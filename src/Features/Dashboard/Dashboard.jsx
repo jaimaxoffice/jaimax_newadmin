@@ -1,376 +1,282 @@
 // src/features/dashboard/Dashboard.jsx
 import React from "react";
 import { useGetDetailsQuery } from "./dashboardApiSlice";
+import {
+  Users,
+  Coins,
+  Tag,
+  ArrowLeftRight,
+  Wallet,
+  TrendingUp,
+  DollarSign,
+  Link2,
+  ArrowDownToLine,
+  RefreshCw,
+} from "lucide-react";
 
-// ─── Helper: Format large numbers ───
 const formatNumber = (num, decimals = 2) => {
   if (num === undefined || num === null) return "0";
-  return Number(num).toLocaleString("en-IN", {
+  return new Intl.NumberFormat("en-IN", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
-  });
+  }).format(Number(num));
 };
 
-// ─── Stat Card Component ───
-const StatCard = ({ title, children, icon }) => (
-  <div className="bg-brand-card border border-brand-border rounded-2xl p-5 hover:border-brand-green/30 transition-all duration-300 group">
-    <div className="flex items-center justify-between mb-4">
-      <p className="text-brand-muted text-sm font-medium">{title}</p>
-      <div className="w-10 h-10 bg-brand-green/10 text-brand-green rounded-xl flex items-center justify-center group-hover:bg-brand-green/20 transition-colors">
-        {icon}
+const formatWhole = (num) => {
+  if (num === undefined || num === null) return "0";
+  return new Intl.NumberFormat("en-IN").format(Number(num));
+};
+
+// ─── Stat Card ───
+const StatCard = ({ label, value, sub, icon: Icon, iconBg, iconColor, valueBg, valueColor = "text-white" }) => (
+  <div className="bg-[#1b232d] rounded-xl p-4 hover:-translate-y-0.5 transition-all duration-200 group">
+    <div className="flex items-center justify-between mb-3">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+        {label}
+      </span>
+      <div
+        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${iconBg}`}
+      >
+        <Icon size={14} className={iconColor} />
       </div>
     </div>
-    {children}
+    <p className={`text-xl sm:text-2xl font-extrabold leading-tight break-all ${valueColor}`}>
+      {value}
+    </p>
+    {sub && <p className="text-[10px] text-gray-500 mt-1">{sub}</p>}
   </div>
 );
 
-// ─── Dual Currency Display ───
-const DualCurrency = ({ inr, usdt }) => (
-  <div className="space-y-1">
-    <p className="text-2xl font-bold text-white">₹{formatNumber(inr)}</p>
-    <p className="text-sm text-brand-green font-medium">
-      ≈ ${formatNumber(usdt)} USDT
+// ─── Dual Panel Card ───
+const DualCard = ({ label, icon: Icon, inr, usdt, accent = false }) => (
+  <div
+    className={`rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5 ${
+      accent
+        ? "bg-[#1b232d] border-l-[3px] border-[#eb660f]"
+        : "bg-[#1b232d] border border-[#1b232d]"
+    }`}
+  >
+    <div className="flex items-center justify-between mb-3">
+      <span
+        className={`text-[10px] font-semibold uppercase tracking-wider ${
+          accent ? "text-[#eb660f]" : "text-white"
+        }`}
+      >
+        {label}
+      </span>
+      <div className="w-7 h-7 rounded-full bg-[#eb660f] flex items-center justify-center">
+        <Icon size={12} className="text-white" />
+      </div>
+    </div>
+    <div className="flex gap-2">
+      <div className="flex-1 bg-[#111] rounded-lg p-3 text-center">
+        <p className="text-[8px] font-bold uppercase text-gray-600 mb-1">INR</p>
+        <p className="text-base sm:text-lg font-extrabold text-white break-all leading-tight">
+          ₹{inr}
+        </p>
+      </div>
+      <div className="flex-1 bg-[#1f1206] rounded-lg p-3 text-center">
+        <p className="text-[8px] font-bold uppercase text-gray-600 mb-1">USDT</p>
+        <p className="text-base sm:text-lg font-extrabold text-[#eb660f] break-all leading-tight">
+          ${usdt}
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+// ─── Balance Card (larger with sub-row) ───
+const BalanceCard = ({ label, icon: Icon, value, subLabel, subValue, iconBg, valueColor }) => (
+  <div className="bg-[#1b232d] rounded-xl p-4 hover:-translate-y-0.5 transition-all duration-200">
+    <div className="flex items-center justify-between mb-3">
+      <span className={`text-[10px] font-semibold uppercase tracking-wider ${valueColor || "text-white"}`}>
+        {label}
+      </span>
+      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
+        <Icon size={14} className="text-white" />
+      </div>
+    </div>
+    <p className={`text-xl sm:text-2xl font-extrabold leading-tight break-all ${valueColor || "text-white"}`}>
+      {value}
     </p>
+    {subLabel && (
+      <div className="mt-3 bg-[#111] rounded-lg px-3 py-2 flex items-center justify-between">
+        <span className="text-[9px] text-gray-600">{subLabel}</span>
+        <span className={`text-xs font-bold ${valueColor || "text-gray-400"}`}>
+          {subValue}
+        </span>
+      </div>
+    )}
   </div>
 );
 
 const Dashboard = () => {
   const { data: response, isLoading, isError, error, refetch } = useGetDetailsQuery();
 
-  // ─── Loading State ───
+  // ─── Loading ───
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-brand-dark flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-brand-green border-t-transparent rounded-full animate-spin" />
-          <p className="text-brand-muted text-lg font-medium">
-            Loading dashboard...
-          </p>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-[3px] border-[#eb660f] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-gray-600 text-xs mt-3">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // ─── Error State ───
+  // ─── Error ───
   if (isError) {
     return (
-      <div className="min-h-screen bg-brand-dark flex items-center justify-center p-4">
-        <div className="bg-brand-card border border-brand-border rounded-2xl p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-white mb-2">
-            Something went wrong
-          </h2>
-          <p className="text-brand-muted mb-6">
-            {error?.data?.message || error?.error || "Failed to load dashboard."}
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="bg-[#1a1a1a] rounded-xl p-6 max-w-sm w-full text-center">
+          <p className="text-gray-500 text-sm mb-4">
+            {error?.data?.message || "Failed to load data"}
           </p>
           <button
             onClick={refetch}
-            className="bg-brand-green hover:bg-brand-green/90 text-brand-dark px-6 py-2.5 rounded-xl font-semibold transition-colors cursor-pointer"
+            className="bg-[#eb660f] text-white text-xs font-semibold px-5 py-2 rounded-lg hover:bg-[#d45a0d] transition-colors cursor-pointer"
           >
-            Try Again
+            Retry
           </button>
         </div>
       </div>
     );
   }
 
-  // ─── Extract Data ───
-  const dashData = response?.data;
+  const d = response?.data;
+  if (!d) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center text-gray-600 text-sm">
+        No data available
+      </div>
+    );
+  }
 
-  const {
-    availableBalanceLogs,
-    total_Raised,
-    total_token_sale,
-    total_referral,
-    current_token_price,
-    usersCount,
-    withdraw_amount,
-  } = dashData || {};
+  const getGreeting = () => {
+    const h = new Date().getHours();
+    return h < 12 ? "Good Morning" : h < 17 ? "Good Afternoon" : "Good Evening";
+  };
+
+  const username = localStorage.getItem("username");
 
   return (
-    <div className="min-h-screen bg-brand-dark">
-      {/* ─── Header ─── */}
-      <header className="border-b border-brand-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span className="w-2 h-6 bg-brand-green rounded-full inline-block" />
-                Admin Dashboard
-              </h1>
-              <p className="text-brand-muted mt-1 text-sm">
-                Real-time token sale & financial overview
-              </p>
-            </div>
-            <button
-              onClick={refetch}
-              className="flex items-center gap-2 bg-brand-green hover:bg-brand-green/90 text-brand-dark px-5 py-2.5 rounded-xl font-semibold transition-colors cursor-pointer text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Refresh
-            </button>
+    <div className="min-h-screen bg-[#111214] p-2 sm:p-4 lg:p-5">
+      {/* ─── Hero ─── */}
+      <div className="bg-[#1b232d] rounded-xl p-4 sm:p-5 mb-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl font-extrabold text-white leading-tight">
+              {getGreeting()},{" "}
+              <span className="text-[#eb660f]">{username || "Admin"}</span>
+            </h1>
+            <p className="text-[11px] text-gray-500 mt-1">
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </p>
           </div>
+          <button
+            onClick={refetch}
+            className="flex items-center gap-1.5 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-[11px] font-semibold px-3 py-2 rounded-lg transition-colors cursor-pointer shrink-0"
+          >
+            <RefreshCw size={12} />
+            Refresh
+          </button>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      {/* ─── Row 1: Quick Stats (4 cols) ─── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-3">
+        <StatCard
+          label="Users"
+          value={formatWhole(d.usersCount)}
+          sub="Registered"
+          icon={Users}
+          iconBg="bg-[#252525]"
+          iconColor="text-gray-400"
+        />
+        <StatCard
+          label="Tokens Sold"
+          value={formatWhole(d.total_token_sale)}
+          icon={Coins}
+          iconBg="bg-[#2a2a2a]"
+          iconColor="text-[#eb660f]"
+          valueColor="text-[#eb660f]"
+        />
+        <StatCard
+          label="Token Price"
+          value={`₹${d.current_token_price?.INR}`}
+          sub={`$${d.current_token_price?.USDT} USDT`}
+          icon={Tag}
+          iconBg="bg-[#b84d08]"
+          iconColor="text-white"
+        />
+        <StatCard
+          label="Rate"
+          value={`₹${d.availableBalanceLogs?.Rate}`}
+          sub="Per USDT"
+          icon={ArrowLeftRight}
+          iconBg="bg-transparent border border-[#444]"
+          iconColor="text-gray-500"
+        />
+      </div>
 
-        {/* ─── Row 1: Key Metrics ─── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-          {/* Total Users */}
-          <StatCard
-            title="Total Users"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            }
-          >
-            <p className="text-3xl font-bold text-white">
-              {usersCount?.toLocaleString()}
-            </p>
-            <p className="text-xs text-brand-muted mt-1">Registered accounts</p>
-          </StatCard>
-
-          {/* Total Token Sale */}
-          <StatCard
-            title="Total Token Sale"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            }
-          >
-            <p className="text-2xl font-bold text-white">
-              {formatNumber(total_token_sale, 0)}
-            </p>
-            <p className="text-xs text-brand-green mt-1">Tokens sold</p>
-          </StatCard>
-
-          {/* Current Token Price */}
-          <StatCard
-            title="Token Price (INR)"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-              </svg>
-            }
-          >
-            <p className="text-3xl font-bold text-white">
-              ₹{current_token_price?.INR}
-            </p>
-            <p className="text-sm text-brand-green mt-1">
-              ≈ ${current_token_price?.USDT} USDT
-            </p>
-          </StatCard>
-
-          {/* Exchange Rate */}
-          <StatCard
-            title="INR/USDT Rate"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-              </svg>
-            }
-          >
-            <p className="text-3xl font-bold text-white">
-              ₹{availableBalanceLogs?.Rate}
-            </p>
-            <p className="text-xs text-brand-muted mt-1">1 USDT exchange rate</p>
-          </StatCard>
-        </div>
-
-        {/* ─── Row 2: Financial Cards ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-          {/* Total Raised */}
-          <div className="bg-gradient-to-br from-brand-green/20 to-brand-green/5 border border-brand-green/30 rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-brand-green/20 text-brand-green rounded-xl flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <p className="text-brand-green font-semibold text-sm uppercase tracking-wide">
-                Total Raised
-              </p>
-            </div>
-            <p className="text-3xl font-bold text-white">
-              ₹{formatNumber(total_Raised?.INR)}
-            </p>
-            <p className="text-brand-green text-sm font-medium mt-1">
-              ≈ ${formatNumber(total_Raised?.USDT)} USDT
-            </p>
-          </div>
-
-          {/* Total Referral */}
-          <div className="bg-brand-card border border-brand-border rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-              </div>
-              <p className="text-brand-muted font-semibold text-sm uppercase tracking-wide">
-                Total Referral
-              </p>
-            </div>
-            <DualCurrency
-              inr={total_referral?.INR}
-              usdt={total_referral?.USDT}
-            />
-          </div>
-
-          {/* Withdraw Amount */}
-          <div className="bg-brand-card border border-brand-border rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-              </div>
-              <p className="text-brand-muted font-semibold text-sm uppercase tracking-wide">
-                Total Withdrawn
-              </p>
-            </div>
-            <DualCurrency
-              inr={withdraw_amount?.INR}
-              usdt={withdraw_amount?.USDT}
-            />
-          </div>
-        </div>
-
-        {/* ─── Row 3: Available Balance Breakdown ─── */}
-        <div className="bg-brand-card border border-brand-border rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-brand-border flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">
-              Available Balance Logs
-            </h2>
-            <span className="text-xs bg-brand-green/10 text-brand-green px-3 py-1 rounded-full font-medium">
-              Live
+      {/* ─── Row 2: Balance / Raised / Admin (3 cols) ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mb-3">
+        <BalanceCard
+          label="Available Balance"
+          icon={Wallet}
+          value={`₹${formatWhole(d.availableBalanceLogs?.TotalUsersINR)}`}
+          subLabel="USDT"
+          subValue={`$${formatWhole(d.availableBalanceLogs?.equviValnetUSDT)}`}
+          iconBg="bg-[#eb660f]"
+          valueColor="text-[#eb660f]"
+        />
+        <BalanceCard
+          label="Total Amount Raised"
+          icon={TrendingUp}
+          value={`₹${formatNumber(d.total_Raised?.INR)}`}
+          subLabel="USDT"
+          subValue={`$${formatNumber(d.total_Raised?.USDT)}`}
+          iconBg="bg-[#303f50]"
+          valueColor="text-white"
+        />
+        <div className="bg-gradient-to-br from-[#b84d08] to-[#b84d08] rounded-xl p-4 hover:-translate-y-0.5 transition-all duration-200 sm:col-span-2 lg:col-span-1">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">
+              Admin USDT
             </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-brand-border">
-            {/* Total Users INR */}
-            <div className="p-6 text-center">
-              <p className="text-brand-muted text-sm font-medium mb-2">
-                Users Balance (INR)
-              </p>
-              <p className="text-2xl font-bold text-white">
-                ₹{formatNumber(availableBalanceLogs?.TotalUsersINR, 0)}
-              </p>
-            </div>
-
-            {/* Rate */}
-            <div className="p-6 text-center">
-              <p className="text-brand-muted text-sm font-medium mb-2">
-                Exchange Rate
-              </p>
-              <p className="text-2xl font-bold text-white">
-                ₹{availableBalanceLogs?.Rate}
-              </p>
-            </div>
-
-            {/* Equivalent USDT */}
-            <div className="p-6 text-center">
-              <p className="text-brand-muted text-sm font-medium mb-2">
-                Equivalent USDT
-              </p>
-              <p className="text-2xl font-bold text-brand-green">
-                ${formatNumber(availableBalanceLogs?.equviValnetUSDT, 0)}
-              </p>
-            </div>
-
-            {/* Admin USDT */}
-            <div className="p-6 text-center">
-              <p className="text-brand-muted text-sm font-medium mb-2">
-                Admin USDT Balance
-              </p>
-              <p className="text-2xl font-bold text-white">
-                ${formatNumber(availableBalanceLogs?.usdtAdminHave, 4)}
-              </p>
+            <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+              <DollarSign size={14} className="text-white" />
             </div>
           </div>
+          <p className="text-xl sm:text-2xl font-extrabold text-white break-all leading-tight">
+            ${formatNumber(d.availableBalanceLogs?.usdtAdminHave, 4)}
+          </p>
+          <p className="text-[10px] text-white/50 mt-1">Holdings</p>
         </div>
+      </div>
 
-        {/* ─── Row 4: Quick Summary Table ─── */}
-        <div className="bg-brand-card border border-brand-border rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-brand-border">
-            <h2 className="text-lg font-semibold text-white">
-              Financial Summary
-            </h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-xs text-brand-muted uppercase tracking-wider border-b border-brand-border">
-                  <th className="px-6 py-3 font-medium">Metric</th>
-                  <th className="px-6 py-3 font-medium text-right">INR (₹)</th>
-                  <th className="px-6 py-3 font-medium text-right">USDT ($)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-brand-border">
-                <tr className="hover:bg-white/5 transition-colors">
-                  <td className="px-6 py-4 text-sm text-white font-medium flex items-center gap-2">
-                    <span className="w-2 h-2 bg-brand-green rounded-full" />
-                    Total Raised
-                  </td>
-                  <td className="px-6 py-4 text-sm text-white text-right font-mono">
-                    ₹{formatNumber(total_Raised?.INR)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-brand-green text-right font-mono">
-                    ${formatNumber(total_Raised?.USDT)}
-                  </td>
-                </tr>
-                <tr className="hover:bg-white/5 transition-colors">
-                  <td className="px-6 py-4 text-sm text-white font-medium flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-400 rounded-full" />
-                    Total Referral
-                  </td>
-                  <td className="px-6 py-4 text-sm text-white text-right font-mono">
-                    ₹{formatNumber(total_referral?.INR)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-brand-green text-right font-mono">
-                    ${formatNumber(total_referral?.USDT)}
-                  </td>
-                </tr>
-                <tr className="hover:bg-white/5 transition-colors">
-                  <td className="px-6 py-4 text-sm text-white font-medium flex items-center gap-2">
-                    <span className="w-2 h-2 bg-orange-400 rounded-full" />
-                    Total Withdrawn
-                  </td>
-                  <td className="px-6 py-4 text-sm text-white text-right font-mono">
-                    ₹{formatNumber(withdraw_amount?.INR)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-brand-green text-right font-mono">
-                    ${formatNumber(withdraw_amount?.USDT)}
-                  </td>
-                </tr>
-                <tr className="hover:bg-white/5 transition-colors">
-                  <td className="px-6 py-4 text-sm text-white font-medium flex items-center gap-2">
-                    <span className="w-2 h-2 bg-purple-400 rounded-full" />
-                    Token Price
-                  </td>
-                  <td className="px-6 py-4 text-sm text-white text-right font-mono">
-                    ₹{current_token_price?.INR}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-brand-green text-right font-mono">
-                    ${current_token_price?.USDT}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
+      {/* ─── Row 3: Referral & Withdrawals (2 cols) ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+        <DualCard
+          label="Total Referral"
+          icon={Link2}
+          inr={formatNumber(d.total_referral?.INR)}
+          usdt={formatNumber(d.total_referral?.USDT)}
+          accent
+        />
+        <DualCard
+          label="Total Withdrawals"
+          icon={ArrowDownToLine}
+          inr={formatNumber(d.withdraw_amount?.INR)}
+          usdt={formatNumber(d.withdraw_amount?.USDT)}
+        />
+      </div>
     </div>
   );
 };

@@ -58,7 +58,7 @@ const WealthLogs3O = () => {
     {
       header: "Transaction ID",
       render: (row) => (
-        <span className="text-[#0ecb6f] text-xs font-mono">{row?.transactionId}</span>
+        <span className="">{row?.transactionId}</span>
       ),
     },
     {
@@ -69,7 +69,7 @@ const WealthLogs3O = () => {
     {
       header: "Order ID",
       render: (row) => (
-        <span className="text-blue-400 text-xs font-mono">{row?.orderId}</span>
+        <span className="">{row?.orderId}</span>
       ),
     },
     {
@@ -79,7 +79,7 @@ const WealthLogs3O = () => {
     {
       header: "Created On",
       render: (row) => (
-        <span className="text-[#8a8d93]">{formatDateWithAmPm(row?.createdOn)}</span>
+        <span className="">{formatDateWithAmPm(row?.createdOn)}</span>
       ),
     },
   ];

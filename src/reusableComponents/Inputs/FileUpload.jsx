@@ -46,7 +46,7 @@ const FileUpload = ({
       {label && (
         <label className="block text-sm font-medium text-[#8a8d93] mb-1.5">
           {label}
-          {required && <span className="text-[#0ecb6f] ml-1">*</span>}
+          {required && <span className="text-[#eb660f] ml-1">*</span>}
         </label>
       )}
 
@@ -60,12 +60,12 @@ const FileUpload = ({
 
       {previewUrl ? (
         /* File Preview */
-        <div className="bg-[#111214] border border-[#0ecb6f]/30 rounded-xl p-3">
+        <div className="bg-[#111214] border border-[#eb660f]/30 rounded-xl p-3">
           <div className="flex items-center gap-3">
             <img
               src={previewUrl}
               alt="Preview"
-              className="w-14 h-14 object-cover rounded-lg border-2 border-[#0ecb6f]/30"
+              className="w-14 h-14 object-cover rounded-lg border-2 border-[#eb660f]/30"
             />
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-medium truncate">
@@ -74,7 +74,7 @@ const FileUpload = ({
               <p className="text-[#555] text-xs mt-0.5">
                 {formatFileSize(file?.size)}
               </p>
-              <span className="inline-block mt-1 text-[10px] font-semibold text-[#0ecb6f] bg-[#0ecb6f]/10 px-2 py-0.5 rounded-full">
+              <span className="inline-block mt-1 text-[10px] font-semibold text-[#eb660f] bg-[#eb660f]/10 px-2 py-0.5 rounded-full">
                 ✓ Uploaded
               </span>
             </div>
@@ -106,12 +106,12 @@ const FileUpload = ({
               error
                 ? "border-red-500/50 bg-red-500/5"
                 : isDragging
-                ? "border-[#0ecb6f] bg-[#0ecb6f]/5"
-                : "border-[#2a2c2f] bg-[#111214] hover:border-[#0ecb6f]/50 hover:bg-[#0ecb6f]/5"
+                ? "border-[#eb660f] bg-[#eb660f]/5"
+                : "border-[#2a2c2f] bg-[#111214] hover:border-[#eb660f]/50 hover:bg-[#eb660f]/5"
             }`}
         >
-          <div className="w-12 h-12 rounded-full bg-[#0ecb6f]/10 flex items-center justify-center">
-            <span className="text-[#0ecb6f] text-xl">↑</span>
+          <div className="w-12 h-12 rounded-full bg-[#eb660f]/10 flex items-center justify-center">
+            <span className="text-[#eb660f] text-xl">↑</span>
           </div>
           <p className="text-white text-sm font-medium">
             {isDragging ? "Drop file here" : "Click or drag to upload"}

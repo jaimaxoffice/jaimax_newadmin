@@ -12,6 +12,8 @@
   "dependencies": {
     "@iconify/react": "^6.0.2",
     "@reduxjs/toolkit": "^2.11.2",
+    "@tinymce/tinymce-react": "^6.3.0",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.9",
     "iconify": "^1.4.0",
     "jspdf": "^4.1.0",

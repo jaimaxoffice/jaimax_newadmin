@@ -36,7 +36,7 @@ const EditRoundModal = ({
               className={`w-full bg-[#111214] border ${
                 errors?.atPriceUsdt ? "border-red-500/50" : "border-[#2a2c2f]"
               } text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none 
-                focus:border-[#0ecb6f] focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors`}
+                focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/50 transition-colors`}
             />
             {errors?.atPriceUsdt && (
               <p className="mt-1 text-xs text-red-400">{errors.atPriceUsdt}</p>
@@ -58,7 +58,7 @@ const EditRoundModal = ({
               className={`w-full bg-[#111214] border ${
                 errors?.atPriceInr ? "border-red-500/50" : "border-[#2a2c2f]"
               } text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none 
-                focus:border-[#0ecb6f] focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors`}
+                focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/50 transition-colors`}
             />
             {errors?.atPriceInr && (
               <p className="mt-1 text-xs text-red-400">{errors.atPriceInr}</p>
@@ -85,7 +85,7 @@ const EditRoundModal = ({
           <button
             type="button"
             onClick={onUpdate}
-            className="flex-1 bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 text-[#111214] py-3 
+            className="flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90 text-[#111214] py-3 
               rounded-xl text-sm font-semibold transition-colors cursor-pointer"
           >
             Save Changes

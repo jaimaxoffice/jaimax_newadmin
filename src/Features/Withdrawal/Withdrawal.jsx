@@ -245,7 +245,7 @@ const Withdrawal = () => {
     {
       header: "Transaction Id",
       render: (row) => (
-        <span className="text-xs font-mono">{row?._id || "—"}</span>
+        <span className=" ">{row?._id || "—"}</span>
       ),
     },
     {
@@ -259,7 +259,7 @@ const Withdrawal = () => {
     {
       header: "UTR Number",
       render: (row) => (
-        <span className={row.utr_number ? "text-[#0ecb6f]" : "text-[#555]"}>
+        <span >
           {row.utr_number || "N/A"}
         </span>
       ),
@@ -345,7 +345,7 @@ const Withdrawal = () => {
           avatar: row?.userId?.name?.charAt(0)?.toUpperCase() || "?",
           avatarBg:
             row.status === 1
-              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
+              ? "bg-green-400 text-gree-400"
               : row.status === 2
               ? "bg-red-500/10 text-red-400"
               : "bg-yellow-500/10 text-yellow-400",

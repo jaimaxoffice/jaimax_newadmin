@@ -165,7 +165,7 @@ const Userinfo = () => {
         subtitle: `#${index + 1} • ${row?.username}`,
         badge: row?.isActive ? "Active" : "Inactive",
         badgeClass: row?.isActive
-          ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
+          ? "bg-[#eb660f]/10 text-[#eb660f]"
           : "bg-red-500/10 text-red-400",
       }}
       rows={[
@@ -182,7 +182,7 @@ const Userinfo = () => {
       <span className="text-xs text-[#8a8d93]">{label}</span>
       <span
         className={`text-sm text-right max-w-[60%] truncate ${
-          highlight ? "text-[#0ecb6f] font-semibold" : mono ? "font-mono text-[#0ecb6f] text-xs bg-[#0ecb6f]/10 px-2 py-0.5 rounded" : "text-white font-medium"
+          highlight ? "text-[#eb660f] font-semibold" : mono ? "font-mono text-[#eb660f] text-xs bg-[#eb660f]/10 px-2 py-0.5 rounded" : "text-white font-medium"
         }`}
       >
         {value || "N/A"}
@@ -195,13 +195,13 @@ const Userinfo = () => {
     <div
       className={`text-center p-3 rounded-xl border ${
         accent
-          ? "bg-[#0ecb6f]/5 border-[#0ecb6f]/20"
+          ? "bg-[#eb660f]/5 border-[#eb660f]/20"
           : "bg-[#2a2c2f]/30 border-[#2a2c2f]"
       }`}
     >
       <p
         className={`text-xl font-bold mb-1 ${
-          accent ? "text-[#0ecb6f]" : "text-white"
+          accent ? "text-[#eb660f]" : "text-white"
         }`}
       >
         {value ?? 0}
@@ -221,15 +221,15 @@ const Userinfo = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-              rounded-xl py-3 px-4 text-sm text-center focus:outline-none focus:border-[#0ecb6f]
-              focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors uppercase"
+              rounded-xl py-3 px-4 text-sm text-center focus:outline-none focus:border-[#eb660f]
+              focus:ring-1 focus:ring-[#eb660f]/50 transition-colors uppercase"
           />
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <button
               onClick={handleDirectSearch}
               disabled={isPageLoading}
-              className="w-full sm:w-auto flex-1 bg-[#0ecb6f] hover:bg-[#0ecb6f]/90
-                disabled:bg-[#0ecb6f]/50 disabled:cursor-not-allowed
+              className="w-full sm:w-auto flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90
+                disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
                 text-[#111214] font-semibold py-2.5 px-4 rounded-xl text-sm
                 transition-colors cursor-pointer"
             >
@@ -238,8 +238,8 @@ const Userinfo = () => {
             <button
               onClick={handleChainSearch}
               disabled={isPageLoading}
-              className="w-full sm:w-auto flex-1 bg-[#0ecb6f] hover:bg-[#0ecb6f]/90
-                disabled:bg-[#0ecb6f]/50 disabled:cursor-not-allowed
+              className="w-full sm:w-auto flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90
+                disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
                 text-[#111214] font-semibold py-2.5 px-4 rounded-xl text-sm
                 transition-colors cursor-pointer"
             >
@@ -248,8 +248,8 @@ const Userinfo = () => {
             <button
               onClick={handleShowUserDetails}
               disabled={isPageLoading}
-              className="w-full sm:w-auto flex-1 bg-[#0ecb6f] hover:bg-[#0ecb6f]/90
-                disabled:bg-[#0ecb6f]/50 disabled:cursor-not-allowed
+              className="w-full sm:w-auto flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90
+                disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
                 text-[#111214] font-semibold py-2.5 px-4 rounded-xl text-sm
                 transition-colors cursor-pointer"
             >
@@ -268,7 +268,7 @@ const Userinfo = () => {
       {/* Loading */}
       {isPageLoading && (
         <div className="flex items-center justify-center py-16">
-          <div className="w-10 h-10 border-4 border-[#0ecb6f] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-[#eb660f] border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
@@ -286,7 +286,7 @@ const Userinfo = () => {
               </div>
               <button
                 onClick={() => setShowEditModal(true)}
-                className="bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 text-[#111214] font-semibold
+                className="bg-[#eb660f] hover:bg-[#eb660f]/90 text-[#111214] font-semibold
                   py-2 px-4 rounded-xl text-xs transition-colors cursor-pointer"
               >
                 Edit Profile
@@ -345,7 +345,7 @@ const Userinfo = () => {
                   <button
                     onClick={() => setShowSecretModal(true)}
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20
-                      bg-black/60 backdrop-blur-sm border border-[#0ecb6f]/50 text-[#0ecb6f]
+                      bg-black/60 backdrop-blur-sm border border-[#eb660f]/50 text-[#eb660f]
                       font-semibold text-sm px-5 py-2.5 rounded-full cursor-pointer
                       hover:bg-black/80 transition-all"
                   >
@@ -453,8 +453,8 @@ const Userinfo = () => {
             onChange={(e) => setSecretInput(e.target.value)}
             placeholder="Enter Secret"
             className="w-full bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-              rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[#0ecb6f]
-              focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors"
+              rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f]
+              focus:ring-1 focus:ring-[#eb660f]/50 transition-colors"
           />
           <div className="flex gap-3">
             <button
@@ -466,7 +466,7 @@ const Userinfo = () => {
             </button>
             <button
               onClick={handleSecretSubmit}
-              className="flex-1 bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 text-[#111214] py-3
+              className="flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90 text-[#111214] py-3
                 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
             >
               Unlock

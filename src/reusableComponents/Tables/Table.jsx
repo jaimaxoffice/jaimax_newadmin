@@ -49,7 +49,7 @@ const Table = ({ columns, data, isLoading, currentPage, perPage }) => {
                 {columns.map((col, colIndex) => (
                   <td
                     key={colIndex}
-                    className="px-4 py-3 text-[13px] text-[#ccc] whitespace-nowrap"
+                    className="px-4 py-3 text-[13px] text-[#ffff] whitespace-nowrap"
                   >
                     {col.render
                       ? col.render(row, rowIndex, currentPage, perPage)

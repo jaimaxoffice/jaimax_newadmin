@@ -56,7 +56,7 @@ const WealthPlanOrders = () => {
     {
       header: "User ID",
       render: (row) => (
-        <span className="font-mono text-[#8a8d93] text-xs">
+        <span className="">
           {row?.userId?._id?.slice(-8)}
         </span>
       ),
@@ -68,7 +68,7 @@ const WealthPlanOrders = () => {
     {
       header: "Email",
       render: (row) => (
-        <span className="text-[#0ecb6f]">{row?.userId?.email}</span>
+        <span className="">{row?.userId?.email}</span>
       ),
     },
     {
@@ -140,7 +140,7 @@ const WealthPlanOrders = () => {
     {
       header: "Created On",
       render: (row) => (
-        <span className="text-[#8a8d93]">
+        <span className="">
           {formatDateWithAmPm(row?.guaranteedWealthPlanChosenDate)}
         </span>
       ),
@@ -160,7 +160,7 @@ const WealthPlanOrders = () => {
           subtitle: `#${sNo} • ${row?.userId?.email}`,
           badge: row?.wealthPlanCompleted ? "Completed" : "In Progress",
           badgeClass: row?.wealthPlanCompleted
-            ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
+            ? "bg-[#eb660f]/10 text-[#eb660f]"
             : "bg-yellow-500/10 text-yellow-400",
         }}
         rows={[

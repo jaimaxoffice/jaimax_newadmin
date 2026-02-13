@@ -97,7 +97,7 @@ const KycApprove = () => {
 
   const getStatusStyle = (status) => {
     const map = {
-      approve: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
+      approve: " text-green-400",
       reject: "bg-red-500/10 text-red-400",
       open: "bg-yellow-500/10 text-yellow-400",
       inprogress: "bg-blue-500/10 text-blue-400",
@@ -180,7 +180,7 @@ const KycApprove = () => {
     {
       header: "Address",
       render: (row) => (
-        <span className="truncate max-w-[120px] inline-block" title={row.address}>
+        <span className=" inline-block" title={row.address}>
           {row.address || "N/A"}
         </span>
       ),

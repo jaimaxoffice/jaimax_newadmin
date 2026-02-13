@@ -1,5 +1,4 @@
 // src/features/team/TeamInvestmentPDF.js
-import PDFGenerator from "../../utils/pdfGenerator";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -42,6 +41,7 @@ const getInvestedStats = (layersData) => {
 
 export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, toDate }) => {
   const stats = getInvestedStats(layersData);
+  const fw = pdf.contentWidth;
 
   if (stats.totalInvestedUsers === 0) {
     pdf.addText("No invested users found to generate report.", {
@@ -65,7 +65,7 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
   if (fromDate || toDate) {
     pdf.addText(`Period: ${fromDate || "Start"} → ${toDate || "Present"}`, {
       fontSize: 9,
-      color: pdf.theme.textMuted,
+      color: pdf.theme.muted,
     });
     pdf.addSpace(3);
   }
@@ -116,9 +116,9 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
 
   pdf.addTable(summaryColumns, summaryData, {
     columnStyles: {
-      0: { halign: "left", fontStyle: "bold" },
-      1: { halign: "center" },
-      2: { halign: "center" },
+      0: { cellWidth: fw * 0.4, halign: "left", fontStyle: "bold" },
+      1: { cellWidth: fw * 0.3, halign: "center" },
+      2: { cellWidth: fw * 0.3, halign: "center" },
     },
   });
 
@@ -140,7 +140,7 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
 
       pdf.addText(
         `Invested Users: ${investedUsers.length} | Total Investment: ${formatAmountPDF(layerTotal)}`,
-        { fontSize: 9, color: pdf.theme.textMuted }
+        { fontSize: 9, color: pdf.theme.muted }
       );
 
       pdf.addSpace(3);
@@ -169,12 +169,12 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
         compact: true,
         headerColor: [14, 203, 111],
         columnStyles: {
-          0: { cellWidth: 12, halign: "center" },
-          1: { cellWidth: 28 },
-          2: { cellWidth: 26 },
-          3: { cellWidth: 22 },
-          4: { cellWidth: 52 },
-          5: { cellWidth: 22, fontStyle: "bold" },
+          0: { cellWidth: fw * 0.06, halign: "center" },
+          1: { cellWidth: fw * 0.15 },
+          2: { cellWidth: fw * 0.14 },
+          3: { cellWidth: fw * 0.12 },
+          4: { cellWidth: fw * 0.38 },
+          5: { cellWidth: fw * 0.15, fontStyle: "bold" },
         },
       });
     });

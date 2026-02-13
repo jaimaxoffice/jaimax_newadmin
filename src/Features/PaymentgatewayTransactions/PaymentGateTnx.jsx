@@ -4,9 +4,9 @@ import Pagination from "../../reusableComponents/paginations/Pagination";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
-import { useAllTransListQuery } from "../Wallet/walletApiSlice";
+import { useGetpaymentgatewaytransactionsQuery } from "../Wallet/walletApiSlice";
 
-const AllTransactions = () => {
+const PaymentGatewaysTransactions = () => {
   const [state, setState] = useState({
     currentPage: 1,
     perPage: 10,
@@ -23,7 +23,7 @@ const AllTransactions = () => {
     data: tableData,
     isLoading,
     refetch,
-  } = useAllTransListQuery(queryParams);
+  } = useGetpaymentgatewaytransactionsQuery(queryParams);
 
   const transactions = tableData?.data?.transactions || [];
   const totalRecords = tableData?.data?.total || 0;
@@ -78,12 +78,19 @@ const AllTransactions = () => {
 
   const getStatusStyle = (status) => {
     const map = {
-      Completed: " text-green-400",
+      Completed: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
       Pending: "bg-yellow-500/10 text-yellow-400",
       Hold: "bg-blue-500/10 text-blue-400",
       Failed: "bg-red-500/10 text-red-400",
+      Success: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
     };
     return map[status] || "bg-[#2a2c2f] text-[#8a8d93]";
+  };
+
+  const getTypeStyle = (type) => {
+    return type === "Credit"
+      ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
+      : "bg-red-500/10 text-red-400";
   };
 
   // Desktop Table Columns
@@ -99,17 +106,19 @@ const AllTransactions = () => {
     },
     {
       header: "Payment Method",
-      accessor: "paymentMode",
+      render: (row) => (
+        <span className="inline-flex items-center gap-1.5">
+        
+          <span className="text-xs text-white">{row.paymentMode || "N/A"}</span>
+        </span>
+      ),
     },
     {
       header: "Type",
       render: (row) => (
         <span
-          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-            row.transactionType === "Credit"
-              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-              : "bg-red-500/10 text-red-400"
-          }`}
+          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full 
+            ${getTypeStyle(row.transactionType)}`}
         >
           {row.transactionType}
         </span>
@@ -119,11 +128,7 @@ const AllTransactions = () => {
       header: "Amount",
       render: (row) => (
         <span
-          className={`font-semibold ${
-            row.transactionType === "Credit"
-              ? "text-green-400"
-              : "text-red-400"
-          }`}
+          className={`font-semibold text-sm `}
         >
           {getCurrency(row.userId?.countryCode, row.transactionAmount)}
         </span>
@@ -137,7 +142,7 @@ const AllTransactions = () => {
             href={row.screenshotUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-[#eb660f] hover:underline text-xs"
+            className="text-blue-400"
           >
             {row.transactionId}
           </a>
@@ -165,9 +170,8 @@ const AllTransactions = () => {
       header: "Status",
       render: (row) => (
         <span
-          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${getStatusStyle(
-            row.transactionStatus
-          )}`}
+          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full 
+            ${getStatusStyle(row.transactionStatus)}`}
         >
           {row.transactionStatus}
         </span>
@@ -176,7 +180,9 @@ const AllTransactions = () => {
     {
       header: "Reason",
       render: (row) => (
-        <span className="">{row.reason || "N/A"}</span>
+        <span className="">
+          {row.reason || "N/A"}
+        </span>
       ),
     },
   ];
@@ -188,7 +194,7 @@ const AllTransactions = () => {
 
     return (
       <MobileCard
-        key={row.transactionId || index}
+        key={row.transactionId || row._id || index}
         header={{
           avatar: row.name?.charAt(0)?.toUpperCase(),
           avatarBg: `${
@@ -208,8 +214,17 @@ const AllTransactions = () => {
           },
           {
             label: "Amount",
-            value: getCurrency(row.userId?.countryCode, row.transactionAmount),
-            highlight: true,
+            custom: (
+              <span
+                className={`text-sm font-bold ${
+                  row.transactionType === "Credit"
+                    ? "text-[#0ecb6f]"
+                    : "text-red-400"
+                }`}
+              >
+                {getCurrency(row.userId?.countryCode, row.transactionAmount)}
+              </span>
+            ),
           },
           {
             label: "Transaction ID",
@@ -254,12 +269,18 @@ const AllTransactions = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div
+          className="flex flex-col sm:flex-row items-start sm:items-center 
+          justify-between gap-4"
+        >
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+            <h1
+              className="text-xl sm:text-2xl font-bold text-white 
+              flex items-center gap-3"
+            >
               <div
                 className="w-10 h-10 bg-[#eb660f]/10 rounded-xl flex items-center 
-                justify-center"
+                justify-center flex-shrink-0"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -272,14 +293,15 @@ const AllTransactions = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <rect width="20" height="14" x="2" y="5" rx="2" />
-                  <line x1="2" x2="22" y1="10" y2="10" />
+                  <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+                  <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+                  <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
                 </svg>
               </div>
-              All Wallet Transactions
+              Payment Gateway Transactions
             </h1>
             <p className="text-[#8a8d93] text-sm mt-1 ml-[52px]">
-              View all completed wallet transactions
+              Monitor all payment gateway transaction history
             </p>
           </div>
         </div>
@@ -369,10 +391,12 @@ const AllTransactions = () => {
               className="flex flex-col sm:flex-row items-start sm:items-center 
               justify-between gap-4"
             >
-              <h2 className="text-lg font-semibold text-white">
-                Transaction History
-              </h2>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-semibold text-white">
+                  Gateway Transactions
+                </h2>
+              </div>
+              <div className="flex items-center gap-3">
                 <span className="text-[#8a8d93] text-sm">
                   Total:{" "}
                   <span className="text-white font-semibold">
@@ -380,6 +404,23 @@ const AllTransactions = () => {
                   </span>{" "}
                   records
                 </span>
+                {transactions.length > 0 && (
+                  <div
+                    className="h-4 w-px bg-[#2a2c2f] hidden sm:block"
+                  />
+                )}
+                {transactions.length > 0 && (
+                  <span className="text-[#8a8d93] text-sm hidden sm:block">
+                    Page{" "}
+                    <span className="text-white font-semibold">
+                      {state.currentPage}
+                    </span>{" "}
+                    of{" "}
+                    <span className="text-white font-semibold">
+                      {Math.ceil(totalRecords / state.perPage) || 1}
+                    </span>
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -401,7 +442,7 @@ const AllTransactions = () => {
               data={transactions}
               isLoading={isLoading}
               renderCard={renderTransactionCard}
-              emptyMessage="No transactions found"
+              emptyMessage="No gateway transactions found"
             />
           </div>
         </div>
@@ -419,4 +460,4 @@ const AllTransactions = () => {
   );
 };
 
-export default AllTransactions;
+export default PaymentGatewaysTransactions;

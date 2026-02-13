@@ -13,7 +13,6 @@ const usePDFGenerator = () => {
       const pdf = new PDFGenerator(options);
       pdf.addHeader();
 
-      // Let the caller build the PDF content
       await builderFn(pdf);
 
       return pdf;

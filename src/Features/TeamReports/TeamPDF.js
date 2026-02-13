@@ -41,8 +41,11 @@ const USER_COLUMNS = [
 export const buildTeamPDF = (pdf, { layersData, username }) => {
   const stats = getTotalStats(layersData);
 
+  // Full content width for column calculations
+  // A4 = 210mm, margins 8mm each side = 194mm usable
+  const fw = pdf.contentWidth;
+
   // ── Page 1: Summary ──────────────────────────────────────
-  // Stat Cards
   pdf.addStatCards([
     { label: "Total Layers", value: stats.totalLayers, color: [59, 130, 246] },
     { label: "Active Users", value: stats.totalActive, color: [14, 203, 111] },
@@ -50,7 +53,7 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
     { label: "Total Users", value: stats.totalUsers, color: [235, 102, 15] },
   ]);
 
-  pdf.addSpace(5);
+  pdf.addSpace(3);
 
   // Summary Box
   pdf.addSummaryBox("Report Summary", [
@@ -62,7 +65,7 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
     { label: "Report Date", value: new Date().toLocaleString() },
   ]);
 
-  pdf.addSpace(5);
+  pdf.addSpace(3);
 
   // ── Layer-wise Summary Table ─────────────────────────────
   pdf.addSectionTitle("Layer-wise Summary");
@@ -92,7 +95,6 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
       };
     });
 
-  // Add total row
   summaryData.push({
     layer: "TOTAL",
     active: stats.totalActive.toString(),
@@ -100,12 +102,13 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
     total: stats.totalUsers.toString(),
   });
 
+  // Summary table — proportional widths that fill 100%
   pdf.addTable(summaryColumns, summaryData, {
     columnStyles: {
-      0: { halign: "left", fontStyle: "bold" },
-      1: { halign: "center" },
-      2: { halign: "center" },
-      3: { halign: "center" },
+      0: { cellWidth: fw * 0.4, halign: "left", fontStyle: "bold" },
+      1: { cellWidth: fw * 0.2, halign: "center" },
+      2: { cellWidth: fw * 0.2, halign: "center" },
+      3: { cellWidth: fw * 0.2, halign: "center" },
     },
   });
 
@@ -121,75 +124,60 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
 
     if (activeUsers.length === 0 && inactiveUsers.length === 0) return;
 
-    // New page for each layer
     pdf.addNewPage();
 
-    // Layer title
-    pdf.addSectionTitle(`Layer ${layerKey}`, {
-      icon: "◆",
-      color: [59, 130, 246],
-    });
+    pdf.addSectionTitle(`Layer ${layerKey}`);
 
-    // Layer stats
     pdf.addText(
-      `Active: ${activeUsers.length} | Inactive: ${inactiveUsers.length} | Total: ${activeUsers.length + inactiveUsers.length}`,
-      {
-        fontSize: 9,
-        color: pdf.theme.textMuted,
-      }
+      `Active: ${activeUsers.length}  |  Inactive: ${inactiveUsers.length}  |  Total: ${activeUsers.length + inactiveUsers.length}`,
+      { fontSize: 7.5, color: pdf.theme.muted }
     );
 
-    pdf.addSpace(3);
+    pdf.addSpace(2);
 
-    // Active Users Table
+    // Column widths — proportional, adds up to 100% of content width
+    const userColStyles = {
+      0: { cellWidth: fw * 0.05, halign: "center" },  // #
+      1: { cellWidth: fw * 0.18 },                      // Name
+      2: { cellWidth: fw * 0.16 },                      // Username
+      3: { cellWidth: fw * 0.27 },                      // Email
+      4: { cellWidth: fw * 0.14 },                      // Phone
+      5: { cellWidth: fw * 0.20 },                      // Reference ID
+    };
+
+    // Active Users
     if (activeUsers.length > 0) {
       pdf.addText("✓ Active Users", {
-        fontSize: 11,
-        fontStyle: "bold",
+        fontSize: 8,
+        bold: true,
         color: [14, 203, 111],
       });
-
-      pdf.addSpace(2);
+      pdf.addSpace(1);
 
       pdf.addTable(USER_COLUMNS, activeUsers, {
         compact: true,
         headerColor: [14, 203, 111],
-        columnStyles: {
-          0: { cellWidth: 10, halign: "center" },
-          1: { cellWidth: 30 },
-          2: { cellWidth: 28 },
-          3: { cellWidth: 42 },
-          4: { cellWidth: 25 },
-          5: { cellWidth: 30 },
-        },
+        columnStyles: userColStyles,
       });
 
-      pdf.addSpace(5);
+      pdf.addSpace(3);
     }
 
-    // Inactive Users Table
+    // Inactive Users
     if (inactiveUsers.length > 0) {
-      pdf.checkPageBreak(30);
+      pdf.checkPageBreak(20);
 
       pdf.addText("✗ Inactive Users", {
-        fontSize: 11,
-        fontStyle: "bold",
+        fontSize: 8,
+        bold: true,
         color: [239, 68, 68],
       });
-
-      pdf.addSpace(2);
+      pdf.addSpace(1);
 
       pdf.addTable(USER_COLUMNS, inactiveUsers, {
         compact: true,
         headerColor: [239, 68, 68],
-        columnStyles: {
-          0: { cellWidth: 10, halign: "center" },
-          1: { cellWidth: 30 },
-          2: { cellWidth: 28 },
-          3: { cellWidth: 42 },
-          4: { cellWidth: 25 },
-          5: { cellWidth: 30 },
-        },
+        columnStyles: userColStyles,
       });
     }
   });

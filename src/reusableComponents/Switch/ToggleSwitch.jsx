@@ -5,12 +5,12 @@ const ToggleSwitch = ({ checked, onChange }) => {
   return (
     <button
       onClick={onChange}
-      className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${
-        checked ? "bg-[#0ecb6f]" : "bg-[#2a2c2f]"
+      className={`relative w-8 h-4 rounded-full transition-colors cursor-pointer ${
+        checked ? "bg-[#eb660f]" : "bg-[#2a2c2f]"
       }`}
     >
       <span
-        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
+        className={`absolute top-0 left-0 w-4 h-4 bg-white rounded-full transition-transform ${
           checked ? "translate-x-5" : "translate-x-0"
         }`}
       />

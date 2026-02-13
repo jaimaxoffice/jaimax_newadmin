@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Modal, Button } from "react-bootstrap";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "react-toastify";
@@ -13,12 +14,11 @@ import Pagination from "../../reusableComponents/paginations/Pagination";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
-import Modal from "../../reusableComponents/Modals/Modals";
 
 import {
   useGetUserBusinessDirectRefsMutation,
   useGetDetailedDirectChainUsersBusinessMutation,
-} from "./businessApiSlice";
+} from "./getBusinessReportFromToApiSlice";
 
 const DetailedBusinessPerformanceReport = () => {
   const [username, setUsername] = useState("");
@@ -50,7 +50,7 @@ const DetailedBusinessPerformanceReport = () => {
     draggable: true,
   };
 
-  // ─── Reset all states ───
+  // Reset all states
   const resetStates = () => {
     setUser(null);
     setExcludedDirectUsers([]);
@@ -61,7 +61,7 @@ const DetailedBusinessPerformanceReport = () => {
     setState({ currentPage: 1, perPage: 10, search: "" });
   };
 
-  // ─── Filter referrals based on search ───
+  // Filter referrals based on search
   const filterReferralsData = (referralsData, searchQuery) => {
     if (!searchQuery.trim()) return referralsData || [];
     const query = searchQuery.toLowerCase().trim();
@@ -91,7 +91,7 @@ const DetailedBusinessPerformanceReport = () => {
     state.currentPage * state.perPage
   );
 
-  // ─── Stats computation ───
+  // Stats computation
   const getStats = () => {
     if (!user) return null;
     const directCount = user.directReferrals?.length || 0;
@@ -113,7 +113,7 @@ const DetailedBusinessPerformanceReport = () => {
 
   const stats = getStats();
 
-  // ─── Forms ───
+  // Form for username input
   const formik = useFormik({
     initialValues: { username: "" },
     validationSchema: Yup.object({
@@ -140,6 +140,7 @@ const DetailedBusinessPerformanceReport = () => {
     },
   });
 
+  // Report form
   const reportFormik = useFormik({
     initialValues: {},
     onSubmit: async () => {
@@ -147,18 +148,18 @@ const DetailedBusinessPerformanceReport = () => {
     },
   });
 
-  // ─── Effects ───
+  // Reset when username input changes
   useEffect(() => {
     if (formik.values.username !== username) {
       resetStates();
     }
   }, [formik.values.username, username]);
 
+  // Reset pagination & search when switching tabs
   useEffect(() => {
     setState((prev) => ({ ...prev, currentPage: 1, search: "" }));
   }, [activeTab]);
 
-  // ─── Toggle exclusions ───
   const toggleExcludedDirect = (uname) => {
     setExcludedDirectUsers((prev) =>
       prev.includes(uname)
@@ -175,7 +176,6 @@ const DetailedBusinessPerformanceReport = () => {
     );
   };
 
-  // ─── Handlers ───
   const handleShowReport = () => {
     if (!user) return;
     setReportData(null);
@@ -205,7 +205,7 @@ const DetailedBusinessPerformanceReport = () => {
     }
   };
 
-  // Search with debounce
+  // Search handler with debounce
   let searchTimeout;
   const handleSearch = (e) => {
     clearTimeout(searchTimeout);
@@ -222,7 +222,7 @@ const DetailedBusinessPerformanceReport = () => {
     setState((prev) => ({ ...prev, currentPage: page }));
   };
 
-  // ─── Exclude Checkbox Component ───
+  // Exclude checkbox component
   const ExcludeCheckbox = ({ data }) => {
     const isChain = activeTab === "chain";
     const excludedList = isChain ? excludedChainUsers : excludedDirectUsers;
@@ -250,7 +250,7 @@ const DetailedBusinessPerformanceReport = () => {
     );
   };
 
-  // ─── Exclusion style helpers ───
+  // Status style for excluded/included
   const getExclusionStyle = (uname) => {
     const isChain = activeTab === "chain";
     const excludedList = isChain ? excludedChainUsers : excludedDirectUsers;
@@ -265,7 +265,7 @@ const DetailedBusinessPerformanceReport = () => {
     return excludedList.includes(uname) ? "Excluded" : "Included";
   };
 
-  // ─── Desktop Table Columns ───
+  // Desktop Table Columns
   const columns = [
     {
       header: "S.No",
@@ -303,7 +303,7 @@ const DetailedBusinessPerformanceReport = () => {
     },
   ];
 
-  // ─── Mobile Card Renderer ───
+  // Mobile Card Renderer
   const renderReferralCard = (row, index) => {
     const sNo =
       state.currentPage * state.perPage - (state.perPage - 1) + index;
@@ -333,8 +333,7 @@ const DetailedBusinessPerformanceReport = () => {
           { label: "Phone", value: row.phone || "N/A" },
           {
             label: "Type",
-            value:
-              activeTab === "direct" ? "Direct Referral" : "Chain Referral",
+            value: activeTab === "direct" ? "Direct Referral" : "Chain Referral",
           },
         ]}
         actions={[
@@ -350,7 +349,7 @@ const DetailedBusinessPerformanceReport = () => {
     );
   };
 
-  // ─── PDF Generation ───
+  // PDF Generation (unchanged logic)
   const generateDetailedBusinessReportPdf = () => {
     if (!user || !reportData) return null;
 
@@ -366,6 +365,7 @@ const DetailedBusinessPerformanceReport = () => {
       return false;
     };
 
+    // Header
     doc.setFontSize(18);
     doc.setTextColor(32, 147, 74);
     doc.text("DETAILED BUSINESS PERFORMANCE REPORT", 105, yPosition, {
@@ -373,6 +373,7 @@ const DetailedBusinessPerformanceReport = () => {
     });
     yPosition += 15;
 
+    // User Info
     doc.setFontSize(14);
     doc.setTextColor(32, 147, 74);
     doc.text("USER INFORMATION", 20, yPosition);
@@ -410,6 +411,7 @@ const DetailedBusinessPerformanceReport = () => {
     );
     yPosition += 15;
 
+    // Direct Referrals Table
     if (reportData.data?.directUserBusinessPerformance?.length > 0) {
       checkAddPage(30);
       doc.setFontSize(14);
@@ -468,6 +470,7 @@ const DetailedBusinessPerformanceReport = () => {
       yPosition = doc.lastAutoTable.finalY + 15;
     }
 
+    // Chain Referrals Table
     if (reportData.data?.chainUserBusinessPerformance?.length > 0) {
       checkAddPage(30);
       doc.setFontSize(14);
@@ -524,6 +527,7 @@ const DetailedBusinessPerformanceReport = () => {
       });
     }
 
+    // Summary
     yPosition = doc.lastAutoTable
       ? doc.lastAutoTable.finalY + 15
       : yPosition + 15;
@@ -616,10 +620,6 @@ const DetailedBusinessPerformanceReport = () => {
     }
   };
 
-  // ═══════════════════════════════════════════════════════
-  // RENDER
-  // ═══════════════════════════════════════════════════════
-
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
@@ -678,7 +678,7 @@ const DetailedBusinessPerformanceReport = () => {
           </div>
         </div>
 
-        {/* ─── Main Content ─── */}
+        {/* ─── Main Content (shown after user data is fetched) ─── */}
         {user && (
           <>
             {/* Stat Cards */}
@@ -709,7 +709,7 @@ const DetailedBusinessPerformanceReport = () => {
               </div>
             )}
 
-            {/* Controls Row */}
+            {/* Controls Row: Per Page, Tab Switcher, Search, Generate Button */}
             <div className="flex flex-wrap items-center gap-3">
               {/* Per Page */}
               <select
@@ -773,6 +773,7 @@ const DetailedBusinessPerformanceReport = () => {
 
             {/* ─── Table Section ─── */}
             <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
+              {/* Table Header */}
               <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <h2 className="text-base font-semibold text-white">
@@ -815,7 +816,9 @@ const DetailedBusinessPerformanceReport = () => {
             {totalFiltered > 0 && (
               <Pagination
                 currentPage={state.currentPage}
-                totalPages={Math.ceil(totalFiltered / state.perPage) || 1}
+                totalPages={
+                  Math.ceil(totalFiltered / state.perPage) || 1
+                }
                 onPageChange={handlePageChange}
               />
             )}
@@ -849,8 +852,9 @@ const DetailedBusinessPerformanceReport = () => {
                               {uname}
                               <button
                                 onClick={() => toggleExcludedDirect(uname)}
-                                className="hover:text-red-300 transition-colors 
-                                           text-xs cursor-pointer"
+                                className="hover:text-red-300 
+                                           transition-colors text-xs 
+                                           cursor-pointer"
                               >
                                 ✕
                               </button>
@@ -876,8 +880,9 @@ const DetailedBusinessPerformanceReport = () => {
                               {uname}
                               <button
                                 onClick={() => toggleExcludedChain(uname)}
-                                className="hover:text-yellow-300 transition-colors 
-                                           text-xs cursor-pointer"
+                                className="hover:text-yellow-300 
+                                           transition-colors text-xs 
+                                           cursor-pointer"
                               >
                                 ✕
                               </button>
@@ -894,133 +899,167 @@ const DetailedBusinessPerformanceReport = () => {
         )}
       </div>
 
-      {/* ─── Report Generation Modal (Custom Reusable Modal) ─── */}
+      {/* ─── Report Generation Modal ─── */}
       <Modal
-        isOpen={showReportModal}
-        onClose={() => setShowReportModal(false)}
-        title="Generate Detailed Business Performance Report"
+        show={showReportModal}
+        onHide={() => setShowReportModal(false)}
         size="lg"
+        backdrop="static"
+        keyboard={false}
       >
-        <div className="space-y-5">
-          {/* User Summary */}
-          <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-4">
-            <p className="text-sm text-[#8a8d93] mb-1">
-              Generating report for:
-            </p>
-            <p className="text-white font-semibold">
-              {user?.name} ({user?.username})
-            </p>
-          </div>
-
-          {/* Exclusion Preview */}
-          {(excludedDirectUsers.length > 0 ||
-            excludedChainUsers.length > 0) && (
-            <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-4">
-              <p className="text-sm text-yellow-400 font-medium mb-3">
-                Users excluded from report:
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                {excludedDirectUsers.length > 0 && (
-                  <div className="flex-1">
-                    <p className="text-xs text-[#8a8d93] mb-1.5">
-                      Direct Referrals ({excludedDirectUsers.length}):
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {excludedDirectUsers.map((uname) => (
-                        <span
-                          key={uname}
-                          className="bg-red-500/10 text-red-400 text-[11px] 
-                                     font-medium px-2.5 py-1 rounded-full"
-                        >
-                          {uname}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {excludedChainUsers.length > 0 && (
-                  <div className="flex-1">
-                    <p className="text-xs text-[#8a8d93] mb-1.5">
-                      Chain Referrals ({excludedChainUsers.length}):
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {excludedChainUsers.map((uname) => (
-                        <span
-                          key={uname}
-                          className="bg-yellow-500/10 text-yellow-400 text-[11px] 
-                                     font-medium px-2.5 py-1 rounded-full"
-                        >
-                          {uname}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+        <Modal.Header
+          closeButton
+          style={{
+            backgroundColor: "#1b232d",
+            borderBottom: "1px solid #2a2c2f",
+          }}
+        >
+          <Modal.Title className="text-white text-base">
+            Generate Detailed Business Performance Report
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ backgroundColor: "#1b232d", color: "#fff" }}>
+          <form onSubmit={reportFormik.handleSubmit}>
+            <div className="space-y-4">
+              {/* User Summary */}
+              <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-4">
+                <p className="text-sm text-[#8a8d93] mb-1">
+                  Generating report for:
+                </p>
+                <p className="text-white font-semibold">
+                  {user?.name} ({user?.username})
+                </p>
               </div>
-            </div>
-          )}
 
-          {/* Report Data Preview */}
+              {/* Exclusion Preview */}
+              {(excludedDirectUsers.length > 0 ||
+                excludedChainUsers.length > 0) && (
+                <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-4">
+                  <p className="text-sm text-yellow-400 font-medium mb-3">
+                    Users excluded from report:
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    {excludedDirectUsers.length > 0 && (
+                      <div className="flex-1">
+                        <p className="text-xs text-[#8a8d93] mb-1.5">
+                          Direct Referrals:
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {excludedDirectUsers.map((uname) => (
+                            <span
+                              key={uname}
+                              className="bg-red-500/10 text-red-400 
+                                         text-[11px] font-medium px-2.5 
+                                         py-1 rounded-full"
+                            >
+                              {uname}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {excludedChainUsers.length > 0 && (
+                      <div className="flex-1">
+                        <p className="text-xs text-[#8a8d93] mb-1.5">
+                          Chain Referrals:
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {excludedChainUsers.map((uname) => (
+                            <span
+                              key={uname}
+                              className="bg-yellow-500/10 text-yellow-400 
+                                         text-[11px] font-medium px-2.5 
+                                         py-1 rounded-full"
+                            >
+                              {uname}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Report Data Preview */}
+              {reportData && (
+                <div className="bg-[#111214] border border-[#0ecb6f]/30 rounded-xl p-4">
+                  <p className="text-sm text-[#0ecb6f] font-medium mb-3">
+                    ✓ Report generated successfully
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-[#1b232d] rounded-lg p-3 text-center">
+                      <p className="text-xs text-[#8a8d93]">
+                        Direct Users
+                      </p>
+                      <p className="text-lg font-bold text-[#eb660f]">
+                        {reportData.data?.directUserBusinessPerformance
+                          ?.filter(
+                            (u) =>
+                              !excludedDirectUsers.includes(u.username)
+                          ).length || 0}
+                      </p>
+                    </div>
+                    <div className="bg-[#1b232d] rounded-lg p-3 text-center">
+                      <p className="text-xs text-[#8a8d93]">
+                        Chain Users
+                      </p>
+                      <p className="text-lg font-bold text-blue-400">
+                        {reportData.data?.chainUserBusinessPerformance
+                          ?.filter(
+                            (u) =>
+                              !excludedChainUsers.includes(u.username)
+                          ).length || 0}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer
+          style={{
+            backgroundColor: "#1b232d",
+            borderTop: "1px solid #2a2c2f",
+          }}
+        >
+          <Button
+            variant="secondary"
+            onClick={() => setShowReportModal(false)}
+            style={{
+              backgroundColor: "#2a2c2f",
+              border: "1px solid #3a3a3a",
+              color: "#8a8d93",
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={reportFormik.handleSubmit}
+            disabled={loading}
+            style={{
+              backgroundColor: "#eb660f",
+              border: "1px solid #eb660f",
+            }}
+          >
+            {loading ? "Generating..." : "Generate Report"}
+          </Button>
           {reportData && (
-            <div className="bg-[#111214] border border-[#0ecb6f]/30 rounded-xl p-4">
-              <p className="text-sm text-[#0ecb6f] font-medium mb-3">
-                ✓ Report generated successfully
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#1a1c1f] rounded-lg p-3 text-center">
-                  <p className="text-xs text-[#8a8d93]">Direct Users</p>
-                  <p className="text-lg font-bold text-[#eb660f]">
-                    {reportData.data?.directUserBusinessPerformance?.filter(
-                      (u) => !excludedDirectUsers.includes(u.username)
-                    ).length || 0}
-                  </p>
-                </div>
-                <div className="bg-[#1a1c1f] rounded-lg p-3 text-center">
-                  <p className="text-xs text-[#8a8d93]">Chain Users</p>
-                  <p className="text-lg font-bold text-blue-400">
-                    {reportData.data?.chainUserBusinessPerformance?.filter(
-                      (u) => !excludedChainUsers.includes(u.username)
-                    ).length || 0}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Button
+              variant="success"
+              onClick={handlePdfGeneration}
+              disabled={pdfLoading}
+              style={{
+                backgroundColor: "#0ecb6f",
+                border: "1px solid #0ecb6f",
+              }}
+            >
+              {pdfLoading ? "Generating PDF..." : "📄 Download PDF"}
+            </Button>
           )}
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <button
-              onClick={() => setShowReportModal(false)}
-              className="px-5 py-2.5 rounded-xl text-sm font-medium 
-                         bg-[#2a2c2f] text-[#8a8d93] hover:bg-[#333538] 
-                         transition-colors cursor-pointer"
-            >
-              Close
-            </button>
-            <button
-              onClick={reportFormik.handleSubmit}
-              disabled={loading}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold 
-                         bg-[#eb660f] text-white hover:bg-[#d25400] 
-                         transition-all duration-200 disabled:opacity-50 
-                         disabled:cursor-not-allowed cursor-pointer"
-            >
-              {loading ? "Generating..." : "Generate Report"}
-            </button>
-            {reportData && (
-              <button
-                onClick={handlePdfGeneration}
-                disabled={pdfLoading}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold 
-                           bg-[#0ecb6f] text-white hover:bg-[#0ab05f] 
-                           transition-all duration-200 disabled:opacity-50 
-                           disabled:cursor-not-allowed cursor-pointer"
-              >
-                {pdfLoading ? "Generating PDF..." : "📄 Download PDF"}
-              </button>
-            )}
-          </div>
-        </div>
+        </Modal.Footer>
       </Modal>
     </>
   );

@@ -18,12 +18,12 @@ const InputField = ({
       {label && (
         <label className="block text-sm font-medium text-[#8a8d93] mb-1.5">
           {label}
-          {required && <span className="text-[#0ecb6f] ml-1">*</span>}
+          {required && <span className="text-[#eb660f] ml-1">*</span>}
         </label>
       )}
       <div className="relative">
         {prefix && (
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0ecb6f] font-semibold text-sm">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#eb660f] font-semibold text-sm">
             {prefix}
           </span>
         )}
@@ -42,7 +42,7 @@ const InputField = ({
             ${
               error
                 ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/50"
-                : "border-[#2a2c2f] focus:border-[#0ecb6f] focus:ring-[#0ecb6f]/50"
+                : "border-[#2a2c2f] focus:border-[#eb660f] focus:ring-[#eb660f]/50"
             }`}
         />
       </div>

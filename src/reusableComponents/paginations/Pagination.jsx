@@ -39,7 +39,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === 1}
         className="w-9 h-9 flex items-center justify-center rounded-full
           text-[#ccc] bg-transparent
-          hover:bg-[#0ecb6f] hover:text-[#111214]
+          hover:bg-[#eb660f] hover:text-[#111214]
           disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-[#ccc]
           disabled:cursor-not-allowed transition-all cursor-pointer"
       >
@@ -59,8 +59,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             className={`w-9 h-9 flex items-center justify-center rounded-full text-sm transition-all cursor-pointer
               ${
                 page === currentPage
-                  ? "bg-[#0ecb6f] text-[#111214] font-bold scale-110"
-                  : "text-[#ccc] hover:bg-[#0ecb6f]/10 hover:text-[#0ecb6f]"
+                  ? "bg-[#eb660f] text-[#111214] font-bold scale-110"
+                  : "text-[#ccc] hover:bg-[#eb660f]/10 hover:text-[#eb660f]"
               }`}
           >
             {page}
