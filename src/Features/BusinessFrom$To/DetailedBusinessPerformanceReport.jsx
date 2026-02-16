@@ -277,7 +277,7 @@ const DetailedBusinessPerformanceReport = () => {
     {
       header: "Email",
       render: (row) => (
-        <span className="text-xs text-[#8a8d93] truncate max-w-[180px] inline-block">
+        <span className="text-xs text-[#8a8d93] truncate max-w-45 inline-block">
           {row.email || "N/A"}
         </span>
       ),

@@ -278,7 +278,7 @@ const AllTransactions = () => {
               </div>
               All Wallet Transactions
             </h1>
-            <p className="text-[#8a8d93] text-sm mt-1 ml-[52px]">
+            <p className="text-[#8a8d93] text-sm mt-1 ml-13">
               View all completed wallet transactions
             </p>
           </div>

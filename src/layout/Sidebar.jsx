@@ -1871,12 +1871,16 @@ const ROLE2_SECTIONS = [
 const ACCOUNTANT_SECTIONS = [
   {
     label: "DASHBOARDS",
-    items: [{ label: "Dashboard", icon: LayoutDashboard, path: "/" }],
+    items: [{ label: "Dashboard", icon: LayoutDashboard, path: "/" },
+     { label: "Credits", icon: LayoutDashboard, path: "/credits" },
+     { label: "Debits", icon: LayoutDashboard, path: "/debits" },
+     { label: "TransactionInfo", icon: LayoutDashboard, path: "/TransactionInfo" },
+     { label: "Withdrawal", icon: LayoutDashboard, path: "/withdrawal" },
+     { label: "Internal Expenses", icon: LayoutDashboard, path: "/expenses" },
+    ],
   },
-  {
-    label: "SETTINGS",
-    items: [{ label: "Settings", icon: Settings, path: "/settings" }],
-  },
+
+
 ];
 
 // ─── ROLE 4 ───
@@ -2119,7 +2123,7 @@ export default function Sidebar({ open, setOpen }) {
         {(open || isMobile) && (
           <div className="mt-3">
             <div
-              className={`flex items-center gap-2 bg-[#111418] rounded-lg px-3 py-2 text-sm border transition-colors duration-200 ${
+              className={`flex items-center gap-2 bg-[#000000] rounded-lg px-3 py-2 text-sm border transition-colors duration-200 ${
                 searchQuery
                   ? "border-[#eb660f]/50 ring-1 ring-[#eb660f]/20"
                   : "border-[#1c2833]"
@@ -2236,7 +2240,7 @@ export default function Sidebar({ open, setOpen }) {
 
       {/* ─── Desktop Sidebar ─── */}
       <aside
-        className={`hidden lg:flex h-screen flex-col bg-[#1b232d] text-gray-400
+        className={`hidden lg:flex h-screen flex-col bg-[#000000] text-gray-400
           border-r border-[#18222c]/80 transition-all duration-300
           ${open ? "w-72" : "w-20"}`}
       >
@@ -2264,7 +2268,7 @@ function HighlightText({ text, query }) {
     <span>
       {parts.map((part, i) =>
         regex.test(part) ? (
-          <span key={i} className="text-white font-semibold">{part}</span>
+          <span key={i} className="text-white font-bold text-[12px]">{part}</span>
         ) : (
           <span key={i}>{part}</span>
         )

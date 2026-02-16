@@ -128,7 +128,7 @@ const BuyHistory = () => {
     {
       header: "Jaimax Coins",
       render: (row) => (
-        <span className="text-[#fff] font-semibold text-sm">
+        <span className="text-white font-semibold text-sm">
           {Number(row.jaimax)?.toFixed(3)}
         </span>
       ),

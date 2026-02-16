@@ -510,7 +510,7 @@ const GroupFormModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-gradient-to-r from-[#eb660f] to-[#ff8533]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#eb660f] to-[#ff8533]">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             {titleIcon}
             {title}

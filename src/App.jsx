@@ -162,6 +162,14 @@ import Settings from "./Features/Settings/Settings";
 import FreezedGroups from "./Features/FreezedGroups/FreezedGroups";
 import Logout from "./Features/Logout/Logout";
 
+
+//accountsDashboard
+import AccountsDashboard from "./Accountant/Dashboard/Dashboard";
+import Credits from "./Accountant/Credits/Credits";
+import Debits from "./Accountant/Debits/Debits";
+import TransactionInfo from "./Accountant/TransactionInfo/TransactionInfo";
+import AccountantWithdrawal from "./Accountant/Withdrawal/Withdrawal";
+import Expenses from "./Accountant/Expensenses/Expenses"
 // Permission-based Route Component
 const PermissionRoute = ({ element, permission, permissions }) => {
   if (!permission || permissions?.includes(permission)) return element;
@@ -260,14 +268,14 @@ const ROLE2_ROUTES = [
   { path: "/logout", element: <Logout /> },
 ];
 
-// ─── ACCOUNTANT ROUTES (role === 3) ───
-// Import accountant-specific components if you have them
-// For now reusing existing ones
-import AccountantDashboard from "./Features/Dashboard/Dashboard";
 
 const ACCOUNTANT_ROUTES = [
-  { path: "/", element: <AccountantDashboard /> },
-  { path: "/settings", element: <Settings /> },
+  { path: "/", element: <AccountsDashboard /> },
+  { path: "/credits", element: <Credits /> },
+  { path: "/debits", element: <Debits /> },
+  { path: "/transactionInfo", element: <TransactionInfo /> },
+  { path: "/withdrawal", element: <AccountantWithdrawal /> },
+  { path: "/expenses", element: <Expenses /> },
   { path: "/logout", element: <Logout /> },
 ];
 

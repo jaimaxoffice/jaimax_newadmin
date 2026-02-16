@@ -1,0 +1,650 @@
+import React, { useState, useEffect, useRef } from "react";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import Pagination from "../../reusableComponents/paginations/Pagination";
+import Modals from "../../reusableComponents/Modals/Modals";
+import {
+  useWithdrawApprovalMutation,
+  useGetWithdrawListQuery,
+} from "../../Features/Withdrawal/withdrawalApiSlice";
+import { toast } from "react-toastify";
+
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://192.168.128.1:3002/api";
+
+/* ── Tailwind Modal ── */
+const TwModal = ({ show, onClose, children, backdrop = true }) => {
+  if (!show) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
+      <div
+        className="absolute inset-0 bg-black/60"
+        onClick={backdrop === "static" ? undefined : onClose}
+      />
+      <div className="relative w-full max-w-lg bg-gradient-to-b from-[#1b232d] to-[#141a20] border border-white/10 rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-white z-10 max-h-[90vh] overflow-y-auto animate-slideUp">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const TwModalHeader = ({ onClose, children }) => (
+  <div className="flex items-start justify-between p-4">
+    <h5 className="text-lg font-bold tracking-wide text-[#eb660f] drop-shadow-[0_0_6px_rgba(235,102,15,0.6)]">
+      {children}
+    </h5>
+    <button
+      onClick={onClose}
+      className="ml-4 text-orange-400/90 hover:text-orange-300 hover:rotate-90 transition-all duration-300 text-2xl leading-none"
+    >
+      ×
+    </button>
+  </div>
+);
+
+const TwModalBody = ({ children, className = "" }) => (
+  <div className={`px-4 pb-4 ${className}`}>{children}</div>
+);
+
+const TwModalFooter = ({ children }) => (
+  <div className="flex justify-end gap-3 px-4 pb-4">{children}</div>
+);
+
+/* ── Export Dropdown ── */
+const ExportDropdown = ({ onExport }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="relative inline-block" ref={ref}>
+      <button
+        type="button"
+        className="px-3 py-1.5 text-xs sm:text-sm border border-gray-500 text-white rounded hover:bg-white/10 transition"
+        onClick={() => setOpen((p) => !p)}
+      >
+        Export ▾
+      </button>
+      {open && (
+        <ul className="absolute right-0 mt-1 w-40 bg-[#1e2a34] border border-[#2b3440] rounded shadow-xl z-20 overflow-hidden">
+          <li>
+            <button
+              className="w-full text-left px-4 py-2 text-sm text-white hover:bg-white/10 transition"
+              onClick={() => {
+                setOpen(false);
+                onExport("xlsx");
+              }}
+            >
+              Excel (.xlsx)
+            </button>
+          </li>
+          <li>
+            <button
+              className="w-full text-left px-4 py-2 text-sm text-white hover:bg-white/10 transition"
+              onClick={() => {
+                setOpen(false);
+                onExport("pdf");
+              }}
+            >
+              PDF (.pdf)
+            </button>
+          </li>
+        </ul>
+      )}
+    </div>
+  );
+};
+
+/* ── Summary Card ── */
+const SummaryCard = ({ icon, count, label, bgClass }) => (
+  <div
+    className={`${bgClass} rounded-xl p-5 text-white flex flex-col items-center justify-center min-h-[100px] transition-all duration-300 hover:-translate-y-1 hover:opacity-90`}
+  >
+    <div className="flex items-center justify-center mb-1">
+      <Icon icon={icon} width="22" className="text-white" />
+    </div>
+    <h2 className="text-2xl sm:text-[1.6rem] font-bold mt-1 mb-0">{count}</h2>
+    <p className="text-sm font-medium opacity-90 m-0">{label}</p>
+  </div>
+);
+
+/* ══════════════════════════════════════
+   WITHDRAW COMPONENT
+   ══════════════════════════════════════ */
+const WithDraw = () => {
+  const [selectedWithdrawId, setSelectedWithdrawId] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+  const [allRequests, setAllRequests] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState("Select Status");
+  const [detailModal, setDetailModal] = useState({
+    show: false,
+    title: "",
+    content: "",
+  });
+
+  const [state, setState] = useState({
+    currentPage: 1,
+    perPage: 10,
+    search: "",
+    selectedUserId: null,
+    fromDate: "",
+    toDate: "",
+  });
+
+  const queryParams = `limit=${state.perPage || ""}&page=${
+    state.currentPage || ""
+  }&search=${state.search || ""}&status=${
+    selectedStatus === "Select Status" ? "" : selectedStatus
+  }&fromDate=${state.fromDate || ""}&toDate=${state.toDate || ""}`;
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteModal3, setDeleteModal3] = useState(false);
+  const [check2, setCheck2] = useState(false);
+
+  const handleDelete = (withdrawId) => {
+    setSelectedWithdrawId(withdrawId);
+    setDeleteModal(true);
+  };
+
+  const handleCheck = (withdrawId) => {
+    setSelectedWithdrawId(withdrawId);
+    setCheck2(true);
+  };
+
+  const handleStatusChange = (e) => {
+    setSelectedStatus(e.target.value);
+    setState({ ...state, currentPage: 1 });
+  };
+
+  const {
+    data: getWithdrawList,
+    isLoading,
+    refetch,
+  } = useGetWithdrawListQuery(queryParams);
+
+  const [withdrawApprovalAmount] = useWithdrawApprovalMutation();
+  const TableData = getWithdrawList?.data?.withdrawRequests || [];
+
+  useEffect(() => {
+    if (getWithdrawList?.data?.withdrawRequests) {
+      setAllRequests(getWithdrawList.data.withdrawRequests);
+    }
+  }, [getWithdrawList]);
+
+  const handlePageChange = (e) => {
+    setState({ ...state, currentPage: e });
+  };
+
+  let searchTimeout;
+  const handleSearch = (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      setState({ ...state, search: e.target.value, currentPage: 1 });
+    }, 1000);
+  };
+
+  const handleExport = async (fmt) => {
+    try {
+      const q = new URLSearchParams();
+      q.set("format", fmt);
+      if (state.search) q.set("search", state.search);
+      if (state.fromDate?.trim()) q.set("fromDate", state.fromDate);
+      if (state.toDate?.trim()) q.set("toDate", state.toDate);
+
+      const res = await fetch(`${API_BASE}/accounts/withdrawals/export?${q}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
+      });
+      if (!res.ok) {
+        toast.error("Export failed");
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const disposition = res.headers.get("content-disposition");
+      let filename =
+        disposition && disposition.includes("filename=")
+          ? disposition.split("filename=")[1].replace(/["']/g, "")
+          : fmt === "pdf"
+          ? "withdrawals.pdf"
+          : "withdrawals.xlsx";
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error("Export error");
+      console.error("Export error:", err);
+    }
+  };
+
+  const handleApprove = async () => {
+    try {
+      const payload = { isApproved: 1, withraw_id: [selectedWithdrawId] };
+      await withdrawApprovalAmount(payload).unwrap();
+      toast.success("Withdrawal approved successfully", {
+        position: "top-center",
+      });
+      setCheck2(false);
+      setRefresh(true);
+    } catch (error) {
+      toast.error("Failed to approve withdrawal", {
+        position: "top-center",
+      });
+    }
+  };
+
+  const handleReject = async (reason, setReason) => {
+    try {
+      const payload = {
+        isApproved: 0,
+        withraw_id: [selectedWithdrawId],
+        reason: reason,
+      };
+      await withdrawApprovalAmount(payload).unwrap();
+      toast.success("Withdrawal rejected successfully", {
+        position: "top-center",
+      });
+      setDeleteModal(false);
+      setRefresh(true);
+      setReason("");
+    } catch (error) {
+      toast.error("Failed to reject withdrawal", {
+        position: "top-center",
+      });
+    }
+  };
+
+  useEffect(() => {
+    refetch();
+    if (refresh) {
+      refetch();
+      setRefresh(false);
+    }
+  }, [refresh, refetch]);
+
+  const formatDateWithAmPm = (isoString) => {
+    const date = new Date(isoString);
+    const dd = String(date.getUTCDate()).padStart(2, "0");
+    const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const yyyy = date.getUTCFullYear();
+    let hh = date.getUTCHours();
+    const min = String(date.getUTCMinutes()).padStart(2, "0");
+    const ampm = hh >= 12 ? "PM" : "AM";
+    hh = hh % 12 || 12;
+    return `${dd}-${mm}-${yyyy} ${hh}:${min} ${ampm}`;
+  };
+
+  const statusPill = (s) => {
+    if (s == "1")
+      return { cls: "bg-green-500/20 text-green-400", text: "Approved" };
+    if (s == "2")
+      return { cls: "bg-red-500/20 text-red-400", text: "Rejected" };
+    if (s == "0")
+      return { cls: "bg-yellow-500/20 text-yellow-400", text: "Pending" };
+    return { cls: "bg-gray-500/20 text-gray-400", text: "Failed" };
+  };
+
+  const viewBtnClass =
+    "px-2 py-1.5 text-sm font-medium text-white border border-[#eb660f]/60 bg-transparent hover:bg-[#eb660f] rounded-sm transition-all duration-300 hover:scale-[1.02]";
+
+  return (
+    <div>
+      <section className="py-3 sm:py-4 px-1 sm:px-3 md:px-4 min-h-screen bg-[#0b1218] overflow-x-hidden">
+        {/* ── Summary Cards ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <SummaryCard
+            icon="mdi:dots-horizontal"
+            count={getWithdrawList?.data?.pagination?.pending ?? 0}
+            label="Pending"
+            bgClass="bg-[#544a24]"
+          />
+          <SummaryCard
+            icon="mdi:check-circle-outline"
+            count={getWithdrawList?.data?.pagination?.approved ?? 0}
+            label="Approved"
+            bgClass="bg-[#1a3c37]"
+          />
+          <SummaryCard
+            icon="mdi:pause-circle-outline"
+            count={getWithdrawList?.data?.pagination?.total ?? 0}
+            label="Total"
+            bgClass="bg-[#174d5e]"
+          />
+          <SummaryCard
+            icon="mdi:close-circle-outline"
+            count={getWithdrawList?.data?.pagination?.rejected ?? 0}
+            label="Rejected"
+            bgClass="bg-[#4b2733]"
+          />
+        </div>
+
+        {/* ── Main Card ── */}
+        <div className="bg-[#1a2128] border border-[#2b3440] rounded-xl px-3 sm:px-4 md:px-5 pb-1 pt-4 overflow-x-hidden">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+            <h1 className="font-bold text-white text-lg sm:text-xl md:text-2xl leading-none">
+              Withdrawal Bonus
+            </h1>
+            <ExportDropdown onExport={handleExport} />
+          </div>
+
+          {/* ── Filters ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_auto_auto_1fr] gap-3 mb-4 items-end">
+            {/* Per-page */}
+            <select
+              className="bg-[#1a2128] text-white border border-[#313b48] rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto"
+              value={state.perPage}
+              onChange={(e) =>
+                setState({
+                  ...state,
+                  perPage: e.target.value,
+                  currentPage: 1,
+                })
+              }
+            >
+              <option value="10">10</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+            </select>
+
+            {/* From */}
+            <div className="flex items-center gap-2">
+              <label className="text-white text-sm whitespace-nowrap">
+                From
+              </label>
+              <input
+                type="date"
+                className="bg-white text-gray-900 rounded-md px-2 py-2 text-sm w-full focus:outline-none"
+                value={state.fromDate}
+                onChange={(e) =>
+                  setState({
+                    ...state,
+                    fromDate: e.target.value,
+                    currentPage: 1,
+                  })
+                }
+              />
+            </div>
+
+            {/* To */}
+            <div className="flex items-center gap-2">
+              <label className="text-white text-sm whitespace-nowrap">To</label>
+              <input
+                type="date"
+                className="bg-white text-gray-900 rounded-md px-2 py-2 text-sm w-full focus:outline-none"
+                value={state.toDate}
+                onChange={(e) =>
+                  setState({
+                    ...state,
+                    toDate: e.target.value,
+                    currentPage: 1,
+                  })
+                }
+              />
+            </div>
+
+            {/* Status filter */}
+            <select
+              className="bg-[#1a2128] text-white border border-[#313b48] rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto"
+              value={selectedStatus}
+              onChange={handleStatusChange}
+            >
+              <option value="Select Status">Select Status</option>
+              <option value="Approved">Approved</option>
+              <option value="Pending">Pending</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+
+            {/* Spacer for lg screens */}
+            <div className="hidden lg:block" />
+
+            {/* Search */}
+            <div className="flex items-center border border-[#313b48] rounded-md overflow-hidden bg-[#2a313b]">
+              <span className="px-2.5 flex items-center">
+                <Icon
+                  icon="tabler:search"
+                  width="16"
+                  height="16"
+                  className="text-gray-400"
+                />
+              </span>
+              <input
+                type="text"
+                autoComplete="off"
+                placeholder="Search"
+                className="bg-transparent text-white text-sm py-2 pr-3 w-full focus:outline-none placeholder:text-white/70"
+                onChange={handleSearch}
+              />
+            </div>
+          </div>
+
+          {/* ── Table ── */}
+          <div className="overflow-x-auto -mx-3 sm:-mx-4 md:-mx-5">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-[#131a21] text-gray-400 text-xs uppercase tracking-wider">
+                <tr>
+                  {[
+                    "S.No",
+                    "Customer Name",
+                    "Transaction Id",
+                    "Customer Id",
+                    "Currency",
+                    "Amount",
+                    "Admin Charges",
+                    "Final Amount",
+                    "Date & Time",
+                    "Status",
+                    "Bank Details",
+                    "Note",
+                  ].map((h) => (
+                    <th key={h} className="px-4 py-3 whitespace-nowrap">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#1e2a34]">
+                {isLoading ? (
+                  [...Array(10)].map((_, i) => (
+                    <tr key={i}>
+                      {[...Array(12)].map((_, j) => (
+                        <td key={j} className="px-4 py-3">
+                          <div
+                            baseColor="#1e2a34"
+                            highlightColor="#2a3744"
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : TableData.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="12"
+                      className="text-center py-10 text-gray-500"
+                    >
+                      No data found
+                    </td>
+                  </tr>
+                ) : (
+                  TableData.map((data, i) => {
+                    const { cls, text } = statusPill(data.status);
+                    const sym = data.currency === "INR" ? "₹" : "$";
+                    return (
+                      <tr
+                        key={data._id || i}
+                        className="hover:bg-white/5 transition text-center"
+                      >
+                        <td className="px-4 py-3">
+                          {state.currentPage * state.perPage -
+                            (state.perPage - 1) +
+                            i}
+                          .
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-left">
+                          {data?.userId?.name}
+                        </td>
+                        <td className="px-4 py-3 text-xs">{data?._id}</td>
+                        <td className="px-4 py-3">
+                          {data?.userId?.username}
+                        </td>
+                        <td className="px-4 py-3">{data.currency}</td>
+                        <td className="px-4 py-3">
+                          {sym}
+                          {data.amount.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3">
+                          {sym}
+                          {data.admin_inr_charges.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3">
+                          {sym}{" "}
+                          {(
+                            data.amount - data.admin_inr_charges || 0
+                          ).toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          {formatDateWithAmPm(data?.created_at)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${cls}`}
+                          >
+                            {text}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            className={viewBtnClass}
+                            onClick={() =>
+                              setDetailModal({
+                                show: true,
+                                title: "Bank Details",
+                                content: `Bank Name: ${
+                                  data.bankDetails?.bank_name || "N/A"
+                                }\nAccount No: ${
+                                  data.bankDetails?.bank_account || "N/A"
+                                }\nIFSC Code: ${
+                                  data.bankDetails?.ifsc_code || "N/A"
+                                }`,
+                              })
+                            }
+                          >
+                            View
+                          </button>
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            className={viewBtnClass}
+                            onClick={() =>
+                              setDetailModal({
+                                show: true,
+                                title: "Note",
+                                content:
+                                  data.note || "No note available.",
+                              })
+                            }
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Pagination */}
+        {TableData?.length > 0 && (
+          <Pagination
+            currentPage={state?.currentPage}
+            totalPages={
+              Math.ceil(
+                getWithdrawList?.data?.pagination?.total / state?.perPage
+              ) || 1
+            }
+            onPageChange={handlePageChange}
+          />
+        )}
+      </section>
+
+      {/* ── Approve / Reject Modals ── */}
+      <Modals
+        deleteModal={deleteModal}
+        setDeleteModal={setDeleteModal}
+        setDeleteModal3={setDeleteModal3}
+        check2={check2}
+        setCheck2={setCheck2}
+        handleApprove={handleApprove}
+        handleReject={handleReject}
+      />
+
+      {/* ── Detail Modal (Bank / Note) ── */}
+      <TwModal
+        show={detailModal.show}
+        onClose={() =>
+          setDetailModal({ show: false, title: "", content: "" })
+        }
+        backdrop="static"
+      >
+        <TwModalHeader
+          onClose={() =>
+            setDetailModal({ show: false, title: "", content: "" })
+          }
+        >
+          {detailModal.title}
+        </TwModalHeader>
+        <TwModalBody>
+          <textarea
+            readOnly
+            rows={6}
+            value={detailModal.content}
+            className="w-full p-3 border border-[#2b3440] rounded-lg bg-transparent text-white font-mono text-sm whitespace-pre-line resize-none focus:outline-none"
+          />
+        </TwModalBody>
+        <TwModalFooter>
+          <button
+            className="px-5 py-2 font-semibold text-white bg-[#eb660f] hover:bg-[#ff7b1c] rounded-lg transition-all duration-300 text-sm"
+            onClick={() =>
+              setDetailModal({ show: false, title: "", content: "" })
+            }
+          >
+            Close
+          </button>
+        </TwModalFooter>
+      </TwModal>
+
+      {/* ── Tailwind keyframes (add to tailwind.config.js or keep inline) ── */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0 }
+          to { opacity: 1 }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(25px); opacity: 0 }
+          to { transform: translateY(0); opacity: 1 }
+        }
+        .animate-fadeIn { animation: fadeIn 0.2s ease-out }
+        .animate-slideUp { animation: slideUp 0.3s ease-out }
+      `}</style>
+    </div>
+  );
+};
+
+export default WithDraw;

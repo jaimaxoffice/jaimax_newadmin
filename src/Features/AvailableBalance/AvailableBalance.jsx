@@ -391,7 +391,7 @@ const AvailableBalance = () => {
                 disabled={isLoading}
                 className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
                            py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                           transition-colors cursor-pointer disabled:opacity-50 min-w-[160px]"
+                           transition-colors cursor-pointer disabled:opacity-50 min-w-40"
               >
                 {amountOptions.map((option) => (
                   <option key={option.value} value={option.value}>

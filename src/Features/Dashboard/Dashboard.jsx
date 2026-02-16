@@ -245,7 +245,7 @@ const Dashboard = () => {
           iconBg="bg-[#303f50]"
           valueColor="text-white"
         />
-        <div className="bg-gradient-to-br from-[#b84d08] to-[#b84d08] rounded-xl p-4 hover:-translate-y-0.5 transition-all duration-200 sm:col-span-2 lg:col-span-1">
+        <div className="bg-linear-to-br from-[#b84d08] to-[#b84d08] rounded-xl p-4 hover:-translate-y-0.5 transition-all duration-200 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">
               Admin USDT
