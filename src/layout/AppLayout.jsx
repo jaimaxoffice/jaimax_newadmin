@@ -25,6 +25,42 @@
 //   );
 // }
 
+// import { useState } from "react";
+// import { Outlet, useLocation, useNavigate } from "react-router-dom";
+// import Sidebar from "./Sidebar";
+
+// export default function AppLayout() {
+//   const [sidebarOpen, setSidebarOpen] = useState(true);
+//   const location = useLocation();
+//   const navigate = useNavigate();
+
+//   return (
+//     <div className="flex h-screen overflow-hidden bg-[#000000]">
+//       {/* Sidebar */}
+//       <Sidebar
+//         open={sidebarOpen}
+//         setOpen={setSidebarOpen}
+//         activePath={location.pathname}
+//         navigate={navigate}
+//       />
+
+//       {/* Main Content */}
+//       <main
+//         className={`
+//           flex-1 overflow-y-auto
+//           transition-all duration-300
+//           bg-[#000000]
+//         `}
+//       >
+//         <div className="p-6">
+//           <Outlet />
+//         </div>
+//       </main>
+//     </div>
+//   );
+// }
+
+
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -45,15 +81,12 @@ export default function AppLayout() {
       />
 
       {/* Main Content */}
-      <main
-        className={`
-          flex-1 overflow-y-auto
-          transition-all duration-300
-          bg-[#000000]
-        `}
-      >
-        <div className="p-6">
-          <Outlet />
+      <main className="flex-1 overflow-y-auto transition-all duration-300 bg-[#000000]">
+        {/* Mobile top spacing for fixed mobile header */}
+        <div className="pt-12 lg:pt-0">
+          <div className="p-4 sm:p-6">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>

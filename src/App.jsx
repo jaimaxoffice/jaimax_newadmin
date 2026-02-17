@@ -1,93 +1,4 @@
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import AppLayout from "./layout/AppLayout";
-// import Dashboard from "./Features/Dashboard/Dashboard";
-// import Login from "./Features/Login/Login";
-// import Wallet from "./Features/Wallet/Wallet";
-// import Withdrawal from "./Features/Withdrawal/Withdrawal";
-// import Users from "./Features/Users/UsersManagemnet";
-// import Kyc from "./Features/Kyc/KycManagement";
-// import Ico from "./Features/ICO/Ico";
-// import AddManualAccountsForm from "./Features/ManualAccounts/ManualAccounts";
-// import ManualKycAccounts from "./Features/ManualKyc/ManualKyc";
-// import TeamReports from "./Features/TeamReports/TeamReports";
-// import TeamInvestments from "./Features/TeamInvestments/TeamInvestments";
-// import UserInfo from "./Features/UserInfo/UserInfo";
-// import WealthPlan1 from "./Features/WealthPlans/WealthPlan1/WealthPlan1";
-// import WealthPlan2 from "./Features/WealthPlans/WealthPlan2/WealthPlan2";
-// import WealthPlan3 from "./Features/WealthPlans/WealthPlan3/WealthPlan3";
-// import AdminUser from "./Features/AdminManagement/AdminManagement"
-// import Announcements from "./Features/Announcements/Announcements"
-// import Notifications from "./Features/Notifications/Notifications"
-// import ZoomMeeting from "./Features/Zoom/Zoom";
-// import Support from "./Features/Support/Support";
-// import Settings from "./Features/Settings/Settings";
-// import Security from "./Features/Security/Security";
-// import DeletedUsersTable from "./Features/DeleteAccounts/DeleteAccounts";
-// import FreezedGroups from "./Features/FreezedGroups/FreezedGroups";
-// import BuyHistory from "./Features/BuyHistory/BuyHistory";
-// import GradualLayerBonusLogs from "./Features/GradualBonus/GradualBonus";
-// import BonusCoinHistory from "./Features/BonusCoinHistory/BonusCoinHistory";
-// import Logout from "./Features/Logout/Logout";
-// import NotVerifiedUser from "./Features/NotVerified/NotVerified";
-// import UsdtWithdrawal from "./Features/UsdtBonus/UsdtWithdrawal";
-// import NoAccess from "./Features/NoAccess/NoAccess";
-// import Blog from "./Features/Blogs/Blogs";
-// import AvailableBalance from "./Features/AvailableBalance/AvailableBalance";
-// import PaymentGateway from "./Features/PaymentGateway/PaymentGateway";
-// import AllTransactions from "./Features/Alltransactions/Alltransactions";
-// import PaymentGatewaysTransactions from "./Features/PaymentgatewayTransactions/PaymentGateTnx";
-// import WealthPlanlog from "./Features/WealthPlans/WealthPlan1/WealthPLanlogs";
-// import WealthPlanlog2 from "./Features/WealthPlans/WealthPlan2/WealthPlanlogs2";
-// import WealthPlanlog3 from "./Features/WealthPlans/WealthPlan3/WealthPLanlogs3";
-// export default function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route element={<AppLayout />}>
-//           <Route path="/" element={<Dashboard />} />
-//           <Route path="/login" element={<Login />} />
-//           <Route path="/wallet" element={<Wallet />} />
-//           <Route path="/withdrawal" element={<Withdrawal />} />
-//           <Route path="/usdt-withdrawal" element={<UsdtWithdrawal />} />
-//           <Route path="/users" element={<Users />} />
-//           <Route path="/ico" element={<Ico />} />
-//           <Route path="/manual-accounts" element={<AddManualAccountsForm />} />
-//           <Route path="/kyc" element={<Kyc />} />
-//           <Route path="/manual-kyc" element={<ManualKycAccounts />} />
-//           <Route path="/team-reports" element={<TeamReports />} />
-//           <Route path="/team-investments" element={<TeamInvestments />} />
-//           <Route path="/user-info" element={<UserInfo />} />
-//           <Route path="/wealth-plan-1" element={<WealthPlan1 />} />
-//           <Route path="/wealth-plan-2" element={<WealthPlan2 />} />
-//           <Route path="/wealth-plan-3" element={<WealthPlan3 />} />
-//           <Route path="/admin-user" element={<AdminUser />} />
-//           <Route path="/announcements" element={<Announcements />} />
-//           <Route path="/notifications" element={<Notifications />} />
-//           <Route path="/zoommeetings" element={<ZoomMeeting />} />
-//           <Route path="/support" element={<Support />} />
-//           <Route path="/settings" element={<Settings />} />
-//           <Route path="/legal" element={<Security />} />
-//           <Route path="/delete-accounts" element={<DeletedUsersTable />} />
-//           <Route path="/freezedgroups" element={<FreezedGroups />} />
-//           <Route path="/buy-history" element={<BuyHistory />} />
-//           <Route path="/gradual-bonus" element={<GradualLayerBonusLogs />} />
-//           <Route path="/bonus-coin-history" element={<BonusCoinHistory />} />
-//           <Route path="/logout" element={<Logout />} />
-//           <Route path="/not-verified-users" element={<NotVerifiedUser />} />
-//           <Route path="/noaccess" element={<NoAccess />} />
-//           <Route path="/blogs" element={<Blog />} />
-//           <Route path="/available-balance" element={<AvailableBalance />} />
-//           <Route path="/paymentgateway" element={<PaymentGateway />} />
-//           <Route path="/all-transactions" element={<AllTransactions />} />
-//           <Route path="/pg-transactions" element={<PaymentGatewaysTransactions />} />
-//           <Route path="/wealth-plan-log-1" element={<WealthPlanlog />} />
-//           <Route path="/wealth-plan-log-2" element={<WealthPlanlog2 />} />
-//           <Route path="/wealth-plan-log-3" element={<WealthPlanlog3 />} />
-//         </Route>
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
+
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -147,7 +58,7 @@ import AddManualAccountsForm from "./Features/ManualAccounts/ManualAccounts";
 import TeamReports from "./Features/TeamReports/TeamReports";
 import TeamInvestments from "./Features/TeamInvestments/TeamInvestments";
 import Report from "./Features/Reports/Reports";
-import BusinessReportfromto from "./Features/BusinessFrom$To/Businessfrom&to"
+import BusinessAnalytics from "./Features/BusinessAnalytics/BusinessAnalytics";
 
 // Notifications & Content
 import Announcements from "./Features/Announcements/Announcements";
@@ -216,7 +127,7 @@ const ADMIN_ROUTES = [
   { path: "/delete-accounts", element: <DeletedUsersTable /> },
   { path: "/settings", element: <Settings /> },
   { path: "/logout", element: <Logout /> },
-  { path: "/businessreportfromto", element: <BusinessReportfromto /> },
+  { path: "/businessanalytics", element: <BusinessAnalytics /> },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───

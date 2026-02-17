@@ -4,13 +4,23 @@ import autoTable from "jspdf-autotable";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
+  FileText,
+  Download,
+  Loader2,
+  Users,
+  UserX,
+  UserCheck,
+  UserPlus,
+  BarChart3,
+} from "lucide-react";
+import {
   useGetUsersWithZeroDirectRefsQuery,
   useGetUsersWithOneToTwoDirectRefsQuery,
   useGetUsersWithThreeToFiveDirectRefsQuery,
   useGetUsersWithSixToNineDirectRefsQuery,
   useGetUsersWithTenToTwentyFiveDirectRefsQuery,
   useGetUsersWithTwentySixToHundredDirectRefsQuery,
-  useGetInactiveUsersQuery
+  useGetInactiveUsersQuery,
 } from "./reportsApiSlice";
 
 const SimpleBusinessReportPDF = () => {
@@ -22,16 +32,21 @@ const SimpleBusinessReportPDF = () => {
   const [pdfLoading26to100, setPdfLoading26to100] = useState(false);
   const [pdfLoadingInactive, setPdfLoadingInactive] = useState(false);
 
-  // API queries
-  const { data: zeroDirectRefsData, isLoading: loadingZero } = useGetUsersWithZeroDirectRefsQuery();
-  const { data: oneToTwoData, isLoading: loading1to2 } = useGetUsersWithOneToTwoDirectRefsQuery();
-  const { data: threeToFiveData, isLoading: loading3to5 } = useGetUsersWithThreeToFiveDirectRefsQuery();
-  const { data: sixToNineData, isLoading: loading6to9 } = useGetUsersWithSixToNineDirectRefsQuery();
-  const { data: tenToTwentyFiveData, isLoading: loading10to25 } = useGetUsersWithTenToTwentyFiveDirectRefsQuery();
-  const { data: twentySixToHundredData, isLoading: loading26to100 } = useGetUsersWithTwentySixToHundredDirectRefsQuery();
-  const { data: inactiveUsersData, isLoading: loadingInactive } = useGetInactiveUsersQuery();
+  const { data: zeroDirectRefsData, isLoading: loadingZero } =
+    useGetUsersWithZeroDirectRefsQuery();
+  const { data: oneToTwoData, isLoading: loading1to2 } =
+    useGetUsersWithOneToTwoDirectRefsQuery();
+  const { data: threeToFiveData, isLoading: loading3to5 } =
+    useGetUsersWithThreeToFiveDirectRefsQuery();
+  const { data: sixToNineData, isLoading: loading6to9 } =
+    useGetUsersWithSixToNineDirectRefsQuery();
+  const { data: tenToTwentyFiveData, isLoading: loading10to25 } =
+    useGetUsersWithTenToTwentyFiveDirectRefsQuery();
+  const { data: twentySixToHundredData, isLoading: loading26to100 } =
+    useGetUsersWithTwentySixToHundredDirectRefsQuery();
+  const { data: inactiveUsersData, isLoading: loadingInactive } =
+    useGetInactiveUsersQuery();
 
-  // Toast configuration
   const toastConfig = {
     position: "top-right",
     autoClose: 3000,
@@ -45,7 +60,6 @@ const SimpleBusinessReportPDF = () => {
     const doc = new jsPDF();
     let yPosition = 20;
 
-    // Helper function to add new page if needed
     const checkAddPage = (requiredSpace = 20) => {
       if (yPosition + requiredSpace > doc.internal.pageSize.height - 20) {
         doc.addPage();
@@ -55,15 +69,11 @@ const SimpleBusinessReportPDF = () => {
       return false;
     };
 
-    // Header
     doc.setFontSize(18);
     doc.setTextColor(32, 147, 74);
-    doc.text(title.toUpperCase(), 105, yPosition, {
-      align: "center",
-    });
+    doc.text(title.toUpperCase(), 105, yPosition, { align: "center" });
     yPosition += 15;
 
-    // Report Details
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.text(
@@ -77,15 +87,13 @@ const SimpleBusinessReportPDF = () => {
     doc.text(`Report Type: ${title}`, 20, yPosition);
     yPosition += 15;
 
-    // Summary Section
     checkAddPage(30);
     doc.setFontSize(14);
     doc.setTextColor(32, 147, 74);
     doc.text("REPORT SUMMARY", 20, yPosition);
     yPosition += 10;
 
-    if (reportType === 'inactive' || reportType === 'zero') {
-      // Summary for inactive users and zero direct refs users
+    if (reportType === "inactive" || reportType === "zero") {
       const summaryData = [
         ["Metric", "Value"],
         ["Report Type", title || "N/A"],
@@ -106,21 +114,17 @@ const SimpleBusinessReportPDF = () => {
           fontSize: 10,
           fontStyle: "bold",
         },
-        styles: {
-          fontSize: 9,
-          cellPadding: 3,
-        },
-        columnStyles: {
-          0: { cellWidth: 80 },
-          1: { cellWidth: 80 },
-        },
+        styles: { fontSize: 9, cellPadding: 3 },
+        columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 80 } },
       });
     } else {
-      // Summary for referral reports
       const totalUsers = data?.data?.length || 0;
-      const totalDirectRefs = data?.data?.reduce((sum, user) => sum + (user.directRefs || 0), 0) || 0;
-      const totalChainRefs = data?.data?.reduce((sum, user) => sum + (user.chainRefs || 0), 0) || 0;
-      const totalRefs = data?.data?.reduce((sum, user) => sum + (user.totalRefs || 0), 0) || 0;
+      const totalDirectRefs =
+        data?.data?.reduce((sum, user) => sum + (user.directRefs || 0), 0) || 0;
+      const totalChainRefs =
+        data?.data?.reduce((sum, user) => sum + (user.chainRefs || 0), 0) || 0;
+      const totalRefs =
+        data?.data?.reduce((sum, user) => sum + (user.totalRefs || 0), 0) || 0;
 
       const summaryData = [
         ["Metric", "Count/Value"],
@@ -141,10 +145,7 @@ const SimpleBusinessReportPDF = () => {
           fontSize: 10,
           fontStyle: "bold",
         },
-        styles: {
-          fontSize: 9,
-          cellPadding: 3,
-        },
+        styles: { fontSize: 9, cellPadding: 3 },
         columnStyles: {
           0: { cellWidth: 100 },
           1: { cellWidth: 50, halign: "right" },
@@ -154,16 +155,14 @@ const SimpleBusinessReportPDF = () => {
 
     yPosition = doc.lastAutoTable.finalY + 15;
 
-    // Main Table
     if (data?.data?.length > 0) {
       checkAddPage(30);
-
       doc.setFontSize(14);
       doc.setTextColor(32, 147, 74);
-      
-      if (reportType === 'inactive') {
+
+      if (reportType === "inactive") {
         doc.text("DETAILED USER DATA", 20, yPosition);
-      } else if (reportType === 'zero') {
+      } else if (reportType === "zero") {
         doc.text("USERS WITH 0 DIRECT REFERRALS", 20, yPosition);
       } else {
         doc.text(`USERS WITH ${category} DIRECT REFERRALS`, 20, yPosition);
@@ -172,10 +171,15 @@ const SimpleBusinessReportPDF = () => {
 
       let tableColumns, tableRows, columnStyles;
 
-      if (reportType === 'inactive') {
-        // Inactive users table structure
-        tableColumns = ["S.No", "Username", "Name", "Email", "Phone", "Referred By"];
-        
+      if (reportType === "inactive") {
+        tableColumns = [
+          "S.No",
+          "Username",
+          "Name",
+          "Email",
+          "Phone",
+          "Referred By",
+        ];
         tableRows = data.data.map((user, index) => [
           (index + 1).toString(),
           user.username || "N/A",
@@ -184,19 +188,24 @@ const SimpleBusinessReportPDF = () => {
           user.phone ? user.phone.toString() : "N/A",
           user.referenceId || "N/A",
         ]);
-
         columnStyles = {
-          0: { cellWidth: 15 }, // S.No
-          1: { cellWidth: 30 }, // Username
-          2: { cellWidth: 35 }, // Name
-          3: { cellWidth: 40 }, // Email
-          4: { cellWidth: 30 }, // Phone
-          5: { cellWidth: 30 }, // Referred By
+          0: { cellWidth: 15 },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 35 },
+          3: { cellWidth: 40 },
+          4: { cellWidth: 30 },
+          5: { cellWidth: 30 },
         };
-      } else if (reportType === 'zero') {
-        // Zero direct refs users table structure
-        tableColumns = ["S.No", "Username", "Name", "Email", "Phone", "Direct Refs", "Status"];
-        
+      } else if (reportType === "zero") {
+        tableColumns = [
+          "S.No",
+          "Username",
+          "Name",
+          "Email",
+          "Phone",
+          "Direct Refs",
+          "Status",
+        ];
         tableRows = data.data.map((user, index) => [
           (index + 1).toString(),
           user.username || "N/A",
@@ -206,18 +215,16 @@ const SimpleBusinessReportPDF = () => {
           user.directRefs?.toString() || "0",
           user.isActive ? "Active" : "Inactive",
         ]);
-
         columnStyles = {
-          0: { cellWidth: 15 }, // S.No
-          1: { cellWidth: 30 }, // Username
-          2: { cellWidth: 35 }, // Name
-          3: { cellWidth: 35 }, // Email
-          4: { cellWidth: 25 }, // Phone
-          5: { cellWidth: 20 }, // Direct Refs
-          6: { cellWidth: 20 }, // Status
+          0: { cellWidth: 15 },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 35 },
+          3: { cellWidth: 35 },
+          4: { cellWidth: 25 },
+          5: { cellWidth: 20 },
+          6: { cellWidth: 20 },
         };
       } else {
-        // Referral users table structure
         tableColumns = [
           "S.No",
           "Name",
@@ -228,7 +235,6 @@ const SimpleBusinessReportPDF = () => {
           "CR",
           "TR",
         ];
-
         tableRows = data.data.map((user, index) => [
           (index + 1).toString(),
           user.name || "N/A",
@@ -239,7 +245,6 @@ const SimpleBusinessReportPDF = () => {
           user.chainRefs?.toString() || "0",
           user.totalRefs?.toString() || "0",
         ]);
-
         columnStyles = {
           0: { cellWidth: 15 },
           1: { cellWidth: 30 },
@@ -260,14 +265,16 @@ const SimpleBusinessReportPDF = () => {
         headStyles: {
           fillColor: [32, 147, 74],
           textColor: 255,
-          fontSize: (reportType === 'inactive' || reportType === 'zero') ? 9 : 8,
+          fontSize:
+            reportType === "inactive" || reportType === "zero" ? 9 : 8,
           fontStyle: "bold",
         },
         styles: {
-          fontSize: (reportType === 'inactive' || reportType === 'zero') ? 8 : 7,
+          fontSize:
+            reportType === "inactive" || reportType === "zero" ? 8 : 7,
           cellPadding: 2,
         },
-        columnStyles: columnStyles,
+        columnStyles,
         didDrawPage: function (data) {
           let str = "Page " + doc.internal.getNumberOfPages();
           doc.setFontSize(8);
@@ -283,21 +290,20 @@ const SimpleBusinessReportPDF = () => {
       yPosition = doc.lastAutoTable.finalY + 15;
     }
 
-    // Insights Section for inactive and zero direct refs users
-    if ((reportType === 'inactive' || reportType === 'zero') && data?.data?.length > 0) {
+    if (
+      (reportType === "inactive" || reportType === "zero") &&
+      data?.data?.length > 0
+    ) {
       checkAddPage(20);
-
       doc.setFontSize(14);
       doc.setTextColor(32, 147, 74);
       doc.text("INSIGHTS", 20, yPosition);
       yPosition += 10;
-
       doc.setFontSize(10);
       doc.setTextColor(0, 0, 0);
 
       let insights = [];
-      
-      if (reportType === 'inactive') {
+      if (reportType === "inactive") {
         insights = [
           `• Total inactive users identified: ${data.data.length}`,
           `• These users may require re-engagement campaigns`,
@@ -305,7 +311,7 @@ const SimpleBusinessReportPDF = () => {
           `• Analyze user behavior patterns to understand inactivity reasons`,
           `• Implement automated email sequences for user re-activation`,
         ];
-      } else if (reportType === 'zero') {
+      } else if (reportType === "zero") {
         insights = [
           `• Total active users with 0 direct referrals: ${data.data.length}`,
           `• These users are active but haven't made any referrals yet`,
@@ -329,49 +335,49 @@ const SimpleBusinessReportPDF = () => {
     let data, title, category, setLoading, filename;
 
     switch (reportType) {
-      case 'inactive':
+      case "inactive":
         data = inactiveUsersData;
         title = "Inactive Users Report";
         category = "INACTIVE";
         setLoading = setPdfLoadingInactive;
         filename = `inactive-users-report-${new Date().toISOString().split("T")[0]}.pdf`;
         break;
-      case 'zero':
+      case "zero":
         data = zeroDirectRefsData;
         title = "Users with 0 Direct Referrals Report";
         category = "0";
         setLoading = setPdfLoadingZero;
         filename = `users-0-direct-refs-report-${new Date().toISOString().split("T")[0]}.pdf`;
         break;
-      case '1to2':
+      case "1to2":
         data = oneToTwoData;
         title = "Users with 1-2 Direct Referrals Report";
         category = "1-2";
         setLoading = setPdfLoading1to2;
         filename = `users-1-to-2-direct-refs-report-${new Date().toISOString().split("T")[0]}.pdf`;
         break;
-      case '3to5':
+      case "3to5":
         data = threeToFiveData;
         title = "Users with 3-5 Direct Referrals Report";
         category = "3-5";
         setLoading = setPdfLoading3to5;
         filename = `users-3-to-5-direct-refs-report-${new Date().toISOString().split("T")[0]}.pdf`;
         break;
-      case '6to9':
+      case "6to9":
         data = sixToNineData;
         title = "Users with 6-9 Direct Referrals Report";
         category = "6-9";
         setLoading = setPdfLoading6to9;
         filename = `users-6-to-9-direct-refs-report-${new Date().toISOString().split("T")[0]}.pdf`;
         break;
-      case '10to25':
+      case "10to25":
         data = tenToTwentyFiveData;
         title = "Users with 10-25 Direct Referrals Report";
         category = "10-25";
         setLoading = setPdfLoading10to25;
         filename = `users-10-to-25-direct-refs-report-${new Date().toISOString().split("T")[0]}.pdf`;
         break;
-      case '26to100':
+      case "26to100":
         data = twentySixToHundredData;
         title = "Users with 26-100 Direct Referrals Report";
         category = "26-100";
@@ -384,9 +390,7 @@ const SimpleBusinessReportPDF = () => {
 
     try {
       setLoading(true);
-
       const pdfDoc = generatePdfReport(data, title, category, reportType);
-
       if (pdfDoc) {
         pdfDoc.save(filename);
         toast.success(
@@ -407,149 +411,198 @@ const SimpleBusinessReportPDF = () => {
     }
   };
 
-  const ReportCard = ({ title, count, isLoading, reportType, pdfLoading, bgColor, textColor }) => (
-    <div className="col-lg-4 col-md-6 mb-4">
-      <div className="card h-100" style={{ backgroundColor: "#1b232d", border: "1px solid #3a3a3a" }}>
-        <div className="card-body d-flex flex-column">
-          <h5 className={`card-title text-center mb-3 ${textColor}`}>{title}</h5>
-          
-          {isLoading ? (
-            <div className="text-center py-4 flex-grow-1 d-flex align-items-center justify-content-center">
-              <div>
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-                <p className="text-white mt-2 mb-0">Loading data...</p>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="text-center mb-4 flex-grow-1 d-flex align-items-center justify-content-center flex-column">
-                <div className={`border rounded p-3 w-100`} style={{ borderColor: "#3a3a3a" }}>
-                  <p className="h2 text-white mb-1">{count || 0}</p>
-                  <small className="text-white">Users</small>
-                </div>
-              </div>
-              
-              <div className="text-center mt-auto">
-                <button
-                  className="btn px-3 py-2 w-100"
-                  onClick={() => handlePdfGeneration(reportType)}
-                  disabled={pdfLoading}
-                  style={{
-                    backgroundColor: bgColor,
-                    border: `1px solid ${bgColor}`,
-                    color: "#fff",
-                    transition: "all 0.3s ease",
-                    fontWeight: "600",
-                    fontSize: "14px",
-                  }}
-                >
-                  {pdfLoading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      📄 Generate PDF
-                    </>
-                  )}
-                </button>
-              </div>
-            </>
-          )}
+  const REPORT_CARDS = [
+    {
+      title: "Inactive Users",
+      count: inactiveUsersData?.data?.length,
+      isLoading: loadingInactive,
+      reportType: "inactive",
+      pdfLoading: pdfLoadingInactive,
+      btnColor: "bg-red-500 hover:bg-red-600",
+      titleColor: "text-red-400",
+      borderColor: "border-red-500/30",
+      iconBg: "bg-red-500/10",
+      icon: UserX,
+    },
+    {
+      title: "0 Direct Referrals",
+      count: zeroDirectRefsData?.data?.length,
+      isLoading: loadingZero,
+      reportType: "zero",
+      pdfLoading: pdfLoadingZero,
+      btnColor: "bg-gray-500 hover:bg-gray-600",
+      titleColor: "text-gray-400",
+      borderColor: "border-gray-500/30",
+      iconBg: "bg-gray-500/10",
+      icon: Users,
+    },
+    {
+      title: "1-2 Direct Referrals",
+      count: oneToTwoData?.data?.length,
+      isLoading: loading1to2,
+      reportType: "1to2",
+      pdfLoading: pdfLoading1to2,
+      btnColor: "bg-cyan-500 hover:bg-cyan-600",
+      titleColor: "text-cyan-400",
+      borderColor: "border-cyan-500/30",
+      iconBg: "bg-cyan-500/10",
+      icon: UserPlus,
+    },
+    {
+      title: "3-5 Direct Referrals",
+      count: threeToFiveData?.data?.length,
+      isLoading: loading3to5,
+      reportType: "3to5",
+      pdfLoading: pdfLoading3to5,
+      btnColor: "bg-blue-500 hover:bg-blue-600",
+      titleColor: "text-blue-400",
+      borderColor: "border-blue-500/30",
+      iconBg: "bg-blue-500/10",
+      icon: UserCheck,
+    },
+    {
+      title: "6-9 Direct Referrals",
+      count: sixToNineData?.data?.length,
+      isLoading: loading6to9,
+      reportType: "6to9",
+      pdfLoading: pdfLoading6to9,
+      btnColor: "bg-yellow-500 hover:bg-yellow-600",
+      titleColor: "text-yellow-400",
+      borderColor: "border-yellow-500/30",
+      iconBg: "bg-yellow-500/10",
+      icon: UserCheck,
+    },
+    {
+      title: "10-25 Direct Referrals",
+      count: tenToTwentyFiveData?.data?.length,
+      isLoading: loading10to25,
+      reportType: "10to25",
+      pdfLoading: pdfLoading10to25,
+      btnColor: "bg-orange-500 hover:bg-orange-600",
+      titleColor: "text-orange-400",
+      borderColor: "border-orange-500/30",
+      iconBg: "bg-orange-500/10",
+      icon: UserCheck,
+    },
+    {
+      title: "26-100 Direct Referrals",
+      count: twentySixToHundredData?.data?.length,
+      isLoading: loading26to100,
+      reportType: "26to100",
+      pdfLoading: pdfLoading26to100,
+      btnColor: "bg-green-500 hover:bg-green-600",
+      titleColor: "text-green-400",
+      borderColor: "border-green-500/30",
+      iconBg: "bg-green-500/10",
+      icon: UserCheck,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen p-4 sm:p-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
+        <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
+          <BarChart3 size={24} className="text-[#eb660f]" />
         </div>
+        <div>
+          <h1 className="text-xl font-bold text-white">
+            Business Performance Reports
+          </h1>
+          <p className="text-sm text-gray-400">
+            Generate individual PDF reports for different user categories based
+            on their activity and referrals count.
+          </p>
+        </div>
+      </div>
+
+      {/* Report Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {REPORT_CARDS.map((card) => (
+          <ReportCard
+            key={card.reportType}
+            {...card}
+            onGenerate={handlePdfGeneration}
+          />
+        ))}
       </div>
     </div>
   );
-
-  return (
-    <section className="profile_section py-4">
-      <div className="container-fluid">
-        <div className="rounded-3 px-3 pb-4 py-4 bg-dark text-white">
-          <h2 className="mb-4 text-center text-md-start">
-            Business Performance Reports
-          </h2>
-          <p className="mb-4">Generate individual PDF reports for different user categories based on their activity and referrals count.</p>
-
-          <div className="row">
-            {/* Inactive Users Report */}
-            <ReportCard
-              title="Inactive Users"
-              count={inactiveUsersData?.data?.length}
-              isLoading={loadingInactive}
-              reportType="inactive"
-              pdfLoading={pdfLoadingInactive}
-              bgColor="#dc3545"
-              textColor="text-danger"
-            />
-
-            {/* Zero Direct Referrals Report */}
-            <ReportCard
-              title="0 Direct Referrals"
-              count={zeroDirectRefsData?.data?.length}
-              isLoading={loadingZero}
-              reportType="zero"
-              pdfLoading={pdfLoadingZero}
-              bgColor="#6c757d"
-              textColor="text-secondary"
-            />
-
-            <ReportCard
-              title="1-2 Direct Referrals"
-              count={oneToTwoData?.data?.length}
-              isLoading={loading1to2}
-              reportType="1to2"
-              pdfLoading={pdfLoading1to2}
-              bgColor="#17a2b8"
-              textColor="text-info"
-            />
-
-            <ReportCard
-              title="3-5 Direct Referrals"
-              count={threeToFiveData?.data?.length}
-              isLoading={loading3to5}
-              reportType="3to5"
-              pdfLoading={pdfLoading3to5}
-              bgColor="#007bff"
-              textColor="text-primary"
-            />
-
-            <ReportCard
-              title="6-9 Direct Referrals"
-              count={sixToNineData?.data?.length}
-              isLoading={loading6to9}
-              reportType="6to9"
-              pdfLoading={pdfLoading6to9}
-              bgColor="#ffc107"
-              textColor="text-warning"
-            />
-
-            <ReportCard
-              title="10-25 Direct Referrals"
-              count={tenToTwentyFiveData?.data?.length}
-              isLoading={loading10to25}
-              reportType="10to25"
-              pdfLoading={pdfLoading10to25}
-              bgColor="#fd7e14"
-              textColor="text-warning"
-            />
-
-            <ReportCard
-              title="26-100 Direct Referrals"
-              count={twentySixToHundredData?.data?.length}
-              isLoading={loading26to100}
-              reportType="26to100"
-              pdfLoading={pdfLoading26to100}
-              bgColor="#28a745"
-              textColor="text-success"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
 };
+
+// ─── Report Card Component ──────────────────────────────────
+
+function ReportCard({
+  title,
+  count,
+  isLoading,
+  reportType,
+  pdfLoading,
+  btnColor,
+  titleColor,
+  borderColor,
+  iconBg,
+  icon: Icon,
+  onGenerate,
+}) {
+  return (
+    <div
+      className={`bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden 
+        hover:${borderColor} transition-all duration-300 flex flex-col`}
+    >
+      <div className="p-5 flex flex-col flex-1">
+        {/* Title */}
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className={`w-10 h-10 rounded-lg ${iconBg} flex items-center justify-center shrink-0`}
+          >
+            <Icon size={20} className={titleColor} />
+          </div>
+          <h3 className={`font-semibold text-sm ${titleColor}`}>{title}</h3>
+        </div>
+
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-8 flex-1">
+            <Loader2 size={32} className="text-[#eb660f] animate-spin mb-3" />
+            <p className="text-gray-400 text-sm">Loading data...</p>
+          </div>
+        ) : (
+          <>
+            {/* Count */}
+            <div className="flex-1 flex items-center justify-center mb-4">
+              <div className="w-full border border-[#303f50] rounded-xl p-4 text-center">
+                <p className="text-3xl font-bold text-white mb-1">
+                  {count || 0}
+                </p>
+                <p className="text-gray-400 text-xs">Users</p>
+              </div>
+            </div>
+
+            {/* Generate Button */}
+            <button
+              onClick={() => onGenerate(reportType)}
+              disabled={pdfLoading}
+              className={`w-full flex items-center justify-center gap-2 ${btnColor} 
+                text-white font-semibold py-2.5 rounded-lg transition-all duration-200 
+                disabled:opacity-50 cursor-pointer text-sm`}
+            >
+              {pdfLoading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Download size={16} />
+                  Generate PDF
+                </>
+              )}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default SimpleBusinessReportPDF;
