@@ -32,7 +32,7 @@ const ViewAdminUser = ({ isOpen, onClose, userId }) => {
             {/* Basic Info */}
             <div className="text-center sm:text-left">
               <h3 className="text-xl font-bold text-white">{user.name}</h3>
-              <p className="text-[#8a8d93] text-sm mt-1">@{user.username}</p>
+              <p className="text-[#8a8d93] text-sm mt-1">{user.username}</p>
               <span
                 className={`inline-block mt-2 text-[11px] font-semibold px-3 py-1 rounded-full ${
                   user.isBlock
@@ -120,7 +120,6 @@ const ViewAdminUser = ({ isOpen, onClose, userId }) => {
 const DetailItem = ({ icon, label, value }) => (
   <div className="bg-[#111214] border border-[#2a2c2f] rounded-lg p-4">
     <div className="flex items-center gap-2 mb-1">
-      <span className="text-sm">{icon}</span>
       <span className="text-xs text-[#eb660f] font-medium">{label}</span>
     </div>
     <p className="text-white text-sm">{value}</p>

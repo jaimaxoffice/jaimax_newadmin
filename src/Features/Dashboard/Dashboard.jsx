@@ -1,6 +1,7 @@
 // src/features/dashboard/Dashboard.jsx
 import React from "react";
 import { useGetDetailsQuery } from "./dashboardApiSlice";
+import Loader from "../../reusableComponents/Loader/Loader"
 import {
   Users,
   Coins,
@@ -116,12 +117,7 @@ const Dashboard = () => {
   // ─── Loading ───
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-[3px] border-[#eb660f] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-gray-600 text-xs mt-3">Loading...</p>
-        </div>
-      </div>
+      <Loader/>
     );
   }
 
@@ -179,13 +175,7 @@ const Dashboard = () => {
               })}
             </p>
           </div>
-          <button
-            onClick={refetch}
-            className="flex items-center gap-1.5 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-[11px] font-semibold px-3 py-2 rounded-lg transition-colors cursor-pointer shrink-0"
-          >
-            <RefreshCw size={12} />
-            Refresh
-          </button>
+         
         </div>
       </div>
 

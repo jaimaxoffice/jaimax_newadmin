@@ -1,6 +1,6 @@
 // src/components/Pagination.jsx
 import React from "react";
-
+import {ArrowLeft,ArrowRight } from "lucide-react";
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
 
@@ -43,7 +43,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-[#ccc]
           disabled:cursor-not-allowed transition-all cursor-pointer"
       >
-        ‹
+      <ArrowLeft size={18} />
       </button>
 
       {/* Pages */}
@@ -74,11 +74,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === totalPages}
         className="w-9 h-9 flex items-center justify-center rounded-full
           text-[#ccc] bg-transparent
-          hover:bg-[#0ecb6f] hover:text-[#111214]
+          hover:bg-[#eb660f] hover:text-[#111214]
           disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-[#ccc]
           disabled:cursor-not-allowed transition-all cursor-pointer"
       >
-        ›
+         <ArrowRight size={18}/>
       </button>
     </div>
   );

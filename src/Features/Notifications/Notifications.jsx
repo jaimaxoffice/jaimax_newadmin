@@ -429,7 +429,7 @@ const BulkNotificationManagement = () => {
                 {/* Validation Errors */}
                 {Object.keys(errors).length > 0 && touched.notificationTitle && (
                   <div className="flex items-start gap-3 p-4 rounded-xl bg-yellow-500/5 border border-yellow-500/20">
-                    <AlertCircle size={18} className="text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <AlertCircle size={18} className="text-yellow-400 shrink-0 mt-0.5" />
                     <div>
                       <p className="text-white text-sm font-semibold">Please fix the following errors:</p>
                       <ul className="mt-2 space-y-1">
@@ -458,7 +458,7 @@ export default BulkNotificationManagement;
 
 const StepHeader = ({ number, title, subtitle }) => (
   <div className="flex items-start gap-3">
-    <span className="w-8 h-8 rounded-full bg-[#eb660f] text-white text-sm font-bold flex items-center justify-center flex-shrink-0">
+    <span className="w-8 h-8 rounded-full bg-[#eb660f] text-white text-sm font-bold flex items-center justify-center shrink-0">
       {number}
     </span>
     <div>
@@ -525,7 +525,7 @@ const UserPreviewList = ({ users, totalCount }) => (
           key={user.id || index}
           className="flex items-center gap-3 p-3 bg-[#111214] border border-[#2a2c2f] rounded-xl"
         >
-          <div className="w-10 h-10 rounded-full bg-[#eb660f] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-[#eb660f] flex items-center justify-center text-white font-bold text-sm shrink-0">
             {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || "U"}
           </div>
           <div className="flex-1 min-w-0">
@@ -537,7 +537,7 @@ const UserPreviewList = ({ users, totalCount }) => (
             </p>
           </div>
           {user.directRefs !== undefined && (
-            <div className="text-right flex-shrink-0">
+            <div className="text-right shrink-0">
               <span className="bg-[#eb660f] text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
                 {user.directRefs} Direct
               </span>
@@ -662,7 +662,7 @@ const SendingStatusBanner = ({ status, userCount }) => {
 
   return (
     <div className={`flex items-start gap-3 p-4 rounded-xl ${c.bg} border ${c.border}`}>
-      <div className="flex-shrink-0 mt-0.5">{c.icon}</div>
+      <div className="shrink-0 mt-0.5">{c.icon}</div>
       <div>
         <p className={`text-sm font-semibold ${c.color}`}>{c.title}</p>
         <p className={`text-xs mt-0.5 ${c.color} opacity-70`}>{c.subtitle}</p>
@@ -680,7 +680,7 @@ const AlertBanner = ({ type, message }) => {
 
   return (
     <div className={`flex items-start gap-3 p-4 rounded-xl ${c.bg} border ${c.border}`}>
-      <div className="flex-shrink-0 mt-0.5">{c.icon}</div>
+      <div className="shrink-0 mt-0.5">{c.icon}</div>
       <p className={`${c.text} text-sm`}>{message}</p>
     </div>
   );
@@ -702,7 +702,7 @@ const InfoFooter = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {items.map((item, i) => (
           <div key={i} className="flex items-start gap-3">
-            <item.icon size={16} className="text-[#eb660f] flex-shrink-0 mt-0.5" />
+            <item.icon size={16} className="text-[#eb660f] shrink-0 mt-0.5" />
             <div>
               <p className="text-white text-xs font-semibold">{item.title}</p>
               <p className="text-[#8a8d93] text-xs mt-0.5">{item.desc}</p>

@@ -35,7 +35,7 @@ export default function AppLayout() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#111821]">
+    <div className="flex h-screen overflow-hidden bg-[#000000]">
       {/* Sidebar */}
       <Sidebar
         open={sidebarOpen}
@@ -49,7 +49,7 @@ export default function AppLayout() {
         className={`
           flex-1 overflow-y-auto
           transition-all duration-300
-          bg-[#111821]
+          bg-[#000000]
         `}
       >
         <div className="p-6">

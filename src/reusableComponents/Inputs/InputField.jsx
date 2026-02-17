@@ -16,7 +16,7 @@ const InputField = ({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-[#8a8d93] mb-1.5">
+        <label className="block text-sm font-medium text-[#ffffff] mb-1.5">
           {label}
           {required && <span className="text-[#eb660f] ml-1">*</span>}
         </label>
@@ -35,7 +35,7 @@ const InputField = ({
           placeholder={placeholder}
           disabled={disabled}
           autoComplete="off"
-          className={`w-full bg-[#111214] border text-white placeholder-[#555] rounded-xl 
+          className={`w-full bg-[#111214] border text-white placeholder-[#c6bfbf] rounded-xl 
             py-3 text-sm focus:outline-none focus:ring-1 transition-colors
             disabled:opacity-50 disabled:cursor-not-allowed
             ${prefix ? "pl-8 pr-4" : "px-4"}

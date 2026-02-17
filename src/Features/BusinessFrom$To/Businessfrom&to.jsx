@@ -772,7 +772,7 @@ const DetailedBusinessPerformanceReport = () => {
             </div>
 
             {/* ─── Table Section ─── */}
-            <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
+            <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
               <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <h2 className="text-base font-semibold text-white">
@@ -790,7 +790,7 @@ const DetailedBusinessPerformanceReport = () => {
               </div>
 
               {/* Desktop Table */}
-              <div className="hidden lg:block">
+              <div className="">
                 <Table
                   columns={columns}
                   data={paginatedData}
@@ -800,15 +800,7 @@ const DetailedBusinessPerformanceReport = () => {
                 />
               </div>
 
-              {/* Mobile Cards */}
-              <div className="lg:hidden">
-                <MobileCardList
-                  data={paginatedData}
-                  isLoading={loading}
-                  renderCard={renderReferralCard}
-                  emptyMessage="No referrals found"
-                />
-              </div>
+
             </div>
 
             {/* Pagination */}

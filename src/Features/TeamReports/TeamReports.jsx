@@ -441,45 +441,7 @@ const TeamInfoPdfDownloader = () => {
         </div>
       )}
 
-      {/* Info Footer */}
-      <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5">
-        <h4 className="text-white text-sm font-semibold flex items-center gap-2 mb-3">
-          <AlertCircle size={14} className="text-[#eb660f]" />
-          How it works
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            {
-              step: "1",
-              title: "Enter Username",
-              desc: "Type the username you want to generate a report for",
-            },
-            {
-              step: "2",
-              title: "Fetch Data",
-              desc: "Click Fetch to load team data and preview stats",
-            },
-            {
-              step: "3",
-              title: "Download PDF",
-              desc: "Export a detailed PDF report with layer-wise breakdown",
-            },
-          ].map((item) => (
-            <div key={item.step} className="flex items-start gap-3">
-              <span
-                className="w-6 h-6 rounded-full bg-[#eb660f] text-white text-xs font-bold
-                  flex items-center justify-center flex-shrink-0"
-              >
-                {item.step}
-              </span>
-              <div>
-                <p className="text-white text-xs font-semibold">{item.title}</p>
-                <p className="text-[#8a8d93] text-xs mt-0.5">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+
     </div>
   );
 };

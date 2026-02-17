@@ -10,7 +10,7 @@ import {
   useGetAllNotverifiedUsersQuery,
   useDeleteNotVerifiedUserMutation,
 } from "./notverifiedApiSlice";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar"
 const NotVerifiedUsers = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -154,19 +154,7 @@ const NotVerifiedUsers = () => {
       <div>
         <div className="p-2 sm:p-2 space-y-6">
           <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-            <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400">
-                    <UserXIcon />
-                  </div>
-                  <h1 className="text-lg font-semibold text-white">
-                    Not Verified Users
-                  </h1>
-                </div>
-                
-              </div>
-            </div>
+            
 
             <div className="flex flex-col items-center justify-center py-20 px-4">
               <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
@@ -383,112 +371,49 @@ const NotVerifiedUsers = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={handlePerPageChange}
-              value={state.perPage}
-              disabled={isLoading}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                         transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
 
-            {/* Search */}
-            <div className="relative">
-              <input
-                type="text"
-                autoComplete="off"
-                placeholder={
-                  isSearching ? "Searching..." : "Search name, email, ID..."
-                }
-                onChange={handleSearch}
-                disabled={isLoading}
-                className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                           rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-[#eb660f]
-                           focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-56
-                           disabled:opacity-50"
-              />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]">
-                <SearchIcon className={isSearching ? "animate-spin" : ""} />
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Unverified"
-            value={totalUnverified}
-            valueClass="text-red-400"
-          />
-          <StatCard
-            title="Active Users"
-            value={activeCount}
-            valueClass="text-[#0ecb6f]"
-          />
-          <StatCard
-            title="Inactive Users"
-            value={inactiveCount}
-            valueClass="text-yellow-400"
-          />
-          <StatCard
-            title="Total Tokens"
-            value={totalTokens.toLocaleString("en-IN")}
-            valueClass="text-blue-400"
-          />
-        </div>
+ 
 
         {/* Main Table Card */}
         <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center
-                             justify-center text-red-400"
-                >
-                  <UserXIcon />
-                </div>
-                <div>
-                  <h1 className="text-lg font-semibold text-white">
-                    Not Verified Users
-                  </h1>
-                  <p className="text-xs text-[#8a8d93] mt-0.5">
-                    Showing{" "}
-                    {paginatedUsers.length > 0
-                      ? (state.currentPage - 1) * state.perPage + 1
-                      : 0}{" "}
-                    to{" "}
-                    {Math.min(
-                      state.currentPage * state.perPage,
-                      filteredUsers.length
-                    )}{" "}
-                    of {filteredUsers.length} results
-                    {state.search && (
-                      <span className="text-[#eb660f]">
-                        {" "}
-                        for "{state.search}"
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
+<div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+  {/* Title */}
+  <div className="flex items-center gap-3">
+    <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 shrink-0">
+      <UserXIcon />
+    </div>
+    <h1 className="text-lg font-semibold text-white">
+      Not Verified Users
+    </h1>
+  </div>
 
-             
-            </div>
-          </div>
+  {/* Filters - Right */}
+  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+    <select
+      onChange={handlePerPageChange}
+      value={state.perPage}
+      disabled={isLoading}
+      className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+        py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+        transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
+    >
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+
+    <SearchBar
+      onSearch={handleSearch}
+      placeholder={isSearching ? "Searching..." : "Search name, email, ID..."}
+    />
+  </div>
+</div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={paginatedUsers}
@@ -498,19 +423,7 @@ const NotVerifiedUsers = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={paginatedUsers}
-              isLoading={isLoading}
-              renderCard={renderUserCard}
-              emptyMessage={
-                state.search
-                  ? `No results found for "${state.search}"`
-                  : "No unverified users found"
-              }
-            />
-          </div>
+
         </div>
 
         {/* Pagination */}

@@ -6,7 +6,7 @@ import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList"
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useGetGradualLayerBonusLogsQuery } from "./gradualBonusApiSlice";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar"
 const GradualLayerBonusLogs = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -177,13 +177,7 @@ const GradualLayerBonusLogs = () => {
             </div>
           </div>
 
-          {/* Empty Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Total Amount" value="--" valueClass="text-[#eb660f]" />
-            <StatCard title="Unique Users" value="--" valueClass="text-blue-400" />
-            <StatCard title="Total Records" value="--" valueClass="text-yellow-400" />
-            <StatCard title="Avg. Per Day" value="--" valueClass="text-purple-400" />
-          </div>
+         
         </div>
       </div>
     );
@@ -206,7 +200,7 @@ const GradualLayerBonusLogs = () => {
     {
       header: "Total Amount",
       render: (row) => (
-        <span className="text-[#eb660f] font-semibold">{row?.amount}</span>
+        <span className=" ">{row?.amount}</span>
       ),
     },
     {
@@ -217,17 +211,17 @@ const GradualLayerBonusLogs = () => {
       header: "Duration",
       render: (row) => (
         <span className="text-xs">
-          <span className="text-[#eb660f] font-semibold">
+          <span className="">
             {row?.disbursedDays || 0}
           </span>
-          <span className="text-[#8a8d93]">/{row?.totalDays || 0} days</span>
+          <span className="">/{row?.totalDays || 0} days</span>
         </span>
       ),
     },
     {
       header: "Transaction ID",
       render: (row) => (
-        <span className="text-xs text-[#8a8d93] font-mono">
+        <span className="">
           {row?.transactionId || "N/A"}
         </span>
       ),
@@ -242,8 +236,7 @@ const GradualLayerBonusLogs = () => {
       header: "Position",
       render: (row) => (
         <span
-          className="text-[11px] font-semibold px-2 py-0.5 rounded-full
-                     bg-blue-500/10 text-blue-400"
+          className=""
         >
           {row?.position || "N/A"}
         </span>
@@ -258,7 +251,7 @@ const GradualLayerBonusLogs = () => {
     {
       header: "Percentage",
       render: (row) => (
-        <span className="text-[#eb660f] font-semibold text-xs">
+        <span className=" ">
           {row?.elegiblePercentag}%
         </span>
       ),
@@ -326,135 +319,52 @@ const GradualLayerBonusLogs = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={handlePerPageChange}
-              value={state.perPage}
-              disabled={isLoading}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                          transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
 
-            {/* Search */}
-            <div className="relative">
-              <input
-                type="text"
-                autoComplete="off"
-                placeholder={
-                  isSearching ? "Searching..." : "Search name, amount..."
-                }
-                onChange={handleSearch}
-                disabled={isLoading}
-                className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                            rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-[#eb660f]
-                            focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-56
-                            disabled:opacity-50"
-              />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]">
-                <SearchIcon
-                  className={isSearching ? "animate-spin" : ""}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Amount"
-            value={formatCurrency(totalAmount)}
-            valueClass="text-[#0ecb6f]"
-          />
-          <StatCard
-            title="Unique Users"
-            value={totalUsers}
-            valueClass="text-blue-400"
-          />
-          <StatCard
-            title="Total Records"
-            value={totalTransactions}
-            valueClass="text-yellow-400"
-          />
-          <StatCard
-            title="Avg. Per Day"
-            value={formatCurrency(averageAmountPerDay)}
-            valueClass="text-purple-400"
-          />
-        </div>
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center
-                              justify-center text-[#eb660f]"
-                >
-                  <LayersIcon />
-                </div>
-                <div>
-                  <h1 className="text-lg font-semibold text-white">
-                    Gradual Layer Income Logs
-                  </h1>
-                  <p className="text-xs text-[#8a8d93] mt-0.5">
-                    Showing{" "}
-                    {TableData.length > 0
-                      ? (state.currentPage - 1) * state.perPage + 1
-                      : 0}{" "}
-                    to{" "}
-                    {Math.min(
-                      state.currentPage * state.perPage,
-                      totalItems
-                    )}{" "}
-                    of {totalItems} results
-                    {state.search && (
-                      <span className="text-[#eb660f]">
-                        {" "}
-                        for "{state.search}"
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+  {/* Header */}
+  <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+    {/* Title */}
+   
+    {/* Filters */}
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+      {/* Per Page */}
+      <select
+        onChange={handlePerPageChange}
+        value={state.perPage}
+        disabled={isLoading}
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+          transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
+      >
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
 
-          {/* Desktop Table */}
-          <div className="hidden lg:block">
-            <Table
-              columns={columns}
-              data={TableData}
-              isLoading={isLoading}
-              currentPage={state.currentPage}
-              perPage={state.perPage}
-            />
-          </div>
+      {/* Search */}
+      <SearchBar
+        onSearch={handleSearch}
+        placeholder={isSearching ? "Searching..." : "Search name, amount..."}
+      />
+    </div>
+  </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={TableData}
-              isLoading={isLoading}
-              renderCard={renderBonusCard}
-              emptyMessage={
-                state.search
-                  ? `No results found for "${state.search}"`
-                  : "No gradual layer income logs available"
-              }
-            />
-          </div>
-        </div>
+  {/* Desktop Table */}
+  <div className="">
+    <Table
+      columns={columns}
+      data={TableData}
+      isLoading={isLoading}
+      currentPage={state.currentPage}
+      perPage={state.perPage}
+    />
+  </div>
+
+
+</div>
 
         {/* Pagination */}
         {totalPages > 1 && (

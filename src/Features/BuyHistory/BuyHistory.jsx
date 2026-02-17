@@ -6,7 +6,7 @@ import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList"
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useBuyHistoryQuery } from "./buyhistoryApiSlice";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar"
 const BuyHistory = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -128,7 +128,7 @@ const BuyHistory = () => {
     {
       header: "Jaimax Coins",
       render: (row) => (
-        <span className="text-white font-semibold text-sm">
+        <span className=" ">
           {Number(row.jaimax)?.toFixed(3)}
         </span>
       ),
@@ -140,7 +140,7 @@ const BuyHistory = () => {
     {
       header: "Paid",
       render: (row) => (
-        <span className="font-semibold">{getCurrencyValue(row, "paid")}</span>
+        <span className="">{getCurrencyValue(row, "paid")}</span>
       ),
     },
     {
@@ -229,96 +229,72 @@ const BuyHistory = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  perPage: Number(e.target.value),
-                  currentPage: 1,
-                }))
-              }
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                          transition-colors cursor-pointer"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
 
-            {/* Search */}
-            <input
-              type="text"
-              autoComplete="off"
-              placeholder="Search..."
-              onChange={handleSearch}
-              className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                          rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                          focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-44"
-            />
-          </div>
-        </div>
 
         {/* Stat Card */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Coins Sold"
-            value={Number(totalCoins).toFixed(3)}
-            valueClass="text-[#eb660f]"
-          />
-        </div>
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center 
-                              justify-center text-[#eb660f]"
-                >
-                  <CartIcon />
-                </div>
-                <h1 className="text-lg font-semibold text-white">
-                  Buy History
-                </h1>
-              </div>
+<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+  {/* Header */}
+<div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    {/* Total Coins - Left */}
+    <div className="flex items-center gap-2 rounded-xl py-1.5">
+      <span className="text-sm text-[#8a8d93] font-medium">Total Coins Sold:</span>
+      <span className="text-lg font-semibold text-white">
+        {Number(totalCoins).toFixed(3)}
+      </span>
+    </div>
 
-              {/* Record Count */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-[#8a8d93]">Total Records:</span>
-                <span className="text-sm font-semibold text-white">
-                  {totalRecords}
-                </span>
-              </div>
-            </div>
-          </div>
+    {/* Filters - Right */}
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      <select
+        onChange={(e) =>
+          setState((prev) => ({
+            ...prev,
+            perPage: Number(e.target.value),
+            currentPage: 1,
+          }))
+        }
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+          transition-colors cursor-pointer w-full sm:w-auto"
+      >
+        <option value="10">10</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+      </select>
 
-          {/* Desktop Table */}
-          <div className="hidden lg:block">
-            <Table
-              columns={columns}
-              data={TableData}
-              isLoading={isLoading}
-              currentPage={state.currentPage}
-              perPage={state.perPage}
-            />
-          </div>
+      <SearchBar
+        onSearch={(e) => {
+          clearTimeout(window._searchTimeout);
+          window._searchTimeout = setTimeout(() => {
+            setState((prev) => ({
+              ...prev,
+              search: e.target.value,
+              currentPage: 1,
+            }));
+          }, 1000);
+        }}
+        placeholder="Search..."
+      />
+    </div>
+  </div>
+</div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={TableData}
-              isLoading={isLoading}
-              renderCard={renderBuyCard}
-              emptyMessage="No buy history found"
-            />
-          </div>
-        </div>
+  {/* Desktop Table */}
+  <div className="">
+    <Table
+      columns={columns}
+      data={TableData}
+      isLoading={isLoading}
+      currentPage={state.currentPage}
+      perPage={state.perPage}
+    />
+  </div>
+
+
+</div>
 
         {/* Pagination */}
         {TableData?.length > 0 && (

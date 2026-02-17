@@ -20,10 +20,10 @@ export default function AccountantDashboard() {
         {/* ── Profile Header ── */}
         <div className="rounded-xl p-4 sm:p-5 mb-4 shadow-lg flex items-center justify-between flex-wrap gap-3 bg-[#132029] border border-[#1d2a34]">
           <div className="flex flex-col min-w-0">
-            <h3 className="mb-1 capitalize font-bold text-[clamp(0.9rem,2.5vw,1.55rem)] leading-tight break-words">
+            <h3 className="mb-1 capitalize font-bold text-[clamp(0.9rem,2.5vw,1.55rem)] leading-tight wrap-break-words">
               {u.name || "—"}
             </h3>
-            <div className="text-[#aaa] text-[clamp(0.8rem,1.2vw,0.95rem)] break-words leading-relaxed max-w-full md:whitespace-nowrap">
+            <div className="text-[#aaa] text-[clamp(0.8rem,1.2vw,0.95rem)] wrap-break-words leading-relaxed max-w-full md:whitespace-nowrap">
               Role&nbsp;ID:&nbsp;{u.role ?? "—"} &nbsp;|&nbsp;{u.email || "—"}
             </div>
           </div>

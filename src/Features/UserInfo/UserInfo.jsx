@@ -13,7 +13,7 @@ import InputField from "../../reusableComponents/Inputs/InputField";
 import SubmitButton from "../../reusableComponents/Buttons/SubmitButton";
 import Alert from "../../reusableComponents/Alerts/Alerts";
 import Edituser from "./EditableUser";
-
+import Loader from "../../reusableComponents/Loader/Loader"
 const Userinfo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -213,74 +213,77 @@ const Userinfo = () => {
   return (
     <div className="p-2 sm:p-2 space-y-6">
       {/* Search Section */}
-      <div className="bg-[#1a1c1f] border border-[#2a2c2f] rounded-2xl p-5">
-        <div className="max-w-md mx-auto space-y-4">
-          <input
-            type="text"
-            placeholder="Enter Reference ID"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-              rounded-xl py-3 px-4 text-sm text-center focus:outline-none focus:border-[#eb660f]
-              focus:ring-1 focus:ring-[#eb660f]/50 transition-colors uppercase"
-          />
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            <button
-              onClick={handleDirectSearch}
-              disabled={isPageLoading}
-              className="w-full sm:w-auto flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90
-                disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
-                text-[#111214] font-semibold py-2.5 px-4 rounded-xl text-sm
-                transition-colors cursor-pointer"
-            >
-              Direct Referrals
-            </button>
-            <button
-              onClick={handleChainSearch}
-              disabled={isPageLoading}
-              className="w-full sm:w-auto flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90
-                disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
-                text-[#111214] font-semibold py-2.5 px-4 rounded-xl text-sm
-                transition-colors cursor-pointer"
-            >
-              Chain Referrals
-            </button>
-            <button
-              onClick={handleShowUserDetails}
-              disabled={isPageLoading}
-              className="w-full sm:w-auto flex-1 bg-[#eb660f] hover:bg-[#eb660f]/90
-                disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
-                text-[#111214] font-semibold py-2.5 px-4 rounded-xl text-sm
-                transition-colors cursor-pointer"
-            >
-              Show Details
-            </button>
-          </div>
-        </div>
+<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5">
+  <div className="max-w-lg mx-auto space-y-4">
+    {/* Input Centered */}
+    <div className="flex justify-center">
+      <input
+        type="text"
+        placeholder="Enter JAIMAX ID"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full sm:w-1/2 bg-[#000000] border border-[#2a2c2f] text-white placeholder-[#555]
+          rounded-xl py-3 px-4 text-sm text-center focus:outline-none focus:border-[#eb660f]
+          focus:ring-1 focus:ring-[#eb660f] transition-colors uppercase"
+      />
+    </div>
 
-        {error && (
-          <div className="mt-4">
-            <Alert type="error" message="Error loading data. Please try again." />
-          </div>
-        )}
-      </div>
+    {/* Buttons Centered */}
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <button
+        onClick={handleDirectSearch}
+        disabled={isPageLoading}
+        className="w-full sm:w-auto bg-[#eb660f] hover:bg-[#eb660f]/90
+          disabled:bg-[#eb660f] disabled:cursor-not-allowed
+          text-white font-semibold py-2.5 px-6 rounded-xl text-sm
+          transition-colors cursor-pointer"
+      >
+        Direct Referrals
+      </button>
+      <button
+        onClick={handleChainSearch}
+        disabled={isPageLoading}
+        className="w-full sm:w-auto bg-[#eb660f] hover:bg-[#eb660f]/90
+          disabled:bg-[#eb660f] disabled:cursor-not-allowed
+          text-white font-semibold py-2.5 px-6 rounded-xl text-sm
+          transition-colors cursor-pointer"
+      >
+        Chain Referrals
+      </button>
+      <button
+        onClick={handleShowUserDetails}
+        disabled={isPageLoading}
+        className="w-full sm:w-auto bg-[#eb660f] hover:bg-[#eb660f]/90
+          disabled:bg-[#eb660f] disabled:cursor-not-allowed
+          text-white font-semibold py-2.5 px-6 rounded-xl text-sm
+          transition-colors cursor-pointer"
+      >
+        Show Details
+      </button>
+    </div>
+  </div>
+
+  {error && (
+    <div className="mt-4 max-w-lg mx-auto">
+      <Alert type="error" message="Error loading data. Please try again." />
+    </div>
+  )}
+</div>
 
       {/* Loading */}
       {isPageLoading && (
-        <div className="flex items-center justify-center py-16">
-          <div className="w-10 h-10 border-4 border-[#eb660f] border-t-transparent rounded-full animate-spin" />
-        </div>
+       <Loader/>
       )}
 
       {/* User Details */}
       {!isPageLoading && userDetails && (
         <div className="max-w-9xl mx-auto">
-          <div className="bg-[#1a1c1f] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
             {/* Header */}
             <div className="px-5 py-4 border-b border-[#2a2c2f] flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-white">User Profile</h2>
-                <p className="text-xs text-[#555] mt-0.5">
+                <p className="text-xs text-[#ffffff] mt-0.5">
                   Complete user information and statistics
                 </p>
               </div>
@@ -400,7 +403,7 @@ const Userinfo = () => {
           </div>
 
           {/* Desktop */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={referralColumns}
               data={referrals}
@@ -410,15 +413,7 @@ const Userinfo = () => {
             />
           </div>
 
-          {/* Mobile */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={referrals}
-              isLoading={false}
-              renderCard={renderReferralCard}
-              emptyMessage="No referrals found"
-            />
-          </div>
+
         </div>
       )}
 

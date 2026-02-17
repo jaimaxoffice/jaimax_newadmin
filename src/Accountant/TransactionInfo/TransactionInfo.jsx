@@ -181,7 +181,7 @@ const TxInfo = () => {
         {/* ── Search Bar ── */}
         <div className="flex justify-center mb-6">
           <form
-            className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full max-w-[500px]"
+            className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full max-w-125"
             onSubmit={(e) => {
               e.preventDefault();
               handleSearch();
@@ -192,12 +192,12 @@ const TxInfo = () => {
               placeholder="Enter Transaction ID"
               value={txId}
               onChange={(e) => setTxId(e.target.value)}
-              className="w-full flex-1 min-w-0 h-[46px] sm:h-[46px] px-3.5 rounded-lg bg-[#2a313b] border border-[#2b3440] text-white text-center text-sm placeholder:text-white/65 focus:outline-none focus:ring-1 focus:ring-[#ec660f]"
+              className="w-full flex-1 min-w-0 h-11.5 sm:h-11.5 px-3.5 rounded-lg bg-[#2a313b] border border-[#2b3440] text-white text-center text-sm placeholder:text-white/65 focus:outline-none focus:ring-1 focus:ring-[#ec660f]"
             />
             <button
               type="submit"
               disabled={isFetching}
-              className="w-full sm:w-auto h-[46px] px-5 rounded-lg bg-[#ec660f] hover:bg-[#d45a0d] text-white font-semibold text-sm whitespace-nowrap transition disabled:opacity-80 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto h-11.5 px-5 rounded-lg bg-[#ec660f] hover:bg-[#d45a0d] text-white font-semibold text-sm whitespace-nowrap transition disabled:opacity-80 disabled:cursor-not-allowed"
             >
               {isFetching ? "Loading..." : "Get Transaction Info"}
             </button>
@@ -247,7 +247,7 @@ const TxInfo = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <div className="text-[#b9c0c7] text-xs">Name</div>
-                  <div className="text-white font-bold text-sm sm:text-base break-words">
+                  <div className="text-white font-bold text-sm sm:text-base wrap-break-words">
                     {tx.name || "N/A"}
                   </div>
                 </div>
@@ -310,7 +310,7 @@ const TxInfo = () => {
                       )}
                   </div>
 
-                  <div className="relative min-h-[220px] flex items-center justify-center">
+                  <div className="relative min-h-55 flex items-center justify-center">
                     {/* Loader overlay */}
                     {isImgLoading && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-lg z-10">
@@ -323,13 +323,13 @@ const TxInfo = () => {
                         src={imgSrc}
                         alt="screenshot"
                         loading="lazy"
-                        className={`max-w-full max-h-[280px] object-contain border border-[#ec660f] rounded-lg cursor-zoom-in transition-opacity duration-500 ${
+                        className={`max-w-full max-h-70 object-contain border border-[#ec660f] rounded-lg cursor-zoom-in transition-opacity duration-500 ${
                           isImgLoading ? "opacity-0" : "opacity-100"
                         }`}
                         onClick={() => setShowImg(true)}
                       />
                     ) : (
-                      <div className="w-full h-[220px] bg-[#2e2e2e] flex items-center justify-center text-[#aaa] border border-dashed border-[#ec660f] rounded-lg p-3 text-center text-sm">
+                      <div className="w-full h-55 bg-[#2e2e2e] flex items-center justify-center text-[#aaa] border border-dashed border-[#ec660f] rounded-lg p-3 text-center text-sm">
                         {imageCandidates.length
                           ? "Image failed to load."
                           : "No image available"}

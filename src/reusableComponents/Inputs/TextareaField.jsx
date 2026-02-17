@@ -14,7 +14,7 @@ const TextareaField = ({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-[#8a8d93] mb-1.5">
+        <label className="block text-sm font-medium text-[#ffffff] mb-1.5">
           {label}
           {required && <span className="text-[#eb660f] ml-1">*</span>}
         </label>
@@ -26,7 +26,7 @@ const TextareaField = ({
         placeholder={placeholder}
         rows={rows}
         autoComplete="off"
-        className={`w-full bg-[#111214] border text-white placeholder-[#555] rounded-xl 
+        className={`w-full bg-[#111214] border text-white placeholder-[#c4b9b9] rounded-xl 
           py-3 px-4 text-sm focus:outline-none focus:ring-1 transition-colors resize-none
           ${
             error

@@ -5,7 +5,7 @@ import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import { useGetpaymentgatewaytransactionsQuery } from "../Wallet/walletApiSlice";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 const PaymentGatewaysTransactions = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -78,20 +78,15 @@ const PaymentGatewaysTransactions = () => {
 
   const getStatusStyle = (status) => {
     const map = {
-      Completed: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
-      Pending: "bg-yellow-500/10 text-yellow-400",
-      Hold: "bg-blue-500/10 text-blue-400",
-      Failed: "bg-red-500/10 text-red-400",
-      Success: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
+      Completed: " text-[#0ecb6f]",
+      Pending: " text-yellow-400",
+      Hold: " text-blue-400",
+      Failed: " text-red-400",
+      Success: " text-[#0ecb6f]",
     };
     return map[status] || "bg-[#2a2c2f] text-[#8a8d93]";
   };
 
-  const getTypeStyle = (type) => {
-    return type === "Credit"
-      ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-      : "bg-red-500/10 text-red-400";
-  };
 
   // Desktop Table Columns
   const columns = [
@@ -108,29 +103,42 @@ const PaymentGatewaysTransactions = () => {
       header: "Payment Method",
       render: (row) => (
         <span className="inline-flex items-center gap-1.5">
-        
           <span className="text-xs text-white">{row.paymentMode || "N/A"}</span>
         </span>
       ),
     },
     {
-      header: "Type",
+      header: "Transaction Type",
       render: (row) => (
         <span
           className={`text-[11px] font-semibold px-2.5 py-1 rounded-full 
-            ${getTypeStyle(row.transactionType)}`}
+            ${row.transactionType}`}
         >
           {row.transactionType}
         </span>
       ),
     },
     {
-      header: "Amount",
+      header: "Net Amount",
       render: (row) => (
-        <span
-          className={`font-semibold text-sm `}
-        >
-          {getCurrency(row.userId?.countryCode, row.transactionAmount)}
+        <span className={`font-semibold text-sm `}>
+          {(row.userId?.countryCode, row.transactionAmount)}
+        </span>
+      ),
+    },
+    {
+      header: "Transaction Fee",
+      render: (row) => (
+        <span className={`font-semibold text-sm `}>
+          {(row.userId?.countryCode, row.transactionAmount)}
+        </span>
+      ),
+    },
+    {
+      header: "Transaction Amount",
+      render: (row) => (
+        <span className={`font-semibold text-sm `}>
+          {(row.userId?.countryCode, row.transactionAmount)}
         </span>
       ),
     },
@@ -151,21 +159,12 @@ const PaymentGatewaysTransactions = () => {
         ),
     },
     {
-      header: "Date",
+      header: "Transaction Date",
       render: (row) => (
-        <span className="">
-          {formatDateWithAmPm(row.transactionDate)}
-        </span>
+        <span className="">{formatDateWithAmPm(row.transactionDate)}</span>
       ),
     },
-    {
-      header: "Updated By",
-      render: (row) => (
-        <span className="">
-          {row.updatedBy?.name || "N/A"}
-        </span>
-      ),
-    },
+    
     {
       header: "Status",
       render: (row) => (
@@ -179,18 +178,13 @@ const PaymentGatewaysTransactions = () => {
     },
     {
       header: "Reason",
-      render: (row) => (
-        <span className="">
-          {row.reason || "N/A"}
-        </span>
-      ),
+      render: (row) => <span className="">{row.reason || "N/A"}</span>,
     },
   ];
 
   // Mobile Card Builder
   const renderTransactionCard = (row, index) => {
-    const sNo =
-      state.currentPage * state.perPage - (state.perPage - 1) + index;
+    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
 
     return (
       <MobileCard
@@ -213,7 +207,7 @@ const PaymentGatewaysTransactions = () => {
             value: row.paymentMode || "N/A",
           },
           {
-            label: "Amount",
+            label: "Transaction Amount",
             custom: (
               <span
                 className={`text-sm font-bold ${
@@ -251,10 +245,7 @@ const PaymentGatewaysTransactions = () => {
             label: "Date",
             value: formatDateWithAmPm(row.transactionDate),
           },
-          {
-            label: "Updated By",
-            value: row.updatedBy?.name || "N/A",
-          },
+        
           {
             label: "Reason",
             value: row.reason || "N/A",
@@ -274,178 +265,79 @@ const PaymentGatewaysTransactions = () => {
           justify-between gap-4"
         >
           <div>
-            <h1
-              className="text-xl sm:text-2xl font-bold text-white 
-              flex items-center gap-3"
-            >
-              <div
-                className="w-10 h-10 bg-[#eb660f]/10 rounded-xl flex items-center 
-                justify-center flex-shrink-0"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#eb660f"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
-                  <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
-                  <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
-                </svg>
-              </div>
-              Payment Gateway Transactions
-            </h1>
-            <p className="text-[#8a8d93] text-sm mt-1 ml-[52px]">
-              Monitor all payment gateway transaction history
-            </p>
+           
           </div>
         </div>
-
-        {/* Filters Row */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  perPage: Number(e.target.value),
-                  currentPage: 1,
-                }))
-              }
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
-                transition-colors cursor-pointer"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
-
-            {/* Transaction Type Filter */}
-            <select
-              value={selectedStatus}
-              onChange={handleStatusChange}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
-                transition-colors cursor-pointer"
-            >
-              <option value="Transaction Type">All Types</option>
-              <option value="Credit">Credit</option>
-              <option value="Debit">Debit</option>
-            </select>
-
-            {/* Search */}
-            <input
-              type="text"
-              autoComplete="off"
-              placeholder="Search..."
-              onChange={handleSearch}
-              className="bg-[#111214] border border-[#2a2c2f] text-white 
-                placeholder-[#555] rounded-xl py-2.5 px-4 text-sm 
-                focus:outline-none focus:border-[#eb660f] focus:ring-1 
-                focus:ring-[#eb660f]/50 transition-colors w-full sm:w-44"
-            />
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        {statusCounts && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              title="Pending"
-              value={statusCounts.Pending || 0}
-              valueClass="text-yellow-400"
-            />
-            <StatCard
-              title="Completed"
-              value={statusCounts.Completed || 0}
-              valueClass="text-[#0ecb6f]"
-            />
-            <StatCard
-              title="Hold"
-              value={statusCounts.Hold || 0}
-              valueClass="text-blue-400"
-            />
-            <StatCard
-              title="Failed"
-              value={statusCounts.Failed || 0}
-              valueClass="text-red-400"
-            />
-          </div>
-        )}
 
         {/* Table Section */}
-        <div
-          className="bg-[#1b232d] border border-[#1b232d] rounded-2xl 
-          overflow-hidden"
-        >
-          {/* Table Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div
-              className="flex flex-col sm:flex-row items-start sm:items-center 
-              justify-between gap-4"
-            >
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold text-white">
-                  Gateway Transactions
-                </h2>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[#8a8d93] text-sm">
-                  Total:{" "}
-                  <span className="text-white font-semibold">
-                    {totalRecords}
-                  </span>{" "}
-                  records
-                </span>
-                {transactions.length > 0 && (
-                  <div
-                    className="h-4 w-px bg-[#2a2c2f] hidden sm:block"
-                  />
-                )}
-                {transactions.length > 0 && (
-                  <span className="text-[#8a8d93] text-sm hidden sm:block">
-                    Page{" "}
-                    <span className="text-white font-semibold">
-                      {state.currentPage}
-                    </span>{" "}
-                    of{" "}
-                    <span className="text-white font-semibold">
-                      {Math.ceil(totalRecords / state.perPage) || 1}
-                    </span>
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+   <div
+  className="bg-[#1b232d] border border-[#303f50] rounded-2xl 
+  overflow-hidden"
+>
+  {/* Table Header */}
+  <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:justify-end">
+      {/* Per Page */}
+      <select
+        onChange={(e) =>
+          setState((prev) => ({
+            ...prev,
+            perPage: Number(e.target.value),
+            currentPage: 1,
+          }))
+        }
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
+          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
+          transition-colors cursor-pointer w-full sm:w-auto"
+      >
+        <option value="10">10</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+      </select>
 
-          {/* Desktop Table */}
-          <div className="hidden lg:block">
-            <Table
-              columns={columns}
-              data={transactions}
-              isLoading={isLoading}
-              currentPage={state.currentPage}
-              perPage={state.perPage}
-            />
-          </div>
+      {/* Transaction Type Filter */}
+      <select
+        value={selectedStatus}
+        onChange={handleStatusChange}
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
+          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
+          transition-colors cursor-pointer w-full sm:w-auto"
+      >
+        <option value="Transaction Type">All Types</option>
+        <option value="Credit">Credit</option>
+        <option value="Debit">Debit</option>
+      </select>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={transactions}
-              isLoading={isLoading}
-              renderCard={renderTransactionCard}
-              emptyMessage="No gateway transactions found"
-            />
-          </div>
-        </div>
+      {/* Search */}
+      <SearchBar
+        onSearch={(e) => {
+          clearTimeout(window._searchTimeout);
+          window._searchTimeout = setTimeout(() => {
+            setState((prev) => ({
+              ...prev,
+              search: e.target.value,
+              currentPage: 1,
+            }));
+          }, 1000);
+        }}
+        placeholder="Search..."
+      />
+    </div>
+  </div>
+
+  {/* Desktop Table */}
+  <div className="">
+    <Table
+      columns={columns}
+      data={transactions}
+      isLoading={isLoading}
+      currentPage={state.currentPage}
+      perPage={state.perPage}
+    />
+  </div>
+
+
+</div>
 
         {/* Pagination */}
         {transactions?.length > 0 && (

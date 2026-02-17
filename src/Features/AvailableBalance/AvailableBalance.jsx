@@ -240,7 +240,7 @@ const AvailableBalance = () => {
                              bg-[#eb660f] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
-                  <RefreshIcon className={isLoading ? "animate-spin" : ""} />
+                 
                   Try Again
                 </button>
                 <button
@@ -256,12 +256,7 @@ const AvailableBalance = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Total Users" value="--" valueClass="text-white" />
-            <StatCard title="Total Balance" value="--" valueClass="text-[#0ecb6f]" />
-            <StatCard title="Avg Balance" value="--" valueClass="text-blue-400" />
-            <StatCard title="High Balance" value="--" valueClass="text-yellow-400" />
-          </div>
+          
         </div>
       </div>
     );
@@ -546,29 +541,7 @@ const AvailableBalance = () => {
           </div>
         )}
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Users"
-            value={totalUsers.toLocaleString("en-IN")}
-            valueClass="text-white"
-          />
-          <StatCard
-            title="Page Balance"
-            value={formatCurrency(totalBalance)}
-            valueClass="text-[#0ecb6f]"
-          />
-          <StatCard
-            title="Avg Balance"
-            value={formatCurrency(Math.round(avgBalance))}
-            valueClass="text-blue-400"
-          />
-          <StatCard
-            title="High Balance (>₹10K)"
-            value={highBalanceCount}
-            valueClass="text-yellow-400"
-          />
-        </div>
+
 
         {/* Fetching Indicator */}
         {isFetching && !isLoading && (
@@ -628,7 +601,7 @@ const AvailableBalance = () => {
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={TableData}
@@ -638,19 +611,7 @@ const AvailableBalance = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={TableData}
-              isLoading={isLoading}
-              renderCard={renderUserCard}
-              emptyMessage={
-                hasActiveFilters
-                  ? "No users found matching your criteria"
-                  : "No users found"
-              }
-            />
-          </div>
+
         </div>
 
         {/* Pagination */}

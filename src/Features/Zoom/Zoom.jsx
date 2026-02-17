@@ -398,7 +398,7 @@ const ZoomMeeting = () => {
               </div>
 
               {/* Desktop Table */}
-              <div className="hidden lg:block">
+              <div className="">
                 <Table
                   columns={columns}
                   data={filteredMeetings}
@@ -408,15 +408,7 @@ const ZoomMeeting = () => {
                 />
               </div>
 
-              {/* Mobile Cards */}
-              <div className="lg:hidden">
-                <MobileCardList
-                  data={filteredMeetings}
-                  isLoading={loadingMeetings}
-                  renderCard={renderMeetingCard}
-                  emptyMessage="No meetings found"
-                />
-              </div>
+
             </div>
 
             {/* Pagination */}

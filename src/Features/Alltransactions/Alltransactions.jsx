@@ -102,30 +102,22 @@ const AllTransactions = () => {
       accessor: "paymentMode",
     },
     {
-      header: "Type",
+      header: "Transaction Type",
       render: (row) => (
         <span
-          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-            row.transactionType === "Credit"
-              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-              : "bg-red-500/10 text-red-400"
-          }`}
+          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full `}
         >
           {row.transactionType}
         </span>
       ),
     },
     {
-      header: "Amount",
+      header: "Transaction Amount",
       render: (row) => (
         <span
-          className={`font-semibold ${
-            row.transactionType === "Credit"
-              ? "text-green-400"
-              : "text-red-400"
-          }`}
+          className={`font-semibold `}
         >
-          {getCurrency(row.userId?.countryCode, row.transactionAmount)}
+          {(row.userId?.countryCode, row.transactionAmount)}
         </span>
       ),
     },
@@ -137,7 +129,7 @@ const AllTransactions = () => {
             href={row.screenshotUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-[#eb660f] hover:underline text-xs"
+            className="text-blue-400 hover:underline text-xs"
           >
             {row.transactionId}
           </a>
@@ -146,7 +138,7 @@ const AllTransactions = () => {
         ),
     },
     {
-      header: "Date",
+      header: "Transaction Date",
       render: (row) => (
         <span className="">
           {formatDateWithAmPm(row.transactionDate)}
@@ -253,38 +245,49 @@ const AllTransactions = () => {
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
-              <div
-                className="w-10 h-10 bg-[#eb660f]/10 rounded-xl flex items-center 
-                justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#eb660f"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect width="20" height="14" x="2" y="5" rx="2" />
-                  <line x1="2" x2="22" y1="10" y2="10" />
-                </svg>
-              </div>
-              All Wallet Transactions
-            </h1>
-            <p className="text-[#8a8d93] text-sm mt-1 ml-13">
-              View all completed wallet transactions
-            </p>
-          </div>
-        </div>
 
-        {/* Filters Row */}
+
+
+
+        {/* Stats Cards */}
+        {statusCounts && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              title="Pending"
+              value={statusCounts.Pending || 0}
+              // valueClass="text-yellow-400"
+            />
+            <StatCard
+              title="Completed"
+              value={statusCounts.Completed || 0}
+              // valueClass="text-[#0ecb6f]"
+            />
+            <StatCard
+              title="Hold"
+              value={statusCounts.Hold || 0}
+              // valueClass="text-blue-400"
+            />
+            <StatCard
+              title="Failed"
+              value={statusCounts.Failed || 0}
+              // valueClass="text-red-400"
+            />
+          </div>
+        )}
+
+        {/* Table Section */}
+        <div
+          className="bg-[#1b232d] border border-[#1b232d] rounded-2xl 
+          overflow-hidden"
+        >
+          {/* Table Header */}
+          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+            <div
+              className="flex flex-col sm:flex-row items-start sm:items-center 
+              justify-between gap-4"
+            >
+             
+                      {/* Filters Row */}
         <div className="flex w-full">
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
             {/* Per Page */}
@@ -332,60 +335,11 @@ const AllTransactions = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        {statusCounts && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              title="Pending"
-              value={statusCounts.Pending || 0}
-              valueClass="text-yellow-400"
-            />
-            <StatCard
-              title="Completed"
-              value={statusCounts.Completed || 0}
-              valueClass="text-[#0ecb6f]"
-            />
-            <StatCard
-              title="Hold"
-              value={statusCounts.Hold || 0}
-              valueClass="text-blue-400"
-            />
-            <StatCard
-              title="Failed"
-              value={statusCounts.Failed || 0}
-              valueClass="text-red-400"
-            />
-          </div>
-        )}
-
-        {/* Table Section */}
-        <div
-          className="bg-[#1b232d] border border-[#1b232d] rounded-2xl 
-          overflow-hidden"
-        >
-          {/* Table Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div
-              className="flex flex-col sm:flex-row items-start sm:items-center 
-              justify-between gap-4"
-            >
-              <h2 className="text-lg font-semibold text-white">
-                Transaction History
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className="text-[#8a8d93] text-sm">
-                  Total:{" "}
-                  <span className="text-white font-semibold">
-                    {totalRecords}
-                  </span>{" "}
-                  records
-                </span>
-              </div>
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={transactions}
@@ -395,15 +349,7 @@ const AllTransactions = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={transactions}
-              isLoading={isLoading}
-              renderCard={renderTransactionCard}
-              emptyMessage="No transactions found"
-            />
-          </div>
+
         </div>
 
         {/* Pagination */}

@@ -23,7 +23,7 @@ const EditableField = ({
         {!isEditing && (
           <button
             onClick={onEdit}
-            className="text-[#0ecb6f] hover:text-[#0ecb6f]/80 cursor-pointer"
+            className="text-[#eb660f] hover:text-[#eb660f]/80 cursor-pointer"
           >
             <svg
               width="13"
@@ -52,7 +52,7 @@ const EditableField = ({
             focus:outline-none transition-colors
             ${
               isEditing
-                ? "border-[#0ecb6f] text-white focus:ring-1 focus:ring-[#0ecb6f]/50"
+                ? "border-[#eb660f] text-white focus:ring-1 focus:ring-[#eb660f]/50"
                 : "border-[#2a2c2f] text-[#8a8d93] cursor-default"
             }`}
         />
@@ -60,7 +60,7 @@ const EditableField = ({
           <button
             onClick={onSave}
             disabled={isSaving}
-            className="bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 disabled:bg-[#0ecb6f]/50
+            className="bg-[#eb660f] hover:bg-[#eb660f]/90 disabled:bg-[#eb660f]/50
               disabled:cursor-not-allowed text-[#111214] font-semibold px-4 py-2.5
               rounded-xl text-xs transition-colors cursor-pointer whitespace-nowrap"
           >
@@ -208,7 +208,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
   if (!user) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="w-8 h-8 border-4 border-[#0ecb6f] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#eb660f] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -218,7 +218,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
   return (
     <div className="space-y-5">
       {/* Title */}
-      <h2 className="text-center text-lg font-semibold text-[#0ecb6f]">
+      <h2 className="text-center text-2xl font-semibold text-[#eb660f]">
         User Details
       </h2>
 
@@ -257,7 +257,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
             {!editMode.phone && (
               <button
                 onClick={() => handleEditClick("phone")}
-                className="text-[#0ecb6f] hover:text-[#0ecb6f]/80 cursor-pointer"
+                className="text-[#eb660f] hover:text-[#eb660f]/80 cursor-pointer"
               >
                 <svg
                   width="13"
@@ -291,7 +291,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
                 focus:outline-none transition-colors placeholder-[#555]
                 ${
                   editMode.phone
-                    ? "border-[#0ecb6f] text-white focus:ring-1 focus:ring-[#0ecb6f]/50"
+                    ? "border-[#eb660f] text-white focus:ring-1 focus:ring-[#eb660f]/50"
                     : "border-[#2a2c2f] text-[#8a8d93] cursor-default"
                 }`}
             />
@@ -299,7 +299,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
               <button
                 onClick={() => handleSaveField("phone")}
                 disabled={isSaving}
-                className="bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 disabled:bg-[#0ecb6f]/50
+                className="bg-[#eb660f] hover:bg-[#eb660f]/90 disabled:bg-[#eb660f]/50
                   disabled:cursor-not-allowed text-[#111214] font-semibold px-4 py-2.5
                   rounded-xl text-xs transition-colors cursor-pointer whitespace-nowrap"
               >
@@ -376,8 +376,8 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
             onChange={(e) => setSecretCode(e.target.value)}
             placeholder="Secret Code"
             className="w-full bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-              rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[#0ecb6f]
-              focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors"
+              rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f]
+              focus:ring-1 focus:ring-[#eb660f]/50 transition-colors"
           />
           <div className="flex gap-3">
             <button

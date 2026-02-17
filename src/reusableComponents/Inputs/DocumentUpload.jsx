@@ -15,7 +15,7 @@ const DocumentUpload = ({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-[#8a8d93] mb-1.5">
+        <label className="block text-sm font-medium text-[#fff] mb-1.5">
           {label}
         </label>
       )}
@@ -49,7 +49,7 @@ const DocumentUpload = ({
             ✕
           </button>
           {fileName && (
-            <p className="text-[#555] text-[11px] mt-2 truncate text-center">
+            <p className="text-[#fff] text-[11px] mt-2 truncate text-center">
               {fileName}
             </p>
           )}
@@ -69,8 +69,8 @@ const DocumentUpload = ({
           <div className="w-10 h-10 rounded-full bg-[#eb660f]/10 flex items-center justify-center">
             <span className="text-[#eb660f] text-lg">↑</span>
           </div>
-          <p className="text-white text-xs font-medium">Click to upload</p>
-          <p className="text-[#555] text-[10px]">PNG, JPG up to 5MB</p>
+          <p className="text-[#fff] text-xs font-medium">Click to upload</p>
+          <p className="text-gray-400 text-[10px]">PNG, JPG up to 5MB</p>
         </div>
       )}
 

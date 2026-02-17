@@ -19,9 +19,9 @@ import {
 
 // ─── Constants ──────────────────────────────────────────────
 const STATUS_STYLES = {
-  open: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
-  inprogress: "bg-yellow-500/10 text-yellow-400",
-  closed: "bg-red-500/10 text-red-400",
+  open: "text-[#0ecb6f]",
+  inprogress: " text-yellow-400",
+  closed: " text-red-400",
 };
 
 const STATUS_OPTIONS = [
@@ -135,20 +135,16 @@ const Support = () => {
       <button
         onClick={() => navigate(`/support-chart/${data._id}`)}
         title="View Ticket"
-        className="w-8 h-8 flex items-center justify-center rounded-lg
-          bg-[#0ecb6f]/10 text-[#0ecb6f] hover:bg-[#0ecb6f]/20
-          transition-colors cursor-pointer"
+        className=" cursor-pointer"
       >
-        <Eye size={14} />
+        <Eye size={17} />
       </button>
       <button
         onClick={() => openEditModal(data._id)}
         title="Edit Status"
-        className="w-8 h-8 flex items-center justify-center rounded-lg
-          bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
-          transition-colors cursor-pointer"
+        className=" cursor-pointer"
       >
-        <Pencil size={14} />
+        <Pencil size={17} />
       </button>
     </div>
   );
@@ -243,7 +239,29 @@ const Support = () => {
     <>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Header */}
-                <div className="flex w-full">
+                
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
+            <MessageSquare size={20} className="text-[#eb660f]" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white">Support Tickets</h1>
+            <p className="text-[#8a8d93] text-sm">
+              Manage and respond to support requests
+            </p>
+          </div>
+        </div>
+
+        {/* Filters */}
+
+
+        {/* Table Section */}
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
+          {/* Header */}
+          <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
+            <div className="flex items-center justify-between">
+              
+              <div className="flex w-full">
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
             {/* Per Page */}
             <select
@@ -275,39 +293,11 @@ const Support = () => {
             />
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
-            <MessageSquare size={20} className="text-[#eb660f]" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white">Support Tickets</h1>
-            <p className="text-[#8a8d93] text-sm">
-              Manage and respond to support requests
-            </p>
-          </div>
-        </div>
-
-        {/* Filters */}
-
-
-        {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">
-                All Tickets
-              </h2>
-              {!isLoading && (
-                <span className="text-[#8a8d93] text-sm">
-                  {totalCount} total tickets
-                </span>
-              )}
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={TableData}
@@ -317,15 +307,7 @@ const Support = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={TableData}
-              isLoading={isLoading}
-              renderCard={renderSupportCard}
-              emptyMessage="No support tickets found"
-            />
-          </div>
+
         </div>
 
         {/* Pagination */}

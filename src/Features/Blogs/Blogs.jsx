@@ -795,29 +795,7 @@ const BlogEditor = () => {
           </button>
         </div>
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Posts"
-            value={pagination.total || 0}
-            valueClass="text-white"
-          />
-          <StatCard
-            title="Published"
-            value={publishedCount}
-            valueClass="text-[#0ecb6f]"
-          />
-          <StatCard
-            title="Drafts"
-            value={draftCount}
-            valueClass="text-yellow-400"
-          />
-          <StatCard
-            title="Scheduled"
-            value={scheduledCount}
-            valueClass="text-blue-400"
-          />
-        </div>
+
 
         {/* Fetching indicator */}
         {isFetchingPosts && !isLoadingPosts && (
@@ -852,13 +830,13 @@ const BlogEditor = () => {
                            bg-[#eb660f] text-white hover:bg-[#ff8533] transition-all cursor-pointer
                            disabled:opacity-50"
               >
-                <RefreshIcon className={isFetchingPosts ? "animate-spin" : ""} />
+             
                 Refresh
               </button>
             </div>
           </div>
 
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={posts}
@@ -868,18 +846,7 @@ const BlogEditor = () => {
             />
           </div>
 
-          <div className="lg:hidden">
-            <MobileCardList
-              data={posts}
-              isLoading={isLoadingPosts}
-              renderCard={renderPostCard}
-              emptyMessage={
-                searchTerm
-                  ? `No posts found for "${searchTerm}"`
-                  : "No blog posts yet. Create your first post!"
-              }
-            />
-          </div>
+
         </div>
 
         {totalPages > 1 && (

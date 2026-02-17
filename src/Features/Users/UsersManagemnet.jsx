@@ -16,7 +16,8 @@ import {
   useViewUserQuery,
 } from "./usersApiSlice";
 import { toast } from "react-toastify";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import {Eye ,Send } from "lucide-react";
 const UserManagement = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -39,7 +40,7 @@ const UserManagement = () => {
   const { data: getUser, isLoading, refetch } = useGetUserQuery(queryParams);
   const { data: viewUser, isLoading: isUserLoading } = useViewUserQuery(
     state.selectedUserId,
-    { skip: !state.selectedUserId }
+    { skip: !state.selectedUserId },
   );
   const [sendTransaction] = useSendTransactionMutation();
   const [blockUser] = useBlockUserMutation();
@@ -130,7 +131,12 @@ const UserManagement = () => {
   };
 
   const getKycStatus = (status) => {
-    const map = { open: "In Open", approve: "Approved", inprogress: "In Progress", reject: "Rejected" };
+    const map = {
+      open: "In Open",
+      approve: "Approved",
+      inprogress: "In Progress",
+      reject: "Rejected",
+    };
     return map[status] || "N/A";
   };
 
@@ -147,20 +153,34 @@ const UserManagement = () => {
     },
     { header: "Name", accessor: "name" },
     { header: "Email", accessor: "email" },
-    { header: "Mobile Number", render: (row) => `+${row.countryCode} ${row.phone}` },
+    {
+      header: "Mobile Number",
+      render: (row) => `+${row.countryCode} ${row.phone}`,
+    },
     { header: "Referral Code", accessor: "username" },
-    { header: "Available Balance", render: (row) => getCurrency(row.countryCode, row.Inr) },
-    { header: "Withdrawal Amount", render: (row) => getCurrency(row.countryCode, row.totalWithdrawal) },
+    {
+      header: "Available Balance",
+      render: (row) => getCurrency(row.countryCode, row.Inr),
+    },
+    {
+      header: "Withdrawal Amount",
+      render: (row) => getCurrency(row.countryCode, row.totalWithdrawal),
+    },
     {
       header: "Block/Unblock",
       render: (row) => (
-        <ToggleSwitch checked={!row.isBlock} onChange={() => handleToggleActive(row._id, row.isBlock)} />
+        <ToggleSwitch
+          checked={!row.isBlock}
+          onChange={() => handleToggleActive(row._id, row.isBlock)}
+        />
       ),
     },
     {
       header: "Status",
       render: (row) => (
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${row.isActive ? "bg-[#0ecb6f]/10 text-[#0ecb6f]" : "bg-red-500/10 text-red-400"}`}>
+        <span
+          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${row.isActive ? "bg-[#0ecb6f]/10 text-[#0ecb6f]" : "bg-red-500/10 text-red-400"}`}
+        >
           {row.isActive ? "Active" : "Inactive"}
         </span>
       ),
@@ -168,16 +188,22 @@ const UserManagement = () => {
     {
       header: "View User",
       render: (row) => (
-        <button onClick={() => handleUserView(row._id, "viewUser")} className="text-[#0ecb6f] hover:text-[#0ecb6f]/80 text-xs font-medium bg-[#0ecb6f]/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
-          View
+        <button
+          onClick={() => handleUserView(row._id, "viewUser")}
+          className="text-[#ffffff] hover:text-[#0ecb6f]/80 text-xs font-medium  px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+        >
+         <Eye size={18}/>
         </button>
       ),
     },
     {
       header: "View Referrer",
       render: (row) => (
-        <button onClick={() => handleUserView(row.referenceUserId, "viewReferrer")} className="text-blue-400 hover:text-blue-300 text-xs font-medium bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
-          View
+        <button
+          onClick={() => handleUserView(row.referenceUserId, "viewReferrer")}
+          className="text-white hover:text-blue-300 text-xs font-medium  px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+        >
+          <Eye size={18} />
         </button>
       ),
     },
@@ -185,11 +211,16 @@ const UserManagement = () => {
       header: "Action",
       render: (row) => (
         <button
-          onClick={() => { if (!row.isBlock) { setSelectedWithdrawId(row._id); setModals((prev) => ({ ...prev, transaction: true })); } }}
+          onClick={() => {
+            if (!row.isBlock) {
+              setSelectedWithdrawId(row._id);
+              setModals((prev) => ({ ...prev, transaction: true }));
+            }
+          }}
           disabled={row.isBlock}
           className="text-orange-400 hover:text-orange-300 text-xs font-medium bg-orange-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          Send
+          <Send size={15} />
         </button>
       ),
     },
@@ -214,8 +245,15 @@ const UserManagement = () => {
         rows={[
           { label: "Email", value: row.email },
           { label: "Mobile", value: `+${row.countryCode} ${row.phone}` },
-          { label: "Balance", value: getCurrency(row.countryCode, row.Inr), highlight: true },
-          { label: "Withdrawal", value: getCurrency(row.countryCode, row.totalWithdrawal) },
+          {
+            label: "Balance",
+            value: getCurrency(row.countryCode, row.Inr),
+            highlight: true,
+          },
+          {
+            label: "Withdrawal",
+            value: getCurrency(row.countryCode, row.totalWithdrawal),
+          },
           {
             label: "Block/Unblock",
             custom: (
@@ -257,15 +295,30 @@ const UserManagement = () => {
     { label: "User ID", value: data?.username },
     { label: "Email", value: data?.email },
     { label: "Phone", value: `+${data?.countryCode} ${data?.phone}` },
-    { label: "Referral Amount", value: getCurrency(data?.countryCode, data?.referenceInr?.toFixed(2)) },
+    {
+      label: "Referral Amount",
+      value: getCurrency(data?.countryCode, data?.referenceInr?.toFixed(2)),
+    },
     { label: "Referrer ID", value: data?.referenceId },
     { label: "Tokens", value: data?.tokens },
     { label: "Referral Count", value: data?.referenceCount },
     { label: "Status", value: data?.isActive ? "Active" : "Inactive" },
-    { label: "Created On", value: formatDateWithAmPm(data?.registeredDate || data?.createdAt) },
-    { label: "Active On", value: data?.activeDate ? formatDateWithAmPm(data.activeDate) : "N/A" },
-    { label: "Wallet Amount", value: getCurrency(data?.countryCode, data?.walletBalance?.toFixed(2)) },
-    { label: "Verified", value: data?.isVerified ? "Verified" : "Not Verified" },
+    {
+      label: "Created On",
+      value: formatDateWithAmPm(data?.registeredDate || data?.createdAt),
+    },
+    {
+      label: "Active On",
+      value: data?.activeDate ? formatDateWithAmPm(data.activeDate) : "N/A",
+    },
+    {
+      label: "Wallet Amount",
+      value: getCurrency(data?.countryCode, data?.walletBalance?.toFixed(2)),
+    },
+    {
+      label: "Verified",
+      value: data?.isVerified ? "Verified" : "Not Verified",
+    },
     { label: "KYC Status", value: getKycStatus(data?.kycStatus) },
   ];
 
@@ -281,7 +334,9 @@ const UserManagement = () => {
           </div>
           <div className="text-center mt-6">
             <button
-              onClick={() => setModals((prev) => ({ ...prev, [modalKey]: false }))}
+              onClick={() =>
+                setModals((prev) => ({ ...prev, [modalKey]: false }))
+              }
               className="bg-[#2a2c2f] hover:bg-[#333] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer"
             >
               Close
@@ -291,7 +346,10 @@ const UserManagement = () => {
       ) : (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-10 bg-[#2a2c2f] rounded-xl animate-pulse" />
+            <div
+              key={i}
+              className="h-10 bg-[#2a2c2f] rounded-xl animate-pulse"
+            />
           ))}
         </div>
       )}
@@ -301,69 +359,71 @@ const UserManagement = () => {
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-        <div className="flex w-full">
-<div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-  <select
-    onChange={(e) =>
-      setState((prev) => ({
-        ...prev,
-        perPage: Number(e.target.value),
-        currentPage: 1,
-      }))
-    }
-    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] transition-colors cursor-pointer"
-  >
-    <option value="10">10</option>
-    <option value="30">30</option>
-    <option value="50">50</option>
-  </select>
-
-  <input
-    type="text"
-    autoComplete="off"
-    placeholder="Search..."
-    onChange={handleSearch}
-    className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555] rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#0ecb6f] focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors w-full sm:w-48"
-  />
-</div>
-</div>
-
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* <StatCard title="Total Members" value={totalMembers} />
           <StatCard title="Total Blocked" value={blockedUser} />
           <StatCard title="Total Active Members" value={activeMembers} /> */}
 
-      
-<StatCard
-  title="Total Members"
-  value={totalMembers}
-  image="/images/total-member.png"
-/>
-<StatCard
-  title="Total Blocked"
-  value={blockedUser}
-  image="/images/total-member.png"
-/>
-<StatCard
-  title="Total Active Members"
-  value={activeMembers}
-  image="/images/total-member.png"
-/>
+          <StatCard
+            title="Total Members"
+            value={totalMembers}
+            image="/images/total-member.png"
+          />
+          <StatCard
+            title="Total Blocked"
+            value={blockedUser}
+            image="/images/total-member.png"
+          />
+          <StatCard
+            title="Total Active Members"
+            value={activeMembers}
+            image="/images/total-member.png"
+          />
         </div>
 
         {/* Table + Cards */}
-        <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
           {/* Search Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-white">Total Users</h1>
-           
+             
+              <div className="flex w-full">
+                <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
+                  <select
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: Number(e.target.value),
+                        currentPage: 1,
+                      }))
+                    }
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] transition-colors cursor-pointer"
+                  >
+                    <option value="10">10</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                  </select>
+                  <SearchBar
+                    onSearch={(e) => {
+                      clearTimeout(window._searchTimeout);
+                      window._searchTimeout = setTimeout(() => {
+                        setState((prev) => ({
+                          ...prev,
+                          search: e.target.value,
+                          currentPage: 1,
+                        }));
+                      }, 0);
+                    }}
+                    placeholder="Search..."
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={TableData}
@@ -373,15 +433,7 @@ const UserManagement = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={TableData}
-              isLoading={isLoading}
-              renderCard={renderUserCard}
-              emptyMessage="No users found"
-            />
-          </div>
+
         </div>
 
         {/* Pagination */}
@@ -395,11 +447,19 @@ const UserManagement = () => {
       </div>
 
       {/* Modals */}
-      <Modal isOpen={modals.viewUser} onClose={() => setModals((prev) => ({ ...prev, viewUser: false }))} title="User Details">
+      <Modal
+        isOpen={modals.viewUser}
+        onClose={() => setModals((prev) => ({ ...prev, viewUser: false }))}
+        title="User Details"
+      >
         <ModalContent modalKey="viewUser" />
       </Modal>
 
-      <Modal isOpen={modals.viewReferrer} onClose={() => setModals((prev) => ({ ...prev, viewReferrer: false }))} title="Referrer User Details">
+      <Modal
+        isOpen={modals.viewReferrer}
+        onClose={() => setModals((prev) => ({ ...prev, viewReferrer: false }))}
+        title="Referrer User Details"
+      >
         <ModalContent modalKey="viewReferrer" />
       </Modal>
 

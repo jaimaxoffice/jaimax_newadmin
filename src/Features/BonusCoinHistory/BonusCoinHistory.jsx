@@ -6,7 +6,7 @@ import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList"
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useBonusHistoryQuery } from "./bonusApiSlice";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar"
 const BonusHistory = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -215,13 +215,13 @@ const BonusHistory = () => {
     {
       header: "Email",
       render: (row) => (
-        <span className="text-xs text-[#8a8d93]">{row?.email || "N/A"}</span>
+        <span className="">{row?.email || "N/A"}</span>
       ),
     },
     {
       header: "Transaction Amount",
       render: (row) => (
-        <span className="text-[#eb660f] font-semibold">
+        <span className="">
           {row?.transactionAmount}
         </span>
       ),
@@ -230,13 +230,7 @@ const BonusHistory = () => {
       header: "Transaction Type",
       render: (row) => (
         <span
-          className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-            row?.transactionType?.toLowerCase() === "credit"
-              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-              : row?.transactionType?.toLowerCase() === "debit"
-              ? "bg-red-500/10 text-red-400"
-              : "bg-blue-500/10 text-blue-400"
-          }`}
+          className={``}
         >
           {row?.transactionType || "N/A"}
         </span>
@@ -245,7 +239,7 @@ const BonusHistory = () => {
     {
       header: "Transaction ID",
       render: (row) => (
-        <span className="text-xs text-[#8a8d93] font-mono">
+        <span className="">
           {row?.transactionId || "N/A"}
         </span>
       ),
@@ -336,109 +330,40 @@ const BonusHistory = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={handlePerPageChange}
-              value={state.perPage}
-              disabled={isLoading}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                          transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
 
-            {/* Search */}
-            <div className="relative">
-              <input
-                type="text"
-                autoComplete="off"
-                placeholder={
-                  isSearching ? "Searching..." : "Search name, email..."
-                }
-                onChange={handleSearch}
-                disabled={isLoading}
-                className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                            rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-[#eb660f]
-                            focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-56
-                            disabled:opacity-50"
-              />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]">
-                <SearchIcon className={isSearching ? "animate-spin" : ""} />
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Bonus Coins Given"
-            value={bonusCoins}
-            valueClass="text-[#0ecb6f]"
-          />
-          <StatCard
-            title="Total Transactions"
-            value={totalTransactions}
-            valueClass="text-blue-400"
-          />
-          <StatCard
-            title="Page Amount"
-            value={formatCurrency(totalTransactionAmount)}
-            valueClass="text-yellow-400"
-          />
-          <StatCard
-            title="Unique Emails"
-            value={uniqueEmails}
-            valueClass="text-purple-400"
-          />
-        </div>
+
 
         {/* Main Table Card */}
         <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center
-                              justify-center text-[#eb660f]"
-                >
-                  <CoinsIcon />
-                </div>
-                <div>
-                  <h1 className="text-lg font-semibold text-white">
-                    Bonus Coins History
-                  </h1>
-                  <p className="text-xs text-[#8a8d93] mt-0.5">
-                    Showing{" "}
-                    {TableData.length > 0
-                      ? (state.currentPage - 1) * state.perPage + 1
-                      : 0}{" "}
-                    to{" "}
-                    {Math.min(
-                      state.currentPage * state.perPage,
-                      totalItems
-                    )}{" "}
-                    of {totalItems} results
-                    {state.search && (
-                      <span className="text-[#eb660f]">
-                        {" "}
-                        for "{state.search}"
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+
+
+  {/* Filters - Right */}
+  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+    <select
+      onChange={handlePerPageChange}
+      value={state.perPage}
+      disabled={isLoading}
+      className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+        py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+        transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
+    >
+      <option value="10">10</option>
+      <option value="30">30</option>
+      <option value="50">50</option>
+    </select>
+
+    <SearchBar
+      onSearch={handleSearch}
+      placeholder={isSearching ? "Searching..." : "Search name, email..."}
+    />
+  </div>
+</div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={TableData}
@@ -448,19 +373,6 @@ const BonusHistory = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={TableData}
-              isLoading={isLoading}
-              renderCard={renderBonusCard}
-              emptyMessage={
-                state.search
-                  ? `No results found for "${state.search}"`
-                  : "No bonus coins history available"
-              }
-            />
-          </div>
         </div>
 
         {/* Pagination */}

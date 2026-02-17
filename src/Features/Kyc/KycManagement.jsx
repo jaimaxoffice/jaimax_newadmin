@@ -9,7 +9,8 @@ import KycViewModal from "./KycViewModal";
 import KycActionModal from "./KycActionModal";
 import { useKycListQuery } from "./kycApiSlice";
 import { toast } from "react-toastify";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import {Eye} from "lucide-react";
 const KycApprove = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -76,7 +77,7 @@ const KycApprove = () => {
       // your API call here
       toast.success(
         `KYC ${type === "approve" ? "approved" : "rejected"} successfully`,
-        { position: "top-center" }
+        { position: "top-center" },
       );
       refetch();
     } catch (error) {
@@ -155,10 +156,10 @@ const KycApprove = () => {
       <button
         onClick={() => handleView(data)}
         title="View"
-        className="text-blue-400 hover:text-blue-300 text-xs font-medium
-          bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+        className=" hover:text-blue-300 text-xs font-medium
+           px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
       >
-        View
+         <Eye  size={17}/>
       </button>
     );
   };
@@ -179,20 +180,21 @@ const KycApprove = () => {
     { header: "Bank Account", accessor: "bank_account" },
     {
       header: "Address",
+      cellClass: "text-left",
       render: (row) => (
-        <span className=" inline-block" title={row.address}>
+        <span className=" inline-block " title={row.address}>
           {row.address || "N/A"}
         </span>
       ),
     },
     { header: "IFSC Code", accessor: "ifsc_code" },
-    { header: "Mobile", accessor: "mobile_number" },
+    { header: "Mobile Number", accessor: "mobile_number" },
     {
       header: "Status",
       render: (row) => (
         <span
           className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${getStatusStyle(
-            row.status
+            row.status,
           )}`}
         >
           {getStatusText(row.status)}
@@ -260,32 +262,6 @@ const KycApprove = () => {
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-                <div className="flex w-full">
-<div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-  <select
-    onChange={(e) =>
-      setState((prev) => ({
-        ...prev,
-        perPage: Number(e.target.value),
-        currentPage: 1,
-      }))
-    }
-    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] transition-colors cursor-pointer"
-  >
-    <option value="10">10</option>
-    <option value="30">30</option>
-    <option value="50">50</option>
-  </select>
-
-  <input
-    type="text"
-    autoComplete="off"
-    placeholder="Search..."
-    onChange={handleSearch}
-    className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555] rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#0ecb6f] focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors w-full sm:w-48"
-  />
-</div>
-</div>
         {/* Status Cards */}
         {statusCounts.length > 0 && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -294,27 +270,43 @@ const KycApprove = () => {
                 key={i}
                 title={getStatusText(item._id) || item._id}
                 value={item.count}
-                valueClass={getStatColor(item._id)}
+                valueClass="text-[#eb660f]"
+                image="/images/total-member.png"
               />
             ))}
           </div>
         )}
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-white">
-                KYC Management
-              </h1>
-
-
+              
+              <div className="flex w-full">
+                <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
+                  <select
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: Number(e.target.value),
+                        currentPage: 1,
+                      }))
+                    }
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] transition-colors cursor-pointer"
+                  >
+                    <option value="10">10</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                  </select>
+                  <SearchBar onSearch={handleSearch} placeholder="Search..." />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={kycList}
@@ -324,15 +316,7 @@ const KycApprove = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={kycList}
-              isLoading={isLoading}
-              renderCard={renderKycCard}
-              emptyMessage="No KYC records found"
-            />
-          </div>
+
         </div>
 
         {/* Pagination */}

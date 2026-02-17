@@ -171,7 +171,17 @@ const WealthPlanLogs = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Filters Row */}
-        <div className="flex w-full">
+
+
+        {/* Table Card */}
+        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+          {/* Header */}
+          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <h1 className="text-lg font-semibold text-white">
+                Guaranteed Wealth Plan Logs
+              </h1>
+                      <div className="flex w-full">
           <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
             {/* Per Page */}
             <select
@@ -205,26 +215,11 @@ const WealthPlanLogs = () => {
           </div>
         </div>
 
-        {/* Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-white">
-                Guaranteed Wealth Plan Logs
-              </h1>
-              <span className="text-[#8a8d93] text-sm">
-                Total:{" "}
-                <span className="text-white font-semibold">
-                  {totalRecords}
-                </span>{" "}
-                records
-              </span>
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={tableData}
@@ -234,15 +229,6 @@ const WealthPlanLogs = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={tableData}
-              isLoading={isLoading}
-              renderCard={renderMobileCard}
-              emptyMessage="No wealth plan logs found"
-            />
-          </div>
         </div>
 
         {/* Pagination */}

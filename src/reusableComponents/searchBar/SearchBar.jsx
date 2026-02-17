@@ -1,31 +1,62 @@
 // src/components/SearchBar.jsx
-import { Icon } from "@iconify/react/dist/iconify.js";
+import { useState, useRef } from "react";
+import { Search, X } from "lucide-react";
 
 const SearchBar = ({ onSearch, placeholder = "Search..." }) => {
+  const [focused, setFocused] = useState(false);
+  const [value, setValue] = useState("");
+  const inputRef = useRef(null);
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
+    onSearch(e);
+  };
+
+  const handleClear = () => {
+    setValue("");
+    onSearch({ target: { value: "" } });
+    inputRef.current?.focus();
+  };
+
   return (
-    <div className="select_level_data mb-4">
-      <div className="input-group search_group">
-        <span
-          className="input-group-text border-0 shadow-none bg-transparent rounded-0 pe-0"
-          id="basic-addon1"
+    <div className="relative w-full sm:w-52">
+      <Search
+        size={15}
+        className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
+          focused || value ? "text-[#eb660f]" : "text-[#555]"
+        }`}
+      />
+
+      <input
+        ref={inputRef}
+        type="text"
+        autoComplete="off"
+        value={value}
+        placeholder={placeholder}
+        onChange={handleChange}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        className={`
+          w-full bg-[#111214] text-white text-sm
+          placeholder-[#555] py-2.5 pl-9 pr-9 rounded-xl
+          border outline-none transition-all duration-200
+          ${
+            focused
+              ? "border-[#eb660f] ring-1 ring-[#eb660f]/30"
+              : "border-[#2a2c2f] hover:border-[#3a3c3f]"
+          }
+        `}
+      />
+
+      {value && (
+        <button
+          onClick={handleClear}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] 
+            hover:text-[#eb660f] transition-colors cursor-pointer"
         >
-          <Icon
-            icon="tabler:search"
-            width="16"
-            height="16"
-            style={{ color: "var(--black)" }}
-          />
-        </span>
-        <input
-          type="text"
-          autoComplete="off"
-          className="form-control border-0 shadow-none rounded-0 bg-transparent"
-          placeholder={placeholder}
-          aria-label="Search"
-          aria-describedby="basic-addon1"
-          onChange={onSearch}
-        />
-      </div>
+          <X size={14} />
+        </button>
+      )}
     </div>
   );
 };

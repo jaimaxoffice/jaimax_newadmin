@@ -15,7 +15,7 @@ import {
   ChevronRight,
   Image as ImageIcon,
 } from "lucide-react";
-
+import Loader from "../../reusableComponents/Loader/Loader"
 import Modal from "../../reusableComponents/Modals/Modals";
 import ConfirmModal from "../../reusableComponents/Modals/ConfirmModal";
 
@@ -830,10 +830,7 @@ const AnnouncementList = () => {
 
         {/* Loading */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-8 h-8 border-2 border-[#eb660f]/30 border-t-[#eb660f] rounded-full animate-spin" />
-            <p className="text-[#eb660f] mt-4 text-sm">Loading...</p>
-          </div>
+         <Loader/>
         )}
 
         {/* Error */}

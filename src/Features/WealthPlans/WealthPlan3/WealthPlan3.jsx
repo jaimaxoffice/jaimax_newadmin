@@ -124,6 +124,13 @@ const WealthLogs3O = () => {
 
   return (
     <div className="p-2 sm:p-2 space-y-6">
+
+      <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <h1 className="text-lg font-semibold text-white">
+              Guaranteed Wealth Plan Logs 3.O
+            </h1>
               <div className="flex w-full">
 <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
   <select
@@ -150,17 +157,10 @@ const WealthLogs3O = () => {
   />
 </div>
 </div>
-      <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <h1 className="text-lg font-semibold text-white">
-              Guaranteed Wealth Plan Logs 3.O
-            </h1>
-
           </div>
         </div>
 
-        <div className="hidden lg:block">
+        <div className="">
           <Table
             columns={columns}
             data={tableData}
@@ -170,14 +170,6 @@ const WealthLogs3O = () => {
           />
         </div>
 
-        <div className="lg:hidden">
-          <MobileCardList
-            data={tableData}
-            isLoading={isLoading}
-            renderCard={renderMobileCard}
-            emptyMessage="No logs found"
-          />
-        </div>
       </div>
 
       {tableData?.length > 0 && (

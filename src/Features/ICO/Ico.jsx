@@ -328,7 +328,7 @@ const IcoManagement = () => {
     <>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -375,7 +375,7 @@ const IcoManagement = () => {
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={TableData}
@@ -385,24 +385,7 @@ const IcoManagement = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            {isLoading ? (
-              <div className="p-4 space-y-3">
-                {[...Array(3)].map((_, i) => (
-                  <MobileCard key={i} isLoading />
-                ))}
-              </div>
-            ) : TableData.length === 0 ? (
-              <div className="py-12 text-center text-[#555] text-sm">
-                No rounds found
-              </div>
-            ) : (
-              <div className="p-4 space-y-3">
-                {TableData.map((row, index) => renderIcoCard(row, index))}
-              </div>
-            )}
-          </div>
+
         </div>
 
         {/* Pagination */}

@@ -12,7 +12,8 @@ import {
   useTransListQuery,
 } from "./walletApiSlice";
 import { toast } from "react-toastify";
-
+import {PencilLine } from "lucide-react"
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 const WalletApprove = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -207,11 +208,9 @@ const WalletApprove = () => {
         <button
           onClick={() => handleEdit(data)}
           title="Edit"
-          className="w-8 h-8 flex items-center justify-center rounded-lg 
-            bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 
-            transition-colors cursor-pointer text-sm"
+          className=" w-8 h-8  items-center justify-center rounded-lg  bg-green-500/10 text-blue-500 transition-colors cursor-pointer text-sm font-bold"
         >
-          ✎
+          <PencilLine  size={15} />
         </button>
       </div>
     );
@@ -226,9 +225,9 @@ const WalletApprove = () => {
     },
     { header: "Name", accessor: "name" },
     { header: "Payment Method", accessor: "paymentMode" },
-    { header: "Type", accessor: "transactionType" },
+    { header: "Transaction Type", accessor: "transactionType" },
     {
-      header: "Amount",
+      header: "Transaction Amount",
       render: (row) =>
         getCurrency(row.userId?.countryCode, row.transactionAmount),
     },
@@ -240,7 +239,7 @@ const WalletApprove = () => {
             href={row.screenshotUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-[#0ecb6f] hover:underline text-xs"
+            className="text-blue-800 hover:underline text-xs"
           >
             {row.transactionId}
           </a>
@@ -249,7 +248,7 @@ const WalletApprove = () => {
         ),
     },
     {
-      header: "Date",
+      header: "Transaction  Date",
       render: (row) => formatDateWithAmPm(row.transactionDate),
     },
     {
@@ -260,7 +259,7 @@ const WalletApprove = () => {
       header: "Status",
       render: (row) => (
         <span
-          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${getStatusStyle(row.transactionStatus)}`}
+          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full text-center ${getStatusStyle(row.transactionStatus)}`}
         >
           {row.transactionStatus}
         </span>
@@ -269,7 +268,7 @@ const WalletApprove = () => {
     {
       header: "Reason",
       render: (row) => (
-        <span className="text-xs text-[#8a8d93]">{row.reason || "N/A"}</span>
+        <span className="">{row.reason || "N/A"}</span>
       ),
     },
     {
@@ -365,52 +364,7 @@ const WalletApprove = () => {
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-<div className="flex w-full">
-  <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-    
-    {/* Per Page */}
-    <select
-      onChange={(e) =>
-        setState((prev) => ({
-          ...prev,
-          perPage: Number(e.target.value),
-          currentPage: 1,
-        }))
-      }
-      className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-              py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] 
-              transition-colors cursor-pointer"
-    >
-      <option value="10">10</option>
-      <option value="30">30</option>
-      <option value="50">50</option>
-    </select>
 
-    {/* Transaction Type Filter */}
-    <select
-      value={selectedStatus}
-      onChange={handleStatusChange}
-      className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-              py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
-              transition-colors cursor-pointer"
-    >
-      <option value="Transaction Type">All Types</option>
-      <option value="Credit">Credit</option>
-      <option value="Debit">Debit</option>
-    </select>
-
-    {/* Search */}
-    <input
-      type="text"
-      autoComplete="off"
-      placeholder="Search..."
-      onChange={handleSearch}
-      className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555] 
-              rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f] 
-              focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-44"
-    />
-  </div>
-</div>
 
         {/* Status Cards */}
         {statusCounts && (
@@ -418,39 +372,90 @@ const WalletApprove = () => {
             <StatCard
               title="Pending"
               value={statusCounts.Pending || 0}
-              valueClass="text-yellow-400"
+              valueClass=""
+              bgClass="bg-[#544a24] "
             />
             <StatCard
               title="Completed"
               value={statusCounts.Completed || 0}
-              valueClass="text-[#eb660f]"
+              valueClass=""
+              bgClass="bg-[#1a3c37] "
             />
             <StatCard
               title="Hold"
               value={statusCounts.Hold || 0}
-              valueClass="text-blue-400"
+              valueClass=""
+              bgClass="bg-[#174d5e] "
             />
             <StatCard
               title="Failed"
               value={statusCounts.Failed || 0}
-              valueClass="text-red-400"
+              valueClass=""
+              bgClass="bg-[#4b2733] "
             />
           </div>
         )}
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden ">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-white">
-                Wallet Management
-              </h1>
+              
+                      <div className="flex w-full">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
+            {/* Per Page */}
+            <select
+              onChange={(e) =>
+                setState((prev) => ({
+                  ...prev,
+                  perPage: Number(e.target.value),
+                  currentPage: 1,
+                }))
+              }
+              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
+              py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] 
+              transition-colors cursor-pointer"
+            >
+              <option value="10">10</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+            </select>
+
+            {/* Transaction Type Filter */}
+            <select
+              value={selectedStatus}
+              onChange={handleStatusChange}
+              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
+              py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
+              transition-colors cursor-pointer"
+            >
+              <option value="Transaction Type">All Types</option>
+              <option value="Credit">Credit</option>
+              <option value="Debit">Debit</option>
+            </select>
+
+            {/* Search */}
+            <SearchBar
+              onSearch={(e) => {
+                clearTimeout(window._searchTimeout);
+                window._searchTimeout = setTimeout(() => {
+                  setState((prev) => ({
+                    ...prev,
+                    search: e.target.value,
+                    currentPage: 1,
+                  }));
+                }, 1000);
+              }}
+              placeholder="Search..."
+            />
+          </div>
+        </div>
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className=" border border-[#303f50]">
             <Table
               columns={columns}
               data={transactions}
@@ -461,14 +466,7 @@ const WalletApprove = () => {
           </div>
 
           {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={transactions}
-              isLoading={isLoading}
-              renderCard={renderWalletCard}
-              emptyMessage="No transactions found"
-            />
-          </div>
+          
         </div>
 
         {/* Pagination */}

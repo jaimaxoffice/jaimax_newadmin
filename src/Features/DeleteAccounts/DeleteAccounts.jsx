@@ -215,58 +215,53 @@ const DeletedUsersTable = () => {
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
-        {/* Stat Card */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Deleted Users"
-            value={Number(totalDeletedUsers).toLocaleString()}
-            valueClass="text-red-400"
-          />
-        </div>
+        
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-white">
-                Deleted Users Report
-              </h1>
+<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+  {/* Header */}
+  <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+    {/* Title + Delete Button */}
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <h1 className="text-lg font-semibold text-white">
+        Deleted Users Report
+      </h1>
+      <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-2.5">
+        <span className="text-sm text-[#8a8d93] font-medium">Total Deleted Users:</span>
+        <span className="text-lg font-bold text-red-400">
+          {Number(totalDeletedUsers).toLocaleString()}
+        </span>
+      </div>
 
-              <button
-                onClick={handleShowDeleteModal}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                           bg-red-500/10 text-red-400 border border-red-500/20
-                           hover:bg-red-500/20 hover:border-red-500/30
-                           transition-all duration-200 cursor-pointer"
-              >
-                <TrashIcon />
-                Delete User
-              </button>
-            </div>
-          </div>
+      <button
+        onClick={handleShowDeleteModal}
+        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+          bg-red-500/10 text-red-400 border border-red-500/20
+          hover:bg-red-500/20 hover:border-red-500/30
+          transition-all duration-200 cursor-pointer"
+      >
+        <TrashIcon />
+        Delete User
+      </button>
+    </div>
 
-          {/* Desktop Table */}
-          <div className="hidden lg:block">
-            <Table
-              columns={columns}
-              data={usersData}
-              isLoading={isLoading}
-              currentPage={1}
-              perPage={usersData.length}
-            />
-          </div>
+    {/* Total Count - Centered */}
+    
+  </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={usersData}
-              isLoading={isLoading}
-              renderCard={renderUserCard}
-              emptyMessage="No deleted users found"
-            />
-          </div>
-        </div>
+  {/* Desktop Table */}
+  <div className="">
+    <Table
+      columns={columns}
+      data={usersData}
+      isLoading={isLoading}
+      currentPage={1}
+      perPage={usersData.length}
+    />
+  </div>
+
+
+</div>
       </div>
 
       {/* User Details Modal */}

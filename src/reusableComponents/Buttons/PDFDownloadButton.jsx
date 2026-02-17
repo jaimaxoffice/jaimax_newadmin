@@ -8,13 +8,13 @@ const PDFDownloadButton = ({
   isGenerating = false,
   label = "Export PDF",
   showPreview = true,
-  size = "md",
+  size = "lg",
   className = "",
 }) => {
   const sizeClasses = {
     sm: "py-1.5 px-3 text-xs",
-    md: "py-2.5 px-4 text-sm",
-    lg: "py-3 px-6 text-base",
+    md: "py-1 px-4 text-sm",
+    lg: "py-2 px-6 text-base",
   };
 
   return (
@@ -34,7 +34,7 @@ const PDFDownloadButton = ({
           </>
         ) : (
           <>
-            <Download size={16} />
+            <Download size={12} />
             {label}
           </>
         )}

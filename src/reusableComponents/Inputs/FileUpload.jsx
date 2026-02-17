@@ -42,7 +42,7 @@ const FileUpload = ({
   };
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       {label && (
         <label className="block text-sm font-medium text-[#8a8d93] mb-1.5">
           {label}
@@ -60,13 +60,15 @@ const FileUpload = ({
 
       {previewUrl ? (
         /* File Preview */
-        <div className="bg-[#111214] border border-[#eb660f]/30 rounded-xl p-3">
-          <div className="flex items-center gap-3">
+        <div className="flex-1 bg-[#111214] border border-[#eb660f]/30 rounded-xl p-4 flex flex-col">
+          <div className="flex-1 flex items-center justify-center mb-3">
             <img
               src={previewUrl}
               alt="Preview"
-              className="w-14 h-14 object-cover rounded-lg border-2 border-[#eb660f]/30"
+              className="max-w-full max-h-64 object-contain rounded-lg border-2 border-[#eb660f]/30"
             />
+          </div>
+          <div className="flex items-center gap-3 pt-3 border-t border-[#2a2c2f]">
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-medium truncate">
                 {file?.name}
@@ -100,8 +102,8 @@ const FileUpload = ({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-xl p-8 cursor-pointer
-            flex flex-col items-center justify-center gap-2 transition-all
+          className={`flex-1 min-h-[280px] border-2 border-dashed rounded-xl p-8 cursor-pointer
+            flex flex-col items-center justify-center gap-3 transition-all
             ${
               error
                 ? "border-red-500/50 bg-red-500/5"
@@ -110,15 +112,17 @@ const FileUpload = ({
                 : "border-[#2a2c2f] bg-[#111214] hover:border-[#eb660f]/50 hover:bg-[#eb660f]/5"
             }`}
         >
-          <div className="w-12 h-12 rounded-full bg-[#eb660f]/10 flex items-center justify-center">
-            <span className="text-[#eb660f] text-xl">↑</span>
+          <div className="w-16 h-16 rounded-full bg-[#eb660f]/10 flex items-center justify-center">
+            <span className="text-[#eb660f] text-2xl">↑</span>
           </div>
-          <p className="text-white text-sm font-medium">
-            {isDragging ? "Drop file here" : "Click or drag to upload"}
-          </p>
-          <p className="text-[#555] text-xs">
-            {hint} (Max {maxSize}MB)
-          </p>
+          <div className="text-center">
+            <p className="text-white text-sm font-medium">
+              {isDragging ? "Drop file here" : "Click or drag to upload"}
+            </p>
+            <p className="text-gray-400 text-xs mt-1">
+              {hint} (Max {maxSize}MB)
+            </p>
+          </div>
         </div>
       )}
 

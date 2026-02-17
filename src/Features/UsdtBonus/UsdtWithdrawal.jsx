@@ -1,5 +1,11 @@
 // src/features/usdtBonus/UsdtBonusList.jsx
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
@@ -7,7 +13,8 @@ import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import Modal from "../../reusableComponents/Modals/Modals";
 import { useGetUsdtBonusListQuery } from "./usdtwithdrawalApiSlice";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import Loader from "../../reusableComponents/Loader/Loader";
 const UsdtBonusList = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -51,23 +58,23 @@ const UsdtBonusList = () => {
   // Stats
   const totalPending = useMemo(
     () => TableData.filter((req) => req.status === 0).length,
-    [TableData]
+    [TableData],
   );
   const totalApproved = useMemo(
     () => TableData.filter((req) => req.status === 1).length,
-    [TableData]
+    [TableData],
   );
   const totalRejected = useMemo(
     () => TableData.filter((req) => req.status === 2).length,
-    [TableData]
+    [TableData],
   );
   const totalUsdtAmount = useMemo(
     () =>
       TableData.reduce(
         (sum, item) => sum + getDecimalValue(item?.amount_in_token),
-        0
+        0,
       ),
-    [TableData]
+    [TableData],
   );
 
   // ─── Handlers ────────────────────────────────────────────────
@@ -160,8 +167,8 @@ const UsdtBonusList = () => {
       error?.status === 524
         ? "The request timed out. This might be due to a large dataset."
         : error?.status === 500
-        ? "Server error. Please try again later."
-        : error?.data?.message || "Something went wrong. Please try again.";
+          ? "Server error. Please try again later."
+          : error?.data?.message || "Something went wrong. Please try again.";
 
     return (
       <div>
@@ -170,23 +177,11 @@ const UsdtBonusList = () => {
             <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]">
-                    <UsdtIcon />
-                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]"></div>
                   <h1 className="text-lg font-semibold text-white">
                     USDT Bonus Withdrawals
                   </h1>
                 </div>
-                <button
-                  onClick={() => refetch()}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#eb660f] text-white hover:bg-[#ff8533]
-                             transition-all duration-200 cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshIcon className={isLoading ? "animate-spin" : ""} />
-                  Refresh
-                </button>
               </div>
             </div>
 
@@ -228,7 +223,11 @@ const UsdtBonusList = () => {
             <StatCard title="Pending" value="--" valueClass="text-yellow-400" />
             <StatCard title="Approved" value="--" valueClass="text-[#0ecb6f]" />
             <StatCard title="Rejected" value="--" valueClass="text-red-400" />
-            <StatCard title="Total USDT" value="--" valueClass="text-blue-400" />
+            <StatCard
+              title="Total USDT"
+              value="--"
+              valueClass="text-blue-400"
+            />
           </div>
         </div>
       </div>
@@ -293,7 +292,7 @@ const UsdtBonusList = () => {
         <span className="text-[#0ecb6f] font-semibold text-sm">
           {formatCurrency(
             getDecimalValue(row?.amount_in_token),
-            row?.currency || "USDT"
+            row?.currency || "USDT",
           )}
         </span>
       ),
@@ -304,7 +303,7 @@ const UsdtBonusList = () => {
         <span className="text-yellow-400 text-xs">
           {formatCurrency(
             getDecimalValue(row?.admin_fee_token),
-            row?.currency || "USDT"
+            row?.currency || "USDT",
           )}
         </span>
       ),
@@ -315,7 +314,7 @@ const UsdtBonusList = () => {
         <span className="text-blue-400 font-semibold text-sm">
           {formatCurrency(
             getDecimalValue(row?.senttoken),
-            row?.currency || "USDT"
+            row?.currency || "USDT",
           )}
         </span>
       ),
@@ -348,13 +347,13 @@ const UsdtBonusList = () => {
       },
     },
     {
-      header: "Wallet",
+      header: "Wallet Address",
       render: (row) => (
         <button
           onClick={() =>
             openDetailModal(
               "Wallet Address",
-              row?.walletAddress || "No wallet address available."
+              row?.walletAddress || "No wallet address available.",
             )
           }
           className="text-[11px] font-semibold px-2.5 py-1 rounded-lg
@@ -402,8 +401,8 @@ const UsdtBonusList = () => {
             row?.status === 1
               ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
               : row?.status === 2
-              ? "bg-red-500/10 text-red-400"
-              : "bg-yellow-500/10 text-yellow-400",
+                ? "bg-red-500/10 text-red-400"
+                : "bg-yellow-500/10 text-yellow-400",
           title: row?.userId?.name || "N/A",
           subtitle: `#${sNo} • ${row?.userId?.username || "N/A"}`,
           badge: status.label,
@@ -472,7 +471,7 @@ const UsdtBonusList = () => {
               onClick={() =>
                 openDetailModal(
                   "Wallet Address",
-                  row?.walletAddress || "No wallet address available."
+                  row?.walletAddress || "No wallet address available.",
                 )
               }
               className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl
@@ -507,92 +506,34 @@ const UsdtBonusList = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={handlePerPageChange}
-              value={state.perPage}
-              disabled={isLoading}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                         transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-
-            {/* Type Filter */}
-            <select
-              onChange={handleTypeChange}
-              value={selectedType}
-              disabled={isLoading}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                         transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <option value="">All Types</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-
-            {/* Search */}
-            <div className="relative">
-              <input
-                type="text"
-                autoComplete="off"
-                placeholder={
-                  isSearching ? "Searching..." : "Search username..."
-                }
-                onChange={handleSearch}
-                disabled={isLoading}
-                className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                           rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-[#eb660f]
-                           focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-56
-                           disabled:opacity-50"
-              />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]">
-                <SearchIcon className={isSearching ? "animate-spin" : ""} />
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Pending"
             value={totalPending}
-            valueClass="text-yellow-400"
+            valueClass="text-white"
           />
           <StatCard
             title="Approved"
             value={totalApproved}
-            valueClass="text-[#0ecb6f]"
+            valueClass="text-[#ffffff]"
           />
           <StatCard
             title="Rejected"
             value={totalRejected}
-            valueClass="text-red-400"
+            valueClass="text-white"
           />
           <StatCard
             title="Total USDT"
             value={`${totalUsdtAmount.toFixed(2)} USDT`}
-            valueClass="text-blue-400"
+            valueClass="text-white"
           />
         </div>
 
         {/* Fetching Indicator */}
         {isFetching && !isLoading && (
-          <div className="flex items-center justify-center gap-2 py-2">
-            <div className="w-4 h-4 border-2 border-[#eb660f] border-t-transparent rounded-full animate-spin" />
-            <span className="text-[#8a8d93] text-sm">
-              Loading page {state.currentPage}...
-            </span>
-          </div>
+          <Loader/>
         )}
 
         {/* Main Table Card */}
@@ -600,61 +541,56 @@ const UsdtBonusList = () => {
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center
-                             justify-center text-[#eb660f]"
-                >
-                  <UsdtIcon />
-                </div>
-                <div>
-                  <h1 className="text-lg font-semibold text-white">
-                    USDT Bonus Withdrawals
-                  </h1>
-                  <p className="text-xs text-[#8a8d93] mt-0.5">
-                    Showing{" "}
-                    {TableData.length > 0
-                      ? (state.currentPage - 1) * state.perPage + 1
-                      : 0}{" "}
-                    to{" "}
-                    {Math.min(
-                      state.currentPage * state.perPage,
-                      totalRecords
-                    )}{" "}
-                    of {totalRecords} results
-                    {state.search && (
-                      <span className="text-[#eb660f]">
-                        {" "}
-                        for "{state.search}"
-                      </span>
-                    )}
-                    {selectedType && (
-                      <span className="text-blue-400">
-                        {" "}
-                        • {selectedType}
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
+              
+               
+                 
+                  <div className="flex w-full">
+                    <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
+                      {/* Per Page */}
+                      <select
+                        onChange={handlePerPageChange}
+                        value={state.perPage}
+                        disabled={isLoading}
+                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                         transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        <option value="10">10</option>
+                        <option value="30">30</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
 
-              <button
-                onClick={() => refetch()}
-                disabled={isLoading || isFetching}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                           bg-[#eb660f] text-white hover:bg-[#ff8533]
-                           transition-all duration-200 cursor-pointer disabled:opacity-50"
-              >
-                <RefreshIcon
-                  className={isLoading || isFetching ? "animate-spin" : ""}
-                />
-                Refresh
-              </button>
+                      {/* Type Filter */}
+                      <select
+                        onChange={handleTypeChange}
+                        value={selectedType}
+                        disabled={isLoading}
+                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                         transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        <option value="">All Types</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+
+                      <SearchBar
+                        onSearch={handleSearch}
+                        placeholder={
+                          isSearching ? "Searching..." : "Search username..."
+                        }
+                      />
+                    </div>
+                  </div>
+                
+              
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={TableData}
@@ -665,7 +601,7 @@ const UsdtBonusList = () => {
           </div>
 
           {/* Mobile Cards */}
-          <div className="lg:hidden">
+          {/* <div className="lg:hidden">
             <MobileCardList
               data={TableData}
               isLoading={isLoading}
@@ -678,7 +614,7 @@ const UsdtBonusList = () => {
                   : "No USDT bonus withdrawals available"
               }
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Pagination */}

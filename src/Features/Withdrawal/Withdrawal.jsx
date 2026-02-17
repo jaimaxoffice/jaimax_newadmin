@@ -14,7 +14,8 @@ import {
   useWithdrawApprovalMutation,
 } from "./withdrawalApiSlice";
 import { formatDateWithAmPm, formatCurrency } from "../../utils/dateUtils";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import { Eye } from "lucide-react";
 const Withdrawal = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -130,7 +131,7 @@ const Withdrawal = () => {
     } catch (error) {
       toast.error(
         error?.data?.isApproved?.message || "Failed to approve withdrawal",
-        { position: "top-center" }
+        { position: "top-center" },
       );
     }
   };
@@ -182,9 +183,9 @@ const Withdrawal = () => {
 
   const getStatusStyle = (status) => {
     const map = {
-      0: "bg-yellow-500/10 text-yellow-400",
-      1: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
-      2: "bg-red-500/10 text-red-400",
+      0: " text-yellow-400",
+      1: " text-[#0ecb6f]",
+      2: " text-red-400",
     };
     return map[status] || "bg-[#2a2c2f] text-[#8a8d93]";
   };
@@ -194,10 +195,10 @@ const Withdrawal = () => {
     <button
       onClick={onClick}
       className="px-3 py-1.5 text-xs font-semibold rounded-lg
-        bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
+         text-[#ffffff] hover:bg-[#eb660f]/20
         transition-colors cursor-pointer"
     >
-      {label}
+      <Eye size={17} />
     </button>
   );
 
@@ -213,7 +214,7 @@ const Withdrawal = () => {
           onClick={() => handleApproveClick(data._id)}
           title="Approve"
           className="w-8 h-8 flex items-center justify-center rounded-lg
-            bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
+            bg-[#eb660f]/10 text-green-400 hover:bg-[#eb660f]/20
             transition-colors cursor-pointer text-sm font-bold"
         >
           ✓
@@ -244,28 +245,22 @@ const Withdrawal = () => {
     },
     {
       header: "Transaction Id",
-      render: (row) => (
-        <span className=" ">{row?._id || "—"}</span>
-      ),
+      render: (row) => <span className=" ">{row?._id || "—"}</span>,
     },
     {
       header: "Customer Id",
       render: (row) => row?.userId?.username || "—",
     },
     {
-      header: "Currency",
+      header: "Currency Type",
       accessor: "currency",
     },
     {
       header: "UTR Number",
-      render: (row) => (
-        <span >
-          {row.utr_number || "N/A"}
-        </span>
-      ),
+      render: (row) => <span>{row.utr_number || "N/A"}</span>,
     },
     {
-      header: "Amount",
+      header: "Withdrawal Amount",
       render: (row) => formatCurrency(row.amount, row.currency),
     },
     {
@@ -278,7 +273,7 @@ const Withdrawal = () => {
         <span className="font-semibold text-white">
           {formatCurrency(
             row.amount - row.admin_inr_charges || 0,
-            row.currency
+            row.currency,
           )}
         </span>
       ),
@@ -286,9 +281,7 @@ const Withdrawal = () => {
     {
       header: "Date",
       render: (row) => (
-        <span className="text-xs">
-          {formatDateWithAmPm(row?.created_at)}
-        </span>
+        <span className="text-xs">{formatDateWithAmPm(row?.created_at)}</span>
       ),
     },
     {
@@ -296,7 +289,7 @@ const Withdrawal = () => {
       render: (row) => (
         <span
           className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${getStatusStyle(
-            row.status
+            row.status,
           )}`}
         >
           {getStatusLabel(row.status)}
@@ -319,8 +312,7 @@ const Withdrawal = () => {
 
   // Mobile Card Builder
   const renderWithdrawalCard = (row, index) => {
-    const sNo =
-      state.currentPage * state.perPage - (state.perPage - 1) + index;
+    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
     const isActionable = row.status === 0;
 
     const actions = isActionable
@@ -347,8 +339,8 @@ const Withdrawal = () => {
             row.status === 1
               ? "bg-green-400 text-gree-400"
               : row.status === 2
-              ? "bg-red-500/10 text-red-400"
-              : "bg-yellow-500/10 text-yellow-400",
+                ? "bg-red-500/10 text-red-400"
+                : "bg-yellow-500/10 text-yellow-400",
           title: row?.userId?.name || "Unknown",
           subtitle: `#${sNo} • ${row.currency}`,
           badge: getStatusLabel(row.status),
@@ -368,7 +360,7 @@ const Withdrawal = () => {
             label: "Final Amount",
             value: formatCurrency(
               row.amount - row.admin_inr_charges || 0,
-              row.currency
+              row.currency,
             ),
             highlight: true,
           },
@@ -402,85 +394,81 @@ const Withdrawal = () => {
     <>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Filters */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  perPage: Number(e.target.value),
-                  currentPage: 1,
-                }))
-              }
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f]
-                transition-colors cursor-pointer"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
-
-            {/* Status Filter */}
-            <select
-              value={selectedStatus}
-              onChange={handleStatusChange}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                transition-colors cursor-pointer"
-            >
-              <option value="Select Status">All Status</option>
-              <option value="Approved">Approved</option>
-              <option value="Pending">Pending</option>
-              <option value="Rejected">Rejected</option>
-            </select>
-
-            {/* Search */}
-            <input
-              type="text"
-              autoComplete="off"
-              placeholder="Search..."
-              onChange={handleSearch}
-              className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-44"
-            />
-          </div>
-        </div>
 
         {/* Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Pending"
             value={totalPending}
-            valueClass="text-yellow-400"
+            valueClass="text-white"
+            // bgClass="bg-yellow-500/25 border border-yellow-500/30 shadow-md hover:border-yellow-400/50"
+            image="/images/pending.png"
           />
           <StatCard
             title="Approved"
             value={totalApproved}
-            valueClass="text-[#0ecb6f]"
+            valueClass="text-[#ffffffff]"
+            // bgClass="bg-[#0ecb6f]/25 border border-[#0ecb6f]/30 shadow-md hover:border-[#0ecb6f]/50"
+            image="/images/approve.png"
           />
           <StatCard
             title="Rejected"
             value={totalRejected}
-            valueClass="text-red-400"
+            valueClass="text-white"
+            // bgClass="bg-red-500/25 border border-red-500/30 shadow-md hover:border-red-400/50"
+            image="/images/approve.png"
           />
         </div>
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-white">
-                Withdrawal Requests
-              </h1>
+              <div className="flex w-full">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
+                  {/* Per Page */}
+                  <select
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: Number(e.target.value),
+                        currentPage: 1,
+                      }))
+                    }
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f]
+                transition-colors cursor-pointer"
+                  >
+                    <option value="10">10</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                  </select>
+
+                  {/* Status Filter */}
+                  <select
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                transition-colors cursor-pointer"
+                  >
+                    <option value="Select Status">All Status</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                  <SearchBar
+                    onSearch={handleSearch}
+                    placeholder="Search with tnx id,username,amount"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden lg:block">
+          <div className="">
             <Table
               columns={columns}
               data={transactions}
@@ -490,15 +478,7 @@ const Withdrawal = () => {
             />
           </div>
 
-          {/* Mobile Cards */}
-          <div className="lg:hidden">
-            <MobileCardList
-              data={transactions}
-              isLoading={isLoading}
-              renderCard={renderWithdrawalCard}
-              emptyMessage="No withdrawal requests found"
-            />
-          </div>
+
         </div>
 
         {/* Pagination */}
