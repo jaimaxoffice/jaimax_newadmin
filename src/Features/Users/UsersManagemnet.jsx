@@ -18,6 +18,7 @@ import {
 import { toast } from "react-toastify";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import {Eye ,Send } from "lucide-react";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const UserManagement = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -226,68 +227,7 @@ const UserManagement = () => {
     },
   ];
 
-  // Mobile Card Builder
-  const renderUserCard = (row, index) => {
-    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
 
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: row.name?.charAt(0)?.toUpperCase(),
-          title: row.name,
-          subtitle: `#${sNo} • ${row.username}`,
-          badge: row.isActive ? "Active" : "Inactive",
-          badgeClass: row.isActive
-            ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-            : "bg-red-500/10 text-red-400",
-        }}
-        rows={[
-          { label: "Email", value: row.email },
-          { label: "Mobile", value: `+${row.countryCode} ${row.phone}` },
-          {
-            label: "Balance",
-            value: getCurrency(row.countryCode, row.Inr),
-            highlight: true,
-          },
-          {
-            label: "Withdrawal",
-            value: getCurrency(row.countryCode, row.totalWithdrawal),
-          },
-          {
-            label: "Block/Unblock",
-            custom: (
-              <ToggleSwitch
-                checked={!row.isBlock}
-                onChange={() => handleToggleActive(row._id, row.isBlock)}
-              />
-            ),
-          },
-        ]}
-        actions={[
-          {
-            label: "View User",
-            onClick: () => handleUserView(row._id, "viewUser"),
-            className: "text-[#0ecb6f] hover:bg-[#0ecb6f]/5",
-          },
-          {
-            label: "Referrer",
-            onClick: () => handleUserView(row.referenceUserId, "viewReferrer"),
-            className: "text-blue-400 hover:bg-blue-500/5",
-          },
-          {
-            label: "Send",
-            onClick: () => {
-              setSelectedWithdrawId(row._id);
-              setModals((prev) => ({ ...prev, transaction: true }));
-            },
-            disabled: row.isBlock,
-            className: "text-orange-400 hover:bg-orange-500/5",
-          },
-        ]}
-      />
-    );
-  };
 
   // Modal Fields
   const getUserFields = (data) => [
@@ -383,14 +323,14 @@ const UserManagement = () => {
         </div>
 
         {/* Table + Cards */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Search Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
              
               <div className="flex w-full">
                 <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-                  <select
+                  {/* <select
                     onChange={(e) =>
                       setState((prev) => ({
                         ...prev,
@@ -403,7 +343,17 @@ const UserManagement = () => {
                     <option value="10">10</option>
                     <option value="30">30</option>
                     <option value="50">50</option>
-                  </select>
+                  </select> */}
+                  <PerPageSelector
+                    options={[5, 15, 25, 50, 100]}
+                    onChange={(value) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: value,
+                        currentPage: 1,
+                      }))
+                    }
+                  />
                   <SearchBar
                     onSearch={(e) => {
                       clearTimeout(window._searchTimeout);

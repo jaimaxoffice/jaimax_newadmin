@@ -10,7 +10,8 @@ import KycActionModal from "./KycActionModal";
 import { useKycListQuery } from "./kycApiSlice";
 import { toast } from "react-toastify";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
-import {Eye} from "lucide-react";
+import { CheckCircle, XCircle, Clock, AlertCircle, Eye } from "lucide-react";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const KycApprove = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -85,7 +86,6 @@ const KycApprove = () => {
     }
   };
 
-  // Status Helpers
   const getStatusText = (status) => {
     const map = {
       open: "In Open",
@@ -94,6 +94,16 @@ const KycApprove = () => {
       reject: "Rejected",
     };
     return map[status] || "N/A";
+  };
+
+  const getStatusIcon = (status) => {
+    const map = {
+      open: <AlertCircle size={32} strokeWidth={2} className="text-white" />,
+      approve: <CheckCircle size={32} strokeWidth={2} className="text-white" />,
+      inprogress: <Clock size={32} strokeWidth={2} className="text-white" />,
+      reject: <XCircle size={32} strokeWidth={2} className="text-white" />,
+    };
+    return map[status] || <AlertCircle size={32} strokeWidth={2} className="text-gray-400" />;
   };
 
   const getStatusStyle = (status) => {
@@ -159,7 +169,7 @@ const KycApprove = () => {
         className=" hover:text-blue-300 text-xs font-medium
            px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
       >
-         <Eye  size={17}/>
+        <Eye size={17} />
       </button>
     );
   };
@@ -208,56 +218,6 @@ const KycApprove = () => {
     },
   ];
 
-  // Mobile Card
-  const renderKycCard = (row, index) => {
-    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
-    const isOpen = row.status === "open";
-
-    const actions = [
-      {
-        label: "View",
-        onClick: () => handleView(row),
-        className: "text-blue-400 hover:bg-blue-500/5",
-      },
-      ...(isOpen
-        ? [
-            {
-              label: "Approve",
-              onClick: () => handleApprove(row._id),
-              className: "text-[#0ecb6f] hover:bg-[#0ecb6f]/5",
-            },
-            {
-              label: "Reject",
-              onClick: () => handleReject(row._id),
-              className: "text-red-400 hover:bg-red-500/5",
-            },
-          ]
-        : []),
-    ];
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: row.name?.charAt(0)?.toUpperCase(),
-          avatarBg: getStatusStyle(row.status),
-          title: row.name,
-          subtitle: `#${sNo} • ${row.user_id?.username || "N/A"}`,
-          badge: getStatusText(row.status),
-          badgeClass: getStatusStyle(row.status),
-        }}
-        rows={[
-          { label: "Bank", value: row.bank_name },
-          { label: "Account", value: row.bank_account },
-          { label: "IFSC", value: row.ifsc_code },
-          { label: "Mobile", value: row.mobile_number },
-          { label: "UPI ID", value: row.upi_id },
-          { label: "Address", value: row.address },
-        ]}
-        actions={actions}
-      />
-    );
-  };
 
   return (
     <>
@@ -271,21 +231,22 @@ const KycApprove = () => {
                 title={getStatusText(item._id) || item._id}
                 value={item.count}
                 valueClass="text-[#eb660f]"
-                image="/images/total-member.png"
+                icon={getStatusIcon(item._id)}
+                iconBg="bg-[#66462a]"
               />
             ))}
           </div>
         )}
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              
+
               <div className="flex w-full">
                 <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-                  <select
+                  {/* <select
                     onChange={(e) =>
                       setState((prev) => ({
                         ...prev,
@@ -298,7 +259,17 @@ const KycApprove = () => {
                     <option value="10">10</option>
                     <option value="30">30</option>
                     <option value="50">50</option>
-                  </select>
+                  </select> */}
+                  <PerPageSelector
+  options={[5, 15, 25, 50, 100]}
+  onChange={(value) =>
+    setState((prev) => ({
+      ...prev,
+      perPage: value,
+      currentPage: 1,
+    }))
+  }
+/>
                   <SearchBar onSearch={handleSearch} placeholder="Search..." />
                 </div>
               </div>

@@ -609,7 +609,7 @@ const AdminManagement = () => {
 
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d] flex items-center justify-between">
             {/* <h1 className="text-lg font-semibold text-white">Admin Users</h1> */}
@@ -669,7 +669,7 @@ const AdminManagement = () => {
           </div>
 
           {/* Desktop Table */}
-          <div className="">
+          <div className="rounded-lg ">
             {showLoader ? (
               <Loader />
             ) : (

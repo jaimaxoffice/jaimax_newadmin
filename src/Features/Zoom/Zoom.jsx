@@ -1,20 +1,27 @@
-// src/features/zoom/ZoomMeeting.jsx
 import React, { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "../../reusableComponents/Loader/Loader"
 import {
-  Video, CheckCircle, Activity, Calendar, Plus,
-  Trash2, Pencil, ExternalLink, Loader,
+  Link,
+  FileText,
+  Video,
+  CheckCircle,
+  Calendar,
+  Activity,
+  Plus,
+  Trash2,
+  Pencil,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Search,
+  ExternalLink,
 } from "lucide-react";
-
-import StatCard from "../../reusableComponents/StatCards/StatsCard";
-import Table from "../../reusableComponents/Tables/Table";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
-import Pagination from "../../reusableComponents/paginations/Pagination";
-import Modal from "../../reusableComponents/Modals/Modals";
-import ConfirmModal from "../../reusableComponents/Modals/ConfirmModal";
-import ZoomMeetingForm from "./ZoomMeetingForm";
-
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import {
   useCreateZoomMeetingMutation,
   useGetAllZoomMeetingsQuery,
@@ -22,458 +29,898 @@ import {
   useDeleteZoomMeetingMutation,
 } from "./zoomApiSlice";
 
-const TYPE_COLORS = {
-  "zoom meet": "bg-blue-500/10 text-blue-400",
-  "youtube": "bg-red-500/10 text-red-400",
-  "google meet": "bg-green-500/10 text-green-400",
-  "social media": "bg-purple-500/10 text-purple-400",
+const validationSchema = Yup.object({
+  title: Yup.string()
+    .required("Title is required")
+    .min(3, "Title must be at least 3 characters"),
+  subTitle: Yup.string()
+    .required("Sub Title is required")
+    .min(3, "Sub Title must be at least 3 characters"),
+  url: Yup.string().required("URL is required").url("Please enter a valid URL"),
+  videoId: Yup.string()
+    .required("Video ID is required")
+    .min(1, "Video ID cannot be empty"),
+  type: Yup.string().required("Meeting type is required"),
+});
+
+const initialValues = {
+  title: "",
+  subTitle: "",
+  url: "",
+  videoId: "",
+  type: "",
 };
 
-const TYPE_FILTER_OPTIONS = [
-  { value: "all", label: "All Types" },
-  { value: "zoom meet", label: "Zoom Meetings" },
-  { value: "youtube", label: "YouTube" },
-  { value: "google meet", label: "Google Meet" },
-  { value: "social media", label: "Social Media" },
-];
+const inputClass = `w-full bg-[#111827] border border-[#303f50] text-white rounded-lg 
+  px-4 py-2.5 text-sm focus:outline-none focus:border-[#eb660f] 
+  focus:ring-1 focus:ring-[#eb660f]/50 transition-colors duration-200
+  placeholder-gray-500 disabled:opacity-50`;
 
-const ZoomMeeting = () => {
-  const [state, setState] = useState({
-    currentPage: 1,
-    perPage: 20,
-  });
-  const [selectedType, setSelectedType] = useState("all");
-  const [modals, setModals] = useState({
-    edit: false,
-    delete: false,
-    create: false,
-  });
+const labelClass = "block text-sm font-medium text-gray-300 mb-1.5";
+
+const TYPE_COLORS = {
+  "zoom meet": "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+  youtube: "bg-red-500/20 text-red-400 border border-red-500/30",
+  "google meet": "bg-green-500/20 text-green-400 border border-green-500/30",
+  "social media":
+    "bg-purple-500/20 text-purple-400 border border-purple-500/30",
+};
+const StatCard = ({
+  title,
+  value,
+  icon: IconComponent,
+  gradient,
+  isLoading,
+}) => (
+  <div
+    className="relative overflow-hidden rounded-xl p-5 transition-all duration-300 
+      hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(242,155,10,0.3)] cursor-pointer"
+    style={{
+      background: `linear-gradient(135deg, ${gradient.from} 0%, ${gradient.to} 100%)`,
+    }}
+  >
+    {/* Background Icon */}
+    <div className="absolute top-0 right-0 p-3 opacity-25">
+      <IconComponent size={60} className="text-white" />
+    </div>
+
+    {/* Content */}
+    <div className="relative">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+          <IconComponent size={24} className="text-white" />
+        </div>
+        <p className="text-white/60 text-sm font-normal">{title}</p>
+      </div>
+
+      {isLoading ? (
+        <div className="flex items-center justify-center py-2">
+          <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+        </div>
+      ) : (
+        <h2 className="text-3xl font-bold text-white">{value || 0}</h2>
+      )}
+    </div>
+  </div>
+);
+function ZoomMeeting() {
+  const [submittedMeeting, setSubmittedMeeting] = useState(null);
   const [editingMeeting, setEditingMeeting] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [selectedType, setSelectedType] = useState("all");
 
-  // API
   const {
     data: allMeetings,
     isLoading: loadingMeetings,
     refetch: refetchMeetings,
-  } = useGetAllZoomMeetingsQuery({ page: state.currentPage, limit: state.perPage });
+  } = useGetAllZoomMeetingsQuery({ page: currentPage, limit });
 
-  const [createZoomMeeting, { isLoading: creatingMeeting }] = useCreateZoomMeetingMutation();
-  const [updateZoomMeeting, { isLoading: updatingMeeting }] = useUpdateZoomMeetingMutation();
-  const [deleteZoomMeeting, { isLoading: deletingMeeting }] = useDeleteZoomMeetingMutation();
+  const [createZoomMeeting, { isLoading: creatingMeeting }] =
+    useCreateZoomMeetingMutation();
+  const [updateZoomMeeting, { isLoading: updatingMeeting }] =
+    useUpdateZoomMeetingMutation();
+  const [deleteZoomMeeting, { isLoading: deletingMeeting }] =
+    useDeleteZoomMeetingMutation();
 
-  const meetings = allMeetings?.data?.videos || [];
-  const pagination = allMeetings?.data?.pagination;
+  const toastConfig = {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+  };
 
-  // Filter meetings
-  const filteredMeetings = meetings.filter((m) => {
-    if (selectedType === "all") return true;
-    return m.type === selectedType;
-  });
-
-  // Handlers
-  const handleCreate = async (values, { resetForm, setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      const result = await createZoomMeeting({
+      const payload = {
         url: values.url,
         title: values.title,
         videoId: values.videoId,
         subTitle: values.subTitle,
         type: values.type,
-      }).unwrap();
+      };
+
+      const result = await createZoomMeeting(payload).unwrap();
 
       if (result.success || result) {
-        toast.success("Meeting created successfully!");
+        toast.success("Zoom meeting created successfully!", toastConfig);
+        setSubmittedMeeting(values);
         resetForm();
         refetchMeetings();
       }
     } catch (error) {
-      toast.error(error?.data?.message || "Failed to create meeting");
+      toast.error(
+        error?.data?.message || "Failed to create Zoom meeting.",
+        toastConfig,
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleUpdate = async (values, { setSubmitting }) => {
+  const handleUpdateMeeting = async (values, { setSubmitting }) => {
     try {
-      const result = await updateZoomMeeting({
-        id: editingMeeting._id,
-        ...values,
-      }).unwrap();
+      const payload = {
+        id: editingMeeting.id,
+        url: values.url,
+        title: values.title,
+        videoId: values.videoId,
+        subTitle: values.subTitle,
+        type: values.type,
+      };
+
+      const result = await updateZoomMeeting(payload).unwrap();
 
       if (result.success || result) {
-        toast.success("Meeting updated successfully!");
-        setModals((prev) => ({ ...prev, edit: false }));
+        toast.success("Zoom meeting updated successfully!", toastConfig);
+        setShowEditModal(false);
         setEditingMeeting(null);
         refetchMeetings();
       }
     } catch (error) {
-      toast.error(error?.data?.message || "Failed to update meeting");
+      toast.error(
+        error?.data?.message || "Failed to update Zoom meeting.",
+        toastConfig,
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
+  const handleDeleteMeeting = async (meetingId) => {
     try {
-      await deleteZoomMeeting(deleteTarget._id).unwrap();
-      toast.success("Meeting deleted successfully!");
-      setModals((prev) => ({ ...prev, delete: false }));
-      setDeleteTarget(null);
-      refetchMeetings();
+      const result = await deleteZoomMeeting(meetingId).unwrap();
+      if (result.success || result) {
+        toast.success("Zoom meeting deleted successfully!", toastConfig);
+        refetchMeetings();
+      }
     } catch (error) {
-      toast.error(error?.data?.message || "Failed to delete meeting");
+      toast.error(
+        error?.data?.message || "Failed to delete Zoom meeting.",
+        toastConfig,
+      );
     }
   };
 
-  const openEdit = (meeting) => {
-    setEditingMeeting(meeting);
-    setModals((prev) => ({ ...prev, edit: true }));
+  const openEditModal = (meeting) => {
+    setEditingMeeting({
+      id: meeting._id,
+      title: meeting.title,
+      subTitle: meeting.subTitle,
+      url: meeting.url,
+      videoId: meeting.videoId,
+      type: meeting.type || "",
+    });
+    setShowEditModal(true);
   };
 
-  const openDelete = (meeting) => {
-    setDeleteTarget(meeting);
-    setModals((prev) => ({ ...prev, delete: true }));
+  const handlePageChange = (page) => setCurrentPage(page);
+
+  const handleLimitChange = (newLimit) => {
+    setLimit(newLimit);
+    setCurrentPage(1);
   };
 
-  const handlePageChange = (page) => {
-    setState((prev) => ({ ...prev, currentPage: page }));
-  };
+  const filteredMeetings =
+    allMeetings?.data?.videos?.filter((meeting) => {
+      if (selectedType === "all") return true;
+      return meeting.type === selectedType;
+    }) || [];
 
-  // Action Buttons
-  const MeetingActions = ({ meeting }) => (
-    <div className="flex items-center gap-1.5">
-      <button
-        onClick={() => openEdit(meeting)}
-        title="Edit"
-        className="w-8 h-8 flex items-center justify-center rounded-lg
-          bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
-          transition-colors cursor-pointer"
-      >
-        <Pencil size={14} />
-      </button>
-      <button
-        onClick={() => openDelete(meeting)}
-        title="Delete"
-        disabled={deletingMeeting}
-        className="w-8 h-8 flex items-center justify-center rounded-lg
-          bg-red-500/10 text-red-400 hover:bg-red-500/20
-          transition-colors cursor-pointer disabled:opacity-50"
-      >
-        <Trash2 size={14} />
-      </button>
-    </div>
-  );
+  const pagination = allMeetings?.data?.pagination;
 
-  // Type Badge
-  const TypeBadge = ({ type }) => (
-    <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${TYPE_COLORS[type] || "bg-[#2a2c2f] text-[#8a8d93]"}`}>
-      {type || "N/A"}
-    </span>
-  );
+  const renderPaginationButtons = () => {
+    if (!pagination || pagination.totalPages <= 1) return null;
 
-  // Table Columns
-  const columns = [
-    {
-      header: "S.No",
-      render: (_, index, currentPage, perPage) =>
-        currentPage * perPage - (perPage - 1) + index + ".",
-    },
-    { header: "Title", accessor: "title" },
-    { header: "Sub Title", accessor: "subTitle" },
-    {
-      header: "Type",
-      render: (row) => <TypeBadge type={row.type} />,
-    },
-    {
-      header: "Video ID",
-      render: (row) => (
-        <span className="text-xs font-mono">{row.videoId}</span>
-      ),
-    },
-    {
-      header: "URL",
-      render: (row) => (
-        <a
-          href={row.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#eb660f] hover:text-[#ff7b1c] text-xs flex items-center gap-1
-            transition-colors"
+    const buttons = [];
+    const maxButtons = 5;
+    const total = pagination.totalPages;
+    const current = pagination.currentPage;
+
+    let start = Math.max(1, current - Math.floor(maxButtons / 2));
+    let end = Math.min(total, start + maxButtons - 1);
+
+    if (end - start + 1 < maxButtons) {
+      start = Math.max(1, end - maxButtons + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`min-w-[36px] h-9 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
+            ${
+              i === current
+                ? "bg-[#eb660f] text-white shadow-lg shadow-[#eb660f]/25"
+                : "bg-[#1b232d] text-gray-400 border border-[#303f50] hover:border-[#eb660f]/50 hover:text-white"
+            }`}
         >
-          <ExternalLink size={12} />
-          View Link
-        </a>
-      ),
-    },
-    {
-      header: "Created",
-      render: (row) => (
-        <span className="text-xs">
-          {new Date(row.createdAt).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </span>
-      ),
-    },
-    {
-      header: "Action",
-      render: (row) => <MeetingActions meeting={row} />,
-    },
-  ];
-
-  // Mobile Card
-  const renderMeetingCard = (row, index) => {
-    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: row.title?.charAt(0)?.toUpperCase() || "M",
-          avatarBg: "bg-[#eb660f]/10 text-[#eb660f]",
-          title: row.title,
-          subtitle: `#${sNo} • ${row.subTitle}`,
-          badge: row.type,
-          badgeClass: TYPE_COLORS[row.type] || "bg-[#2a2c2f] text-[#8a8d93]",
-        }}
-        rows={[
-          { label: "Video ID", value: row.videoId },
-          {
-            label: "URL",
-            custom: (
-              <a
-                href={row.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#eb660f] text-xs truncate max-w-[60%]"
-              >
-                {row.url}
-              </a>
-            ),
-          },
-          {
-            label: "Created",
-            value: new Date(row.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            }),
-          },
-        ]}
-        actions={[
-          {
-            label: "Edit",
-            onClick: () => openEdit(row),
-            className: "text-[#eb660f] hover:bg-[#eb660f]/5",
-          },
-          {
-            label: "Delete",
-            onClick: () => openDelete(row),
-            className: "text-red-400 hover:bg-red-500/5",
-          },
-        ]}
-      />
-    );
+          {i}
+        </button>,
+      );
+    }
+    return buttons;
   };
 
   return (
-    <>
-      <div className="p-2 sm:p-2 space-y-6">
+    <div>
+      <div className="min-h-screen p-4 sm:p-6 bg-[#0f172a]">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
               <Video size={24} className="text-[#eb660f]" />
-              Zoom Meeting Management
-            </h2>
-            <p className="text-[#8a8d93] text-sm mt-1">
-              Create and manage your meetings efficiently
-            </p>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">
+                Zoom Meeting Management
+              </h1>
+              <p className="text-sm text-gray-400">
+                Create and manage your meetings efficiently
+              </p>
+            </div>
           </div>
+
+          {/* Type Filter */}
+          {/* <select
+            value={selectedType}
+            onChange={(e) => {
+              setSelectedType(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={inputClass + " w-auto"}
+          >
+            <option value="all">All Videos</option>
+            <option value="zoom meet">Zoom Meetings</option>
+            <option value="youtube">YouTube Videos</option>
+            <option value="google meet">Google Meet</option>
+          </select> */}
         </div>
 
-        {/* Filters */}
-        <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            <select
-              onChange={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  perPage: Number(e.target.value),
-                  currentPage: 1,
-                }))
-              }
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f]
-                transition-colors cursor-pointer"
-            >
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-
-            <select
-              value={selectedType}
-              onChange={(e) => {
-                setSelectedType(e.target.value);
-                setState((prev) => ({ ...prev, currentPage: 1 }));
-              }}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                transition-colors cursor-pointer"
-            >
-              {TYPE_FILTER_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Stats */}
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatCard
             title="Total Meetings"
             value={pagination?.totalCount || 0}
-            valueClass="text-[#eb660f]"
+            icon={Video}
+            gradient={{ from: "#eb660f", to: "#d97706" }}
+            isLoading={loadingMeetings}
           />
           <StatCard
             title="Active Meetings"
-            value={meetings?.length || 0}
-            valueClass="text-[#0ecb6f]"
+            value={allMeetings?.data?.videos?.length || 0}
+            icon={CheckCircle}
+            gradient={{ from: "#eb660f", to: "#d97706" }}
+            isLoading={loadingMeetings}
           />
           <StatCard
             title="Total Pages"
             value={pagination?.totalPages || 1}
-            valueClass="text-blue-400"
+            icon={Activity}
+            gradient={{ from: "#eb660f", to: "#d97706" }}
+            isLoading={loadingMeetings}
           />
           <StatCard
             title="Current Page"
             value={pagination?.currentPage || 1}
-            valueClass="text-[#8a8d93]"
+            icon={Calendar}
+            gradient={{ from: "#64748b", to: "#475569" }}
+            isLoading={loadingMeetings}
           />
         </div>
 
-        {/* Main Content: Form + Table */}
+        {/* Success Alert */}
+        {submittedMeeting && (
+          <div className="flex items-center gap-3 bg-[#eb660f]/10 border-l-4 border-[#eb660f] rounded-lg px-4 py-3 mb-6">
+            <CheckCircle size={20} className="text-[#eb660f] shrink-0" />
+            <p className="text-white text-sm">
+              <span className="font-semibold">Meeting Created:</span>{" "}
+              {submittedMeeting.title}
+            </p>
+            <button
+              onClick={() => setSubmittedMeeting(null)}
+              className="ml-auto text-gray-400 hover:text-white cursor-pointer"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
+        {/* Main Content */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-          {/* Create Form */}
+          {/* Form Section */}
           <div className="xl:col-span-4">
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 sticky top-4">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-full bg-[#eb660f] flex items-center justify-center">
-                  <Plus size={20} className="text-white" />
+            <div className="bg-[#1e293b] border border-[#303f50] rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-11 h-11 rounded-full bg-[#eb660f] flex items-center justify-center">
+                  <Plus size={22} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-sm">
+                  <h2 className="text-white font-semibold">
                     Create New Meeting
-                  </h3>
-                  <p className="text-[#8a8d93] text-xs">
+                  </h2>
+                  <p className="text-gray-400 text-xs">
                     Fill in the details below
                   </p>
                 </div>
               </div>
 
-              <ZoomMeetingForm
-                onSubmit={handleCreate}
-                isProcessing={creatingMeeting}
-                submitLabel="Create Meeting"
-                processingLabel="Creating..."
-                layout="single"
-              />
+              <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ isSubmitting, resetForm }) => (
+                  <Form className="space-y-4">
+                    {/* Title */}
+                    <div>
+                      <label className={labelClass}>
+                        Title <span className="text-red-500">*</span>
+                      </label>
+                      <Field
+                        type="text"
+                        name="title"
+                        placeholder="Enter meeting title"
+                        className={inputClass}
+                        disabled={creatingMeeting}
+                      />
+                      <ErrorMessage
+                        name="title"
+                        component="p"
+                        className="text-red-400 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* Sub Title */}
+                    <div>
+                      <label className={labelClass}>
+                        Sub Title <span className="text-red-500">*</span>
+                      </label>
+                      <Field
+                        type="text"
+                        name="subTitle"
+                        placeholder="Enter sub title"
+                        className={inputClass}
+                        disabled={creatingMeeting}
+                      />
+                      <ErrorMessage
+                        name="subTitle"
+                        component="p"
+                        className="text-red-400 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* URL */}
+                    <div>
+                      <label className={labelClass}>
+                        URL <span className="text-red-500">*</span>
+                      </label>
+                      <Field
+                        type="url"
+                        name="url"
+                        placeholder="https://zoom.us/j/..."
+                        className={inputClass}
+                        disabled={creatingMeeting}
+                      />
+                      <ErrorMessage
+                        name="url"
+                        component="p"
+                        className="text-red-400 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* Video ID */}
+                    <div>
+                      <label className={labelClass}>
+                        Video ID <span className="text-red-500">*</span>
+                      </label>
+                      <Field
+                        type="text"
+                        name="videoId"
+                        placeholder="Enter video ID"
+                        className={inputClass}
+                        disabled={creatingMeeting}
+                      />
+                      <ErrorMessage
+                        name="videoId"
+                        component="p"
+                        className="text-red-400 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* Type */}
+                    <div>
+                      <label className={labelClass}>
+                        Meeting Type <span className="text-red-500">*</span>
+                      </label>
+                      <Field
+                        as="select"
+                        name="type"
+                        className={inputClass}
+                        disabled={creatingMeeting}
+                      >
+                        <option value="">Select meeting type</option>
+                        <option value="zoom meet">Zoom Meet</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="google meet">Google Meet</option>
+                        <option value="social media">Social Media</option>
+                      </Field>
+                      <ErrorMessage
+                        name="type"
+                        component="p"
+                        className="text-red-400 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || creatingMeeting}
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] 
+                          text-white font-medium py-2.5 rounded-lg transition-all duration-200 
+                          disabled:opacity-50 cursor-pointer"
+                      >
+                        {isSubmitting || creatingMeeting ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            Creating...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle size={18} />
+                            Create Meeting
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => resetForm()}
+                        disabled={isSubmitting || creatingMeeting}
+                        className="px-4 py-2.5 bg-gray-600 hover:bg-gray-500 text-white rounded-lg 
+                          transition-colors duration-200 disabled:opacity-50 cursor-pointer"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
             </div>
           </div>
 
-          {/* Meetings Table */}
+          {/* Table Section */}
           <div className="xl:col-span-8">
-            <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
-              <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
-                <h1 className="text-lg font-semibold text-white">
-                  All Meetings
-                </h1>
+            <div className=" rounded-lg overflow-hidden">
+              {/* Table Header */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-5 py-4 border-b border-[#303f50]">
+                <h2 className="text-white font-semibold">All Meetings</h2>
+                <div className="flex items-center gap-3">
+                  <PerPageSelector
+                    value={limit}
+                    options={[10, 20, 50, 100]}
+                    onChange={handleLimitChange}
+                  />
+                </div>
               </div>
 
-              {/* Desktop Table */}
-              <div className="">
-                <Table
-                  columns={columns}
-                  data={filteredMeetings}
-                  isLoading={loadingMeetings}
-                  currentPage={state.currentPage}
-                  perPage={state.perPage}
-                />
-              </div>
+              {loadingMeetings ? (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <Loader
+                    size={40}
+                    className="text-[#eb660f] animate-spin mb-3"
+                  />
+                  <p className="text-gray-400">Loading meetings...</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-[#eb660f] border-b border-[#303f50]">
+                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          S.No
+                        </th>
+                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          Title
+                        </th>
+                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          Sub Title
+                        </th>
+                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          Type
+                        </th>
+                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          Video ID
+                        </th>
+                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          URL
+                        </th>
+                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          Created
+                        </th>
+                        <th className="text-center text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#303f50]/50">
+                      {filteredMeetings.length > 0 ? (
+                        filteredMeetings.map((meeting, i) => (
+                          <tr
+                            key={meeting._id}
+                            className="hover:bg-[#252d38] transition-colors duration-150"
+                          >
+                            <td className="px-4 py-3 text-sm text-gray-400">
+                              {(currentPage - 1) * limit + i + 1}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-white font-medium max-w-[150px] truncate">
+                              {meeting.title}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-300 max-w-[150px] truncate">
+                              {meeting.subTitle}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                                  ${TYPE_COLORS[meeting.type] || "bg-gray-500/20 text-gray-400 border border-gray-500/30"}`}
+                              >
+                                {meeting.type}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-300 font-mono">
+                              {meeting.videoId}
+                            </td>
+                            <td className="px-4 py-3">
+                              <a
+                                href={meeting.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[#eb660f] hover:text-[#eb660f]/80 
+                                  text-sm transition-colors"
+                              >
+                                <ExternalLink size={14} />
+                                View
+                              </a>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-400">
+                              {new Date(meeting.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center justify-center gap-2">
+                                <button
+                                  title="Edit"
+                                  onClick={() => openEditModal(meeting)}
+                                  className="w-8 h-8 rounded-lg bg-[#eb660f]/10 text-[#eb660f] 
+                                    hover:bg-[#eb660f]/20 flex items-center justify-center 
+                                    transition-colors cursor-pointer"
+                                >
+                                  <Pencil size={14} />
+                                </button>
+                                <button
+                                  title="Delete"
+                                  onClick={() =>
+                                    handleDeleteMeeting(meeting._id)
+                                  }
+                                  disabled={deletingMeeting}
+                                  className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 
+                                    hover:bg-red-500/20 flex items-center justify-center 
+                                    transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                  {deletingMeeting ? (
+                                    <Loader2
+                                      size={14}
+                                      className="animate-spin"
+                                    />
+                                  ) : (
+                                    <Trash2 size={14} />
+                                  )}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="8" className="text-center py-12">
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 rounded-full bg-[#111827] flex items-center justify-center mb-3">
+                                <Video size={28} className="text-gray-600" />
+                              </div>
+                              <p className="text-gray-400 font-medium">
+                                No meetings found
+                              </p>
+                              <p className="text-gray-600 text-sm mt-1">
+                                Create a new meeting to get started
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
+              {/* Pagination */}
+              {pagination && pagination.totalPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4 border-t border-[#303f50]">
+                  <p className="text-sm text-gray-400">
+                    Showing{" "}
+                    <span className="text-white font-medium">
+                      {(pagination.currentPage - 1) * limit + 1}
+                    </span>{" "}
+                    to{" "}
+                    <span className="text-white font-medium">
+                      {Math.min(
+                        pagination.currentPage * limit,
+                        pagination.totalCount,
+                      )}
+                    </span>{" "}
+                    of{" "}
+                    <span className="text-white font-medium">
+                      {pagination.totalCount}
+                    </span>{" "}
+                    entries
+                  </p>
 
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        handlePageChange(pagination.currentPage - 1)
+                      }
+                      disabled={!pagination.hasPrevPage || loadingMeetings}
+                      className="w-9 h-9 rounded-lg bg-[#1b232d] border border-[#303f50] text-gray-400 
+                        hover:border-[#eb660f]/50 hover:text-white flex items-center justify-center 
+                        transition-colors disabled:opacity-30 cursor-pointer"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+
+                    {renderPaginationButtons()}
+
+                    <button
+                      onClick={() =>
+                        handlePageChange(pagination.currentPage + 1)
+                      }
+                      disabled={!pagination.hasNextPage || loadingMeetings}
+                      className="w-9 h-9 rounded-lg bg-[#1b232d] border border-[#303f50] text-gray-400 
+                        hover:border-[#eb660f]/50 hover:text-white flex items-center justify-center 
+                        transition-colors disabled:opacity-30 cursor-pointer"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Pagination */}
-            {filteredMeetings?.length > 0 && pagination && (
-              <div className="mt-4">
-                <Pagination
-                  currentPage={state.currentPage}
-                  totalPages={pagination.totalPages || 1}
-                  onPageChange={handlePageChange}
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>
 
       {/* Edit Modal */}
-      <Modal
-        isOpen={modals.edit}
-        onClose={() => {
-          setModals((prev) => ({ ...prev, edit: false }));
-          setEditingMeeting(null);
-        }}
-        title="Edit Meeting"
-        size="lg"
-      >
-        {editingMeeting && (
-          <ZoomMeetingForm
-            initialValues={{
-              title: editingMeeting.title || "",
-              subTitle: editingMeeting.subTitle || "",
-              url: editingMeeting.url || "",
-              videoId: editingMeeting.videoId || "",
-              type: editingMeeting.type || "",
-            }}
-            onSubmit={handleUpdate}
-            isProcessing={updatingMeeting}
-            submitLabel="Update Meeting"
-            processingLabel="Updating..."
-            showCancel
-            onCancel={() => {
-              setModals((prev) => ({ ...prev, edit: false }));
+      {showEditModal && editingMeeting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => {
+              setShowEditModal(false);
               setEditingMeeting(null);
             }}
-            layout="grid"
           />
-        )}
-      </Modal>
 
-      {/* Delete Confirmation */}
-      <ConfirmModal
-        show={modals.delete}
-        onClose={() => {
-          setModals((prev) => ({ ...prev, delete: false }));
-          setDeleteTarget(null);
-        }}
-        onConfirm={handleDelete}
-        title="Delete Meeting"
-        message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        type="danger"
-      />
-    </>
+          <div className="relative w-full max-w-2xl bg-[#1b232d] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#303f50]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[#eb660f]/10 flex items-center justify-center">
+                  <FileText size={20} className="text-[#eb660f]" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">
+                  Edit Zoom Meeting
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingMeeting(null);
+                }}
+                className="w-9 h-9 rounded-lg bg-[#111827] text-gray-400 hover:text-white 
+                  flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6">
+              <Formik
+                initialValues={{
+                  title: editingMeeting.title || "",
+                  subTitle: editingMeeting.subTitle || "",
+                  url: editingMeeting.url || "",
+                  videoId: editingMeeting.videoId || "",
+                  type: editingMeeting.type || "",
+                }}
+                validationSchema={validationSchema}
+                onSubmit={handleUpdateMeeting}
+              >
+                {({ isSubmitting }) => (
+                  <Form className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Title */}
+                      <div>
+                        <label className={labelClass}>
+                          Title <span className="text-red-500">*</span>
+                        </label>
+                        <Field
+                          type="text"
+                          name="title"
+                          className={inputClass}
+                          disabled={updatingMeeting}
+                        />
+                        <ErrorMessage
+                          name="title"
+                          component="p"
+                          className="text-red-400 text-xs mt-1"
+                        />
+                      </div>
+
+                      {/* Sub Title */}
+                      <div>
+                        <label className={labelClass}>
+                          Sub Title <span className="text-red-500">*</span>
+                        </label>
+                        <Field
+                          type="text"
+                          name="subTitle"
+                          className={inputClass}
+                          disabled={updatingMeeting}
+                        />
+                        <ErrorMessage
+                          name="subTitle"
+                          component="p"
+                          className="text-red-400 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    {/* URL */}
+                    <div>
+                      <label className={labelClass}>
+                        URL <span className="text-red-500">*</span>
+                      </label>
+                      <Field
+                        type="url"
+                        name="url"
+                        className={inputClass}
+                        disabled={updatingMeeting}
+                      />
+                      <ErrorMessage
+                        name="url"
+                        component="p"
+                        className="text-red-400 text-xs mt-1"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Video ID */}
+                      <div>
+                        <label className={labelClass}>
+                          Video ID <span className="text-red-500">*</span>
+                        </label>
+                        <Field
+                          type="text"
+                          name="videoId"
+                          className={inputClass}
+                          disabled={updatingMeeting}
+                        />
+                        <ErrorMessage
+                          name="videoId"
+                          component="p"
+                          className="text-red-400 text-xs mt-1"
+                        />
+                      </div>
+
+                      {/* Type */}
+                      <div>
+                        <label className={labelClass}>
+                          Meeting Type <span className="text-red-500">*</span>
+                        </label>
+                        <Field
+                          as="select"
+                          name="type"
+                          className={inputClass}
+                          disabled={updatingMeeting}
+                        >
+                          <option value="">Select type</option>
+                          <option value="zoom meet">Zoom Meet</option>
+                          <option value="youtube">YouTube</option>
+                          <option value="google meet">Google Meet</option>
+                          <option value="social media">Social Media</option>
+                        </Field>
+                        <ErrorMessage
+                          name="type"
+                          component="p"
+                          className="text-red-400 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Modal Footer */}
+                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#303f50]">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowEditModal(false);
+                          setEditingMeeting(null);
+                        }}
+                        disabled={updatingMeeting}
+                        className="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white rounded-lg 
+                          transition-colors disabled:opacity-50 cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || updatingMeeting}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[#eb660f] hover:bg-[#d55a0e] 
+                          text-white rounded-lg transition-all duration-200 
+                          disabled:opacity-50 cursor-pointer"
+                      >
+                        {isSubmitting || updatingMeeting ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin" />
+                            Updating...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle size={16} />
+                            Update Meeting
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
-};
+}
 
 export default ZoomMeeting;

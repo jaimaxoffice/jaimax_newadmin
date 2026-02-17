@@ -11,7 +11,8 @@ import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import Modal from "../../reusableComponents/Modals/Modals";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import {
   useSupportDataQuery,
   useEditStatusMutation,
@@ -256,43 +257,31 @@ const Support = () => {
 
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
             <div className="flex items-center justify-between">
               
-              <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  perPage: Number(e.target.value),
-                  currentPage: 1,
-                }))
-              }
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f]
-                transition-colors cursor-pointer"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
+<div className="flex w-full">
+  <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
+    <PerPageSelector
+      value={state.perPage}
+      options={[10, 30, 50]}
+      onChange={(value) =>
+        setState((prev) => ({
+          ...prev,
+          perPage: value,
+          currentPage: 1,
+        }))
+      }
+    />
 
-            {/* Search */}
-            <input
-              type="text"
-              autoComplete="off"
-              placeholder="Search..."
-              onChange={handleSearch}
-              className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-44"
-            />
-          </div>
-        </div>
+    <SearchBar
+      onChange={handleSearch}
+      placeholder="Search..."
+    />
+  </div>
+</div>
             </div>
           </div>
 

@@ -6,7 +6,8 @@ import MobileCard from "../../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../../reusableComponents/MobileCards/MobileCardList";
 import { useGuarantededWealthPlanLogs3OMutation } from "../wealthPlanApiSlice";
 import { formatDateWithAmPm } from "../../../utils/dateUtils";
-
+import SearchBar from "../../../reusableComponents/searchBar/SearchBar";
+import PerPageSelector from "../../../reusableComponents/Filter/PerPageSelector";
 const WealthLogs3O = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -131,31 +132,25 @@ const WealthLogs3O = () => {
             <h1 className="text-lg font-semibold text-white">
               Guaranteed Wealth Plan Logs 3.O
             </h1>
-              <div className="flex w-full">
-<div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-  <select
-    onChange={(e) =>
-      setState((prev) => ({
-        ...prev,
-        perPage: Number(e.target.value),
-        currentPage: 1,
-      }))
-    }
-    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] transition-colors cursor-pointer"
-  >
-    <option value="10">10</option>
-    <option value="30">30</option>
-    <option value="50">50</option>
-  </select>
+<div className="flex w-full">
+  <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
+    <PerPageSelector
+      value={state.perPage}
+      options={[10, 30, 50]}
+      onChange={(value) =>
+        setState((prev) => ({
+          ...prev,
+          perPage: value,
+          currentPage: 1,
+        }))
+      }
+    />
 
-  <input
-    type="text"
-    autoComplete="off"
-    placeholder="Search..."
-    onChange={handleSearch}
-    className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555] rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#0ecb6f] focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors w-full sm:w-48"
-  />
-</div>
+    <SearchBar
+      onChange={handleSearch}
+      placeholder="Search..."
+    />
+  </div>
 </div>
           </div>
         </div>

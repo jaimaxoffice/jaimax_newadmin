@@ -5,7 +5,7 @@ import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import { useAllTransListQuery } from "../Wallet/walletApiSlice";
-
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const AllTransactions = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -277,7 +277,7 @@ const AllTransactions = () => {
 
         {/* Table Section */}
         <div
-          className="bg-[#1b232d] border border-[#1b232d] rounded-2xl 
+          className="bg-[#1b232d] border border-[#1b232d] rounded-lg 
           overflow-hidden"
         >
           {/* Table Header */}
@@ -290,23 +290,16 @@ const AllTransactions = () => {
                       {/* Filters Row */}
         <div className="flex w-full">
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  perPage: Number(e.target.value),
-                  currentPage: 1,
-                }))
-              }
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
-                transition-colors cursor-pointer"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
+           <PerPageSelector
+  options={[5, 15, 25, 50, 100]}
+  onChange={(value) =>
+    setState((prev) => ({
+      ...prev,
+      perPage: value,
+      currentPage: 1,
+    }))
+  }
+/>
 
             {/* Transaction Type Filter */}
             <select
@@ -339,7 +332,7 @@ const AllTransactions = () => {
           </div>
 
           {/* Desktop Table */}
-          <div className="">
+          <div className="rounded-lg ">
             <Table
               columns={columns}
               data={transactions}

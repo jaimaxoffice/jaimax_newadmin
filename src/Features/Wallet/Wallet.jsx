@@ -12,8 +12,11 @@ import {
   useTransListQuery,
 } from "./walletApiSlice";
 import { toast } from "react-toastify";
-import {PencilLine } from "lucide-react"
+import { PencilLine } from "lucide-react";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import { Clock, CheckCircle, PauseCircle, XCircle } from "lucide-react";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
+import { formatDateWithAmPm } from "../../utils/dateUtils";
 const WalletApprove = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -133,19 +136,6 @@ const WalletApprove = () => {
     }
   };
 
-  const formatDateWithAmPm = (isoString) => {
-    if (!isoString) return "N/A";
-    const date = new Date(isoString);
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    let hours = date.getUTCHours();
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-    const amAndPm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${day}-${month}-${year} ${hours}:${minutes} ${amAndPm}`;
-  };
-
   const getCurrency = (countryCode, value) => {
     return countryCode === 91
       ? `₹${value?.toFixed(2)}`
@@ -210,7 +200,7 @@ const WalletApprove = () => {
           title="Edit"
           className=" w-8 h-8  items-center justify-center rounded-lg  bg-green-500/10 text-blue-500 transition-colors cursor-pointer text-sm font-bold"
         >
-          <PencilLine  size={15} />
+          <PencilLine size={15} />
         </button>
       </div>
     );
@@ -267,9 +257,7 @@ const WalletApprove = () => {
     },
     {
       header: "Reason",
-      render: (row) => (
-        <span className="">{row.reason || "N/A"}</span>
-      ),
+      render: (row) => <span className="">{row.reason || "N/A"}</span>,
     },
     {
       header: "Action",
@@ -277,180 +265,99 @@ const WalletApprove = () => {
     },
   ];
 
-  // Mobile Card Builder
-  const renderWalletCard = (row, index) => {
-    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
-    const isActionable =
-      row.transactionStatus !== "Completed" &&
-      row.transactionStatus !== "Failed";
-
-    const actions = isActionable
-      ? [
-          {
-            label: "Approve",
-            onClick: () => handleAction(row.transactionId, "Approve"),
-            className: "text-[#eb660f] hover:bg-[#eb660f]/5",
-          },
-          ...(row.transactionStatus !== "Hold"
-            ? [
-                {
-                  label: "Hold",
-                  onClick: () => handleAction(row.transactionId, "Hold"),
-                  className: "text-yellow-400 hover:bg-yellow-500/5",
-                },
-              ]
-            : []),
-          {
-            label: "Reject",
-            onClick: () => handleAction(row.transactionId, "Reject"),
-            className: "text-red-400 hover:bg-red-500/5",
-          },
-          {
-            label: "Edit",
-            onClick: () => handleEdit(row),
-            className: "text-blue-400 hover:bg-blue-500/5",
-          },
-        ]
-      : [];
-
-    return (
-      <MobileCard
-        key={row.transactionId || index}
-        header={{
-          avatar: row.name?.charAt(0)?.toUpperCase(),
-          avatarBg: `${
-            row.transactionType === "Credit"
-              ? "bg-[#eb660f]/10 text-[#eb660f]"
-              : "bg-red-500/10 text-red-400"
-          }`,
-          title: row.name,
-          subtitle: `#${sNo} • ${row.transactionType}`,
-          badge: row.transactionStatus,
-          badgeClass: getStatusStyle(row.transactionStatus),
-        }}
-        rows={[
-          { label: "Payment", value: row.paymentMode },
-          {
-            label: "Amount",
-            value: getCurrency(row.userId?.countryCode, row.transactionAmount),
-            highlight: true,
-          },
-          {
-            label: "Transaction ID",
-            custom: row.screenshotUrl ? (
-              <a
-                href={row.screenshotUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#eb660f] hover:underline text-xs truncate max-w-[60%] text-right"
-              >
-                {row.transactionId}
-              </a>
-            ) : (
-              <span className="text-xs text-white truncate max-w-[60%] text-right">
-                {row.transactionId}
-              </span>
-            ),
-          },
-          { label: "Date", value: formatDateWithAmPm(row.transactionDate) },
-          { label: "Updated By", value: row.updatedBy?.name || "N/A" },
-          { label: "Reason", value: row.reason || "N/A" },
-        ]}
-        actions={actions}
-      />
-    );
-  };
-
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-
-
-        {/* Status Cards */}
         {statusCounts && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               title="Pending"
               value={statusCounts.Pending || 0}
               valueClass=""
-              bgClass="bg-[#544a24] "
+              bgClass="bg-[#544a24]"
+              icon={<Clock size={25} strokeWidth={2} className="text-white" />}
+              // iconBg="bg-yellow-500/20"
             />
             <StatCard
               title="Completed"
               value={statusCounts.Completed || 0}
               valueClass=""
-              bgClass="bg-[#1a3c37] "
+              bgClass="bg-[#1a3c37]"
+              icon={
+                <CheckCircle size={25} strokeWidth={2} className="text-white" />
+              }
+              // iconBg="bg-green-500/20"
             />
             <StatCard
               title="Hold"
               value={statusCounts.Hold || 0}
               valueClass=""
-              bgClass="bg-[#174d5e] "
+              bgClass="bg-[#174d5e]"
+              icon={
+                <PauseCircle size={25} strokeWidth={2} className="text-white" />
+              }
+              // iconBg="bg-blue-500/20"
             />
             <StatCard
               title="Failed"
               value={statusCounts.Failed || 0}
               valueClass=""
-              bgClass="bg-[#4b2733] "
+              bgClass="bg-[#4b2733]"
+              icon={
+                <XCircle size={25} strokeWidth={2} className="text-white" />
+              }
+              // iconBg="bg-red-500/20"
             />
           </div>
         )}
-
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden ">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg overflow-hidden ">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              
-                      <div className="flex w-full">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-            {/* Per Page */}
-            <select
-              onChange={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  perPage: Number(e.target.value),
-                  currentPage: 1,
-                }))
-              }
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-              py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] 
-              transition-colors cursor-pointer"
-            >
-              <option value="10">10</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
+              <div className="flex w-full">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
+                  {/* Per Page */}
 
-            {/* Transaction Type Filter */}
-            <select
-              value={selectedStatus}
-              onChange={handleStatusChange}
-              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
+                  <PerPageSelector
+                    options={[5, 15, 25, 50, 100]}
+                    onChange={(value) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: value,
+                        currentPage: 1,
+                      }))
+                    }
+                  />
+                  {/* Transaction Type Filter */}
+                  <select
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
               transition-colors cursor-pointer"
-            >
-              <option value="Transaction Type">All Types</option>
-              <option value="Credit">Credit</option>
-              <option value="Debit">Debit</option>
-            </select>
+                  >
+                    <option value="Transaction Type">All Types</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Debit">Debit</option>
+                  </select>
 
-            {/* Search */}
-            <SearchBar
-              onSearch={(e) => {
-                clearTimeout(window._searchTimeout);
-                window._searchTimeout = setTimeout(() => {
-                  setState((prev) => ({
-                    ...prev,
-                    search: e.target.value,
-                    currentPage: 1,
-                  }));
-                }, 1000);
-              }}
-              placeholder="Search..."
-            />
-          </div>
-        </div>
+                  {/* Search */}
+                  <SearchBar
+                    onSearch={(e) => {
+                      clearTimeout(window._searchTimeout);
+                      window._searchTimeout = setTimeout(() => {
+                        setState((prev) => ({
+                          ...prev,
+                          search: e.target.value,
+                          currentPage: 1,
+                        }));
+                      }, 1000);
+                    }}
+                    placeholder="Search..."
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -466,7 +373,6 @@ const WalletApprove = () => {
           </div>
 
           {/* Mobile Cards */}
-          
         </div>
 
         {/* Pagination */}

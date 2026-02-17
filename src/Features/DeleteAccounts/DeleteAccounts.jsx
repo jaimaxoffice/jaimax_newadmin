@@ -218,7 +218,7 @@ const DeletedUsersTable = () => {
         
 
         {/* Main Table Card */}
-<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
   {/* Header */}
   <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
     {/* Title + Delete Button */}

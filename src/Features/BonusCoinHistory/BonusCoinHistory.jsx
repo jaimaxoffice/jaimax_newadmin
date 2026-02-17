@@ -6,7 +6,8 @@ import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList"
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useBonusHistoryQuery } from "./bonusApiSlice";
-import SearchBar from "../../reusableComponents/searchBar/SearchBar"
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const BonusHistory = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -260,71 +261,6 @@ const BonusHistory = () => {
     },
   ];
 
-  // ─── Mobile Card Builder ────────────────────────────────────
-
-  const renderBonusCard = (row, index) => {
-    const sNo = (state.currentPage - 1) * state.perPage + index + 1;
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: (row?.name?.charAt(0) || "?").toUpperCase(),
-          avatarBg: "bg-[#eb660f]/10 text-[#eb660f]",
-          title: row?.name || "N/A",
-          subtitle: `#${sNo} • ${row?.email || "N/A"}`,
-          badge: row?.transactionType || "N/A",
-          badgeClass:
-            row?.transactionType?.toLowerCase() === "credit"
-              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-              : row?.transactionType?.toLowerCase() === "debit"
-              ? "bg-red-500/10 text-red-400"
-              : "bg-blue-500/10 text-blue-400",
-        }}
-        rows={[
-          {
-            label: "Transaction Amount",
-            value: row?.transactionAmount,
-            highlight: true,
-          },
-          {
-            label: "Transaction Type",
-            custom: (
-              <span
-                className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                  row?.transactionType?.toLowerCase() === "credit"
-                    ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-                    : row?.transactionType?.toLowerCase() === "debit"
-                    ? "bg-red-500/10 text-red-400"
-                    : "bg-blue-500/10 text-blue-400"
-                }`}
-              >
-                {row?.transactionType || "N/A"}
-              </span>
-            ),
-          },
-          {
-            label: "Transaction ID",
-            custom: (
-              <span className="text-xs text-[#8a8d93] font-mono truncate max-w-[60%] text-right">
-                {row?.transactionId || "N/A"}
-              </span>
-            ),
-          },
-          {
-            label: "Helped User",
-            value: row?.comssionHelpedUser || "N/A",
-          },
-          {
-            label: "Transaction Date",
-            value: formatDateWithAmPm(row?.transactionDate),
-          },
-        ]}
-      />
-    );
-  };
-
-  // ─── Render ─────────────────────────────────────────────────
 
   return (
     <div>
@@ -335,25 +271,23 @@ const BonusHistory = () => {
 
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
 
 
   {/* Filters - Right */}
   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
-    <select
-      onChange={handlePerPageChange}
-      value={state.perPage}
-      disabled={isLoading}
-      className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-        py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-        transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
-    >
-      <option value="10">10</option>
-      <option value="30">30</option>
-      <option value="50">50</option>
-    </select>
+<PerPageSelector
+  options={[5, 15, 25, 50, 100]}
+  onChange={(value) =>
+    setState((prev) => ({
+      ...prev,
+      perPage: value,
+      currentPage: 1,
+    }))
+  }
+/>
 
     <SearchBar
       onSearch={handleSearch}
@@ -363,7 +297,7 @@ const BonusHistory = () => {
 </div>
 
           {/* Desktop Table */}
-          <div className="">
+          <div className="rounded-lg ">
             <Table
               columns={columns}
               data={TableData}

@@ -6,7 +6,8 @@ import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList"
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useGetGradualLayerBonusLogsQuery } from "./gradualBonusApiSlice";
-import SearchBar from "../../reusableComponents/searchBar/SearchBar"
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const GradualLayerBonusLogs = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -258,63 +259,6 @@ const GradualLayerBonusLogs = () => {
     },
   ];
 
-  // ─── Mobile Card Builder ────────────────────────────────────
-
-  const renderBonusCard = (row, index) => {
-    const sNo = (state.currentPage - 1) * state.perPage + index + 1;
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: (row?.name?.charAt(0) || "?").toUpperCase(),
-          avatarBg: "bg-[#eb660f]/10 text-[#eb660f]",
-          title: row?.name || "N/A",
-          subtitle: `#${sNo} • ${row?.position || "N/A"}`,
-          badge: `${row?.disbursedDays || 0}/${row?.totalDays || 0} days`,
-          badgeClass: "bg-blue-500/10 text-blue-400",
-        }}
-        rows={[
-          {
-            label: "Total Amount",
-            value: row?.amount,
-            highlight: true,
-          },
-          {
-            label: "Amount/Day",
-            value: row?.amountPerDay,
-          },
-          {
-            label: "Transaction ID",
-            custom: (
-              <span className="text-xs text-[#8a8d93] font-mono truncate max-w-[60%] text-right">
-                {row?.transactionId || "N/A"}
-              </span>
-            ),
-          },
-          {
-            label: "Created Date",
-            value: formatDateWithAmPm(row?.createdOn),
-          },
-          {
-            label: "Helped User",
-            value: row?.comssionHelpedUser || "N/A",
-          },
-          {
-            label: "Percentage",
-            custom: (
-              <span className="text-[#0ecb6f] font-semibold text-xs">
-                {row?.elegiblePercentag}%
-              </span>
-            ),
-          },
-        ]}
-      />
-    );
-  };
-
-  // ─── Render ─────────────────────────────────────────────────
-
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
@@ -322,27 +266,23 @@ const GradualLayerBonusLogs = () => {
 
 
         {/* Main Table Card */}
-<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
   {/* Header */}
   <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
     {/* Title */}
    
     {/* Filters */}
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
-      {/* Per Page */}
-      <select
-        onChange={handlePerPageChange}
-        value={state.perPage}
-        disabled={isLoading}
-        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-          transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
-      >
-        <option value="10">10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-      </select>
+<PerPageSelector
+  options={[5, 15, 25, 50, 100]}
+  onChange={(value) =>
+    setState((prev) => ({
+      ...prev,
+      perPage: value,
+      currentPage: 1,
+    }))
+  }
+/>
 
       {/* Search */}
       <SearchBar

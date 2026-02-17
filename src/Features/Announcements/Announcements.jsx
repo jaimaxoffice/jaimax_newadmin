@@ -348,7 +348,7 @@ const AnnouncementCard = ({
 
   return (
     <div
-      className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden
+      className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden
         flex flex-col relative group hover:border-[#eb660f]/30 transition-colors"
     >
       {/* Image Section */}

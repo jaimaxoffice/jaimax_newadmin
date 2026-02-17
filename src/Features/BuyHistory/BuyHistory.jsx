@@ -6,7 +6,9 @@ import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList"
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useBuyHistoryQuery } from "./buyhistoryApiSlice";
-import SearchBar from "../../reusableComponents/searchBar/SearchBar"
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
+import {formatDateWithAmPm} from "../../utils/dateUtils";
 const BuyHistory = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -47,20 +49,7 @@ const BuyHistory = () => {
     }, 1000);
   };
 
-  // ─── Helpers ─────────────────────────────────────────────────
 
-  const formatDateWithAmPm = (isoString) => {
-    if (!isoString) return "N/A";
-    const date = new Date(isoString);
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    let hours = date.getUTCHours();
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-    const amAndPm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${day}-${month}-${year} ${hours}:${minutes} ${amAndPm}`;
-  };
 
   const getCurrencyValue = (data, field) => {
     if (field === "atPrice") {
@@ -97,11 +86,7 @@ const BuyHistory = () => {
     },
     {
       header: "Email",
-      render: (row) => (
-        <span className="">
-          {row?.userId?.email || "N/A"}
-        </span>
-      ),
+      render: (row) => <span className="">{row?.userId?.email || "N/A"}</span>,
     },
     {
       header: "Payment Method",
@@ -117,20 +102,12 @@ const BuyHistory = () => {
     },
     {
       header: "Paid Currency",
-      render: (row) => (
-        <span
-          
-        >
-          {row.currency}
-        </span>
-      ),
+      render: (row) => <span>{row.currency}</span>,
     },
     {
       header: "Jaimax Coins",
       render: (row) => (
-        <span className=" ">
-          {Number(row.jaimax)?.toFixed(3)}
-        </span>
+        <span className=" ">{Number(row.jaimax)?.toFixed(3)}</span>
       ),
     },
     {
@@ -148,7 +125,7 @@ const BuyHistory = () => {
       render: (row) => (
         <span
           className={`text-[11px] font-semibold px-2.5 py-1 rounded-full capitalize ${getStatusStyle(
-            row?.status
+            row?.status,
           )}`}
         >
           {row?.status}
@@ -157,144 +134,64 @@ const BuyHistory = () => {
     },
   ];
 
-  // ─── Mobile Card Builder ────────────────────────────────────
-
-  const renderBuyCard = (row, index) => {
-    const sNo =
-      state.currentPage * state.perPage - (state.perPage - 1) + index;
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: (row?.userId?.name?.charAt(0) || "?").toUpperCase(),
-          avatarBg:
-            row.currency === "INR"
-              ? "bg-[#eb660f]/10 text-[#eb660f]"
-              : "bg-blue-500/10 text-blue-400",
-          title: row?.userId?.name || "N/A",
-          subtitle: `#${sNo} • ${row.paymentMethod || "N/A"}`,
-          badge: row?.status,
-          badgeClass: getStatusStyle(row?.status),
-        }}
-        rows={[
-          {
-            label: "Email",
-            value: row?.userId?.email || "N/A",
-          },
-          {
-            label: "Purchased Date",
-            value: formatDateWithAmPm(row.createdAt),
-          },
-          {
-            label: "Round",
-            value: row.round || "N/A",
-          },
-          {
-            label: "Currency",
-            custom: (
-              <span
-                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                  row.currency === "INR"
-                    ? "bg-[#eb660f]/10 text-[#eb660f]"
-                    : "bg-blue-500/10 text-blue-400"
-                }`}
-              >
-                {row.currency}
-              </span>
-            ),
-          },
-          {
-            label: "Jaimax Coins",
-            value: Number(row.jaimax)?.toFixed(3),
-            highlight: true,
-          },
-          {
-            label: "At Price",
-            value: getCurrencyValue(row, "atPrice"),
-          },
-          {
-            label: "Paid",
-            value: getCurrencyValue(row, "paid"),
-            highlight: true,
-          },
-        ]}
-      />
-    );
-  };
-
-  // ─── Render ─────────────────────────────────────────────────
-
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
-        {/* Top Controls */}
+        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+          {/* Header */}
+          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              {/* Total Coins - Left */}
+              <div className="flex items-center gap-2 rounded-xl py-1.5">
+                <span className="text-sm text-[#8a8d93] font-medium">
+                  Total Coins Sold:
+                </span>
+                <span className="text-lg font-semibold text-white">
+                  {Number(totalCoins).toFixed(3)}
+                </span>
+              </div>
 
+              {/* Filters - Right */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <PerPageSelector
+                  options={[5, 15, 25, 50, 100]}
+                  onChange={(value) =>
+                    setState((prev) => ({
+                      ...prev,
+                      perPage: value,
+                      currentPage: 1,
+                    }))
+                  }
+                />
 
-        {/* Stat Card */}
+                <SearchBar
+                  onSearch={(e) => {
+                    clearTimeout(window._searchTimeout);
+                    window._searchTimeout = setTimeout(() => {
+                      setState((prev) => ({
+                        ...prev,
+                        search: e.target.value,
+                        currentPage: 1,
+                      }));
+                    }, 1000);
+                  }}
+                  placeholder="Search..."
+                />
+              </div>
+            </div>
+          </div>
 
-        {/* Main Table Card */}
-<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-  {/* Header */}
-<div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-    {/* Total Coins - Left */}
-    <div className="flex items-center gap-2 rounded-xl py-1.5">
-      <span className="text-sm text-[#8a8d93] font-medium">Total Coins Sold:</span>
-      <span className="text-lg font-semibold text-white">
-        {Number(totalCoins).toFixed(3)}
-      </span>
-    </div>
-
-    {/* Filters - Right */}
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-      <select
-        onChange={(e) =>
-          setState((prev) => ({
-            ...prev,
-            perPage: Number(e.target.value),
-            currentPage: 1,
-          }))
-        }
-        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-          transition-colors cursor-pointer w-full sm:w-auto"
-      >
-        <option value="10">10</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-      </select>
-
-      <SearchBar
-        onSearch={(e) => {
-          clearTimeout(window._searchTimeout);
-          window._searchTimeout = setTimeout(() => {
-            setState((prev) => ({
-              ...prev,
-              search: e.target.value,
-              currentPage: 1,
-            }));
-          }, 1000);
-        }}
-        placeholder="Search..."
-      />
-    </div>
-  </div>
-</div>
-
-  {/* Desktop Table */}
-  <div className="">
-    <Table
-      columns={columns}
-      data={TableData}
-      isLoading={isLoading}
-      currentPage={state.currentPage}
-      perPage={state.perPage}
-    />
-  </div>
-
-
-</div>
+          {/* Desktop Table */}
+          <div className="">
+            <Table
+              columns={columns}
+              data={TableData}
+              isLoading={isLoading}
+              currentPage={state.currentPage}
+              perPage={state.perPage}
+            />
+          </div>
+        </div>
 
         {/* Pagination */}
         {TableData?.length > 0 && (

@@ -16,6 +16,7 @@ import {
 import { formatDateWithAmPm, formatCurrency } from "../../utils/dateUtils";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import { Eye } from "lucide-react";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const Withdrawal = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -310,140 +311,48 @@ const Withdrawal = () => {
     },
   ];
 
-  // Mobile Card Builder
-  const renderWithdrawalCard = (row, index) => {
-    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
-    const isActionable = row.status === 0;
-
-    const actions = isActionable
-      ? [
-          {
-            label: "Approve",
-            onClick: () => handleApproveClick(row._id),
-            className: "text-[#eb660f] hover:bg-[#eb660f]/5",
-          },
-          {
-            label: "Reject",
-            onClick: () => handleRejectClick(row._id),
-            className: "text-red-400 hover:bg-red-500/5",
-          },
-        ]
-      : [];
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: row?.userId?.name?.charAt(0)?.toUpperCase() || "?",
-          avatarBg:
-            row.status === 1
-              ? "bg-green-400 text-gree-400"
-              : row.status === 2
-                ? "bg-red-500/10 text-red-400"
-                : "bg-yellow-500/10 text-yellow-400",
-          title: row?.userId?.name || "Unknown",
-          subtitle: `#${sNo} • ${row.currency}`,
-          badge: getStatusLabel(row.status),
-          badgeClass: getStatusStyle(row.status),
-        }}
-        rows={[
-          {
-            label: "Amount",
-            value: formatCurrency(row.amount, row.currency),
-            highlight: true,
-          },
-          {
-            label: "Admin Charges",
-            value: formatCurrency(row.admin_inr_charges, row.currency),
-          },
-          {
-            label: "Final Amount",
-            value: formatCurrency(
-              row.amount - row.admin_inr_charges || 0,
-              row.currency,
-            ),
-            highlight: true,
-          },
-          {
-            label: "UTR Number",
-            value: row.utr_number || "N/A",
-          },
-          {
-            label: "Customer ID",
-            value: row?.userId?.username || "N/A",
-          },
-          {
-            label: "Date",
-            value: formatDateWithAmPm(row?.created_at),
-          },
-          {
-            label: "Bank Details",
-            custom: <ViewBtn onClick={() => showBankDetails(row)} />,
-          },
-          {
-            label: "Note",
-            custom: <ViewBtn onClick={() => showNote(row)} />,
-          },
-        ]}
-        actions={actions}
-      />
-    );
-  };
-
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-        {/* Filters */}
-
-        {/* Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Pending"
             value={totalPending}
             valueClass="text-white"
-            // bgClass="bg-yellow-500/25 border border-yellow-500/30 shadow-md hover:border-yellow-400/50"
             image="/images/pending.png"
           />
           <StatCard
             title="Approved"
             value={totalApproved}
             valueClass="text-[#ffffffff]"
-            // bgClass="bg-[#0ecb6f]/25 border border-[#0ecb6f]/30 shadow-md hover:border-[#0ecb6f]/50"
             image="/images/approve.png"
           />
           <StatCard
             title="Rejected"
             value={totalRejected}
             valueClass="text-white"
-            // bgClass="bg-red-500/25 border border-red-500/30 shadow-md hover:border-red-400/50"
             image="/images/approve.png"
           />
         </div>
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex w-full">
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
                   {/* Per Page */}
-                  <select
-                    onChange={(e) =>
+                  <PerPageSelector
+                    options={[5, 15, 25, 50, 100]}
+                    onChange={(value) =>
                       setState((prev) => ({
                         ...prev,
-                        perPage: Number(e.target.value),
+                        perPage: value,
                         currentPage: 1,
                       }))
                     }
-                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f]
-                transition-colors cursor-pointer"
-                  >
-                    <option value="10">10</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                  </select>
+                  />
 
                   {/* Status Filter */}
                   <select
@@ -477,8 +386,6 @@ const Withdrawal = () => {
               perPage={state.perPage}
             />
           </div>
-
-
         </div>
 
         {/* Pagination */}

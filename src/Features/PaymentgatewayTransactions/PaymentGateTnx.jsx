@@ -6,6 +6,7 @@ import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import { useGetpaymentgatewaytransactionsQuery } from "../Wallet/walletApiSlice";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const PaymentGatewaysTransactions = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -271,29 +272,22 @@ const PaymentGatewaysTransactions = () => {
 
         {/* Table Section */}
    <div
-  className="bg-[#1b232d] border border-[#303f50] rounded-2xl 
+  className="bg-[#1b232d] border border-[#303f50] rounded-lg 
   overflow-hidden"
 >
   {/* Table Header */}
   <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:justify-end">
-      {/* Per Page */}
-      <select
-        onChange={(e) =>
-          setState((prev) => ({
-            ...prev,
-            perPage: Number(e.target.value),
-            currentPage: 1,
-          }))
-        }
-        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
-          transition-colors cursor-pointer w-full sm:w-auto"
-      >
-        <option value="10">10</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-      </select>
+<PerPageSelector
+  options={[5, 15, 25, 50, 100]}
+  onChange={(value) =>
+    setState((prev) => ({
+      ...prev,
+      perPage: value,
+      currentPage: 1,
+    }))
+  }
+/>
 
       {/* Transaction Type Filter */}
       <select

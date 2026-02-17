@@ -1249,7 +1249,7 @@ const Credits = () => {
             </div>
 
             {/* ═══ Desktop Table (✅ YOUR Table) ═══ */}
-            <div className="">
+            <div className="rounded-lg ">
               <Table
                 columns={columns}
                 data={transactions}

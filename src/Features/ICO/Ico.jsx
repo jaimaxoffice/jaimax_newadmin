@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import EditRoundModal from "./EditRoundModal";
 import {
   useGetRoundQuery,
@@ -11,7 +9,9 @@ import {
   useGetExchangeQuery,
 } from "./icoApiSlice";
 import { toast } from "react-toastify";
-
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import Loader from "../../reusableComponents/Loader/Loader";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const IcoManagement = () => {
   const [currentEditData, setCurrentEditData] = useState(null);
   const [errors, setErrors] = useState({});
@@ -170,11 +170,7 @@ const IcoManagement = () => {
     },
     {
       header: "Round",
-      render: (row) => (
-        <span className="">
-          Round {row.round}
-        </span>
-      ),
+      render: (row) => <span className="">Round {row.round}</span>,
     },
     {
       header: "Price (USD)",
@@ -191,18 +187,12 @@ const IcoManagement = () => {
     {
       header: "Sold Tokens",
       render: (row) => (
-        <span className="text-[#eb660f]">
-          {formatNum(row.soldQty)}
-        </span>
+        <span className="text-[#eb660f]">{formatNum(row.soldQty)}</span>
       ),
     },
     {
       header: "Remaining",
-      render: (row) => (
-        <span className="">
-          {formatNum(row.remaingQty)}
-        </span>
-      ),
+      render: (row) => <span className="">{formatNum(row.remaingQty)}</span>,
     },
     {
       header: "Action",
@@ -210,7 +200,7 @@ const IcoManagement = () => {
         <button
           onClick={() => handleEdit(row)}
           title="Edit Round"
-            className="text-[#eb660f] text-xs font-medium 
+          className="text-[#eb660f] text-xs font-medium 
             bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
         >
           Edit
@@ -219,116 +209,12 @@ const IcoManagement = () => {
     },
   ];
 
-  // Progress Bar Helper
-  const getProgress = (sold, total) => {
-    if (!total || total === 0) return 0;
-    return Math.min(((sold / total) * 100).toFixed(1), 100);
-  };
-
-  // Mobile Card
-  const renderIcoCard = (row, index) => {
-    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
-    const progress = getProgress(row.soldQty, row.totalQty);
-
-    return (
-      <div
-        key={row._id || index}
-        className="bg-[#1a1c1f] border border-[#2a2c2f] rounded-xl overflow-hidden"
-      >
-        {/* Card Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-[#16181b]">
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-[#555] font-mono">#{sNo}</span>
-            <div className="w-9 h-9 rounded-full bg-[#0ecb6f]/10 flex items-center justify-center">
-              <span className="text-[#0ecb6f] text-xs font-bold">
-                R{row.round}
-              </span>
-            </div>
-            <div>
-              <p className="text-white text-sm font-medium">
-                Round {row.round}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Prices */}
-        <div className="px-4 py-3 grid grid-cols-2 gap-3 border-b border-[#2a2c2f]/50">
-          <div className="bg-[#111214] rounded-lg p-3 text-center">
-            <p className="text-[10px] text-[#555] uppercase tracking-wider mb-1">
-              USD
-            </p>
-            <p className="text-white text-sm font-semibold">
-              ${formatNum(row.atPriceUsdt, 5)}
-            </p>
-          </div>
-          <div className="bg-[#111214] rounded-lg p-3 text-center">
-            <p className="text-[10px] text-[#555] uppercase tracking-wider mb-1">
-              INR
-            </p>
-            <p className="text-white text-sm font-semibold">
-              ₹{formatNum(row.atPriceInr, 2)}
-            </p>
-          </div>
-        </div>
-
-        {/* Token Info */}
-        <div className="px-4 py-3 space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-[#8a8d93]">Total Tokens</span>
-            <span className="text-xs text-white font-medium">
-              {Number(row.totalQty).toLocaleString()}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-[#8a8d93]">Sold</span>
-            <span className="text-xs text-[#0ecb6f] font-medium">
-              {formatNum(row.soldQty)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-[#8a8d93]">Remaining</span>
-            <span className="text-xs text-yellow-400 font-medium">
-              {formatNum(row.remaingQty)}
-            </span>
-          </div>
-
-          {/* Progress Bar */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] text-[#555]">Progress</span>
-              <span className="text-[10px] text-[#0ecb6f] font-medium">
-                {progress}%
-              </span>
-            </div>
-            <div className="w-full h-1.5 bg-[#2a2c2f] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#0ecb6f] rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Action */}
-        <div className="border-t border-[#2a2c2f]">
-          <button
-            onClick={() => handleEdit(row)}
-            className="w-full py-2.5 text-xs font-medium text-blue-400 
-              hover:bg-blue-500/5 transition-colors cursor-pointer"
-          >
-            Edit Round
-          </button>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -343,33 +229,24 @@ const IcoManagement = () => {
                 )}
               </div>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <select
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      perPage: Number(e.target.value),
-                      currentPage: 1,
-                    }))
-                  }
-                  className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-                    py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] 
-                    transition-colors cursor-pointer"
-                >
-                  <option value="10">10</option>
-                  <option value="30">30</option>
-                  <option value="50">50</option>
-                </select>
+              <div className="flex w-full">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
+                  <PerPageSelector
+                    options={[5, 15, 25, 50, 100]}
+                    onChange={(value) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: value,
+                        currentPage: 1,
+                      }))
+                    }
+                  />
 
-                <input
-                  type="text"
-                  autoComplete="off"
-                  placeholder="Search..."
-                  onChange={handleSearch}
-                  className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555] 
-                    rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#0ecb6f] 
-                    focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors w-full sm:w-44"
-                />
+                  <SearchBar
+                    onSearch={handleSearch}
+                    placeholder="Search username..."
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -384,8 +261,6 @@ const IcoManagement = () => {
               perPage={state.perPage}
             />
           </div>
-
-
         </div>
 
         {/* Pagination */}

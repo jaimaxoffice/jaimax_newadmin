@@ -493,7 +493,7 @@ const BlogEditor = () => {
 
     return (
       <div className="p-2 sm:p-2 space-y-6">
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -806,7 +806,7 @@ const BlogEditor = () => {
         )}
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#2a2c2f]rounded-lg  overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -836,7 +836,7 @@ const BlogEditor = () => {
             </div>
           </div>
 
-          <div className="">
+          <div className="rounded-lg ">
             <Table
               columns={columns}
               data={posts}

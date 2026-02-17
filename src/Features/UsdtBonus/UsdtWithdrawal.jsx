@@ -15,6 +15,9 @@ import Modal from "../../reusableComponents/Modals/Modals";
 import { useGetUsdtBonusListQuery } from "./usdtwithdrawalApiSlice";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import Loader from "../../reusableComponents/Loader/Loader";
+import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
+import {formatDateWithAmPm} from "../../utils/dateUtils";
+       import { Clock, CheckCircle, XCircle, Wallet,PencilIcon  } from "lucide-react";
 const UsdtBonusList = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -120,21 +123,6 @@ const UsdtBonusList = () => {
     };
   }, []);
 
-  // ─── Helpers ─────────────────────────────────────────────────
-
-  const formatDateWithAmPm = (isoString) => {
-    if (!isoString) return "N/A";
-    const date = new Date(isoString);
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    let hours = date.getUTCHours();
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-    const amPm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${day}-${month}-${year} ${hours}:${minutes} ${amPm}`;
-  };
-
   const formatCurrency = (amount, currency = "USDT") => {
     if (amount === null || amount === undefined) return `0.00 ${currency}`;
     return `${parseFloat(amount).toFixed(2)} ${currency}`;
@@ -177,7 +165,7 @@ const UsdtBonusList = () => {
             <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]"></div>
+                  {/* <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]"></div> */}
                   <h1 className="text-lg font-semibold text-white">
                     USDT Bonus Withdrawals
                   </h1>
@@ -186,9 +174,7 @@ const UsdtBonusList = () => {
             </div>
 
             <div className="flex flex-col items-center justify-center py-20 px-4">
-              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-                <AlertIcon />
-              </div>
+              
               <h3 className="text-white text-lg font-semibold mb-2">
                 Error Loading Data
               </h3>
@@ -203,7 +189,7 @@ const UsdtBonusList = () => {
                              bg-[#eb660f] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
-                  <RefreshIcon className={isLoading ? "animate-spin" : ""} />
+                 
                   Try Again
                 </button>
                 <button
@@ -219,22 +205,12 @@ const UsdtBonusList = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Pending" value="--" valueClass="text-yellow-400" />
-            <StatCard title="Approved" value="--" valueClass="text-[#0ecb6f]" />
-            <StatCard title="Rejected" value="--" valueClass="text-red-400" />
-            <StatCard
-              title="Total USDT"
-              value="--"
-              valueClass="text-blue-400"
-            />
-          </div>
+          
         </div>
       </div>
     );
   }
 
-  // ─── Table Columns ──────────────────────────────────────────
 
   const columns = [
     {
@@ -383,124 +359,6 @@ const UsdtBonusList = () => {
     },
   ];
 
-  // ─── Mobile Card Builder ────────────────────────────────────
-
-  const renderBonusCard = (row, index) => {
-    const sNo = (state.currentPage - 1) * state.perPage + index + 1;
-    const amountInToken = getDecimalValue(row?.amount_in_token);
-    const sentToken = getDecimalValue(row?.senttoken);
-    const adminFeeToken = getDecimalValue(row?.admin_fee_token);
-    const status = getStatusInfo(row?.status);
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: (row?.userId?.name?.charAt(0) || "?").toUpperCase(),
-          avatarBg:
-            row?.status === 1
-              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-              : row?.status === 2
-                ? "bg-red-500/10 text-red-400"
-                : "bg-yellow-500/10 text-yellow-400",
-          title: row?.userId?.name || "N/A",
-          subtitle: `#${sNo} • ${row?.userId?.username || "N/A"}`,
-          badge: status.label,
-          badgeClass: status.class,
-        }}
-        rows={[
-          {
-            label: "Amount (USDT)",
-            custom: (
-              <span className="text-[#0ecb6f] font-semibold text-sm">
-                {formatCurrency(amountInToken, row?.currency || "USDT")}
-              </span>
-            ),
-          },
-          {
-            label: "Admin Fee",
-            custom: (
-              <span className="text-yellow-400 text-xs">
-                {formatCurrency(adminFeeToken, row?.currency || "USDT")}
-              </span>
-            ),
-          },
-          {
-            label: "Final Amount",
-            custom: (
-              <span className="text-blue-400 font-semibold text-sm">
-                {formatCurrency(sentToken, row?.currency || "USDT")}
-              </span>
-            ),
-          },
-          {
-            label: "INR Value",
-            value: `₹${row?.amount_in_inr?.toFixed(2) || "0.00"}`,
-          },
-          {
-            label: "Currency",
-            custom: (
-              <span
-                className="text-[11px] font-semibold px-2 py-0.5 rounded-full
-                           bg-blue-500/10 text-blue-400"
-              >
-                {row?.currency || "USDT"}
-              </span>
-            ),
-          },
-          {
-            label: "UTR Number",
-            value: row?.utr_number || "N/A",
-          },
-          {
-            label: "Transaction ID",
-            custom: (
-              <span className="text-[10px] text-[#8a8d93] font-mono truncate max-w-[60%] text-right">
-                {row?._id || "N/A"}
-              </span>
-            ),
-          },
-          {
-            label: "Date & Time",
-            value: formatDateWithAmPm(row?.created_at),
-          },
-        ]}
-        footer={
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() =>
-                openDetailModal(
-                  "Wallet Address",
-                  row?.walletAddress || "No wallet address available.",
-                )
-              }
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl
-                         text-xs font-semibold bg-[#eb660f]/10 text-[#eb660f]
-                         border border-[#eb660f]/20 hover:bg-[#eb660f]/20
-                         hover:border-[#eb660f]/40 transition-all duration-200 cursor-pointer"
-            >
-              <WalletIcon />
-              Wallet
-            </button>
-            <button
-              onClick={() =>
-                openDetailModal("Note", row?.note || "No note available.")
-              }
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl
-                         text-xs font-semibold bg-blue-500/10 text-blue-400
-                         border border-blue-500/20 hover:bg-blue-500/20
-                         hover:border-blue-500/40 transition-all duration-200 cursor-pointer"
-            >
-              <NoteIcon />
-              Note
-            </button>
-          </div>
-        }
-      />
-    );
-  };
-
-  // ─── Render ─────────────────────────────────────────────────
 
   return (
     <div>
@@ -508,28 +366,41 @@ const UsdtBonusList = () => {
         {/* Top Controls */}
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Pending"
-            value={totalPending}
-            valueClass="text-white"
-          />
-          <StatCard
-            title="Approved"
-            value={totalApproved}
-            valueClass="text-[#ffffff]"
-          />
-          <StatCard
-            title="Rejected"
-            value={totalRejected}
-            valueClass="text-white"
-          />
-          <StatCard
-            title="Total USDT"
-            value={`${totalUsdtAmount.toFixed(2)} USDT`}
-            valueClass="text-white"
-          />
-        </div>
+
+
+{/* USDT Withdrawal Stats */}
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  <StatCard
+    title="Pending"
+    value={totalPending}
+    valueClass="text-white"
+   image="/images/pending.png"
+    // iconBg="bg-yellow-500/20"
+  />
+  <StatCard
+    title="Approved"
+    value={totalApproved}
+    valueClass="text-white"
+    image="/images/approve.png"
+    // iconBg="bg-green-500/20"
+  />
+  <StatCard
+    title="Rejected"
+    value={totalRejected}
+    valueClass="text-white"
+    image="/images/approve.png"
+    // iconBg="bg-red-500/20"
+  />
+  <StatCard
+    title="Total USDT"
+    value={`${totalUsdtAmount.toFixed(2)} USDT`}
+    valueClass="text-white"
+    icon={<Wallet size={32} strokeWidth={2} className="text-white" />}
+    bgClass="bg-[#544a24]"
+  />
+</div>
+
+
 
         {/* Fetching Indicator */}
         {isFetching && !isLoading && (
@@ -537,7 +408,7 @@ const UsdtBonusList = () => {
         )}
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -547,11 +418,11 @@ const UsdtBonusList = () => {
                   <div className="flex w-full">
                     <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
                       {/* Per Page */}
-                      <select
+                      {/* <select
                         onChange={handlePerPageChange}
                         value={state.perPage}
                         disabled={isLoading}
-                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-lg
                          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
                          transition-colors cursor-pointer disabled:opacity-50"
                       >
@@ -559,7 +430,17 @@ const UsdtBonusList = () => {
                         <option value="30">30</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
-                      </select>
+                      </select> */}
+                     <PerPageSelector
+  options={[5, 15, 25, 50, 100]}
+  onChange={(value) =>
+    setState((prev) => ({
+      ...prev,
+      perPage: value,
+      currentPage: 1,
+    }))
+  }
+/>
 
                       {/* Type Filter */}
                       <select
@@ -588,9 +469,7 @@ const UsdtBonusList = () => {
               
             </div>
           </div>
-
-          {/* Desktop Table */}
-          <div className="">
+          <div className="rounded-lg ">
             <Table
               columns={columns}
               data={TableData}
@@ -599,25 +478,7 @@ const UsdtBonusList = () => {
               perPage={state.perPage}
             />
           </div>
-
-          {/* Mobile Cards */}
-          {/* <div className="lg:hidden">
-            <MobileCardList
-              data={TableData}
-              isLoading={isLoading}
-              renderCard={renderBonusCard}
-              emptyMessage={
-                state.search
-                  ? `No results found for "${state.search}"`
-                  : selectedType
-                  ? `No ${selectedType} withdrawals found`
-                  : "No USDT bonus withdrawals available"
-              }
-            />
-          </div> */}
         </div>
-
-        {/* Pagination */}
         {totalPages > 1 && (
           <Pagination
             currentPage={state.currentPage}
@@ -626,8 +487,6 @@ const UsdtBonusList = () => {
           />
         )}
       </div>
-
-      {/* Detail Modal */}
       <Modal
         isOpen={detailModal.show}
         onClose={closeDetailModal}
@@ -647,7 +506,7 @@ const UsdtBonusList = () => {
               detailModal.title === "Wallet Address" ? (
                 <WalletLargeIcon />
               ) : (
-                <NoteLargeIcon />
+                <PencilIcon  />
               )
             }
             bgClass={
@@ -716,101 +575,6 @@ function getDecimalValue(field) {
   return parseFloat(field) || 0;
 }
 
-// ─── SVG Icons ───────────────────────────────────────────────────
-
-const UsdtIcon = ({ className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 6v12" />
-    <path d="M8 8h8" />
-    <path d="M8 12h8" />
-  </svg>
-);
-
-const SearchIcon = ({ className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-const RefreshIcon = ({ className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polyline points="23 4 23 10 17 10" />
-    <polyline points="1 20 1 14 7 14" />
-    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-  </svg>
-);
-
-const AlertIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#ef4444"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-    <line x1="12" y1="9" x2="12" y2="13" />
-    <line x1="12" y1="17" x2="12.01" y2="17" />
-  </svg>
-);
-
-const WalletIcon = ({ className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
-    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
-    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
-  </svg>
-);
 
 const WalletLargeIcon = () => (
   <svg
@@ -851,25 +615,7 @@ const NoteIcon = ({ className = "" }) => (
   </svg>
 );
 
-const NoteLargeIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#3b82f6"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="16" y1="13" x2="8" y2="13" />
-    <line x1="16" y1="17" x2="8" y2="17" />
-    <line x1="10" y1="9" x2="8" y2="9" />
-  </svg>
-);
+
 
 const CopyIcon = ({ className = "" }) => (
   <svg
