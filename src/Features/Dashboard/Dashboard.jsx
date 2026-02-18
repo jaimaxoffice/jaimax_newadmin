@@ -9,6 +9,7 @@ import {
   Briefcase, Calendar as CalendarIcon, ArrowLeft, ArrowRight,
   ArrowUpCircle,
   ArrowDownCircle,
+  Mail, Phone,
   Gift
 } from "lucide-react";
 import {
@@ -125,459 +126,6 @@ const StatCard = ({ label, value, sub, icon: Icon, accent, trend }) => (
 
 
 
-// const CommunityCard = ({ community }) => {
-//   const [activeIndex, setActiveIndex] = useState(0); // State to track hovered item index
-
-//   const data = [
-//     { name: 'Active', value: community.activeUsers || 0, color: '#b9fd5c' },
-//     { name: 'Inactive', value: community.inActiveUsers || 0, color: '#ffffff' },
-//     { name: 'Blocked', value: community.blockedUsers || 0, color: '#ef4444' },
-//     { name: 'Admins', value: community.adminUsers || 0, color: '#d9a90b' },
-//   ].filter(item => item.value > 0); // Filter out zero values for a cleaner chart
-
-//   const totalUsersForChart = data.reduce((sum, item) => sum + item.value, 0);
-
-//   return (
-//     <Card>
-//       <div className="relative p-5 sm:p-6 overflow-hidden">
-//         {/* All visible content resides within this relative z-10 container */}
-//         <div className="relative z-10">
-//           <CardHeader title="Community Breakdown" />
-
-//           {/* Interactive Chart and Total Users Area */}
-//           {/* This div reserves space for the chart, so the legend flows after it */}
-//           <div className="relative h-48 mb-6 sm:h-56"> {/* Set a fixed height for the chart area */}
-//             {totalUsersForChart > 0 && (
-//               <div className="absolute inset-0"> {/* Chart takes full space within its container */}
-//                 <ResponsiveContainer width="100%" height="100%">
-//                   <PieChart>
-//                     <Pie
-//                       data={data}
-//                       cx="50%"
-//                       cy="50%"
-//                       innerRadius="60%" // Donut hole for total count
-//                       outerRadius="90%" // Size of the pie chart
-//                       dataKey="value"
-//                       stroke="none" // No stroke for cleaner look
-//                       isAnimationActive={false} // No animation on load for interactive state
-//                     >
-//                       {data.map((entry, index) => (
-//                         <Cell
-//                           key={`cell-${index}`}
-//                           fill={entry.color}
-//                           opacity={index === activeIndex ? 1 : 0.5} // Highlight effect: full opacity for active, 50% for others
-//                           onMouseEnter={() => setActiveIndex(index)}
-//                           onMouseLeave={() => setActiveIndex(-1)}
-//                           style={{ cursor: 'pointer' }} // Indicate interactivity
-//                         />
-//                       ))}
-//                     </Pie>
-//                   </PieChart>
-//                 </ResponsiveContainer>
-//               </div>
-//             )}
-
-//             {/* Total Users (always centered and above the chart, but doesn't block pointer events) */}
-//             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-//               <p className="text-3xl sm:text-3xl font-bold text-white">
-//                 {fmtWhole(community.allUsers || 0)}
-//               </p>
-//               {/* <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-white mt-1">
-//                 Total Users
-//               </p> */}
-//             </div>
-//           </div>
-
-//           {/* Legend - follows the chart area */}
-//           <div className="space-y-1 pt-2 border-t border-gray-800">
-//             {data.map((item, index) => (
-//               <div
-//                 key={item.name}
-//                 className={`flex items-center justify-between p-2 rounded-lg transition-colors duration-200 ${index === activeIndex ? 'bg-gray-800' : 'hover:bg-gray-900' // Highlight legend item on hover
-//                   }`}
-//                 onMouseEnter={() => setActiveIndex(index)}
-//                 onMouseLeave={() => setActiveIndex(-1)}
-//               >
-//                 <div className="flex items-center gap-3">
-//                   <span className="w-3 h-3 rounded-[8px]" style={{ backgroundColor: item.color }} />
-//                   <span className={`text-sm font-medium ${index === activeIndex ? 'text-white' : 'text-gray-400'}`}> {/* Highlight text */}
-//                     {item.name}
-//                   </span>
-//                 </div>
-//                 <span className={`text-sm font-bold ${index === activeIndex ? 'text-white' : 'text-gray-300'}`}>
-//                   {fmtWhole(item.value)}
-//                 </span>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </Card>
-//   );
-// };
-
-
-// const FundsCard = ({ funds }) => {
-//   // Calculate percentages for the rings
-//   const totalRaised = funds.totalFundRaisedINR  // rough USD to INR conversion
-//   const inrPercentage = totalRaised > 0 ? Math.min(((funds.totalFundRaisedINR || 0) / totalRaised) * 100, 100) : 0;
-
-
-//   const availablePercentage = funds.totalFundRaisedINR > 0
-//     ? Math.min(((funds.totalAvailableInr || 0) / funds.totalFundRaisedINR) * 100, 100)
-//     : 0;
-
-//   // SVG ring component
-//   const Ring = ({ percentage, color, size, strokeWidth, offset = 0 }) => {
-//     const radius = (size - strokeWidth) / 2;
-//     const circumference = 2 * Math.PI * radius;
-//     const strokeDashoffset = circumference - (percentage / 100) * circumference;
-
-//     return (
-//       <svg width={size} height={size} className="absolute" style={{ transform: 'rotate(-90deg)' }}>
-//         {/* Background ring */}
-//         <circle
-//           cx={size / 2}
-//           cy={size / 2}
-//           r={radius}
-//           fill="none"
-//           stroke="#1a2130"
-//           strokeWidth={strokeWidth}
-//         />
-//         {/* Progress ring */}
-//         <circle
-//           cx={size / 2}
-//           cy={size / 2}
-//           r={radius}
-//           fill="none"
-//           stroke={color}
-//           strokeWidth={strokeWidth}
-//           strokeLinecap="round"
-//           strokeDasharray={circumference}
-//           strokeDashoffset={strokeDashoffset}
-//           style={{
-//             transformOrigin: 'center',
-//             transition: 'stroke-dashoffset 0.5s ease'
-//           }}
-//         />
-//       </svg>
-//     );
-//   };
-
-//   const fmt = (num) => new Intl.NumberFormat('en-IN').format(num);
-
-//   return (
-//     <Card className="bg-[#1f2633] border border-[#2b3445] rounded-2xl">
-//       <div className="p-6">
-
-//         {/* Header */}
-//         <h2 className="text-lg font-semibold text-white mb-6 serialHeading text-[20px]">
-//           Funds Overview
-//         </h2>
-
-//         {/* Concentric Rings */}
-//         <div className="relative w-48 h-48 mx-auto mb-8">
-//           <div className="absolute inset-0 flex items-center justify-center">
-//             <Ring
-//               percentage={inrPercentage}
-//               color="#b9fd5c"
-//               size={192}
-//               strokeWidth={12}
-//             />
-//           </div>
-
-//           <div className="absolute inset-0 flex items-center justify-center">
-//             <Ring
-//               percentage={availablePercentage}
-//               color="#ffffff"
-//               size={112}
-//               strokeWidth={12}
-//             />
-//           </div>
-
-//           <div className="absolute inset-0 flex items-center justify-center">
-//             <div className="text-center">
-//               <p className="text-2xl font-semibold text-white">
-//                 ₹{fmt(Math.round((funds.totalFundRaisedINR || 0) / 100000))}L
-//               </p>
-//               <p className="text-[11px] text-gray-400 uppercase tracking-wider">
-//                 Total Raised
-//               </p>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* ========== CREDITS ========== */}
-//         <div className="mb-6">
-//           {/* <p className="text-xs uppercase  text-gray-400 mb-1">
-//             Credits
-//           </p> */}
-//           <h3 className="text-[11px] text-gray-500 font-semibold uppercase tracking-[0.15em]">
-
-//             Credits
-//           </h3>
-
-
-//           <div className="rounded-[8px] p-4 space-y-4">
-
-//             <div className="flex items-center gap-3">
-//               <div className="w-3 h-3 rounded-full bg-[#b9fd5c]" />
-//               <div>
-//                 <p className="text-[11px] uppercase  text-gray-400">
-//                   Fund Raised in INR
-//                 </p>
-//                 <p className="text-sm font-medium text-white">
-//                   ₹{fmt(funds.totalFundRaisedINR || 0)}
-//                 </p>
-//               </div>
-//             </div>
-
-//             <div className="flex items-center gap-3">
-//               <div className="w-3 h-3 rounded-full bg-[#b9fd5c]" />
-//               <div>
-//                 <p className="text-[11px] uppercase  text-gray-400">
-//                   Fund Raised in USD
-//                 </p>
-//                 <p className="text-sm font-medium text-white">
-//                   ${fmt(funds.totalFundRaisedUSD || 0)}
-//                 </p>
-//               </div>
-//             </div>
-
-//           </div>
-//         </div>
-
-//         {/* ========== AVAILABLE BALANCE ========== */}
-//         <div>
-//           {/* <p className="text-xs uppercase tracking-widest text-gray-400 mb-1">
-//             Available Balance
-//           </p> */}
-//           <h3 className="text-[11px] text-gray-500 font-semibold uppercase tracking-[0.15em]">
-
-//             Ready to Withdraw
-//           </h3>
-
-
-//           <div className="rounded-[8px] p-4 space-y-4">
-
-//             <div className="flex items-center gap-3">
-//               <div className="w-3 h-3 rounded-full bg-white" />
-//               <div>
-//                 <p className="text-[11px] uppercase tracking-widest text-gray-400">
-//                   Available Balance
-//                 </p>
-//                 <p className="text-sm font-medium text-white">
-//                   ₹{fmt(funds.totalAvailableInr || 0)}
-//                 </p>
-//               </div>
-//             </div>
-
-//             <div className="flex items-center gap-3">
-//               <div className="w-3 h-3 rounded-full bg-white" />
-//               <div>
-//                 <p className="text-[11px] uppercase tracking-widest text-gray-400">
-//                   Supply Required (USDT)
-//                 </p>
-//                 <p className="text-sm font-medium text-white">
-//                   ₹{fmt(funds.usdtRequiredToWithdarwInAdmin || 0)}
-//                 </p>
-//               </div>
-//             </div>
-
-//           </div>
-//         </div>
-
-//       </div>
-//     </Card>
-
-//   );
-// };
-
-// const TokensCard = ({ tokens }) => {
-//   const [hoveredData, setHoveredData] = useState(null);
-
-//   // Prepare dynamic data
-//   const chartData = [
-//     {
-//       key: "totalSoldFromOrders",
-//       label: "From Orders",
-//       value: Number(tokens.totalSoldFromOrders || 0),
-//       color: "#60a5fa",
-//     },
-//     {
-//       key: "bonusJaimaxDistributed",
-//       label: "Bonus Distributed",
-//       value: Number(tokens.bonusJaimaxDistributed || 0),
-//       color: "#bdf34d",
-//     },
-//     {
-//       key: "registrationBonusJaimax",
-//       label: "Registration Bonus",
-//       value: Number(tokens.registrationBonusJaimax || 0),
-//       color: "#c084fc",
-//     },
-//   ];
-
-//   // Sort by highest value first (outer ring = biggest)
-//   const sortedChartData = [...chartData].sort((a, b) => b.value - a.value);
-
-//   const total = Number(tokens.totalSoldFromUsers || 0);
-
-//   return (
-//     <Card>
-//       <div className="p-6 sm:p-8 bg-[#272c33] font-sans">
-
-//         {/* Header */}
-//         <div className="flex items-center gap-2.5 mb-6">
-//           <span className="flex-1 text-[22px] font-serif italic tracking-wide text-white serialHeading">
-//             Total Token Stats
-//           </span>
-//         </div>
-
-//         {/* Dynamic Concentric Circles */}
-//         <div
-//           className="flex justify-center mb-10"
-//           onMouseLeave={() => setHoveredData(null)}
-//         >
-//           <div className="relative w-52 h-52">
-
-//             {/* Render Rings Dynamically */}
-//             {sortedChartData.map((item, index) => {
-//               const inset = index * 16;// controls spacing between rings
-//               return (
-//                 <div
-//                   key={item.key}
-//                   className="absolute rounded-full border-[10px] cursor-pointer transition-opacity hover:opacity-70"
-//                   style={{
-//                     inset: `${inset}px`,
-//                     borderColor: item.color,
-//                     zIndex: 10 + index,
-//                   }}
-//                   onMouseEnter={() =>
-//                     setHoveredData({ label: item.label, value: item.value })
-//                   }
-//                 />
-//               );
-//             })}
-
-//             {/* Center Core */}
-//             <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
-//               <div
-//                 className="w-24 h-24 bg-[#1a212a] rounded-full flex flex-col items-center justify-center pointer-events-auto border-[4px] border-[#272c33] shadow-inner"
-//                 onMouseEnter={() => setHoveredData(null)}
-//               >
-//                 <span className="text-2xl text-white font-bold">
-//                   {hoveredData
-//                     ? fmtCompact(hoveredData.value)
-//                     : fmtCompact(total)}
-//                 </span>
-//                 <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1 text-center px-2">
-//                   {hoveredData ? hoveredData.label : "Total Sold"}
-//                 </span>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Info Section */}
-//         <div className="space-y-5 pl-1">
-
-//           {/* Sales Overview */}
-//           <div>
-//             <h3 className="text-[11px] text-gray-500 font-semibold uppercase tracking-[0.15em] mb-2">
-
-//               Sales Overview
-//             </h3>
-
-//             <div className="space-y-2.5">
-//               {/* From Users */}
-//               <div className="flex items-start gap-3">
-//                 <div className="w-2.5 h-2.5 rounded-full bg-gray-500 mt-1" />
-//                 <div>
-//                   <span className="text-[10px] text-gray-400 uppercase tracking-widest">
-//                     From Users
-//                   </span>
-//                   <div className="text-[15px] text-white font-medium">
-//                     {tokens.totalSoldFromUsers || 0}
-//                   </div>
-//                 </div>
-//               </div>
-
-//               {/* From Orders */}
-//               {sortedChartData
-//                 .filter((i) => i.key === "totalSoldFromOrders")
-//                 .map((item) => (
-//                   <div
-//                     key={item.key}
-//                     className="flex items-start gap-3 cursor-pointer group"
-//                     onMouseEnter={() =>
-//                       setHoveredData({ label: item.label, value: item.value })
-//                     }
-//                     onMouseLeave={() => setHoveredData(null)}
-//                   >
-//                     <div
-//                       className="w-2.5 h-2.5 rounded-full mt-1 group-hover:scale-125 transition-transform"
-//                       style={{ backgroundColor: item.color }}
-//                     />
-//                     <div>
-//                       <span className="text-[10px] text-gray-400 uppercase tracking-widest group-hover:text-white transition-colors">
-//                         {item.label}
-//                       </span>
-//                       <div className="text-[15px] text-white font-medium">
-//                         {item.value}
-//                       </div>
-//                     </div>
-//                   </div>
-//                 ))}
-//             </div>
-//           </div>
-
-//           {/* Bonuses Overview */}
-//           <div>
-//             <h3 className="text-[11px] text-gray-500 font-semibold uppercase tracking-[0.15em] mb-2">
-
-//               Bonuses Overview
-//             </h3>
-
-//             <div className="space-y-2.5">
-
-//               {sortedChartData
-//                 .filter(
-//                   (i) =>
-//                     i.key === "bonusJaimaxDistributed" ||
-//                     i.key === "registrationBonusJaimax"
-//                 )
-//                 .map((item) => (
-//                   <div
-//                     key={item.key}
-//                     className="flex items-start gap-3 cursor-pointer group"
-//                     onMouseEnter={() =>
-//                       setHoveredData({ label: item.label, value: item.value })
-//                     }
-//                     onMouseLeave={() => setHoveredData(null)}
-//                   >
-//                     <div
-//                       className="w-2.5 h-2.5 rounded-full mt-1 group-hover:scale-125 transition-transform"
-//                       style={{ backgroundColor: item.color }}
-//                     />
-//                     <div>
-//                       <span className="text-[10px] text-gray-400 uppercase tracking-widest group-hover:text-white transition-colors">
-//                         {item.label}
-//                       </span>
-//                       <div className="text-[15px] text-white font-medium">
-//                         {item.value}
-//                       </div>
-//                     </div>
-//                   </div>
-//                 ))}
-//             </div>
-//           </div>
-
-//         </div>
-//       </div>
-//     </Card>
-//   );
-// };
 
 
 
@@ -962,41 +510,6 @@ const TokensCard = ({ tokens }) => {
 
 
 
-// Clean Text Row Component (No boxes, just spacing)
-const TextRow = ({ dotColor, label, value }) => (
-  <div className="flex items-start gap-4">
-    {/* Dot */}
-    <div className={`w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ${dotColor}`} />
-
-    {/* Labels and Values */}
-    <div className="flex flex-col">
-      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
-        {label}
-      </span>
-      <span className="text-lg font-semibold text-white tracking-tight">
-        {value}
-      </span>
-    </div>
-  </div>
-);
-
-
-// Helper component for the rows
-const DataRow = ({ dotColor, label, value }) => (
-  <div className="flex items-start gap-3">
-    <div className={`w-2.5 h-2.5 rounded-full mt-1 ${dotColor} shadow-[0_0_8px_rgba(204,255,0,0.4)]`} />
-    <div className="flex flex-col">
-      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider leading-none mb-1">
-        {label}
-      </span>
-      <span className="text-lg font-bold text-gray-100 tabular-nums">
-        {Number(value).toLocaleString()}
-      </span>
-    </div>
-  </div>
-);
-
-
 const WithdrawalsCard = ({ withdrawals }) => {
   const total = withdrawals.totalRequests || 0;
   const approved = withdrawals.approved || 0;
@@ -1148,7 +661,7 @@ const ICORoundsChart = ({ rounds }) => {
 };
 
 
-const ActiveICOCard = ({ round }) => {
+const ActiveICOCard = ({ round, completedRounds, totalRounds }) => {
   if (!round) {
     return (
       <Card>
@@ -1207,6 +720,7 @@ const ActiveICOCard = ({ round }) => {
             <span className="text-[9px] font-bold uppercase tracking-widest text-white">Progress</span>
             <span className="text-[11px] font-bold text-[#b9fd5c]">{rawPct.toFixed(2)}%</span>
           </div>
+
           <div className="h-2 bg-[#0d1218] rounded-full overflow-hidden">
             <div
               className="h-full rounded-full bg-gradient-to-r from-[#b9fd5c] via-[#b9fd5c] to-[#b9fd5c] shadow-[0_0_8px_rgb(184, 252, 92)] transition-all duration-[1500ms] ease-out"
@@ -1214,6 +728,9 @@ const ActiveICOCard = ({ round }) => {
             />
           </div>
         </div>
+        {/* //total supply, sold, left, price in INR and USDT, progress bar with animated fill, and a "Live" badge. */}
+        <p className="text-[10px] text-white/40 flex justify-between rounded-xl px-4 py-2 mt-2">Total Supply <span className="text-white font-medium">125B</span></p>
+        <p className="text-[10px] text-white/40 flex justify-between rounded-xl px-4 py-1">Completed Rounds <span className="text-white font-medium">{completedRounds}/{totalRounds}</span></p>
       </div>
     </Card >
   );
@@ -1309,6 +826,171 @@ const CalendarWidget = () => {
 };
 
 
+
+const TopInvestorsCard = ({ topInvestors = [] }) => {
+  const [activeId, setActiveId] = useState(null);
+
+  const fmt = (num) =>
+    num >= 100000
+      ? `₹${(num / 100000).toFixed(1)}L`
+      : `₹${new Intl.NumberFormat("en-IN").format(num)}`;
+
+  const initials = (name) =>
+    name
+      .trim()
+      .split(" ")
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+
+  const toTitleCase = (name) =>
+    name.trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+
+  const ringColors = [
+    { ring: "border-[#b9fd5c]", bg: "bg-[#b9fd5c]/10", text: "text-[#b9fd5c]" },
+    { ring: "border-[#60a5fa]", bg: "bg-[#60a5fa]/10", text: "text-[#60a5fa]" },
+    { ring: "border-[#c084fc]", bg: "bg-[#c084fc]/10", text: "text-[#c084fc]" },
+    { ring: "border-[#f97316]", bg: "bg-[#f97316]/10", text: "text-[#f97316]" },
+    { ring: "border-[#f43f5e]", bg: "bg-[#f43f5e]/10", text: "text-[#f43f5e]" },
+  ];
+
+  const handleEmail = (e, investor) => {
+    e.stopPropagation();
+    if (investor.email) {
+      window.location.href = `mailto:${investor.email}`;
+    } else {
+      // fallback: open mail compose with just subject
+      window.location.href = `mailto:?subject=Regarding your investment - ${toTitleCase(investor.name)}`;
+    }
+  };
+
+  const handlePhone = (e, investor) => {
+    e.stopPropagation();
+    if (investor.phone) {
+      window.location.href = `tel:${investor.phone}`;
+    }
+  };
+
+  return (
+    <div className="bg-[#282f35] rounded-[8px] p-4 sm:p-6 w-full shadow-2xl">
+
+      {/* Header */}
+      <div className="mb-5">
+        <h2 className="text-white text-[20px] font-semibold  serialHeading">
+          Top 3 Investors
+        </h2>
+        <p className="text-gray-500 text-xs mt-0.5">Ranked by total investment</p>
+      </div>
+
+      {/* List */}
+      <div className="flex flex-col gap-1.5">
+        {topInvestors.map((investor, index) => {
+          const isActive = activeId === investor.userId;
+          const color = ringColors[index % ringColors.length];
+          const hasPhone = !!investor.phone;
+          const hasEmail = !!investor.email;
+
+          return (
+            <div
+              key={investor.userId}
+              onMouseEnter={() => setActiveId(investor.userId)}
+              onMouseLeave={() => setActiveId(null)}
+              className={`flex items-center gap-3 px-1 py-1 rounded-full cursor-pointer transition-all duration-200
+                ${isActive ? "bg-[#b9fd5c]" : "hover:bg-white/5"}`}
+            >
+              {/* Avatar */}
+              <div
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center
+                  text-xs sm:text-sm font-bold flex-shrink-0 border-2 transition-all duration-200
+                  ${isActive
+                    ? `bg-[#1a1d23] border-[#1a1d23] ${color.text}`
+                    : `${color.bg} ${color.ring} ${color.text}`
+                  }`}
+              >
+                {initials(investor.name)}
+              </div>
+
+              {/* Name + Username + Amount */}
+              <div className="flex-1 min-w-0">
+                <p
+                  className={`text-sm font-semibold truncate transition-colors duration-200
+                    ${isActive ? "text-[#1a1d23]" : "text-white"}`}
+                >
+                  {toTitleCase(investor.name)}
+                </p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span
+                    className={`text-[10px] font-mono tracking-wide transition-colors duration-200
+                      ${isActive ? "text-[#2d3a1a]" : "text-gray-500"}`}
+                  >
+                    {investor.username}
+                  </span>
+                  <span className={`text-[10px] ${isActive ? "text-[#2d3a1a]" : "text-gray-500"}`}>·</span>
+                  <span
+                    className={`text-[11px] font-semibold transition-colors duration-200
+                      ${isActive ? "text-[#1a1d23]" : color.text}`}
+                  >
+                    {fmt(investor.investedAmount)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex-shrink-0">
+                {isActive ? (
+                  <div className="flex items-center gap-1.5">
+                    {/* Email button */}
+                    <button
+                      onClick={(e) => handleEmail(e, investor)}
+                      className={`w-8 h-8 rounded-full bg-[#1a1d23] flex items-center justify-center
+                        transition-all duration-150
+                        ${hasEmail
+                          ? "text-[#b9fd5c] hover:bg-[#b9fd5c] hover:text-[#1a1d23] cursor-pointer"
+                          : "text-gray-600 cursor-not-allowed opacity-50"
+                        }`}
+                      title={hasEmail ? `Email ${toTitleCase(investor.name)}` : "No email available"}
+                      disabled={!hasEmail}
+                    >
+                      <Mail size={14} />
+                    </button>
+
+                    {/* Phone button */}
+                    <button
+                      onClick={(e) => handlePhone(e, investor)}
+                      className={`w-8 h-8 rounded-full bg-[#1a1d23] flex items-center justify-center
+                        transition-all duration-150
+                        ${hasPhone
+                          ? "text-[#b9fd5c] hover:bg-[#b9fd5c] hover:text-[#1a1d23] cursor-pointer"
+                          : "text-gray-600 cursor-not-allowed opacity-50"
+                        }`}
+                      title={hasPhone ? `Call ${toTitleCase(investor.name)}` : "No phone available"}
+                      disabled={!hasPhone}
+                    >
+                      <Phone size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <span className="text-white text-xl rounded-full w-5 h-5 flex items-center justify-center opacity-80">
+                    ⋮
+                  </span>
+
+                )}
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+
+
+
+
 const Dashboard = () => {
   const { data: response, isLoading, isError, error, refetch } = useGetDetailsQuery();
 
@@ -1338,10 +1020,12 @@ const Dashboard = () => {
   console.log("UserData from localStorage:", userDataObj);
 
   const activeRound = d.ico?.rounds?.find(r => r.status === 2) || d.ico?.rounds?.find(r => r.status === 1);
+  const totalRounds = d.ico?.rounds?.length || 0;
+  const completedRounds = d.ico?.rounds?.filter(r => r.status === 2).length || 0;
 
   return (
     <div className="min-h-screentext-white">
-      <div className="max-w-[1800px] mx-auto p-3 sm:p-5 mt-10 lg:p-6">
+      <div className="max-w-[1800px] mx-auto p-3 sm:p-5 mt-2 lg:p-6">
 
         {/* HEADER */}
         <Card className="mb-6 overflow-hidden border-0 bg-[#282f35] shadow-xl shadow-black/30">
@@ -1431,7 +1115,7 @@ const Dashboard = () => {
               <SL>Financial & Plans</SL>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <WithdrawalsCard withdrawals={d.withdrawals} />
-                <ActiveICOCard round={activeRound} />
+                <ActiveICOCard round={activeRound} completedRounds={completedRounds} totalRounds={totalRounds} />
                 <USDTCard usdt={d.usdt} />
               </div>
             </section>
@@ -1480,6 +1164,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </Card>
+            <TopInvestorsCard topInvestors={d.topInvestors} />
           </aside>
 
         </div>
