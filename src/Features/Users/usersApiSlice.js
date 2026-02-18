@@ -64,6 +64,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: { ...data },
       }),
     }),
+    usersummary: builder.query({
+      query: (username) => ({
+        url: `/Admin/user-summary?${username}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -77,4 +83,5 @@ export const {
   useChangePwdMutation,
   useChangePwdReqMutation,
   useVerifyMutation,
+  useUsersummaryQuery,
 } = userApiSlice;

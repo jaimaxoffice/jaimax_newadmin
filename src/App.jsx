@@ -82,6 +82,7 @@ import Debits from "./Accountant/Debits/Debits";
 import TransactionInfo from "./Accountant/TransactionInfo/TransactionInfo";
 import AccountantWithdrawal from "./Accountant/Withdrawal/Withdrawal";
 import Expenses from "./Accountant/Expensenses/Expenses"
+import UserSummary from "./Features/Users/UserSummary";
 // Permission-based Route Component
 const PermissionRoute = ({ element, permission, permissions }) => {
   if (!permission || permissions?.includes(permission)) return element;
@@ -130,6 +131,7 @@ const ADMIN_ROUTES = [
   { path: "/logout", element: <Logout /> },
   { path: "/businessanalytics", element: <BusinessAnalytics /> },
   { path: "/socialmedia", element: <SocialMedia /> },
+  { path: "/user-summary", element: <UserSummary /> },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
