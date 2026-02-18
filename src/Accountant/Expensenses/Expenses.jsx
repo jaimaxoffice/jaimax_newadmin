@@ -95,7 +95,7 @@
 
 // /* ── Shared input class ── */
 // const inputCls =
-//   "w-full bg-[#1a2128] border border-[#444] rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eb660f]";
+//   "w-full bg-[#1a2128] border border-[#444] rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#b9fd5c]";
 
 // const selectWrap = "relative";
 // const chevronCls =
@@ -323,7 +323,7 @@
 //   }, [currentPage]);
 
 //   const viewBtnCls =
-//     "inline-flex items-center justify-center px-2.5 py-1.5 text-white bg-[#eb660f] hover:bg-[#d45a0d] rounded text-xs transition";
+//     "inline-flex items-center justify-center px-2.5 py-1.5 text-white bg-[#b9fd5c] hover:bg-[#d45a0d] rounded text-xs transition";
 
 //   return (
 //     <div>
@@ -410,7 +410,7 @@
 //                   }}
 //                 />
 //                 <button
-//                   className="px-4 py-2 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50"
+//                   className="px-4 py-2 bg-[#b9fd5c] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50"
 //                   onClick={handleFilter}
 //                   disabled={isLoading}
 //                 >
@@ -542,7 +542,7 @@
 //                         <td className="px-4 py-3">
 //                           <div className="flex gap-2">
 //                             <button
-//                               className="p-1.5 bg-[#eb660f] hover:bg-[#d45a0d] text-white rounded text-xs transition"
+//                               className="p-1.5 bg-[#b9fd5c] hover:bg-[#d45a0d] text-white rounded text-xs transition"
 //                               onClick={() => handleEditClick(doc)}
 //                               title="Edit"
 //                             >
@@ -905,7 +905,7 @@
 //                   </button>
 //                   <button
 //                     type="submit"
-//                     className="px-5 py-2 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 flex items-center gap-2"
+//                     className="px-5 py-2 bg-[#b9fd5c] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 flex items-center gap-2"
 //                     disabled={isSubmitting}
 //                   >
 //                     {isSubmitting && (
@@ -1108,7 +1108,7 @@ const BillViewButton = ({ url }) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center justify-center px-2.5 py-1.5 text-white bg-[#eb660f] hover:bg-[#d45a0d] rounded text-xs transition"
+      className="inline-flex items-center justify-center px-2.5 py-1.5 text-white bg-[#b9fd5c] hover:bg-[#d45a0d] rounded text-xs transition"
     >
       <Eye size={14} />
     </a>
@@ -1117,7 +1117,7 @@ const BillViewButton = ({ url }) => {
 
 /* ── Shared Styles ── */
 const inputCls =
-  "w-full bg-[#1a2128] border border-[#444] rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eb660f]";
+  "w-full bg-[#1a2128] border border-[#444] rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#b9fd5c]";
 const selectWrap = "relative";
 const chevronCls =
   "absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none text-xs";
@@ -1428,7 +1428,7 @@ const InternalExpenses = () => {
       render: (doc) => (
         <div className="flex gap-2">
           <button
-            className="p-1.5 bg-[#eb660f] hover:bg-[#d45a0d] text-white rounded text-xs transition"
+            className="p-1.5 bg-[#b9fd5c] hover:bg-[#d45a0d] text-white rounded text-xs transition"
             onClick={() => handleEditClick(doc)}
             title="Edit"
           >
@@ -1616,7 +1616,7 @@ const InternalExpenses = () => {
 
                 {/* Fetch Button */}
                 <button
-                  className="px-4 py-2 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 h-9.5 w-full sm:w-auto"
+                  className="px-4 py-2 bg-[#b9fd5c] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 h-9.5 w-full sm:w-auto"
                   onClick={handleFilter}
                   disabled={isLoading}
                 >
@@ -1892,7 +1892,7 @@ const InternalExpenses = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2 bg-[#b9fd5c] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 flex items-center gap-2"
                     disabled={isSubmitting}
                   >
                     {isSubmitting && (

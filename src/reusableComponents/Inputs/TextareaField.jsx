@@ -16,7 +16,7 @@ const TextareaField = ({
       {label && (
         <label className="block text-sm font-medium text-[#ffffff] mb-1.5">
           {label}
-          {required && <span className="text-[#eb660f] ml-1">*</span>}
+          {required && <span className="text-[#b9fd5c] ml-1">*</span>}
         </label>
       )}
       <textarea

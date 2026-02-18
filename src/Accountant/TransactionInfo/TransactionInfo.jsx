@@ -9,7 +9,7 @@ const TwModal = ({ show, onClose, size = "max-w-lg", children }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div
-        className={`relative w-full ${size} bg-[#1b232d] border border-[#2b3440] rounded-xl shadow-2xl text-white z-10 max-h-[90vh] overflow-y-auto`}
+        className={`relative w-full ${size} bg-[#282f35] border border-[#2b3440] rounded-xl shadow-2xl text-white z-10 max-h-[90vh] overflow-y-auto`}
       >
         {children}
       </div>
@@ -177,7 +177,7 @@ const TxInfo = () => {
     <div>
       <ToastContainer />
 
-      <section className="py-3 sm:py-4 px-1 sm:px-3 md:px-4 min-h-screen bg-[#1b232d] rounded-lg mx-1 sm:mx-2.5">
+      <section className="py-3 sm:py-4 px-1 sm:px-3 md:px-4 min-h-screen bg-[#282f35] rounded-lg mx-1 sm:mx-2.5">
         {/* ── Search Bar ── */}
         <div className="flex justify-center mb-6">
           <form
@@ -347,7 +347,7 @@ const TxInfo = () => {
           <TwModalHeader onClose={() => setShowImg(false)}>
             Screenshot
           </TwModalHeader>
-          <TwModalBody className="bg-[#1b232d]">
+          <TwModalBody className="bg-[#282f35]">
             {imgSrc ? (
               <img
                 src={imgSrc}

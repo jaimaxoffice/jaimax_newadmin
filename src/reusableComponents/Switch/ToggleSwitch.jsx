@@ -6,7 +6,7 @@ const ToggleSwitch = ({ checked, onChange }) => {
     <button
       onClick={onChange}
       className={`relative w-8 h-4 rounded-full transition-colors cursor-pointer ${
-        checked ? "bg-[#eb660f]" : "bg-[#2a2c2f]"
+        checked ? "bg-[#b9fd5c]" : "bg-[#2a2c2f]"
       }`}
     >
       <span

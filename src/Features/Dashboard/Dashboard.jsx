@@ -84,7 +84,7 @@ const CardHeader = ({ title, action }) => (
 const ChartTip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#1b232d] border border-[#2a3340] rounded-xl px-3 py-2 shadow-2xl text-xs min-w-[110px]">
+    <div className="bg-[#282f35] border border-[#2a3340] rounded-xl px-3 py-2 shadow-2xl text-xs min-w-[110px]">
       <p className="text-white font-semibold mb-1.5">{label}</p>
       {payload.map((p, i) => (
         <p key={i} className="font-bold" style={{ color: p.color || p.fill }}>

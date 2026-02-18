@@ -187,7 +187,7 @@ const IcoManagement = () => {
     {
       header: "Sold Tokens",
       render: (row) => (
-        <span className="text-[#eb660f]">{formatNum(row.soldQty)}</span>
+        <span className="text-[#b9fd5c]">{formatNum(row.soldQty)}</span>
       ),
     },
     {
@@ -200,7 +200,7 @@ const IcoManagement = () => {
         <button
           onClick={() => handleEdit(row)}
           title="Edit Round"
-          className="text-[#eb660f] text-xs font-medium 
+          className="text-[#b9fd5c] text-xs font-medium 
             bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
         >
           Edit
@@ -214,7 +214,7 @@ const IcoManagement = () => {
     <>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

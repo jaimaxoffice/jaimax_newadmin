@@ -16,7 +16,7 @@ const StatCard = ({
         rounded-lg p-3 sm:p-4 md:p-5 transition-all duration-300 hover:scale-[1.02]
         flex items-center gap-3 sm:gap-4
         w-full min-w-0
-        ${bgClass || "bg-[#1b232d] border border-[#303f50] hover:border-[#0ecb6f]/30"}
+        ${bgClass || "bg-[#282f35] border border-[#303f50] hover:border-[#0ecb6f]/30"}
       `}
     >
       {/* Icon / Image */}

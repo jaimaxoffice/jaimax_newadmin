@@ -254,7 +254,7 @@ const PaymentGatewayManagement = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
-          {/* <CreditCard size={32} className="text-[#eb660f]" /> */}
+          {/* <CreditCard size={32} className="text-[#b9fd5c]" /> */}
           <div>
             <h3 className="text-xl sm:text-2xl font-bold text-white">
               Payment Gateway Management
@@ -306,9 +306,9 @@ const PaymentGatewayManagement = () => {
       {activeGateway?.data && (
         <div
           className="flex items-center gap-3 rounded-xl px-5 py-4 shadow-sm
-            bg-[#eb660f]/10 border-l-4 border-[#eb660f]"
+            bg-[#b9fd5c]/10 border-l-4 border-[#b9fd5c]"
         >
-          <Zap size={20} className="text-[#eb660f] shrink-0" />
+          <Zap size={20} className="text-[#b9fd5c] shrink-0" />
           <span className="text-white font-bold">Active Gateway:</span>
           <span className="text-white">{activeGateway.data.gatewayName}</span>
         </div>
@@ -317,7 +317,7 @@ const PaymentGatewayManagement = () => {
       {/* Filter Section */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2 mr-2">
-          <Filter size={18} className="text-[#eb660f]" />
+          <Filter size={18} className="text-[#b9fd5c]" />
           <span className="text-white font-medium text-sm">Filter:</span>
         </div>
 
@@ -325,8 +325,8 @@ const PaymentGatewayManagement = () => {
           onClick={() => setFilterActive("all")}
           className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "all"
-              ? "bg-[#eb660f] text-white shadow-md shadow-[#eb660f]/20"
-              : "bg-transparent border border-[#64748b] text-white hover:border-[#eb660f]/50"
+              ? "bg-[#b9fd5c] text-white shadow-md shadow-[#b9fd5c]/20"
+              : "bg-transparent border border-[#64748b] text-white hover:border-[#b9fd5c]/50"
           }`}
         >
           All ({allGateways?.data?.length || 0})
@@ -336,8 +336,8 @@ const PaymentGatewayManagement = () => {
           onClick={() => setFilterActive("active")}
           className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "active"
-              ? "bg-[#eb660f] text-white shadow-md shadow-[#eb660f]/20"
-              : "bg-transparent border border-[#64748b] text-white hover:border-[#eb660f]/50"
+              ? "bg-[#b9fd5c] text-white shadow-md shadow-[#b9fd5c]/20"
+              : "bg-transparent border border-[#64748b] text-white hover:border-[#b9fd5c]/50"
           }`}
         >
           Active ({gatewayStats?.data?.activeGateways || 0})
@@ -347,8 +347,8 @@ const PaymentGatewayManagement = () => {
           onClick={() => setFilterActive("inactive")}
           className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "inactive"
-              ? "bg-[#eb660f] text-white shadow-md shadow-[#eb660f]/20"
-              : "bg-transparent border border-[#64748b] text-white hover:border-[#eb660f]/50"
+              ? "bg-[#b9fd5c] text-white shadow-md shadow-[#b9fd5c]/20"
+              : "bg-transparent border border-[#64748b] text-white hover:border-[#b9fd5c]/50"
           }`}
         >
           Inactive ({gatewayStats?.data?.inactiveGateways || 0})
@@ -365,11 +365,11 @@ const PaymentGatewayManagement = () => {
               key={gateway._id}
               className={`relative overflow-hidden rounded-lg shadow-lg
                 transition-all duration-300 hover:-translate-y-2 group
-                bg-[#1b232d] border
+                bg-[#282f35] border
                 ${
                   gateway.isActive
-                    ? "border-[#eb660f]/30 hover:shadow-[0_15px_35px_rgba(235,102,15,0.2)] hover:border-[#eb660f]"
-                    : "border-[#2a2c2f] hover:shadow-[0_15px_35px_rgba(0,0,0,0.3)] hover:border-[#eb660f]"
+                    ? "border-[#b9fd5c]/30 hover:shadow-[0_15px_35px_rgba(235,102,15,0.2)] hover:border-[#b9fd5c]"
+                    : "border-[#2a2c2f] hover:shadow-[0_15px_35px_rgba(0,0,0,0.3)] hover:border-[#b9fd5c]"
                 }`}
             >
               {/* Active Corner Badge */}
@@ -379,7 +379,7 @@ const PaymentGatewayManagement = () => {
                     className="w-0 h-0"
                     style={{
                       borderLeft: "50px solid transparent",
-                      borderTop: "50px solid #eb660f",
+                      borderTop: "50px solid #b9fd5c",
                     }}
                   />
                   <CheckCircle
@@ -395,7 +395,7 @@ const PaymentGatewayManagement = () => {
                 <div className="flex items-center gap-4 mb-5">
                   <div
                     className={`p-3 rounded-full shrink-0 ${
-                      gateway.isActive ? "bg-[#eb660f]" : "bg-[#64748b]"
+                      gateway.isActive ? "bg-[#b9fd5c]" : "bg-[#64748b]"
                     }`}
                   >
                     <CreditCard size={24} className="text-white" />
@@ -407,7 +407,7 @@ const PaymentGatewayManagement = () => {
                     <span
                       className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${
                         gateway.isActive
-                          ? "bg-[#eb660f] text-white"
+                          ? "bg-[#b9fd5c] text-white"
                           : "bg-[#64748b] text-white"
                       }`}
                     >
@@ -426,7 +426,7 @@ const PaymentGatewayManagement = () => {
 
                 {/* Info Rows */}
                 <div className="space-y-2 mb-5">
-                  <div className="bg-[#eb660f]/10 border border-[#eb660f]/20 rounded-xs p-3">
+                  <div className="bg-[#b9fd5c]/10 border border-[#b9fd5c]/20 rounded-xs p-3">
                     <div className="flex items-center gap-2 text-white mb-1">
                       <Calendar size={14} className="text-white" />
                       <span className="text-xs font-medium">Created</span>
@@ -486,7 +486,7 @@ const PaymentGatewayManagement = () => {
                       }
                       disabled={activatingGateway}
                       className="flex-1 flex items-center justify-center gap-2 
-                        bg-[#eb660f] hover:bg-[#eb660f]/90 text-white
+                        bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 text-white
                         font-semibold py-2.5 px-4 rounded-xs text-sm
                         disabled:opacity-50 disabled:cursor-not-allowed
                         transition-all duration-200 cursor-pointer min-h-10"
@@ -508,10 +508,10 @@ const PaymentGatewayManagement = () => {
         /* Empty State */
         <div className="flex flex-col items-center justify-center py-16">
           <div
-            className="w-24 h-24 rounded-full bg-[#eb660f]/10 
+            className="w-24 h-24 rounded-full bg-[#b9fd5c]/10 
               flex items-center justify-center mb-4"
           >
-            <CreditCard size={48} className="text-[#eb660f]" />
+            <CreditCard size={48} className="text-[#b9fd5c]" />
           </div>
           <h3 className="text-white font-semibold text-lg mb-2">
             No payment gateways found
@@ -524,7 +524,7 @@ const PaymentGatewayManagement = () => {
           {filterActive === "all" && (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-[#eb660f] hover:bg-[#eb660f]/90 
+              className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 
                 text-white font-semibold py-3 px-6 rounded-lg text-sm
                 transition-colors cursor-pointer"
             >
@@ -542,7 +542,7 @@ const PaymentGatewayManagement = () => {
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setShowEditModal(false)}
           />
-          <div className="relative bg-[#1b232d] border border-[#2a2c2f] rounded-2xl w-full max-w-md shadow-2xl">
+          <div className="relative bg-[#282f35] border border-[#2a2c2f] rounded-2xl w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f]">
               <h2 className="text-lg font-bold text-white">Edit Gateway</h2>
               <button
@@ -563,8 +563,8 @@ const PaymentGatewayManagement = () => {
                 value={editGatewayName}
                 onChange={(e) => setEditGatewayName(e.target.value)}
                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-lg
-                  py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f] 
-                  focus:ring-1 focus:ring-[#eb660f]/50 transition-colors"
+                  py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c] 
+                  focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors"
                 placeholder="Enter gateway name"
               />
             </div>
@@ -581,7 +581,7 @@ const PaymentGatewayManagement = () => {
                 onClick={handleEditGateway}
                 disabled={updatingGateway}
                 className="px-5 py-2.5 rounded-lg text-sm font-medium 
-                  bg-[#eb660f] text-white hover:bg-[#eb660f]/90 
+                  bg-[#b9fd5c] text-white hover:bg-[#b9fd5c]/90 
                   disabled:opacity-50 disabled:cursor-not-allowed 
                   transition-colors cursor-pointer flex items-center gap-2"
               >
@@ -606,11 +606,11 @@ const PaymentGatewayManagement = () => {
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={resetCreateModal}
           />
-          <div className="relative bg-[#1b232d] border border-[#2a2c2f] rounded-lg w-full max-w-md shadow-2xl">
+          <div className="relative bg-[#282f35] border border-[#2a2c2f] rounded-lg w-full max-w-md shadow-2xl">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f]">
               <div className="flex items-center gap-2">
-                <Plus size={24} className="text-[#eb660f]" />
+                <Plus size={24} className="text-[#b9fd5c]" />
                 <h2 className="text-lg font-bold text-white">
                   Add New Payment Gateway
                 </h2>
@@ -639,8 +639,8 @@ const PaymentGatewayManagement = () => {
                       className={`px-4 py-2 rounded-xl text-sm font-medium 
                         transition-all duration-200 cursor-pointer ${
                           newGatewayName === gateway && !isCustomGateway
-                            ? "bg-[#eb660f] text-white shadow-md"
-                            : "bg-transparent border border-blue-500/50 text-white hover:border-[#eb660f]/50"
+                            ? "bg-[#b9fd5c] text-white shadow-md"
+                            : "bg-transparent border border-blue-500/50 text-white hover:border-[#b9fd5c]/50"
                         }`}
                     >
                       {gateway}
@@ -670,19 +670,19 @@ const PaymentGatewayManagement = () => {
                     value={newGatewayName}
                     onChange={(e) => setNewGatewayName(e.target.value)}
                     className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-                      py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f] 
-                      focus:ring-1 focus:ring-[#eb660f]/50 transition-colors"
+                      py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c] 
+                      focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors"
                     placeholder="Enter custom gateway name"
                   />
                 </div>
               )}
 
               {!isCustomGateway && newGatewayName && (
-                <div className="flex items-center gap-2 bg-[#eb660f]/10 border-l-[3px] border-[#eb660f] rounded-lg px-4 py-3">
-                  <CheckCircle size={18} className="text-[#eb660f] shrink-0" />
+                <div className="flex items-center gap-2 bg-[#b9fd5c]/10 border-l-[3px] border-[#b9fd5c] rounded-lg px-4 py-3">
+                  <CheckCircle size={18} className="text-[#b9fd5c] shrink-0" />
                   <span className="text-white text-sm">
                     Selected:{" "}
-                    <strong className="text-[#eb660f]">{newGatewayName}</strong>
+                    <strong className="text-[#b9fd5c]">{newGatewayName}</strong>
                   </span>
                 </div>
               )}
@@ -702,7 +702,7 @@ const PaymentGatewayManagement = () => {
                 onClick={handleCreateGateway}
                 disabled={creatingGateway}
                 className="px-5 py-2.5 rounded-xl text-sm font-medium 
-                  bg-[#eb660f] text-white hover:bg-[#eb660f]/90 
+                  bg-[#b9fd5c] text-white hover:bg-[#b9fd5c]/90 
                   disabled:opacity-50 disabled:cursor-not-allowed 
                   transition-colors cursor-pointer flex items-center gap-2"
               >

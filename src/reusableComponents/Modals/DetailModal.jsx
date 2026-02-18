@@ -19,7 +19,7 @@ const DetailModal = ({ show, title, content, onClose }) => {
         <button
           onClick={onClose}
           className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-            bg-[#eb660f] hover:bg-[#ff7b1c] transition-all duration-300
+            bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-all duration-300
             cursor-pointer"
         >
           Close

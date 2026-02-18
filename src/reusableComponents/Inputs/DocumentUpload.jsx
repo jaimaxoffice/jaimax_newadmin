@@ -30,7 +30,7 @@ const DocumentUpload = ({
       />
 
       {preview ? (
-        <div className="relative bg-[#111214] border border-[#eb660f]/30 rounded-xl p-3">
+        <div className="relative bg-[#111214] border border-[#b9fd5c]/30 rounded-xl p-3">
           <img
             src={preview}
             alt={label}
@@ -59,15 +59,15 @@ const DocumentUpload = ({
           onClick={() => inputRef.current?.click()}
           className={`border-2 border-dashed rounded-xl h-40 cursor-pointer
             flex flex-col items-center justify-center gap-2 transition-all
-            hover:border-[#eb660f]/50 hover:bg-[#eb660f]/5
+            hover:border-[#b9fd5c]/50 hover:bg-[#b9fd5c]/5
             ${
               error
                 ? "border-red-500/50 bg-red-500/5"
                 : "border-[#2a2c2f] bg-[#111214]"
             }`}
         >
-          <div className="w-10 h-10 rounded-full bg-[#eb660f]/10 flex items-center justify-center">
-            <span className="text-[#eb660f] text-lg">↑</span>
+          <div className="w-10 h-10 rounded-full bg-[#b9fd5c]/10 flex items-center justify-center">
+            <span className="text-[#b9fd5c] text-lg">↑</span>
           </div>
           <p className="text-[#fff] text-xs font-medium">Click to upload</p>
           <p className="text-gray-400 text-[10px]">PNG, JPG up to 5MB</p>

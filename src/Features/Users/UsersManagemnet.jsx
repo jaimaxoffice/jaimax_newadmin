@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import Modal from "../../reusableComponents/Modals/Modals";
-import StatCard from "../../reusableComponents/StatCards/StatsCard";
+import StatCard from "../../reusableComponents/StatCards/GradientCard";
 import ToggleSwitch from "../../reusableComponents/Switch/ToggleSwitch";
 import ReadOnlyField from "../../reusableComponents/Inputs/ReadOnlyField";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import {Eye ,Send } from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
+import { UserStar , ShieldX , UserCheck } from "lucide-react";
 const UserManagement = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -300,50 +301,36 @@ const UserManagement = () => {
     <>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* <StatCard title="Total Members" value={totalMembers} />
-          <StatCard title="Total Blocked" value={blockedUser} />
-          <StatCard title="Total Active Members" value={activeMembers} /> */}
-
-          <StatCard
-            title="Total Members"
-            value={totalMembers}
-            image="/images/total-member.png"
-          />
-          <StatCard
-            title="Total Blocked"
-            value={blockedUser}
-            image="/images/total-member.png"
-          />
-          <StatCard
-            title="Total Active Members"
-            value={activeMembers}
-            image="/images/total-member.png"
-          />
-        </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <StatCard
+    title="Total Members"
+    value={totalMembers}
+    icon={UserStar }
+    variant="blue"
+  />
+  <StatCard
+    title="Total Blocked"
+    value={blockedUser}
+    icon={ShieldX }
+    variant="red"
+  />
+  <StatCard
+    title="Total Active Members"
+    value={activeMembers}
+    icon={UserCheck}
+    variant="green"
+  />
+</div>
 
         {/* Table + Cards */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#303f50] rounded-[5px] overflow-hidden">
           {/* Search Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
              
               <div className="flex w-full">
                 <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-                  {/* <select
-                    onChange={(e) =>
-                      setState((prev) => ({
-                        ...prev,
-                        perPage: Number(e.target.value),
-                        currentPage: 1,
-                      }))
-                    }
-                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-[#0ecb6f] transition-colors cursor-pointer"
-                  >
-                    <option value="10">10</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                  </select> */}
+
                   <PerPageSelector
                     options={[10,20,40,60,80,100]}
                     onChange={(value) =>

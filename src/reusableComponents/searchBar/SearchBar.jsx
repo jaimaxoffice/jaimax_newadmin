@@ -23,7 +23,7 @@ const SearchBar = ({ onSearch, placeholder = "Search..." }) => {
       <Search
         size={15}
         className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-          focused || value ? "text-[#eb660f]" : "text-[#555]"
+          focused || value ? "text-[#b9fd5c]" : "text-[#555]"
         }`}
       />
 
@@ -42,7 +42,7 @@ const SearchBar = ({ onSearch, placeholder = "Search..." }) => {
           border outline-none transition-all duration-200
           ${
             focused
-              ? "border-[#eb660f] ring-1 ring-[#eb660f]/30"
+              ? "border-[#b9fd5c] ring-1 ring-[#b9fd5c]/30"
               : "border-[#2a2c2f] hover:border-[#3a3c3f]"
           }
         `}
@@ -52,7 +52,7 @@ const SearchBar = ({ onSearch, placeholder = "Search..." }) => {
         <button
           onClick={handleClear}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] 
-            hover:text-[#eb660f] transition-colors cursor-pointer"
+            hover:text-[#b9fd5c] transition-colors cursor-pointer"
         >
           <X size={14} />
         </button>

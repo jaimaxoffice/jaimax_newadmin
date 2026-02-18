@@ -167,7 +167,7 @@ const WalletApprove = () => {
           onClick={() => handleAction(data.transactionId, "Approve")}
           title="Approve"
           className="w-8 h-8 flex items-center justify-center rounded-lg 
-            bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20 
+            bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20 
             transition-colors cursor-pointer text-sm font-bold"
         >
           ✓
@@ -311,9 +311,9 @@ const WalletApprove = () => {
           </div>
         )}
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg overflow-hidden ">
+        <div className="bg-[#282f35] border border-[#303f50] rounded-lg overflow-hidden ">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex w-full">
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
@@ -334,7 +334,7 @@ const WalletApprove = () => {
                     value={selectedStatus}
                     onChange={handleStatusChange}
                     className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-              py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
+              py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c] 
               transition-colors cursor-pointer"
                   >
                     <option value="Transaction Type">All Types</option>

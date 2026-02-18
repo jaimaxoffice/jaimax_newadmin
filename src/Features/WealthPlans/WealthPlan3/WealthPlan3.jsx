@@ -126,7 +126,7 @@ const WealthLogs3O = () => {
   return (
     <div className="p-2 sm:p-2 space-y-6">
 
-      <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
         <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <h1 className="text-lg font-semibold text-white">

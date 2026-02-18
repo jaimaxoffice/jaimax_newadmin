@@ -151,7 +151,7 @@ const DeletedUsersTable = () => {
           onClick={() => handleShowDetails(row)}
           title="View Details"
           className="w-8 h-8 flex items-center justify-center rounded-lg
-                     bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
+                     bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20
                      transition-colors cursor-pointer"
         >
           <svg
@@ -205,7 +205,7 @@ const DeletedUsersTable = () => {
           {
             label: "View Details",
             onClick: () => handleShowDetails(row),
-            className: "text-[#eb660f] hover:bg-[#eb660f]/5",
+            className: "text-[#b9fd5c] hover:bg-[#b9fd5c]/5",
           },
         ]}
       />
@@ -218,7 +218,7 @@ const DeletedUsersTable = () => {
         
 
         {/* Main Table Card */}
-<div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+<div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
   {/* Header */}
   <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
     {/* Title + Delete Button */}

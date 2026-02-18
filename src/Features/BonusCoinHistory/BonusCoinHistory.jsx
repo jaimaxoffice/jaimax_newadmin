@@ -112,11 +112,11 @@ const BonusHistory = () => {
       <div>
         <div className="p-2 sm:p-2 space-y-6">
           {/* Header */}
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]">
+                  <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center text-[#b9fd5c]">
                     <CoinsIcon />
                   </div>
                   <h1 className="text-lg font-semibold text-white">
@@ -127,7 +127,7 @@ const BonusHistory = () => {
                   onClick={() => refetch()}
                   disabled={isLoading}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#eb660f] text-white hover:bg-[#ff8533]
+                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
                   <RefreshIcon className={isLoading ? "animate-spin" : ""} />
@@ -152,7 +152,7 @@ const BonusHistory = () => {
                   onClick={() => refetch()}
                   disabled={isLoading}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#eb660f] text-white hover:bg-[#ff8533]
+                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
                   <RefreshIcon className={isLoading ? "animate-spin" : ""} />
@@ -271,7 +271,7 @@ const BonusHistory = () => {
 
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
 

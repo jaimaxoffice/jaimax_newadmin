@@ -128,7 +128,7 @@ const SupportChart = () => {
             {/* Back Button */}
             <Link
               to="/support"
-              className="inline-flex items-center gap-1 text-[#eb660f] text-lg 
+              className="inline-flex items-center gap-1 text-[#b9fd5c] text-lg 
                          no-underline mb-4 hover:text-[#ff8533] transition-colors"
             >
               <svg
@@ -136,7 +136,7 @@ const SupportChart = () => {
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
-                className="fill-[#eb660f]"
+                className="fill-[#b9fd5c]"
               >
                 <path d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z" />
               </svg>
@@ -146,7 +146,7 @@ const SupportChart = () => {
               {/* Chat Section */}
               <div className="w-full xl:w-5/12">
                 {/* Chat Header & Messages */}
-                <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-t-2xl px-4 pb-1 pt-5">
+                <div className="bg-[#282f35] border border-[#2a2c2f] rounded-t-2xl px-4 pb-1 pt-5">
                   <h3 className="text-white text-lg font-semibold pb-3">
                     Chat Support
                   </h3>
@@ -217,7 +217,7 @@ const SupportChart = () => {
                                      hover:bg-gray-200 transition-colors"
                         >
                           <span
-                            className="text-[10px] font-bold text-[#eb660f] leading-none"
+                            className="text-[10px] font-bold text-[#b9fd5c] leading-none"
                           >
                             X
                           </span>
@@ -255,7 +255,7 @@ const SupportChart = () => {
 
               {/* Ticket Details Section */}
               <div className="w-full xl:w-5/12">
-                <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 mb-3">
+                <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 mb-3">
                   <h3 className="text-white text-lg font-semibold mb-4">
                     Ticket Details
                   </h3>
@@ -363,7 +363,7 @@ const ChatBubble = ({ item, isUser, onImageClick, formatDate }) => {
         <div
           className={`p-3 rounded-xl ${
             isUser
-              ? "bg-[#eb660f]/15 border border-[#eb660f]/20 rounded-tr-sm"
+              ? "bg-[#b9fd5c]/15 border border-[#b9fd5c]/20 rounded-tr-sm"
               : "bg-[#2a2c2f] border border-[#333] rounded-tl-sm"
           }`}
         >

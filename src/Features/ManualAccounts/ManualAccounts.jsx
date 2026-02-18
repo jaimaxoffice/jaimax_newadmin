@@ -158,10 +158,10 @@ const AddManualAccountsForm = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Left - Fields */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
               <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
-                <div className="w-8 h-8 rounded-lg bg-[#eb660f]/15 flex items-center justify-center">
-                  <FileText size={16} className="text-[#eb660f]" />
+                <div className="w-8 h-8 rounded-lg bg-[#b9fd5c]/15 flex items-center justify-center">
+                  <FileText size={16} className="text-[#b9fd5c]" />
                 </div>
                 <h2 className="text-base font-semibold text-white">
                   Transaction Details
@@ -210,10 +210,10 @@ const AddManualAccountsForm = () => {
             </div>
 
             {/* Right - Upload */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
               <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
-                  <Upload size={16} className="text-[#eb660f]" />
+                  <Upload size={16} className="text-[#b9fd5c]" />
                 </div>
                 <div>
                   <h2 className="text-base font-semibold text-white">
@@ -240,7 +240,7 @@ const AddManualAccountsForm = () => {
 
           {/* Submit */}
           <div className="flex flex-col-reverse sm:flex-row items-center gap-3 justify-end 
-            bg-[#1b232d] border border-[#2a2c2f] rounded-lg px-5 py-4"
+            bg-[#282f35] border border-[#2a2c2f] rounded-lg px-5 py-4"
           >
             <button
               type="button"

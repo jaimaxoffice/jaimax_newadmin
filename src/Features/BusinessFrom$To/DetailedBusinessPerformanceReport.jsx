@@ -22,9 +22,9 @@ import {
   useGetDetailedDirectChainUsersBusinessMutation,
 } from "./businessApiSlice";
 
-const inputClass = `w-full bg-[#1b232d] border border-[#303f50] text-white rounded-lg 
-  px-4 py-2.5 text-sm focus:outline-none focus:border-[#eb660f] 
-  focus:ring-1 focus:ring-[#eb660f]/50 transition-colors duration-200
+const inputClass = `w-full bg-[#282f35] border border-[#303f50] text-white rounded-lg 
+  px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
+  focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
   placeholder-gray-500 disabled:opacity-50`;
 
 const DetailedBusinessPerformanceReport = () => {
@@ -354,15 +354,15 @@ const DetailedBusinessPerformanceReport = () => {
     <div className="min-h-screen p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
-          <BarChart3 size={24} className="text-[#eb660f]" />
+        <div className="w-12 h-12 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
+          <BarChart3 size={24} className="text-[#b9fd5c]" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-white">
             Detailed Business Performance Report
           </h1>
           {user && (
-            <p className="text-[#eb660f] text-sm font-medium mt-0.5">
+            <p className="text-[#b9fd5c] text-sm font-medium mt-0.5">
               Name: {user.name}
             </p>
           )}
@@ -370,7 +370,7 @@ const DetailedBusinessPerformanceReport = () => {
       </div>
 
       {/* Search Form */}
-      <div className="bg-[#1b232d] border border-[#303f50] rounded-xl p-5 mb-6">
+      <div className="bg-[#282f35] border border-[#303f50] rounded-xl p-5 mb-6">
         <form onSubmit={formik.handleSubmit}>
           <div className="flex flex-col sm:flex-row items-end gap-4">
             <div className="w-full sm:flex-1 max-w-md">
@@ -394,7 +394,7 @@ const DetailedBusinessPerformanceReport = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] 
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] 
                 text-white font-medium px-6 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
@@ -422,8 +422,8 @@ const DetailedBusinessPerformanceReport = () => {
                 onClick={() => setActiveTab("direct")}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border transition-all cursor-pointer ${
                   activeTab === "direct"
-                    ? "bg-[#eb660f] text-white border-[#eb660f]"
-                    : "bg-transparent text-[#eb660f] border-[#eb660f] hover:bg-[#eb660f]/10"
+                    ? "bg-[#b9fd5c] text-white border-[#b9fd5c]"
+                    : "bg-transparent text-[#b9fd5c] border-[#b9fd5c] hover:bg-[#b9fd5c]/10"
                 }`}
               >
                 <Users size={14} />
@@ -433,8 +433,8 @@ const DetailedBusinessPerformanceReport = () => {
                 onClick={() => setActiveTab("chain")}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border border-l-0 transition-all cursor-pointer ${
                   activeTab === "chain"
-                    ? "bg-[#eb660f] text-white border-[#eb660f]"
-                    : "bg-transparent text-[#eb660f] border-[#eb660f] hover:bg-[#eb660f]/10"
+                    ? "bg-[#b9fd5c] text-white border-[#b9fd5c]"
+                    : "bg-transparent text-[#b9fd5c] border-[#b9fd5c] hover:bg-[#b9fd5c]/10"
                 }`}
               >
                 <Link2 size={14} />
@@ -444,7 +444,7 @@ const DetailedBusinessPerformanceReport = () => {
 
             <button
               onClick={handleShowReport}
-              className="flex items-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] text-white 
+              className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
                 font-semibold px-5 py-2.5 rounded-lg transition-all cursor-pointer"
             >
               <FileText size={16} />
@@ -453,7 +453,7 @@ const DetailedBusinessPerformanceReport = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+          <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
             {activeTab === "direct" && (
               <>
                 <SearchBar
@@ -491,7 +491,7 @@ const DetailedBusinessPerformanceReport = () => {
 
           {/* Excluded Users Summary */}
           {(excludedDirectUsers.length > 0 || excludedChainUsers.length > 0) && (
-            <div className="bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+            <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
               <div className="px-5 py-3 bg-red-500/20 border-b border-[#303f50]">
                 <div className="flex items-center gap-2">
                   <AlertTriangle size={16} className="text-red-400" />
@@ -564,12 +564,12 @@ const DetailedBusinessPerformanceReport = () => {
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setShowReportModal(false)}
           />
-          <div className="relative w-full max-w-2xl bg-[#1b232d] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
+          <div className="relative w-full max-w-2xl bg-[#282f35] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#303f50]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#eb660f]/10 flex items-center justify-center">
-                  <FileText size={20} className="text-[#eb660f]" />
+                <div className="w-10 h-10 rounded-lg bg-[#b9fd5c]/10 flex items-center justify-center">
+                  <FileText size={20} className="text-[#b9fd5c]" />
                 </div>
                 <h3 className="text-white font-semibold">
                   Generate Detailed Report
@@ -651,7 +651,7 @@ const DetailedBusinessPerformanceReport = () => {
               <button
                 onClick={reportFormik.handleSubmit}
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#eb660f] hover:bg-[#d55a0e] 
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] 
                   text-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
@@ -704,7 +704,7 @@ function SearchBar({ query, setQuery, placeholder, totalCount, filteredCount }) 
           <Search
             size={14}
             className={`absolute left-3 top-1/2 -translate-y-1/2 ${
-              query ? "text-[#eb660f]" : "text-gray-500"
+              query ? "text-[#b9fd5c]" : "text-gray-500"
             }`}
           />
           <input
@@ -713,8 +713,8 @@ function SearchBar({ query, setQuery, placeholder, totalCount, filteredCount }) 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full bg-[#111827] border border-[#303f50] text-white rounded-lg 
-              pl-9 pr-9 py-2 text-sm focus:outline-none focus:border-[#eb660f] 
-              focus:ring-1 focus:ring-[#eb660f]/50 transition-colors placeholder-gray-500"
+              pl-9 pr-9 py-2 text-sm focus:outline-none focus:border-[#b9fd5c] 
+              focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors placeholder-gray-500"
           />
           {query && (
             <button
@@ -746,7 +746,7 @@ function ReferralsTable({ data, excludedList, toggleFunction }) {
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="bg-[#eb660f]">
+          <tr className="bg-[#b9fd5c]">
             {["S.No", "Name", "Username", "Email", "Phone", "Exclude?"].map(
               (head, i) => (
                 <th
@@ -795,9 +795,9 @@ function ReferralsTable({ data, excludedList, toggleFunction }) {
                       type="checkbox"
                       checked={isExcluded}
                       onChange={() => toggleFunction(user.username)}
-                      className="w-4 h-4 rounded border-gray-600 text-[#eb660f] 
-                        focus:ring-[#eb660f] focus:ring-offset-0 bg-[#111827] cursor-pointer
-                        accent-[#eb660f]"
+                      className="w-4 h-4 rounded border-gray-600 text-[#b9fd5c] 
+                        focus:ring-[#b9fd5c] focus:ring-offset-0 bg-[#111827] cursor-pointer
+                        accent-[#b9fd5c]"
                     />
                   </td>
                 </tr>

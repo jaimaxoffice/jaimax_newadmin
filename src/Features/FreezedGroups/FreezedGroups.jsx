@@ -213,7 +213,7 @@ const FrezzedGroupManagement = () => {
           {row.affectedUsers.length > 3 && (
             <span
               className="text-[11px] font-semibold px-2 py-0.5 rounded-full
-                         bg-[#eb660f] text-white"
+                         bg-[#b9fd5c] text-white"
             >
               +{row.affectedUsers.length - 3}
             </span>
@@ -229,7 +229,7 @@ const FrezzedGroupManagement = () => {
             onClick={() => openEditModal(row)}
             title="Edit Group"
             className="w-8 h-8 flex items-center justify-center rounded-lg
-                       bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
+                       bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20
                        transition-colors cursor-pointer"
           >
             <Pencil size={14} />
@@ -238,8 +238,8 @@ const FrezzedGroupManagement = () => {
             onClick={() => openAddUsersModal(row)}
             title="Add Users"
             className="w-8 h-8 flex items-center justify-center rounded-lg
-                       bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
-                       border border-[#eb660f]/20
+                       bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20
+                       border border-[#b9fd5c]/20
                        transition-colors cursor-pointer"
           >
             <UserPlus size={14} />
@@ -276,14 +276,14 @@ const FrezzedGroupManagement = () => {
         </div>
 
         {/* Main Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div
-                  className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center 
-                              justify-center text-[#eb660f]"
+                  className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center 
+                              justify-center text-[#b9fd5c]"
                 >
                   <Users size={16}/>
                 </div>
@@ -295,8 +295,8 @@ const FrezzedGroupManagement = () => {
               <button
                 onClick={openAddModal}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                           bg-[#eb660f] text-white
-                           hover:bg-[#ff8533] hover:shadow-lg hover:shadow-[#eb660f]/20
+                           bg-[#b9fd5c] text-white
+                           hover:bg-[#ff8533] hover:shadow-lg hover:shadow-[#b9fd5c]/20
                            active:scale-[0.98] transition-all duration-200 cursor-pointer"
               >
                 <Plus size={16} />
@@ -437,11 +437,11 @@ const GroupFormModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl w-full max-w-md overflow-hidden"
+        className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl w-full max-w-md overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#eb660f] to-[#ff8533]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#b9fd5c] to-[#ff8533]">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             {titleIcon}
             {title}
@@ -468,7 +468,7 @@ const GroupFormModal = ({
               onChange={onFormChange}
               className="w-full bg-[#111214] border border-[#2a2c2f] text-white text-sm
                          rounded-xl py-2.5 px-4 placeholder-[#555]
-                         focus:outline-none focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/50
+                         focus:outline-none focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/50
                          transition-all duration-200 hover:border-[#3a3c3f]"
             />
           </FormField>
@@ -482,7 +482,7 @@ const GroupFormModal = ({
               onChange={onFormChange}
               className="w-full bg-[#111214] border border-[#2a2c2f] text-white text-sm
                          rounded-xl py-2.5 px-4 placeholder-[#555]
-                         focus:outline-none focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/50
+                         focus:outline-none focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/50
                          transition-all duration-200 hover:border-[#3a3c3f]
                          [scheme:dark]"
             />
@@ -513,8 +513,8 @@ const GroupFormModal = ({
           <button
             onClick={onSubmit}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                       bg-[#eb660f] text-white hover:bg-[#ff8533]
-                       hover:shadow-lg hover:shadow-[#eb660f]/20
+                       bg-[#b9fd5c] text-white hover:bg-[#ff8533]
+                       hover:shadow-lg hover:shadow-[#b9fd5c]/20
                        active:scale-[0.98] transition-all duration-200 cursor-pointer"
           >
             <CheckIcon />
@@ -547,11 +547,11 @@ const AddUsersModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl w-full max-w-md overflow-hidden"
+        className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl w-full max-w-md overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#eb660f] to-[#ff8533]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#b9fd5c] to-[#ff8533]">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <UserPlus size={14} />
             Add Users to Group
@@ -571,8 +571,8 @@ const AddUsersModal = ({
           {/* Group Info */}
           <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-3 flex items-center gap-3">
             <div
-              className="w-8 h-8 rounded-full bg-[#eb660f]/10 flex items-center 
-                          justify-center text-[#eb660f] shrink-0"
+              className="w-8 h-8 rounded-full bg-[#b9fd5c]/10 flex items-center 
+                          justify-center text-[#b9fd5c] shrink-0"
             >
               <KeyPersonIcon />
             </div>
@@ -611,8 +611,8 @@ const AddUsersModal = ({
           <button
             onClick={onSubmit}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                       bg-[#eb660f] text-white hover:bg-[#ff8533]
-                       hover:shadow-lg hover:shadow-[#eb660f]/20
+                       bg-[#b9fd5c] text-white hover:bg-[#ff8533]
+                       hover:shadow-lg hover:shadow-[#b9fd5c]/20
                        active:scale-[0.98] transition-all duration-200 cursor-pointer"
           >
             <CheckIcon />
@@ -630,7 +630,7 @@ const AddUsersModal = ({
 const FormField = ({ label, icon, children }) => (
   <div className="space-y-1.5">
     <label className="flex items-center gap-1.5 text-xs font-medium text-[#8a8d93] uppercase tracking-wider">
-      <span className="text-[#eb660f]">{icon}</span>
+      <span className="text-[#b9fd5c]">{icon}</span>
       {label}
     </label>
     {children}
@@ -651,7 +651,7 @@ const DynamicUserInputs = ({ users, onChange, onAdd, onRemove }) => (
           onChange={(e) => onChange(index, e.target.value)}
           className="flex-1 bg-[#111214] border border-[#2a2c2f] text-white text-sm
                      rounded-xl py-2.5 px-4 placeholder-[#555]
-                     focus:outline-none focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/50
+                     focus:outline-none focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/50
                      transition-all duration-200 hover:border-[#3a3c3f]"
         />
         {users.length > 1 && (
@@ -674,8 +674,8 @@ const DynamicUserInputs = ({ users, onChange, onAdd, onRemove }) => (
       type="button"
       onClick={onAdd}
       className="w-full py-2.5 rounded-xl text-sm font-medium
-                 border border-dashed border-[#eb660f]/40 text-[#eb660f]
-                 bg-[#eb660f]/5 hover:bg-[#eb660f]/10 hover:border-[#eb660f]
+                 border border-dashed border-[#b9fd5c]/40 text-[#b9fd5c]
+                 bg-[#b9fd5c]/5 hover:bg-[#b9fd5c]/10 hover:border-[#b9fd5c]
                  transition-all duration-200 cursor-pointer
                  flex items-center justify-center gap-2"
     >

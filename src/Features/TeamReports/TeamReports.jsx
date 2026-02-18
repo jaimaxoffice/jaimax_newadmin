@@ -145,8 +145,8 @@ const TeamInfoPdfDownloader = () => {
     <div className="p-2 sm:p-2 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
-          <FileText size={20} className="text-[#eb660f]" />
+        <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
+          <FileText size={20} className="text-[#b9fd5c]" />
         </div>
         <div>
           <h1 className="text-lg font-bold text-white">
@@ -159,15 +159,15 @@ const TeamInfoPdfDownloader = () => {
       </div>
 
       {/* Input Section */}
-      <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 space-y-5">
-        <h3 className="text-xs font-semibold text-[#eb660f] uppercase tracking-widest">
+      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 space-y-5">
+        <h3 className="text-xs font-semibold text-[#b9fd5c] uppercase tracking-widest">
           Enter Details
         </h3>
 
         <div className="space-y-4">
           {/* Username Input */}
           <div>
-            <label className="block text-sm font-medium text-[#eb660f] mb-2">
+            <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
               Username <span className="text-red-400">*</span>
             </label>
             <div className="flex gap-3">
@@ -187,8 +187,8 @@ const TeamInfoPdfDownloader = () => {
                 placeholder="JAIMAX...."
                 autoComplete="off"
                 className="flex-1 bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                  py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                  focus:ring-1 focus:ring-[#eb660f]/30 transition-colors placeholder-[#555]"
+                  py-2.5 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                  focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors placeholder-[#555]"
               />
 
               {/* Fetch Button */}
@@ -196,7 +196,7 @@ const TeamInfoPdfDownloader = () => {
                 onClick={handleFetch}
                 disabled={!username.trim() || isFetching}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                  bg-[#eb660f] hover:bg-[#ff7b1c] text-white transition-colors
+                  bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white transition-colors
                   cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 {isFetching ? (
@@ -256,22 +256,22 @@ const TeamInfoPdfDownloader = () => {
               icon={Users}
               label="Total Users"
               value={stats.totalUsers}
-              color="text-[#eb660f]"
-              bgColor="bg-[#eb660f]/10"
+              color="text-[#b9fd5c]"
+              bgColor="bg-[#b9fd5c]/10"
             />
           </div>
 
           {/* Layer Summary Preview */}
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 space-y-4">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 space-y-4">
             <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Layers size={16} className="text-[#eb660f]" />
+              <Layers size={16} className="text-[#b9fd5c]" />
               Layer-wise Summary
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-[#eb660f]">
+                  <tr className="bg-[#b9fd5c]">
                     <th className="px-4 py-3 text-left text-xs font-semibold text-white">
                       Layer
                     </th>
@@ -308,7 +308,7 @@ const TeamInfoPdfDownloader = () => {
                           className={
                             index % 2 === 0
                               ? "bg-[#111214]"
-                              : "bg-[#1b232d]"
+                              : "bg-[#282f35]"
                           }
                         >
                           <td className="px-4 py-3 text-sm text-white font-medium">
@@ -328,8 +328,8 @@ const TeamInfoPdfDownloader = () => {
                     })}
 
                   {/* Total Row */}
-                  <tr className="bg-[#eb660f]/10 border-t border-[#eb660f]/30">
-                    <td className="px-4 py-3 text-sm text-[#eb660f] font-bold">
+                  <tr className="bg-[#b9fd5c]/10 border-t border-[#b9fd5c]/30">
+                    <td className="px-4 py-3 text-sm text-[#b9fd5c] font-bold">
                       TOTAL
                     </td>
                     <td className="px-4 py-3 text-sm text-[#0ecb6f] text-center font-bold">
@@ -338,7 +338,7 @@ const TeamInfoPdfDownloader = () => {
                     <td className="px-4 py-3 text-sm text-red-400 text-center font-bold">
                       {stats.totalInactive}
                     </td>
-                    <td className="px-4 py-3 text-sm text-[#eb660f] text-center font-bold">
+                    <td className="px-4 py-3 text-sm text-[#b9fd5c] text-center font-bold">
                       {stats.totalUsers}
                     </td>
                   </tr>
@@ -348,16 +348,16 @@ const TeamInfoPdfDownloader = () => {
           </div>
 
           {/* Download / Preview Actions */}
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-white font-bold flex items-center gap-2 mb-1">
-                  <FileText size={18} className="text-[#eb660f]" />
+                  <FileText size={18} className="text-[#b9fd5c]" />
                   Ready to Export
                 </h3>
                 <p className="text-[#8a8d93] text-sm">
                   Download or preview the team report for{" "}
-                  <span className="text-[#eb660f] font-semibold">
+                  <span className="text-[#b9fd5c] font-semibold">
                     {username}
                   </span>{" "}
                   • {stats.totalUsers} users across {stats.totalLayers} layers
@@ -383,7 +383,7 @@ const TeamInfoPdfDownloader = () => {
                   onClick={handleDownload}
                   disabled={isProcessing}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold
-                    bg-[#eb660f] hover:bg-[#ff7b1c] text-white transition-colors
+                    bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white transition-colors
                     cursor-pointer disabled:opacity-50"
                 >
                   {isGenerating ? (
@@ -406,11 +406,11 @@ const TeamInfoPdfDownloader = () => {
 
       {/* Quick Download (without preview) */}
       {!fetchedData && (
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-white font-bold flex items-center gap-2 mb-1">
-                <Download size={18} className="text-[#eb660f]" />
+                <Download size={18} className="text-[#b9fd5c]" />
                 Quick Download
               </h3>
               <p className="text-[#8a8d93] text-sm">
@@ -422,7 +422,7 @@ const TeamInfoPdfDownloader = () => {
               onClick={handleDownload}
               disabled={!username.trim() || isProcessing}
               className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold
-                bg-[#eb660f] hover:bg-[#ff7b1c] text-white transition-colors
+                bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white transition-colors
                 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {isProcessing ? (
@@ -450,7 +450,7 @@ export default TeamInfoPdfDownloader;
 
 // ─── Stat Preview Card ──────────────────────────────────────
 const StatPreviewCard = ({ icon: Icon, label, value, color, bgColor }) => (
-  <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 hover:border-[#eb660f]/30 transition-colors">
+  <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 hover:border-[#b9fd5c]/30 transition-colors">
     <div className="flex items-center gap-3">
       <div
         className={`w-10 h-10 rounded-xl ${bgColor} flex items-center justify-center shrink-0`}

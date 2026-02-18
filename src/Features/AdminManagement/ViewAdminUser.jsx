@@ -14,7 +14,7 @@ const ViewAdminUser = ({ isOpen, onClose, userId }) => {
     <Modal isOpen={isOpen} onClose={onClose} title="User Details" size="lg">
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-12">
-          <div className="w-8 h-8 border-2 border-[#eb660f]/30 border-t-[#eb660f] rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-[#b9fd5c]/30 border-t-[#b9fd5c] rounded-full animate-spin" />
           <p className="text-white mt-4 text-sm">Loading user details...</p>
         </div>
       ) : user ? (
@@ -23,7 +23,7 @@ const ViewAdminUser = ({ isOpen, onClose, userId }) => {
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             {/* Avatar */}
             <div
-              className="w-20 h-20 rounded-full bg-[#eb660f] flex items-center justify-center
+              className="w-20 h-20 rounded-full bg-[#b9fd5c] flex items-center justify-center
                 text-white text-3xl font-bold flex-shrink-0"
             >
               {user.name?.charAt(0)?.toUpperCase() || "U"}
@@ -83,7 +83,7 @@ const ViewAdminUser = ({ isOpen, onClose, userId }) => {
 
           {/* Permissions */}
           <div>
-            <h4 className="text-sm font-semibold text-[#eb660f] mb-3">
+            <h4 className="text-sm font-semibold text-[#b9fd5c] mb-3">
               Assigned Permissions
             </h4>
 
@@ -120,7 +120,7 @@ const ViewAdminUser = ({ isOpen, onClose, userId }) => {
 const DetailItem = ({ icon, label, value }) => (
   <div className="bg-[#111214] border border-[#2a2c2f] rounded-lg p-4">
     <div className="flex items-center gap-2 mb-1">
-      <span className="text-xs text-[#eb660f] font-medium">{label}</span>
+      <span className="text-xs text-[#b9fd5c] font-medium">{label}</span>
     </div>
     <p className="text-white text-sm">{value}</p>
   </div>

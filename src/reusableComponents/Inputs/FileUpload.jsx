@@ -46,7 +46,7 @@ const FileUpload = ({
       {label && (
         <label className="block text-sm font-medium text-[#8a8d93] mb-1.5">
           {label}
-          {required && <span className="text-[#eb660f] ml-1">*</span>}
+          {required && <span className="text-[#b9fd5c] ml-1">*</span>}
         </label>
       )}
 
@@ -60,12 +60,12 @@ const FileUpload = ({
 
       {previewUrl ? (
         /* File Preview */
-        <div className="flex-1 bg-[#111214] border border-[#eb660f]/30 rounded-xl p-4 flex flex-col">
+        <div className="flex-1 bg-[#111214] border border-[#b9fd5c]/30 rounded-xl p-4 flex flex-col">
           <div className="flex-1 flex items-center justify-center mb-3">
             <img
               src={previewUrl}
               alt="Preview"
-              className="max-w-full max-h-64 object-contain rounded-lg border-2 border-[#eb660f]/30"
+              className="max-w-full max-h-64 object-contain rounded-lg border-2 border-[#b9fd5c]/30"
             />
           </div>
           <div className="flex items-center gap-3 pt-3 border-t border-[#2a2c2f]">
@@ -76,7 +76,7 @@ const FileUpload = ({
               <p className="text-[#555] text-xs mt-0.5">
                 {formatFileSize(file?.size)}
               </p>
-              <span className="inline-block mt-1 text-[10px] font-semibold text-[#eb660f] bg-[#eb660f]/10 px-2 py-0.5 rounded-full">
+              <span className="inline-block mt-1 text-[10px] font-semibold text-[#b9fd5c] bg-[#b9fd5c]/10 px-2 py-0.5 rounded-full">
                 ✓ Uploaded
               </span>
             </div>
@@ -108,12 +108,12 @@ const FileUpload = ({
               error
                 ? "border-red-500/50 bg-red-500/5"
                 : isDragging
-                ? "border-[#eb660f] bg-[#eb660f]/5"
-                : "border-[#2a2c2f] bg-[#111214] hover:border-[#eb660f]/50 hover:bg-[#eb660f]/5"
+                ? "border-[#b9fd5c] bg-[#b9fd5c]/5"
+                : "border-[#2a2c2f] bg-[#111214] hover:border-[#b9fd5c]/50 hover:bg-[#b9fd5c]/5"
             }`}
         >
-          <div className="w-16 h-16 rounded-full bg-[#eb660f]/10 flex items-center justify-center">
-            <span className="text-[#eb660f] text-2xl">↑</span>
+          <div className="w-16 h-16 rounded-full bg-[#b9fd5c]/10 flex items-center justify-center">
+            <span className="text-[#b9fd5c] text-2xl">↑</span>
           </div>
           <div className="text-center">
             <p className="text-white text-sm font-medium">

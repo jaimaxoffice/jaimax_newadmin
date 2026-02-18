@@ -75,7 +75,7 @@ const Wealthlogs2O = () => {
     {
       header: "Amount (₹)",
       render: (row) => (
-        <span className="text-[#eb660f] font-semibold text-sm">
+        <span className="text-[#b9fd5c] font-semibold text-sm">
           ₹
           {row?.amountDisbursed?.toFixed?.(2) ||
             row?.amountDisbursed ||
@@ -125,7 +125,7 @@ const Wealthlogs2O = () => {
         key={row?.transactionId || row?._id || index}
         header={{
           avatar: row?.name?.charAt(0)?.toUpperCase() || "?",
-          avatarBg: "bg-[#eb660f]/10 text-[#eb660f]",
+          avatarBg: "bg-[#b9fd5c]/10 text-[#b9fd5c]",
           title: row?.name || "Unknown",
           subtitle: `#${sNo} • ${row?.orderId || "N/A"}`,
           badge: extractDay(row?.reason),
@@ -146,7 +146,7 @@ const Wealthlogs2O = () => {
           {
             label: "Amount",
             custom: (
-              <span className="text-[#eb660f] font-semibold text-sm">
+              <span className="text-[#b9fd5c] font-semibold text-sm">
                 ₹
                 {row?.amountDisbursed?.toFixed?.(2) ||
                   row?.amountDisbursed ||
@@ -186,7 +186,7 @@ const Wealthlogs2O = () => {
 
 
         {/* Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div

@@ -25,14 +25,14 @@ const MemberDetailModal = ({ isOpen, onClose, member }) => {
         <div className="flex items-center gap-4 pb-4 border-b border-[#2a2c2f]">
           <div
             className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0 ${
-              member.isActive ? "bg-[#eb660f]" : "bg-[#333]"
+              member.isActive ? "bg-[#b9fd5c]" : "bg-[#333]"
             }`}
           >
             {(member.name || "U")[0].toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="text-white font-bold text-lg">{member.name}</h3>
-            <p className="text-[#eb660f] text-sm">@{member.username}</p>
+            <p className="text-[#b9fd5c] text-sm">@{member.username}</p>
           </div>
           <span
             className={`text-[11px] font-semibold px-3 py-1 rounded-full ${
@@ -53,7 +53,7 @@ const MemberDetailModal = ({ isOpen, onClose, member }) => {
               className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-4"
             >
               <div className="flex items-center gap-2 mb-1">
-                <item.icon size={12} className="text-[#eb660f]" />
+                <item.icon size={12} className="text-[#b9fd5c]" />
                 <span className="text-[#8a8d93] text-[11px] uppercase tracking-wide">
                   {item.label}
                 </span>
@@ -86,9 +86,9 @@ export const InvestmentSection = ({ investments }) => {
   }
 
   return (
-    <div className="bg-[#eb660f]/5 border border-[#eb660f]/15 rounded-xl p-4 space-y-3">
+    <div className="bg-[#b9fd5c]/5 border border-[#b9fd5c]/15 rounded-xl p-4 space-y-3">
       <div className="flex items-center justify-between pb-3 border-b border-white/5">
-        <span className="text-[#eb660f] text-[13px] font-semibold flex items-center gap-2">
+        <span className="text-[#b9fd5c] text-[13px] font-semibold flex items-center gap-2">
           <TrendingUp size={12} />
           Investments ({investments.length})
         </span>
@@ -104,7 +104,7 @@ export const InvestmentSection = ({ investments }) => {
             className="flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-lg"
           >
             <div className="flex items-center gap-3">
-              <span className="w-7 h-7 rounded-lg bg-[#eb660f] flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0">
+              <span className="w-7 h-7 rounded-lg bg-[#b9fd5c] flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0">
                 {idx + 1}
               </span>
               <span className="text-[#0ecb6f] font-bold text-sm">

@@ -36,9 +36,9 @@ import {
 } from "recharts";
 import { useGetBusinessDetailsByDateMutation } from "./getBusinessDetailsApiSlice";
 
-const inputClass = `w-full bg-[#1b232d] border border-[#303f50] text-white rounded-lg 
-  px-4 py-2.5 text-sm focus:outline-none focus:border-[#eb660f] 
-  focus:ring-1 focus:ring-[#eb660f]/50 transition-colors duration-200
+const inputClass = `w-full bg-[#282f35] border border-[#303f50] text-white rounded-lg 
+  px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
+  focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
   placeholder-gray-500 disabled:opacity-50`;
 
 const labelClass = "block text-sm font-medium text-gray-300 mb-1.5";
@@ -735,8 +735,8 @@ function GetBusinessDetails() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
-            <BarChart3 size={24} className="text-[#eb660f]" />
+          <div className="w-12 h-12 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
+            <BarChart3 size={24} className="text-[#b9fd5c]" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white">Get Business Details</h1>
@@ -747,12 +747,12 @@ function GetBusinessDetails() {
 
       {/* View Toggle */}
       <div className="flex items-center gap-3 mb-6 flex-wrap">
-        <div className="flex bg-[#1b232d] border border-[#303f50] rounded-lg p-0.5">
+        <div className="flex bg-[#282f35] border border-[#303f50] rounded-lg p-0.5">
           <button
             onClick={() => setCurrentView("analytics")}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
               currentView === "analytics"
-                ? "bg-[#eb660f] text-white"
+                ? "bg-[#b9fd5c] text-white"
                 : "text-gray-400 hover:text-white"
             }`}
           >
@@ -762,7 +762,7 @@ function GetBusinessDetails() {
             onClick={() => setCurrentView("details")}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
               currentView === "details"
-                ? "bg-[#eb660f] text-white"
+                ? "bg-[#b9fd5c] text-white"
                 : "text-gray-400 hover:text-white"
             }`}
           >
@@ -772,7 +772,7 @@ function GetBusinessDetails() {
       </div>
 
       {/* Search Form */}
-      <div className="bg-[#1b232d] border border-[#303f50] rounded-xl p-5 mb-6">
+      <div className="bg-[#282f35] border border-[#303f50] rounded-xl p-5 mb-6">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -794,7 +794,7 @@ function GetBusinessDetails() {
                 <button
                   type="submit"
                   disabled={isSubmitting || isLoading}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] 
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] 
                     text-white font-medium px-6 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting || isLoading ? (
@@ -819,9 +819,9 @@ function GetBusinessDetails() {
         <>
           {/* Business Summary */}
           {dataFetched && usersData.length > 0 && (
-            <div className="bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+            <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
               <div className="px-5 py-4 border-b border-[#303f50]">
-                <h3 className="text-[#eb660f] font-semibold">Business Summary</h3>
+                <h3 className="text-[#b9fd5c] font-semibold">Business Summary</h3>
               </div>
               <div className="p-5">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -833,7 +833,7 @@ function GetBusinessDetails() {
                 {Object.keys(totalStats.paymentModeStats).length > 0 && (
                   <>
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-[#eb660f] font-semibold text-sm">Payment Mode Breakdown</h4>
+                      <h4 className="text-[#b9fd5c] font-semibold text-sm">Payment Mode Breakdown</h4>
                       <button
                         onClick={exportToPDF}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium
@@ -851,7 +851,7 @@ function GetBusinessDetails() {
                           className="bg-[#2e2e2e] border border-[#4a4a4a] rounded-xl p-4 text-center
                             hover:bg-[#3a3a3a] hover:-translate-y-0.5 transition-all"
                         >
-                          <p className="text-[#eb660f] font-semibold mb-2">{mode}</p>
+                          <p className="text-[#b9fd5c] font-semibold mb-2">{mode}</p>
                           <p className="text-gray-400 text-sm">
                             Transactions: <span className="text-white font-semibold">{stats.count}</span>
                           </p>
@@ -887,9 +887,9 @@ function GetBusinessDetails() {
 
           {/* User Info Card */}
           {dataFetched && currentUserData && (
-            <div className="bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+            <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
               <div className="px-5 py-4 border-b border-[#303f50]">
-                <h3 className="text-[#eb660f] font-semibold">User Information</h3>
+                <h3 className="text-[#b9fd5c] font-semibold">User Information</h3>
               </div>
               <div className="p-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -909,7 +909,7 @@ function GetBusinessDetails() {
                   <button
                     onClick={() => handleViewDetails("orders")}
                     disabled={!currentUserData.orders?.length}
-                    className="flex items-center justify-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] text-white 
+                    className="flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
                       font-medium py-3 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
                   >
                     <ShoppingCart size={16} />
@@ -942,10 +942,10 @@ function GetBusinessDetails() {
       {showModal && currentUserData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-          <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#1b232d] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden flex flex-col">
+          <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#282f35] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden flex flex-col">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#303f50] shrink-0">
-              <h3 className="text-lg font-semibold text-[#eb660f]">
+              <h3 className="text-lg font-semibold text-[#b9fd5c]">
                 {currentUserData.user.name}&apos;s{" "}
                 {modalType === "orders" ? "Orders" : "Wallet Transactions"}
               </h3>
@@ -985,7 +985,7 @@ function GetBusinessDetails() {
                   <div className="overflow-x-auto rounded-xl border border-[#303f50]">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-gradient-to-r from-[#eb660f] to-[#f07d2c]">
+                        <tr className="bg-gradient-to-r from-[#b9fd5c] to-[#f07d2c]">
                           {["S.No", "Date", "Amount", "JAIMAX Tokens", "Status"].map((h) => (
                             <th key={h} className="text-white text-sm font-semibold uppercase tracking-wider px-4 py-3 text-center">
                               {h}
@@ -1000,10 +1000,10 @@ function GetBusinessDetails() {
                               key={index}
                               className={`${
                                 index % 2 === 0 ? "bg-[#2e2e2e]" : "bg-[#262626]"
-                              } hover:bg-[#3a3a3a] transition-colors border-l-2 border-r-2 border-transparent hover:border-[#eb660f]`}
+                              } hover:bg-[#3a3a3a] transition-colors border-l-2 border-r-2 border-transparent hover:border-[#b9fd5c]`}
                             >
                               <td className="px-4 py-3 text-center">
-                                <span className="bg-[#eb660f] text-white text-xs font-bold px-2.5 py-1 rounded-md">
+                                <span className="bg-[#b9fd5c] text-white text-xs font-bold px-2.5 py-1 rounded-md">
                                   {index + 1}
                                 </span>
                               </td>
@@ -1045,7 +1045,7 @@ function GetBusinessDetails() {
                   <div className="overflow-x-auto rounded-xl border border-[#303f50]">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-linear-to-r from-[#eb660f] to-[#f07d2c]">
+                        <tr className="bg-linear-to-r from-[#b9fd5c] to-[#f07d2c]">
                           {["S.No", "Date", "Amount", "Payment Mode", "Transaction ID", "Status"].map((h) => (
                             <th key={h} className="text-white text-sm font-semibold uppercase tracking-wider px-4 py-3 text-center">
                               {h}
@@ -1060,10 +1060,10 @@ function GetBusinessDetails() {
                               key={index}
                               className={`${
                                 index % 2 === 0 ? "bg-[#2e2e2e]" : "bg-[#262626]"
-                              } hover:bg-[#3a3a3a] transition-colors border-l-2 border-r-2 border-transparent hover:border-[#eb660f]`}
+                              } hover:bg-[#3a3a3a] transition-colors border-l-2 border-r-2 border-transparent hover:border-[#b9fd5c]`}
                             >
                               <td className="px-4 py-3 text-center">
-                                <span className="bg-[#eb660f] text-white text-xs font-bold px-2.5 py-1 rounded-md">
+                                <span className="bg-[#b9fd5c] text-white text-xs font-bold px-2.5 py-1 rounded-md">
                                   {index + 1}
                                 </span>
                               </td>
@@ -1110,7 +1110,7 @@ function GetBusinessDetails() {
               {modalType === "orders" && currentUserData?.walletTransactions?.length > 0 && (
                 <button
                   onClick={() => setModalType("walletTransactions")}
-                  className="px-5 py-2.5 bg-[#eb660f] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
                 >
                   View Wallet Transactions
                 </button>
@@ -1118,7 +1118,7 @@ function GetBusinessDetails() {
               {modalType === "walletTransactions" && currentUserData?.orders?.length > 0 && (
                 <button
                   onClick={() => setModalType("orders")}
-                  className="px-5 py-2.5 bg-[#eb660f] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
                 >
                   View Orders
                 </button>
@@ -1158,7 +1158,7 @@ function GradientStatCard({ title, value, gradient, shadow, icon: Icon }) {
 function SummaryCard({ label, value }) {
   return (
     <div className="bg-[#2e2e2e] rounded-xl p-4 text-center">
-      <p className="text-[#eb660f] text-sm font-medium mb-1">{label}</p>
+      <p className="text-[#b9fd5c] text-sm font-medium mb-1">{label}</p>
       <p className="text-white text-xl font-bold">{value}</p>
     </div>
   );

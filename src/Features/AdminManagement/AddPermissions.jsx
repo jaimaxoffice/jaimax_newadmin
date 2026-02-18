@@ -154,7 +154,7 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Country Code */}
           <div>
-            <label className="block text-sm font-medium text-[#eb660f] mb-2">
+            <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
               Country Code *
             </label>
             <select
@@ -162,8 +162,8 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
               value={formData.countryCode}
               onChange={handleInputChange}
               className="w-full bg-[#111214] border border-[#2a2c2f] text-white
-                rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
-                focus:ring-1 focus:ring-[#eb660f]/30 transition-colors"
+                rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+                focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors"
             >
               {countryCodes.map((item, i) => (
                 <option key={i} value={item.countryCode} className="bg-[#111214]">
@@ -189,13 +189,13 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
         {/* Permissions */}
         <div>
           <div className="flex justify-between items-center mb-3">
-            <label className="text-sm font-medium text-[#eb660f]">
+            <label className="text-sm font-medium text-[#b9fd5c]">
               Permissions *
             </label>
             <button
               type="button"
               onClick={handleSelectAll}
-              className="text-sm text-[#eb660f] hover:text-[#ff7b1c] transition-colors
+              className="text-sm text-[#b9fd5c] hover:text-[#ff7b1c] transition-colors
                 cursor-pointer bg-transparent border-none"
             >
               {formData.permissions.length === allPermissions.length
@@ -210,7 +210,7 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
                 key={index}
                 className="flex items-center justify-between p-3
                   bg-[#111214] border border-[#2a2c2f] rounded-lg
-                  hover:border-[#eb660f]/30 transition-colors cursor-pointer"
+                  hover:border-[#b9fd5c]/30 transition-colors cursor-pointer"
               >
                 <span className="text-[13px] text-[#ccc]">
                   {formatPermissionName(permission)}
@@ -220,7 +220,7 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
                   value={permission}
                   checked={formData.permissions.includes(permission)}
                   onChange={handleCheckboxChange}
-                  className="w-4 h-4 accent-[#eb660f] cursor-pointer"
+                  className="w-4 h-4 accent-[#b9fd5c] cursor-pointer"
                 />
               </label>
             ))}
@@ -247,7 +247,7 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
             type="submit"
             disabled={isLoading}
             className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-              bg-[#eb660f] hover:bg-[#ff7b1c] transition-colors cursor-pointer
+              bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
               disabled:opacity-50 flex items-center gap-2"
           >
             {isLoading ? (
@@ -278,7 +278,7 @@ const FormField = ({
   maxLength,
 }) => (
   <div>
-    <label className="block text-sm font-medium text-[#eb660f] mb-2">
+    <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
       {label} *
     </label>
     <input
@@ -296,7 +296,7 @@ const FormField = ({
         ${
           error
             ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/30"
-            : "border-[#2a2c2f] focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/30"
+            : "border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30"
         }`}
     />
     {error && <p className="text-red-400 text-xs mt-1">{error}</p>}

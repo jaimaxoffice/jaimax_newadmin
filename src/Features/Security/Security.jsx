@@ -67,7 +67,7 @@ const LegalUpdation = () => {
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Main Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
           {/* Header */}
           <div className="px-5 py-4 border-b border-[#2a2c2f]">
             <h1 className="text-xl font-semibold text-white">
@@ -137,8 +137,8 @@ const LegalUpdation = () => {
                       transition-all duration-200 cursor-pointer
                       ${
                         loading
-                          ? "bg-[#eb660f]/50 text-white/60 cursor-not-allowed"
-                          : "bg-[#eb660f] text-white hover:bg-[#ff8533] hover:shadow-lg hover:shadow-[#eb660f]/20 active:scale-[0.98]"
+                          ? "bg-[#b9fd5c]/50 text-white/60 cursor-not-allowed"
+                          : "bg-[#b9fd5c] text-white hover:bg-[#ff8533] hover:shadow-lg hover:shadow-[#b9fd5c]/20 active:scale-[0.98]"
                       }
                     `}
                   >

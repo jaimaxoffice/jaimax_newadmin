@@ -149,8 +149,8 @@ const Userinfo = () => {
     <div className="min-h-screen p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center shrink-0">
-          <User size={24} className="text-[#eb660f]" />
+        <div className="w-12 h-12 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center shrink-0">
+          <User size={24} className="text-[#b9fd5c]" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-white">User Information</h1>
@@ -159,7 +159,7 @@ const Userinfo = () => {
       </div>
 
       {/* Search Section */}
-      <div className="bg-[#1b232d] border border-[#303f50] rounded-xl p-5 mb-6">
+      <div className="bg-[#282f35] border border-[#303f50] rounded-xl p-5 mb-6">
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-full max-w-xs">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -169,15 +169,15 @@ const Userinfo = () => {
               value={searchTerm}
               onChange={handleSearchInputChange}
               className="w-full bg-[#111827] border border-[#303f50] text-white rounded-lg 
-                pl-10 pr-4 py-2.5 text-sm text-center focus:outline-none focus:border-[#eb660f] 
-                focus:ring-1 focus:ring-[#eb660f]/50 transition-colors placeholder-gray-500"
+                pl-10 pr-4 py-2.5 text-sm text-center focus:outline-none focus:border-[#b9fd5c] 
+                focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors placeholder-gray-500"
             />
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             <button
               onClick={handleDirectSearch}
               disabled={isPageLoading}
-              className="flex items-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] text-white 
+              className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
                 font-medium px-4 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer text-sm"
             >
               <Users size={16} />
@@ -186,7 +186,7 @@ const Userinfo = () => {
             <button
               onClick={handleChainSearch}
               disabled={isPageLoading}
-              className="flex items-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] text-white 
+              className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
                 font-medium px-4 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer text-sm"
             >
               <Link2 size={16} />
@@ -195,7 +195,7 @@ const Userinfo = () => {
             <button
               onClick={handleShowUserDetails}
               disabled={isPageLoading}
-              className="flex items-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] text-white 
+              className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
                 font-medium px-4 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer text-sm"
             >
               <User size={16} />
@@ -218,24 +218,24 @@ const Userinfo = () => {
           {/* User Details */}
           {userDetails && (
             <div className="max-w-6xl mx-auto mb-6">
-              <div className="bg-gradient-to-br from-[#1b232d] to-[#1a2128] rounded-2xl border-2 border-[#eb660f] 
+              <div className="bg-gradient-to-br from-[#282f35] to-[#1a2128] rounded-2xl border-2 border-[#b9fd5c] 
                 shadow-[0_20px_40px_rgba(0,0,0,0.3),0_8px_24px_rgba(236,102,15,0.2)] overflow-hidden relative">
                 
                 {/* Decorative */}
-                <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#eb660f]/10 rounded-full" />
-                <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-[#eb660f]/5 rounded-full" />
+                <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#b9fd5c]/10 rounded-full" />
+                <div className="absolute -bottom-8 -left-8 w-16 h-16 bg-[#b9fd5c]/5 rounded-full" />
 
                 <div className="relative p-5 sm:p-6 z-10">
                   {/* Header */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                     <div>
-                      <h2 className="text-[#eb660f] text-2xl font-bold">User Profile</h2>
+                      <h2 className="text-[#b9fd5c] text-2xl font-bold">User Profile</h2>
                       <p className="text-white/70 text-sm mt-0.5">Complete user information and statistics</p>
                     </div>
                     <button
                       onClick={() => setShowEditModal(true)}
                       disabled={isPageLoading}
-                      className="flex items-center gap-2 bg-[#eb660f] hover:bg-[#eb660f]/80 text-white 
+                      className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#b9fd5c]/80 text-white 
                         px-5 py-2 rounded-full text-sm font-medium transition-all hover:-translate-y-0.5 
                         hover:shadow-[0_4px_12px_rgba(236,102,15,0.3)] cursor-pointer"
                     >
@@ -281,7 +281,7 @@ const Userinfo = () => {
                           icon={Hash}
                           label="Ref ID"
                           value={
-                            <span className="text-[#eb660f] font-mono bg-[#eb660f]/10 px-2 py-0.5 rounded border border-[#eb660f]/30 text-xs">
+                            <span className="text-[#b9fd5c] font-mono bg-[#b9fd5c]/10 px-2 py-0.5 rounded border border-[#b9fd5c]/30 text-xs">
                               {userDetails.referenceId}
                             </span>
                           }
@@ -293,10 +293,10 @@ const Userinfo = () => {
                     <div className="space-y-4">
                       {/* Financial */}
                       <InfoSection title="Financial Overview">
-                        <InfoRow icon={Gift} label="Referral Bonus" value={<span className="text-[#eb660f] font-bold">₹{userDetails.referenceInr}</span>} />
-                        <InfoRow icon={Wallet} label="Wallet Balance" value={<span className="text-[#eb660f] font-bold">{userDetails.walletBalance ?? 0}</span>} />
-                        <InfoRow icon={Coins} label="JAIMAX Tokens" value={<span className="text-[#eb660f] font-bold">{userDetails.tokens?.toLocaleString() || "N/A"}</span>} />
-                        <InfoRow icon={Star} label="Super Bonus" value={<span className="text-[#eb660f] font-bold">{userDetails.super_bonus || "N/A"}</span>} />
+                        <InfoRow icon={Gift} label="Referral Bonus" value={<span className="text-[#b9fd5c] font-bold">₹{userDetails.referenceInr}</span>} />
+                        <InfoRow icon={Wallet} label="Wallet Balance" value={<span className="text-[#b9fd5c] font-bold">{userDetails.walletBalance ?? 0}</span>} />
+                        <InfoRow icon={Coins} label="JAIMAX Tokens" value={<span className="text-[#b9fd5c] font-bold">{userDetails.tokens?.toLocaleString() || "N/A"}</span>} />
+                        <InfoRow icon={Star} label="Super Bonus" value={<span className="text-[#b9fd5c] font-bold">{userDetails.super_bonus || "N/A"}</span>} />
                       </InfoSection>
 
                       {/* Referral Stats - Blurred */}
@@ -305,8 +305,8 @@ const Userinfo = () => {
                           <button
                             onClick={handleUnlockClick}
                             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 
-                              bg-black/65 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#eb660f] 
-                              text-[#eb660f] font-bold text-sm cursor-pointer hover:bg-black/80 transition-all
+                              bg-black/65 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#b9fd5c] 
+                              text-[#b9fd5c] font-bold text-sm cursor-pointer hover:bg-black/80 transition-all
                               flex items-center gap-2"
                           >
                             <Lock size={14} />
@@ -315,11 +315,11 @@ const Userinfo = () => {
                         )}
 
                         <div
-                          className={`bg-gradient-to-br from-[#1b232d] to-[#1a2128] rounded-2xl border border-[#eb660f] 
+                          className={`bg-gradient-to-br from-[#282f35] to-[#1a2128] rounded-2xl border border-[#b9fd5c] 
                             p-4 shadow-[0_4px_12px_rgba(0,0,0,0.3)] min-h-[260px] transition-all duration-300
                             ${isBlurred ? "blur-lg pointer-events-none" : ""}`}
                         >
-                          <h3 className="text-[#eb660f] text-lg font-semibold mb-3 pb-2 border-b-2 border-[#eb660f]">
+                          <h3 className="text-[#b9fd5c] text-lg font-semibold mb-3 pb-2 border-b-2 border-[#b9fd5c]">
                             Referral Statistics
                           </h3>
                           <div className="grid grid-cols-2 gap-3">
@@ -339,16 +339,16 @@ const Userinfo = () => {
 
           {/* Referrals Table */}
           {(refType === "direct" || refType === "chain") && referrals.length > 0 && (
-            <div className="bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden">
               <div className="px-5 py-4 border-b border-[#303f50]">
-                <h3 className="text-[#eb660f] font-semibold text-center">
+                <h3 className="text-[#b9fd5c] font-semibold text-center">
                   {refType === "direct" ? "Direct" : "Chain"} Referrals
                 </h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-[#eb660f]">
+                    <tr className="bg-[#b9fd5c]">
                       {["S.No", "Name", "Username", "Phone", "Email", "Status", "Created"].map((h) => (
                         <th key={h} className="text-white text-xs font-semibold uppercase tracking-wider px-4 py-3 text-center">
                           {h}
@@ -386,8 +386,8 @@ const Userinfo = () => {
       {showEditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowEditModal(false)} />
-          <div className="relative w-full max-w-3xl max-h-[90vh] bg-[#1b232d] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#eb660f]">
+          <div className="relative w-full max-w-3xl max-h-[90vh] bg-[#282f35] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#b9fd5c]">
               <h3 className="text-white font-semibold">Edit User</h3>
               <button
                 onClick={() => setShowEditModal(false)}
@@ -415,27 +415,27 @@ const Userinfo = () => {
       {showModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setShowModal(false)} />
-          <div className="relative bg-[#1b232d] border border-[#eb660f] rounded-xl p-6 w-full max-w-xs">
-            <h3 className="text-[#eb660f] font-semibold mb-4">Enter Secret Code</h3>
+          <div className="relative bg-[#282f35] border border-[#b9fd5c] rounded-xl p-6 w-full max-w-xs">
+            <h3 className="text-[#b9fd5c] font-semibold mb-4">Enter Secret Code</h3>
             <input
               type="password"
               value={secretInput}
               onChange={(e) => setSecretInput(e.target.value)}
               placeholder="Enter Secret"
               className="w-full bg-[#111827] border border-[#303f50] text-white rounded-lg px-4 py-2.5 text-sm 
-                focus:outline-none focus:border-[#eb660f] mb-3 placeholder-gray-500"
+                focus:outline-none focus:border-[#b9fd5c] mb-3 placeholder-gray-500"
             />
             <button
               onClick={handleSecretSubmit}
-              className="w-full bg-[#eb660f] hover:bg-[#d55a0e] text-white font-semibold py-2.5 rounded-lg 
+              className="w-full bg-[#b9fd5c] hover:bg-[#d55a0e] text-white font-semibold py-2.5 rounded-lg 
                 transition-colors mb-2 cursor-pointer"
             >
               Unlock
             </button>
             <button
               onClick={() => setShowModal(false)}
-              className="w-full bg-transparent border border-[#eb660f] text-[#eb660f] font-semibold py-2.5 
-                rounded-lg hover:bg-[#eb660f]/10 transition-colors cursor-pointer"
+              className="w-full bg-transparent border border-[#b9fd5c] text-[#b9fd5c] font-semibold py-2.5 
+                rounded-lg hover:bg-[#b9fd5c]/10 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -450,8 +450,8 @@ const Userinfo = () => {
 
 function InfoSection({ title, children }) {
   return (
-    <div className="bg-gradient-to-br from-[#1b232d] to-[#1a2128] rounded-2xl border border-[#eb660f] p-4 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
-      <h3 className="text-[#eb660f] text-lg font-semibold mb-3 pb-2 border-b-2 border-[#eb660f]">
+    <div className="bg-gradient-to-br from-[#282f35] to-[#1a2128] rounded-2xl border border-[#b9fd5c] p-4 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+      <h3 className="text-[#b9fd5c] text-lg font-semibold mb-3 pb-2 border-b-2 border-[#b9fd5c]">
         {title}
       </h3>
       <div className="space-y-3">{children}</div>
@@ -463,7 +463,7 @@ function InfoRow({ icon: Icon, label, value, truncate = false }) {
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-2">
-        {/* {Icon && <Icon size={14} className="text-[#eb660f]/60 shrink-0" />} */}
+        {/* {Icon && <Icon size={14} className="text-[#b9fd5c]/60 shrink-0" />} */}
         <span className="text-white/70 text-sm font-medium">{label}:</span>
       </div>
       <span className={`text-white text-sm font-semibold text-right `}>
@@ -477,10 +477,10 @@ function StatBox({ label, value, accent = false }) {
   return (
     <div className={`text-center p-3 rounded-xl border ${
       accent
-        ? "bg-[#eb660f]/10 border-[#eb660f]/30"
+        ? "bg-[#b9fd5c]/10 border-[#b9fd5c]/30"
         : "bg-gray-500/10 border-gray-500/30"
     }`}>
-      <div className={`text-xl font-bold mb-1 ${accent ? "text-[#eb660f]" : "text-white/80"}`}>
+      <div className={`text-xl font-bold mb-1 ${accent ? "text-[#b9fd5c]" : "text-white/80"}`}>
         {value}
       </div>
       <div className={`text-xs font-medium ${accent ? "text-white/80" : "text-white/60"}`}>

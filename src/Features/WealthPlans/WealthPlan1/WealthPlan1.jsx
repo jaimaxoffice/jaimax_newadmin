@@ -161,7 +161,7 @@ const WealthPlanOrders = () => {
           subtitle: `#${sNo} • ${row?.userId?.email}`,
           badge: row?.wealthPlanCompleted ? "Completed" : "In Progress",
           badgeClass: row?.wealthPlanCompleted
-            ? "bg-[#eb660f]/10 text-[#eb660f]"
+            ? "bg-[#b9fd5c]/10 text-[#b9fd5c]"
             : "bg-yellow-500/10 text-yellow-400",
         }}
         rows={[
@@ -191,7 +191,7 @@ const WealthPlanOrders = () => {
 
 
       {/* Table Card */}
-      <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

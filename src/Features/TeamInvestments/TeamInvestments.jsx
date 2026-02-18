@@ -167,7 +167,7 @@ const TeamInfo = () => {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-3">
-              <Users size={24} className="text-[#eb660f]" />
+              <Users size={24} className="text-[#b9fd5c]" />
               Team Investments Overview
             </h2>
             <p className="text-[#8a8d93] text-sm mt-1">
@@ -178,8 +178,8 @@ const TeamInfo = () => {
             <button
               onClick={toggleExpandAll}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
-                bg-transparent border border-[#eb660f]/30 text-[#eb660f]
-                hover:bg-[#eb660f]/10 transition-colors cursor-pointer"
+                bg-transparent border border-[#b9fd5c]/30 text-[#b9fd5c]
+                hover:bg-[#b9fd5c]/10 transition-colors cursor-pointer"
             >
               {expandAll ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               {expandAll ? "Collapse All" : "Expand All"}
@@ -188,7 +188,7 @@ const TeamInfo = () => {
         </div>
 
         {/* Search Section */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 space-y-4">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
             {/* Username */}
             <div className="md:col-span-4">
@@ -203,8 +203,8 @@ const TeamInfo = () => {
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 autoComplete="off"
                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                  py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                  focus:ring-1 focus:ring-[#eb660f]/30 transition-colors placeholder-[#555]"
+                  py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                  focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors placeholder-[#555]"
               />
             </div>
 
@@ -218,8 +218,8 @@ const TeamInfo = () => {
                 value={input.fromDate}
                 onChange={(e) => setInput({ ...input, fromDate: e.target.value })}
                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                  py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                  focus:ring-1 focus:ring-[#eb660f]/30 transition-colors
+                  py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                  focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors
                   [color-scheme:dark]"
               />
             </div>
@@ -234,8 +234,8 @@ const TeamInfo = () => {
                 value={input.toDate}
                 onChange={(e) => setInput({ ...input, toDate: e.target.value })}
                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                  py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                  focus:ring-1 focus:ring-[#eb660f]/30 transition-colors
+                  py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                  focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors
                   [color-scheme:dark]"
               />
             </div>
@@ -245,7 +245,7 @@ const TeamInfo = () => {
               <button
                 onClick={handleSearch}
                 disabled={isLoading || !input.username.trim()}
-                className="w-full bg-[#eb660f] hover:bg-[#ff7b1c] text-white rounded-xl
+                className="w-full bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
                   py-3 px-4 text-sm font-semibold transition-colors cursor-pointer
                   disabled:opacity-50 disabled:cursor-not-allowed
                   flex items-center justify-center gap-2"
@@ -313,8 +313,8 @@ const TeamInfo = () => {
         {/* Empty State */}
         {!teamData && !isLoading && (
           <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-20 h-20 rounded-2xl bg-[#eb660f]/10 flex items-center justify-center mb-5">
-              <Search size={30} className="text-[#eb660f]/40" />
+            <div className="w-20 h-20 rounded-2xl bg-[#b9fd5c]/10 flex items-center justify-center mb-5">
+              <Search size={30} className="text-[#b9fd5c]/40" />
             </div>
             <h3 className="text-white/50 font-semibold mb-2">
               Search for Team Data
@@ -333,7 +333,7 @@ const TeamInfo = () => {
               <StatCard
                 title="Total Team"
                 value={teamData.summary?.chain?.total || 0}
-                valueClass="text-[#eb660f]"
+                valueClass="text-[#b9fd5c]"
               />
               <StatCard
                 title="Direct Referrals"
@@ -363,7 +363,7 @@ const TeamInfo = () => {
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[13px]
                       transition-all cursor-pointer ${
                         activeTab === tab.key
-                          ? "bg-[#eb660f] text-white font-semibold"
+                          ? "bg-[#b9fd5c] text-white font-semibold"
                           : "text-white/50 hover:text-white/70"
                       }`}
                   >
@@ -380,7 +380,7 @@ const TeamInfo = () => {
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                    py-2 px-3 text-xs focus:outline-none focus:border-[#eb660f]
+                    py-2 px-3 text-xs focus:outline-none focus:border-[#b9fd5c]
                     transition-colors cursor-pointer"
                 >
                   {SORT_OPTIONS.map((opt) => (
@@ -389,7 +389,7 @@ const TeamInfo = () => {
                 </select>
                 <button
                   onClick={() => setSortOrder((p) => (p === "asc" ? "desc" : "asc"))}
-                  className="bg-[#111214] border border-[#2a2c2f] text-[#eb660f] rounded-xl
+                  className="bg-[#111214] border border-[#2a2c2f] text-[#b9fd5c] rounded-xl
                     p-2 cursor-pointer hover:bg-[#2a2c2f] transition-colors"
                 >
                   {sortOrder === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
@@ -400,7 +400,7 @@ const TeamInfo = () => {
             {/* Layers */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <Layers size={16} className="text-[#eb660f]" />
+                <Layers size={16} className="text-[#b9fd5c]" />
                 <h3 className="text-white font-semibold text-lg">Team Layers</h3>
                 <span className="text-white/30 text-sm ml-2">
                   ({layerStats.layerCount} layers)

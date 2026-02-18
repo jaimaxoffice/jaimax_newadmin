@@ -1,13 +1,19 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
-
-/* body {
-  font-family: "Poppins", sans-serif;
-  color: #fff;
-} */
+::selection {
+  background: #b9fd5c !important;
+  color: black !important;
+}
 body {
   font-family: "Inter", sans-serif;
   background-color: #111214;
+}
+.tableHead{
+    font-family: "Lato", sans-serif;
+    
+}
+.tablebody{
+  font-family: "Sora", sans-serif;
 }
 
 .serialHeading {

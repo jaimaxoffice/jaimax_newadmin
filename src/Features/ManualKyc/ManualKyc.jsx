@@ -197,10 +197,10 @@ const ManualKycAccounts = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Personal Information */}
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
-              <div className="w-8 h-8 rounded-lg bg-[#eb660f]/15 flex items-center justify-center">
-                <User size={16} className="text-[#eb660f]" />
+              <div className="w-8 h-8 rounded-lg bg-[#b9fd5c]/15 flex items-center justify-center">
+                <User size={16} className="text-[#b9fd5c]" />
               </div>
               <h2 className="text-base font-semibold text-white">
                 Personal Information
@@ -270,10 +270,10 @@ const ManualKycAccounts = () => {
           </div>
 
           {/* Document Upload */}
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
               <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
-                <FileText size={16} className="text-[#eb660f]" />
+                <FileText size={16} className="text-[#b9fd5c]" />
               </div>
               <div>
                 <h2 className="text-base font-semibold text-white">
@@ -316,10 +316,10 @@ const ManualKycAccounts = () => {
           </div>
 
           {/* Bank Details */}
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
-              <div className="w-8 h-8 rounded-lg bg-[#eb660f]/15 flex items-center justify-center">
-                <Building2 size={16} className="text-[#eb660f]" />
+              <div className="w-8 h-8 rounded-lg bg-[#b9fd5c]/15 flex items-center justify-center">
+                <Building2 size={16} className="text-[#b9fd5c]" />
               </div>
               <h2 className="text-base font-semibold text-white">
                 Bank Details
@@ -366,10 +366,10 @@ const ManualKycAccounts = () => {
           </div>
 
           {/* Additional Information */}
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
               <div className="w-8 h-8 rounded-lg bg-yellow-500/15 flex items-center justify-center">
-                <Info size={16} className="text-[#eb660f]" />
+                <Info size={16} className="text-[#b9fd5c]" />
               </div>
               <h2 className="text-white font-semibold ">
                 Additional Information

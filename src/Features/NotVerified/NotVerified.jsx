@@ -139,7 +139,7 @@ const NotVerifiedUsers = () => {
     return (
       <div>
         <div className="p-2 sm:p-2 space-y-6">
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
             <div className="flex flex-col items-center justify-center py-20 px-4">
               <h3 className="text-white text-lg font-semibold mb-2">
                 Error Loading Data
@@ -152,7 +152,7 @@ const NotVerifiedUsers = () => {
                   onClick={() => refetch()}
                   disabled={isLoading}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#eb660f] text-white hover:bg-[#ff8533]
+                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
                   {/* <RefreshIcon className={isLoading ? "animate-spin" : ""} /> */}
@@ -207,7 +207,7 @@ const NotVerifiedUsers = () => {
         <span
           className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
             row?.isActive
-              ? "bg-[#eb660f]/10 text-[#eb660f]"
+              ? "bg-[#b9fd5c]/10 text-[#b9fd5c]"
               : "bg-red-500/10 text-red-400"
           }`}
         >
@@ -221,7 +221,7 @@ const NotVerifiedUsers = () => {
         <span
           className={`font-semibold text-sm ${
             row?.tokens > 1000
-              ? "text-[#eb660f]"
+              ? "text-[#b9fd5c]"
               : row?.tokens > 0
                 ? "text-yellow-400"
                 : "text-red-400"
@@ -255,7 +255,7 @@ const NotVerifiedUsers = () => {
         {/* Top Controls */}
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -343,7 +343,7 @@ const NotVerifiedUsers = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[#8a8d93] text-xs">User ID</span>
-                <span className="text-[#eb660f] text-xs font-mono font-semibold">
+                <span className="text-[#b9fd5c] text-xs font-mono font-semibold">
                   {selectedUser._id?.slice(-12) || "N/A"}
                 </span>
               </div>

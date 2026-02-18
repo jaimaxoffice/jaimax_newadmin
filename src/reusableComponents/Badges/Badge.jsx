@@ -3,7 +3,7 @@ import React from "react";
 
 const Badge = ({ type = "default", children }) => {
   const styles = {
-    success: "bg-[#eb660f]/10 text-[#eb660f]",
+    success: "bg-[#b9fd5c]/10 text-[#b9fd5c]",
     danger: "bg-red-500/10 text-red-400",
     warning: "bg-yellow-500/10 text-yellow-400",
     info: "bg-blue-500/10 text-blue-400",

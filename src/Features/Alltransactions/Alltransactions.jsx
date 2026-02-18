@@ -210,7 +210,7 @@ const AllTransactions = () => {
                 href={row.screenshotUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#eb660f] hover:underline text-xs 
+                className="text-[#b9fd5c] hover:underline text-xs 
                   truncate max-w-[60%] text-right"
               >
                 {row.transactionId}
@@ -277,7 +277,7 @@ const AllTransactions = () => {
 
         {/* Table Section */}
         <div
-          className="bg-[#1b232d] border border-[#1b232d] rounded-lg 
+          className="bg-[#282f35] border border-[#282f35] rounded-lg 
           overflow-hidden"
         >
           {/* Table Header */}
@@ -306,7 +306,7 @@ const AllTransactions = () => {
               value={selectedStatus}
               onChange={handleStatusChange}
               className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-                py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
+                py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c] 
                 transition-colors cursor-pointer"
             >
               <option value="Transaction Type">All Types</option>
@@ -322,8 +322,8 @@ const AllTransactions = () => {
               onChange={handleSearch}
               className="bg-[#111214] border border-[#2a2c2f] text-white 
                 placeholder-[#555] rounded-xl py-2.5 px-4 text-sm 
-                focus:outline-none focus:border-[#eb660f] focus:ring-1 
-                focus:ring-[#eb660f]/50 transition-colors w-full sm:w-44"
+                focus:outline-none focus:border-[#b9fd5c] focus:ring-1 
+                focus:ring-[#b9fd5c]/50 transition-colors w-full sm:w-44"
             />
           </div>
         </div>

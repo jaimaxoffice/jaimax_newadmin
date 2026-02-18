@@ -493,11 +493,11 @@ const BlogEditor = () => {
 
     return (
       <div className="p-2 sm:p-2 space-y-6">
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]">
+                <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center text-[#b9fd5c]">
                   <BlogIcon />
                 </div>
                 <h1 className="text-lg font-semibold text-white">Blog Posts</h1>
@@ -505,7 +505,7 @@ const BlogEditor = () => {
               <button
                 onClick={() => refetch()}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                           bg-[#eb660f] text-white hover:bg-[#ff8533] transition-all cursor-pointer"
+                           bg-[#b9fd5c] text-white hover:bg-[#ff8533] transition-all cursor-pointer"
               >
                 <RefreshIcon />
                 Refresh
@@ -520,7 +520,7 @@ const BlogEditor = () => {
             <p className="text-[#8a8d93] text-sm text-center max-w-md mb-6">{errorMessage}</p>
             <button
               onClick={() => refetch()}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#eb660f] text-white
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#b9fd5c] text-white
                          hover:bg-[#ff8533] transition-all cursor-pointer"
             >
               Try Again
@@ -579,7 +579,7 @@ const BlogEditor = () => {
                 <span
                   key={cat._id || i}
                   className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full
-                             bg-[#eb660f]/10 text-[#eb660f]"
+                             bg-[#b9fd5c]/10 text-[#b9fd5c]"
                 >
                   {cat?.name || "Unnamed"}
                 </span>
@@ -618,8 +618,8 @@ const BlogEditor = () => {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => handleEditPost(row._id)}
-              className="p-1.5 rounded-lg bg-[#eb660f]/10 text-[#eb660f]
-                         hover:bg-[#eb660f]/20 transition-all cursor-pointer"
+              className="p-1.5 rounded-lg bg-[#b9fd5c]/10 text-[#b9fd5c]
+                         hover:bg-[#b9fd5c]/20 transition-all cursor-pointer"
               title="Edit"
             >
               <EditIcon />
@@ -652,7 +652,7 @@ const BlogEditor = () => {
           key={row._id || index}
           header={{
             avatar: (row.title?.charAt(0) || "?").toUpperCase(),
-            avatarBg: "bg-[#eb660f]/10 text-[#eb660f]",
+            avatarBg: "bg-[#b9fd5c]/10 text-[#b9fd5c]",
             title: row.title || "Untitled",
             subtitle: `${row.author?.name || "Unknown"} • ${formatDate(row.updatedAt)}`,
             badge: status.label,
@@ -674,7 +674,7 @@ const BlogEditor = () => {
                       <span
                         key={i}
                         className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full
-                                   bg-[#eb660f]/10 text-[#eb660f]"
+                                   bg-[#b9fd5c]/10 text-[#b9fd5c]"
                       >
                         {cat.name}
                       </span>
@@ -702,8 +702,8 @@ const BlogEditor = () => {
               <button
                 onClick={() => handleEditPost(row._id)}
                 className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl
-                           text-xs font-semibold bg-[#eb660f]/10 text-[#eb660f]
-                           border border-[#eb660f]/20 hover:bg-[#eb660f]/20 transition-all cursor-pointer"
+                           text-xs font-semibold bg-[#b9fd5c]/10 text-[#b9fd5c]
+                           border border-[#b9fd5c]/20 hover:bg-[#b9fd5c]/20 transition-all cursor-pointer"
               >
                 <EditIcon />
                 Edit
@@ -743,7 +743,7 @@ const BlogEditor = () => {
                 setPage(1);
               }}
               className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                          transition-colors cursor-pointer"
             >
               <option value="all">All Status</option>
@@ -760,8 +760,8 @@ const BlogEditor = () => {
                 placeholder={isSearching ? "Searching..." : "Search posts..."}
                 onChange={handleSearch}
                 className="bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-                           rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-[#eb660f]
-                           focus:ring-1 focus:ring-[#eb660f]/50 transition-colors w-full sm:w-56"
+                           rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                           focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors w-full sm:w-56"
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]">
                 <SearchIcon className={isSearching ? "animate-spin" : ""} />
@@ -788,7 +788,7 @@ const BlogEditor = () => {
           <button
             onClick={handleCreateNewPost}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                       bg-[#eb660f] text-white hover:bg-[#ff8533] transition-all cursor-pointer"
+                       bg-[#b9fd5c] text-white hover:bg-[#ff8533] transition-all cursor-pointer"
           >
             <PlusIcon />
             Create New Post
@@ -800,17 +800,17 @@ const BlogEditor = () => {
         {/* Fetching indicator */}
         {isFetchingPosts && !isLoadingPosts && (
           <div className="flex items-center justify-center gap-2 py-2">
-            <div className="w-4 h-4 border-2 border-[#eb660f] border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-[#b9fd5c] border-t-transparent rounded-full animate-spin" />
             <span className="text-[#8a8d93] text-sm">Loading...</span>
           </div>
         )}
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f]rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f]rounded-lg  overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]">
+                <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center text-[#b9fd5c]">
                   <BlogIcon />
                 </div>
                 <div>
@@ -818,7 +818,7 @@ const BlogEditor = () => {
                   <p className="text-xs text-[#8a8d93] mt-0.5">
                     Showing {pagination.count || 0} of {pagination.total || 0} posts
                     {searchTerm && (
-                      <span className="text-[#eb660f]"> for "{searchTerm}"</span>
+                      <span className="text-[#b9fd5c]"> for "{searchTerm}"</span>
                     )}
                   </p>
                 </div>
@@ -827,7 +827,7 @@ const BlogEditor = () => {
                 onClick={() => refetch()}
                 disabled={isFetchingPosts}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                           bg-[#eb660f] text-white hover:bg-[#ff8533] transition-all cursor-pointer
+                           bg-[#b9fd5c] text-white hover:bg-[#ff8533] transition-all cursor-pointer
                            disabled:opacity-50"
               >
              
@@ -869,7 +869,7 @@ const BlogEditor = () => {
     if (isLoadingPost && isEditMode) {
       return (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-2 border-[#eb660f] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-[#b9fd5c] border-t-transparent rounded-full animate-spin" />
         </div>
       );
     }
@@ -928,7 +928,7 @@ const BlogEditor = () => {
               onClick={handleSubmit}
               disabled={isCreating || isUpdating}
               className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold
-                         bg-[#eb660f] text-white hover:bg-[#ff8533] transition-all cursor-pointer
+                         bg-[#b9fd5c] text-white hover:bg-[#ff8533] transition-all cursor-pointer
                          disabled:opacity-50"
             >
               {isCreating || isUpdating ? (
@@ -950,7 +950,7 @@ const BlogEditor = () => {
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-6">
             {/* Title & Excerpt */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 space-y-4">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 space-y-4">
               <div>
                 <label className="text-white text-sm font-semibold mb-2 block">Title</label>
                 <input
@@ -963,8 +963,8 @@ const BlogEditor = () => {
                   }}
                   placeholder="Enter post title"
                   className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                             py-3 px-4 text-base focus:outline-none focus:border-[#eb660f]
-                             focus:ring-1 focus:ring-[#eb660f]/50 transition-colors"
+                             py-3 px-4 text-base focus:outline-none focus:border-[#b9fd5c]
+                             focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors"
                 />
               </div>
 
@@ -977,14 +977,14 @@ const BlogEditor = () => {
                   placeholder="Write a brief excerpt"
                   rows={3}
                   className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                             py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                             focus:ring-1 focus:ring-[#eb660f]/50 transition-colors resize-none"
+                             py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                             focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors resize-none"
                 />
               </div>
             </div>
 
             {/* Content Editor */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5">
               <label className="text-white text-sm font-semibold mb-3 block">Content</label>
               <Editor
                 apiKey={tinyMceApiKey}
@@ -1014,7 +1014,7 @@ const BlogEditor = () => {
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
             {/* SEO Settings */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
               <div className="px-5 py-3 border-b border-[#2a2c2f] flex items-center gap-2">
                 <SeoIcon />
                 <span className="text-white font-semibold text-sm">SEO Settings</span>
@@ -1038,7 +1038,7 @@ const BlogEditor = () => {
                     onChange={handleChange}
                     placeholder="SEO title"
                     className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                                transition-colors"
                   />
                 </div>
@@ -1066,7 +1066,7 @@ const BlogEditor = () => {
                     placeholder="Meta description"
                     rows={3}
                     className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                                transition-colors resize-none"
                   />
                 </div>
@@ -1080,7 +1080,7 @@ const BlogEditor = () => {
                     onChange={handleChange}
                     placeholder="e.g. blogging, writing, SEO"
                     className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                                transition-colors"
                   />
                 </div>
@@ -1107,7 +1107,7 @@ const BlogEditor = () => {
             </div>
 
             {/* Featured Image */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
               <div className="px-5 py-3 border-b border-[#2a2c2f] flex items-center gap-2">
                 <ImageIcon />
                 <span className="text-white font-semibold text-sm">Featured Image</span>
@@ -1136,7 +1136,7 @@ const BlogEditor = () => {
                 <label
                   className="w-full flex flex-col items-center justify-center gap-2 px-4 py-6
                              rounded-xl border-2 border-dashed border-[#2a2c2f] text-[#8a8d93]
-                             hover:border-[#eb660f] hover:text-[#eb660f] transition-colors cursor-pointer"
+                             hover:border-[#b9fd5c] hover:text-[#b9fd5c] transition-colors cursor-pointer"
                 >
                   <UploadIcon />
                   <span className="text-xs font-medium">
@@ -1154,7 +1154,7 @@ const BlogEditor = () => {
             </div>
 
             {/* Categories */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
               <div className="px-5 py-3 border-b border-[#2a2c2f] flex items-center gap-2">
                 <FolderIcon />
                 <span className="text-white font-semibold text-sm">Categories</span>
@@ -1178,12 +1178,12 @@ const BlogEditor = () => {
                     }}
                     placeholder="Add category..."
                     className="flex-1 bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                                transition-colors"
                   />
                   <button
                     onClick={addCategory}
-                    className="px-3 py-2.5 rounded-xl text-sm font-semibold bg-[#eb660f]
+                    className="px-3 py-2.5 rounded-xl text-sm font-semibold bg-[#b9fd5c]
                                text-white hover:bg-[#ff8533] transition-all cursor-pointer"
                   >
                     Add
@@ -1195,7 +1195,7 @@ const BlogEditor = () => {
                       <span
                         key={i}
                         className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs
-                                   font-medium bg-[#eb660f]/10 text-[#eb660f] border border-[#eb660f]/20"
+                                   font-medium bg-[#b9fd5c]/10 text-[#b9fd5c] border border-[#b9fd5c]/20"
                       >
                         {cat}
                         <button
@@ -1214,7 +1214,7 @@ const BlogEditor = () => {
             </div>
 
             {/* Tags */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
               <div className="px-5 py-3 border-b border-[#2a2c2f] flex items-center gap-2">
                 <TagIcon />
                 <span className="text-white font-semibold text-sm">Tags</span>
@@ -1238,12 +1238,12 @@ const BlogEditor = () => {
                     }}
                     placeholder="Add tag..."
                     className="flex-1 bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                                transition-colors"
                   />
                   <button
                     onClick={addTag}
-                    className="px-3 py-2.5 rounded-xl text-sm font-semibold bg-[#eb660f]
+                    className="px-3 py-2.5 rounded-xl text-sm font-semibold bg-[#b9fd5c]
                                text-white hover:bg-[#ff8533] transition-all cursor-pointer"
                   >
                     Add
@@ -1274,7 +1274,7 @@ const BlogEditor = () => {
             </div>
 
             {/* Status */}
-            <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
               <div className="px-5 py-3 border-b border-[#2a2c2f] flex items-center gap-2">
                 <StatusIcon />
                 <span className="text-white font-semibold text-sm">Status</span>
@@ -1286,7 +1286,7 @@ const BlogEditor = () => {
                   onChange={handleChange}
                   disabled={isEditMode}
                   className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                             py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                             py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                              transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <option value="draft">Draft</option>
@@ -1316,16 +1316,16 @@ const BlogEditor = () => {
         <h1 className="text-xl font-semibold text-white">{title}</h1>
       </div>
 
-      <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl">
+      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl">
         <div className="flex flex-col items-center justify-center py-20 px-4">
-          <div className="w-16 h-16 rounded-full bg-[#eb660f]/10 flex items-center justify-center mb-4 text-[#eb660f]">
+          <div className="w-16 h-16 rounded-full bg-[#b9fd5c]/10 flex items-center justify-center mb-4 text-[#b9fd5c]">
             <HistoryIcon className="w-8 h-8" />
           </div>
           <h3 className="text-white text-lg font-semibold mb-2">{title}</h3>
           <p className="text-[#8a8d93] text-sm text-center max-w-md mb-6">{message}</p>
           <button
             onClick={() => setActiveView("posts")}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#eb660f] text-white
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#b9fd5c] text-white
                        hover:bg-[#ff8533] transition-all cursor-pointer"
           >
             Back to Posts
@@ -1415,7 +1415,7 @@ const BlogEditor = () => {
               onChange={(e) => setScheduleDate(e.target.value)}
               min={format(new Date(), "yyyy-MM-dd")}
               className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                          transition-colors"
             />
           </div>
@@ -1426,7 +1426,7 @@ const BlogEditor = () => {
               value={scheduleTime}
               onChange={(e) => setScheduleTime(e.target.value)}
               className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                          transition-colors"
             />
           </div>
@@ -1590,7 +1590,7 @@ const CalendarLargeIcon = () => (
 
 const SeoIcon = ({ className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-    fill="none" stroke="#eb660f" strokeWidth="2" strokeLinecap="round"
+    fill="none" stroke="#b9fd5c" strokeWidth="2" strokeLinecap="round"
     strokeLinejoin="round" className={className}>
     <circle cx="11" cy="11" r="8" />
     <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -1601,7 +1601,7 @@ const SeoIcon = ({ className = "" }) => (
 
 const ImageIcon = ({ className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-    fill="none" stroke="#eb660f" strokeWidth="2" strokeLinecap="round"
+    fill="none" stroke="#b9fd5c" strokeWidth="2" strokeLinecap="round"
     strokeLinejoin="round" className={className}>
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
     <circle cx="8.5" cy="8.5" r="1.5" />
@@ -1621,7 +1621,7 @@ const UploadIcon = ({ className = "" }) => (
 
 const FolderIcon = ({ className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-    fill="none" stroke="#eb660f" strokeWidth="2" strokeLinecap="round"
+    fill="none" stroke="#b9fd5c" strokeWidth="2" strokeLinecap="round"
     strokeLinejoin="round" className={className}>
     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
   </svg>
@@ -1638,7 +1638,7 @@ const TagIcon = ({ className = "" }) => (
 
 const StatusIcon = ({ className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-    fill="none" stroke="#eb660f" strokeWidth="2" strokeLinecap="round"
+    fill="none" stroke="#b9fd5c" strokeWidth="2" strokeLinecap="round"
     strokeLinejoin="round" className={className}>
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
     <polyline points="22 4 12 14.01 9 11.01" />

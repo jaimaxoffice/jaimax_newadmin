@@ -73,13 +73,13 @@ const AnnouncementForm = ({
 
       {/* Details Section */}
       <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-5 space-y-4">
-        <h3 className="text-xs font-semibold text-[#eb660f] uppercase tracking-widest">
+        <h3 className="text-xs font-semibold text-[#b9fd5c] uppercase tracking-widest">
           Announcement Details
         </h3>
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-[#eb660f] mb-2">
+          <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
             Title <span className="text-red-400">*</span>
           </label>
           <input
@@ -87,15 +87,15 @@ const AnnouncementForm = ({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter announcement title"
-            className="w-full bg-[#1b232d] border border-[#2a2c2f] text-white rounded-lg
-              py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-              focus:ring-1 focus:ring-[#eb660f]/30 transition-colors placeholder-[#555]"
+            className="w-full bg-[#282f35] border border-[#2a2c2f] text-white rounded-lg
+              py-2.5 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+              focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors placeholder-[#555]"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-[#eb660f] mb-2">
+          <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
             Description <span className="text-red-400">*</span>
           </label>
           <textarea
@@ -103,16 +103,16 @@ const AnnouncementForm = ({
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
             placeholder="Enter announcement description"
-            className="w-full bg-[#1b232d] border border-[#2a2c2f] text-white rounded-lg
-              py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-              focus:ring-1 focus:ring-[#eb660f]/30 transition-colors placeholder-[#555]
+            className="w-full bg-[#282f35] border border-[#2a2c2f] text-white rounded-lg
+              py-2.5 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+              focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors placeholder-[#555]
               resize-y"
           />
         </div>
 
         {/* Status Toggle */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg p-4">
-          <label className="block text-xs font-medium text-[#eb660f] mb-2">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg p-4">
+          <label className="block text-xs font-medium text-[#b9fd5c] mb-2">
             Status
           </label>
           <div className="flex items-center gap-3">
@@ -120,7 +120,7 @@ const AnnouncementForm = ({
               type="button"
               onClick={() => setIsActive(!isActive)}
               className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
-                isActive ? "bg-[#eb660f]" : "bg-[#4b4545]"
+                isActive ? "bg-[#b9fd5c]" : "bg-[#4b4545]"
               }`}
             >
               <span
@@ -131,7 +131,7 @@ const AnnouncementForm = ({
             </button>
             <span
               className={`text-sm ${
-                isActive ? "text-[#eb660f]" : "text-[#8a8d93]"
+                isActive ? "text-[#b9fd5c]" : "text-[#8a8d93]"
               }`}
             >
               {isActive ? "Active" : "Inactive"}
@@ -142,7 +142,7 @@ const AnnouncementForm = ({
 
       {/* Media Gallery Section */}
       <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-5 space-y-4">
-        <h3 className="text-xs font-semibold text-[#eb660f] uppercase tracking-widest flex items-center gap-2">
+        <h3 className="text-xs font-semibold text-[#b9fd5c] uppercase tracking-widest flex items-center gap-2">
           <ImageIcon size={14} />
           Media Gallery
         </h3>
@@ -150,7 +150,7 @@ const AnnouncementForm = ({
         {/* Existing Images (Edit Mode) */}
         {isEditing && existingImages.length > 0 && (
           <div>
-            <p className="text-sm text-[#eb660f] mb-3 pb-2 border-b border-[#2a2c2f]">
+            <p className="text-sm text-[#b9fd5c] mb-3 pb-2 border-b border-[#2a2c2f]">
               Current Images
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -171,7 +171,7 @@ const AnnouncementForm = ({
 
         {/* New Image Uploads */}
         <div>
-          <p className="text-sm text-[#eb660f] mb-3 pb-2 border-b border-[#2a2c2f]">
+          <p className="text-sm text-[#b9fd5c] mb-3 pb-2 border-b border-[#2a2c2f]">
             {isEditing ? "Add New Images" : "Upload Images"}
           </p>
 
@@ -181,8 +181,8 @@ const AnnouncementForm = ({
                 key={section.id}
                 className={`rounded-xl overflow-hidden h-44 flex flex-col ${
                   section.preview
-                    ? "bg-[#1b232d] border border-[#2a2c2f]"
-                    : "border border-dashed border-[#eb660f]/50"
+                    ? "bg-[#282f35] border border-[#2a2c2f]"
+                    : "border border-dashed border-[#b9fd5c]/50"
                 }`}
               >
                 {section.preview ? (
@@ -201,7 +201,7 @@ const AnnouncementForm = ({
                           justify-between p-2 opacity-0 hover:opacity-100 transition-opacity"
                       >
                         <span
-                          className="self-start bg-[#eb660f] text-white text-[10px]
+                          className="self-start bg-[#b9fd5c] text-white text-[10px]
                             font-bold px-1.5 py-0.5 rounded"
                         >
                           #{index + 1}
@@ -223,7 +223,7 @@ const AnnouncementForm = ({
                           <button
                             type="button"
                             onClick={() => onRemoveSection(section.id)}
-                            className="w-7 h-7 bg-[#eb660f] rounded flex items-center
+                            className="w-7 h-7 bg-[#b9fd5c] rounded flex items-center
                               justify-center text-white cursor-pointer hover:bg-[#ff7b1c]
                               transition-colors"
                           >
@@ -240,7 +240,7 @@ const AnnouncementForm = ({
                         onChange={(e) => onRedirectChange(e, section.id)}
                         className="w-full bg-[#111214] border border-[#2a2c2f] text-white
                           rounded-lg py-1.5 px-2 text-xs focus:outline-none
-                          focus:border-[#eb660f] transition-colors cursor-pointer"
+                          focus:border-[#b9fd5c] transition-colors cursor-pointer"
                       >
                         <option value="">Select Redirect</option>
                         {redirectOptions.map((option) => (
@@ -254,7 +254,7 @@ const AnnouncementForm = ({
                 ) : (
                   <label
                     className="flex flex-col items-center justify-center h-full p-4
-                      cursor-pointer hover:bg-[#1b232d] transition-colors"
+                      cursor-pointer hover:bg-[#282f35] transition-colors"
                   >
                     <input
                       type="file"
@@ -263,13 +263,13 @@ const AnnouncementForm = ({
                       className="hidden"
                     />
                     <div
-                      className="w-10 h-10 rounded-full bg-[#eb660f]/10 border border-[#eb660f]
+                      className="w-10 h-10 rounded-full bg-[#b9fd5c]/10 border border-[#b9fd5c]
                         flex items-center justify-center mb-3"
                     >
-                      <Upload size={18} className="text-[#eb660f]" />
+                      <Upload size={18} className="text-[#b9fd5c]" />
                     </div>
                     <p className="text-center text-xs leading-relaxed">
-                      <span className="text-[#eb660f]">Click to upload</span>
+                      <span className="text-[#b9fd5c]">Click to upload</span>
                       <br />
                       <span className="text-[#555]">or drag image here</span>
                     </p>
@@ -282,18 +282,18 @@ const AnnouncementForm = ({
             <button
               type="button"
               onClick={onAddSection}
-              className="border border-dashed border-[#eb660f]/50 rounded-xl h-44
+              className="border border-dashed border-[#b9fd5c]/50 rounded-xl h-44
                 flex flex-col items-center justify-center cursor-pointer
-                hover:bg-[#1b232d] transition-colors group"
+                hover:bg-[#282f35] transition-colors group"
             >
               <div
-                className="w-9 h-9 rounded-full border border-dashed border-[#eb660f]
+                className="w-9 h-9 rounded-full border border-dashed border-[#b9fd5c]
                   flex items-center justify-center mb-3
-                  group-hover:bg-[#eb660f]/10 transition-colors"
+                  group-hover:bg-[#b9fd5c]/10 transition-colors"
               >
-                <Plus size={16} className="text-[#eb660f]" />
+                <Plus size={16} className="text-[#b9fd5c]" />
               </div>
-              <span className="text-[#eb660f] text-xs">Add Image</span>
+              <span className="text-[#b9fd5c] text-xs">Add Image</span>
             </button>
           </div>
         </div>
@@ -314,7 +314,7 @@ const AnnouncementForm = ({
           type="submit"
           disabled={isSubmitting}
           className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white
-            bg-[#eb660f] hover:bg-[#ff7b1c] transition-colors cursor-pointer
+            bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
             disabled:opacity-50 flex items-center gap-2"
         >
           {isSubmitting ? (
@@ -348,8 +348,8 @@ const AnnouncementCard = ({
 
   return (
     <div
-      className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden
-        flex flex-col relative group hover:border-[#eb660f]/30 transition-colors"
+      className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden
+        flex flex-col relative group hover:border-[#b9fd5c]/30 transition-colors"
     >
       {/* Image Section */}
       <div className="relative h-48 bg-[#111214]">
@@ -389,7 +389,7 @@ const AnnouncementCard = ({
                     <span
                       key={idx}
                       className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                        idx === carouselIndex ? "bg-[#eb660f]" : "bg-white/40"
+                        idx === carouselIndex ? "bg-[#b9fd5c]" : "bg-white/40"
                       }`}
                     />
                   ))}
@@ -407,7 +407,7 @@ const AnnouncementCard = ({
         <span
           className={`absolute top-3 right-3 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
             announcement.isActive
-              ? "bg-[#eb660f] text-white"
+              ? "bg-[#b9fd5c] text-white"
               : "bg-[#2a2c2f] text-[#8a8d93]"
           }`}
         >
@@ -417,7 +417,7 @@ const AnnouncementCard = ({
 
       {/* Content */}
       <div className="p-4 flex-1">
-        <h3 className="text-[#eb660f] text-sm font-semibold mb-2 line-clamp-1">
+        <h3 className="text-[#b9fd5c] text-sm font-semibold mb-2 line-clamp-1">
           {announcement.title}
         </h3>
         <p className="text-[#ccc] text-xs leading-relaxed line-clamp-2">
@@ -436,14 +436,14 @@ const AnnouncementCard = ({
           className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs
             font-semibold transition-colors cursor-pointer ${
               announcement.isActive
-                ? "bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20"
+                ? "bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20"
                 : "bg-[#2a2c2f] text-[#8a8d93] hover:bg-[#333]"
             }`}
         >
           {announcement.isActive ? "ON" : "OFF"}
           <span
             className={`w-8 h-4 rounded-full relative transition-colors ${
-              announcement.isActive ? "bg-[#eb660f]" : "bg-[#4b4545]"
+              announcement.isActive ? "bg-[#b9fd5c]" : "bg-[#4b4545]"
             }`}
           >
             <span
@@ -459,7 +459,7 @@ const AnnouncementCard = ({
           <button
             onClick={onEdit}
             className="w-8 h-8 flex items-center justify-center rounded-lg
-              bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
+              bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20
               transition-colors cursor-pointer"
             title="Edit"
           >
@@ -481,7 +481,7 @@ const AnnouncementCard = ({
 };
 const ImageThumbnail = ({ src, index, total, onMoveUp, onMoveDown, onRemove }) => (
   <div
-    className="relative rounded-xl overflow-hidden h-28 bg-[#1b232d]
+    className="relative rounded-xl overflow-hidden h-28 bg-[#282f35]
       border border-[#2a2c2f] group"
   >
     <img src={src} alt={`Image ${index + 1}`} className="w-full h-full object-cover" />
@@ -491,7 +491,7 @@ const ImageThumbnail = ({ src, index, total, onMoveUp, onMoveDown, onRemove }) =
       className="absolute inset-0 bg-black/70 flex flex-col justify-between p-2
         opacity-0 group-hover:opacity-100 transition-opacity"
     >
-      <span className="self-start bg-[#eb660f] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+      <span className="self-start bg-[#b9fd5c] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
         #{index + 1}
       </span>
 
@@ -511,7 +511,7 @@ const ImageThumbnail = ({ src, index, total, onMoveUp, onMoveDown, onRemove }) =
         <button
           type="button"
           onClick={onRemove}
-          className="w-7 h-7 bg-[#eb660f] rounded flex items-center justify-center
+          className="w-7 h-7 bg-[#b9fd5c] rounded flex items-center justify-center
             text-white cursor-pointer hover:bg-[#ff7b1c] transition-colors"
         >
           <Trash size={12} />
@@ -818,7 +818,7 @@ const AnnouncementList = () => {
           <div className="flex flex-wrap items-center gap-3 ml-auto">
             <button
               onClick={openCreateModal}
-              className="bg-[#eb660f] hover:bg-[#ff7b1c] text-white rounded-xl
+              className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
                 py-2.5 px-4 text-sm font-semibold transition-colors cursor-pointer
                 flex items-center gap-2"
             >
@@ -839,8 +839,8 @@ const AnnouncementList = () => {
             className="flex items-center gap-3 p-4 rounded-xl
               bg-red-500/5 border border-red-500/20"
           >
-            <AlertTriangle size={18} className="text-[#eb660f] shrink-0" />
-            <p className="text-[#eb660f] text-sm">
+            <AlertTriangle size={18} className="text-[#b9fd5c] shrink-0" />
+            <p className="text-[#b9fd5c] text-sm">
               {error.data?.message || "An error occurred while fetching announcements."}
             </p>
           </div>
@@ -850,15 +850,15 @@ const AnnouncementList = () => {
         {!isLoading && !error && announcements.length === 0 && (
           <div
             className="flex flex-col items-center justify-center py-16
-              bg-[#1b232d] border border-[#2a2c2f] rounded-2xl"
+              bg-[#282f35] border border-[#2a2c2f] rounded-2xl"
           >
-            <Megaphone size={48} className="text-[#eb660f] mb-4" />
-            <h3 className="text-[#eb660f] text-lg font-semibold mb-2">
+            <Megaphone size={48} className="text-[#b9fd5c] mb-4" />
+            <h3 className="text-[#b9fd5c] text-lg font-semibold mb-2">
               No announcements yet
             </h3>
             <button
               onClick={openCreateModal}
-              className="bg-[#eb660f] hover:bg-[#ff7b1c] text-white rounded-xl
+              className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
                 py-2.5 px-5 text-sm font-semibold transition-colors cursor-pointer mt-2"
             >
               Create First Announcement

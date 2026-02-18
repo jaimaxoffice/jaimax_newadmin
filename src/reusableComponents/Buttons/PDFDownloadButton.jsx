@@ -23,7 +23,7 @@ const PDFDownloadButton = ({
         onClick={onDownload}
         disabled={isGenerating}
         className={`flex items-center gap-2 rounded-xl font-semibold
-          bg-[#eb660f] hover:bg-[#ff7b1c] text-white
+          bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white
           transition-colors cursor-pointer disabled:opacity-50
           disabled:cursor-not-allowed ${sizeClasses[size]}`}
       >

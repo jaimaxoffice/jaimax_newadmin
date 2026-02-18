@@ -15,8 +15,8 @@ const SubmitButton = ({
       onClick={onClick}
       disabled={isLoading}
       className={`${fullWidth ? "w-full" : ""}
-        bg-[#eb660f] hover:bg-[#eb660f]/90 
-        disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
+        bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 
+        disabled:bg-[#b9fd5c]/50 disabled:cursor-not-allowed
         text-[#111214] font-semibold py-2 rounded-xl 
         transition-all cursor-pointer text-sm
         flex items-center justify-center gap-2 px-4`}

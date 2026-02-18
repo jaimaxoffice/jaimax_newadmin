@@ -502,8 +502,8 @@ const SimpleBusinessReportPDF = () => {
     <div className="min-h-screen p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
-          <BarChart3 size={24} className="text-[#eb660f]" />
+        <div className="w-12 h-12 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
+          <BarChart3 size={24} className="text-[#b9fd5c]" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-white">
@@ -547,7 +547,7 @@ function ReportCard({
 }) {
   return (
     <div
-      className={`bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden 
+      className={`bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden 
         hover:${borderColor} transition-all duration-300 flex flex-col`}
     >
       <div className="p-5 flex flex-col flex-1">
@@ -563,7 +563,7 @@ function ReportCard({
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-8 flex-1">
-            <Loader2 size={32} className="text-[#eb660f] animate-spin mb-3" />
+            <Loader2 size={32} className="text-[#b9fd5c] animate-spin mb-3" />
             <p className="text-gray-400 text-sm">Loading data...</p>
           </div>
         ) : (

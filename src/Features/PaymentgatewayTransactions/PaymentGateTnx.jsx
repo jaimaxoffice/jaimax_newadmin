@@ -228,7 +228,7 @@ const PaymentGatewaysTransactions = () => {
                 href={row.screenshotUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#eb660f] hover:underline text-xs 
+                className="text-[#b9fd5c] hover:underline text-xs 
                   truncate max-w-[60%] text-right"
               >
                 {row.transactionId}
@@ -272,7 +272,7 @@ const PaymentGatewaysTransactions = () => {
 
         {/* Table Section */}
    <div
-  className="bg-[#1b232d] border border-[#303f50] rounded-lg 
+  className="bg-[#282f35] border border-[#303f50] rounded-lg 
   overflow-hidden"
 >
   {/* Table Header */}
@@ -294,7 +294,7 @@ const PaymentGatewaysTransactions = () => {
         value={selectedStatus}
         onChange={handleStatusChange}
         className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
-          py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f] 
+          py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c] 
           transition-colors cursor-pointer w-full sm:w-auto"
       >
         <option value="Transaction Type">All Types</option>

@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const data = payload[0];
   return (
-    <div className="bg-[#1b232d] border border-[#303f50] rounded-lg px-3 py-2 shadow-xl">
+    <div className="bg-[#282f35] border border-[#303f50] rounded-lg px-3 py-2 shadow-xl">
       <div className="flex items-center gap-2 mb-1">
         <div
           className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -112,7 +112,7 @@ export default function ReferralChart() {
     return (
       <div className="min-h-screen p-4 sm:p-6">
         <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 size={40} className="text-[#eb660f] animate-spin mb-3" />
+          <Loader2 size={40} className="text-[#b9fd5c] animate-spin mb-3" />
           <p className="text-gray-400">Loading referral data...</p>
         </div>
       </div>
@@ -161,8 +161,8 @@ export default function ReferralChart() {
     <div className="min-h-screen p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center shrink-0">
-          <PieChartIcon size={24} className="text-[#eb660f]" />
+        <div className="w-12 h-12 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center shrink-0">
+          <PieChartIcon size={24} className="text-[#b9fd5c]" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-white">
@@ -176,7 +176,7 @@ export default function ReferralChart() {
 
 
       {/* Chart Card */}
-      <div className="bg-[#1b232d] border border-[#303f50] rounded-xl overflow-hidden">
+      <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden">
         <div className="px-4 sm:px-5 py-4 border-b border-[#303f50] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <h2 className="text-white font-semibold">Referral Distribution</h2>
           <span className="text-gray-400 text-sm">
@@ -211,7 +211,7 @@ export default function ReferralChart() {
                           <Cell
                             key={`cell-m-${index}`}
                             fill={entry.color}
-                            stroke="#1b232d"
+                            stroke="#282f35"
                             strokeWidth={2}
                           />
                         ))}
@@ -241,7 +241,7 @@ export default function ReferralChart() {
                           <Cell
                             key={`cell-t-${index}`}
                             fill={entry.color}
-                            stroke="#1b232d"
+                            stroke="#282f35"
                             strokeWidth={2}
                           />
                         ))}
@@ -271,7 +271,7 @@ export default function ReferralChart() {
                           <Cell
                             key={`cell-d-${index}`}
                             fill={entry.color}
-                            stroke="#1b232d"
+                            stroke="#282f35"
                             strokeWidth={2}
                           />
                         ))}
@@ -346,7 +346,7 @@ export default function ReferralChart() {
 
 function StatCard({ label, value, color, dotColor, isText = false }) {
   return (
-    <div className="bg-[#1b232d] border border-[#303f50] rounded-xl p-4 hover:border-[#eb660f]/30 transition-all">
+    <div className="bg-[#282f35] border border-[#303f50] rounded-xl p-4 hover:border-[#b9fd5c]/30 transition-all">
       <div className="flex items-center gap-2 mb-2">
         <div
           className="w-2.5 h-2.5 rounded-full shrink-0"

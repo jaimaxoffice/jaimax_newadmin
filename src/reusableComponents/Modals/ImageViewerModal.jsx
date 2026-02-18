@@ -11,7 +11,7 @@ const ImageViewerModal = ({ isOpen, onClose, imageSrc }) => {
       onClick={onClose}
     >
       <div
-        className="relative bg-[#1b232d] border border-[#2a2c2f] rounded-2xl 
+        className="relative bg-[#282f35] border border-[#2a2c2f] rounded-2xl 
                     max-w-[90vw] max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -21,7 +21,7 @@ const ImageViewerModal = ({ isOpen, onClose, imageSrc }) => {
             onClick={onClose}
             className="w-9 h-9 flex items-center justify-center rounded-full 
                        bg-[#111214] border border-[#2a2c2f] text-[#8a8d93]
-                       hover:text-white hover:border-[#eb660f] 
+                       hover:text-white hover:border-[#b9fd5c] 
                        transition-colors cursor-pointer"
           >
             <svg

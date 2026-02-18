@@ -11,7 +11,7 @@ const ViewButton = ({ onClick, label = "View" }) => {
         transition: "all 0.3s ease",
         borderRadius: "2px",
       }}
-      onMouseEnter={(e) => (e.target.style.backgroundColor = "#eb660f")}
+      onMouseEnter={(e) => (e.target.style.backgroundColor = "#b9fd5c")}
       onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
     >
       {label}

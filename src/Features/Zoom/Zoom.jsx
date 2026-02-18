@@ -53,8 +53,8 @@ const initialValues = {
 };
 
 const inputClass = `w-full bg-[#111827] border border-[#303f50] text-white rounded-lg 
-  px-4 py-2.5 text-sm focus:outline-none focus:border-[#eb660f] 
-  focus:ring-1 focus:ring-[#eb660f]/50 transition-colors duration-200
+  px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
+  focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
   placeholder-gray-500 disabled:opacity-50`;
 
 const labelClass = "block text-sm font-medium text-gray-300 mb-1.5";
@@ -218,8 +218,8 @@ function ZoomMeeting() {
           className={`min-w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
             ${
               i === current
-                ? "bg-[#eb660f] text-white shadow-lg shadow-[#eb660f]/25"
-                : "bg-[#1b232d] text-gray-400 border border-[#303f50] hover:border-[#eb660f]/50 hover:text-white"
+                ? "bg-[#b9fd5c] text-white shadow-lg shadow-[#b9fd5c]/25"
+                : "bg-[#282f35] text-gray-400 border border-[#303f50] hover:border-[#b9fd5c]/50 hover:text-white"
             }`}
         >
           {i}
@@ -235,8 +235,8 @@ function ZoomMeeting() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
-              <Video size={24} className="text-[#eb660f]" />
+            <div className="w-12 h-12 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
+              <Video size={24} className="text-[#b9fd5c]" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">
@@ -271,21 +271,21 @@ function ZoomMeeting() {
             title="Total Meetings"
             value={pagination?.totalCount || 0}
             icon={Video}
-            gradient={{ from: "#eb660f", to: "#d97706" }}
+            gradient={{ from: "#b9fd5c", to: "#d97706" }}
             isLoading={loadingMeetings}
           />
           <StatCard
             title="Active Meetings"
             value={allMeetings?.data?.videos?.length || 0}
             icon={CheckCircle}
-            gradient={{ from: "#eb660f", to: "#d97706" }}
+            gradient={{ from: "#b9fd5c", to: "#d97706" }}
             isLoading={loadingMeetings}
           />
           <StatCard
             title="Total Pages"
             value={pagination?.totalPages || 1}
             icon={Activity}
-            gradient={{ from: "#eb660f", to: "#d97706" }}
+            gradient={{ from: "#b9fd5c", to: "#d97706" }}
             isLoading={loadingMeetings}
           />
           <StatCard
@@ -299,8 +299,8 @@ function ZoomMeeting() {
 
         {/* Success Alert */}
         {submittedMeeting && (
-          <div className="flex items-center gap-3 bg-[#eb660f]/10 border-l-4 border-[#eb660f] rounded-lg px-4 py-3 mb-6">
-            <CheckCircle size={20} className="text-[#eb660f] shrink-0" />
+          <div className="flex items-center gap-3 bg-[#b9fd5c]/10 border-l-4 border-[#b9fd5c] rounded-lg px-4 py-3 mb-6">
+            <CheckCircle size={20} className="text-[#b9fd5c] shrink-0" />
             <p className="text-white text-sm">
               <span className="font-semibold">Meeting Created:</span>{" "}
               {submittedMeeting.title}
@@ -320,7 +320,7 @@ function ZoomMeeting() {
           <div className="xl:col-span-4">
             <div className="bg-[#1e293b] border border-[#303f50] rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-11 h-11 rounded-full bg-[#eb660f] flex items-center justify-center">
+                <div className="w-11 h-11 rounded-full bg-[#b9fd5c] flex items-center justify-center">
                   <Plus size={22} className="text-white" />
                 </div>
                 <div>
@@ -445,7 +445,7 @@ function ZoomMeeting() {
                       <button
                         type="submit"
                         disabled={isSubmitting || creatingMeeting}
-                        className="flex-1 flex items-center justify-center gap-2 bg-[#eb660f] hover:bg-[#d55a0e] 
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] 
                           text-white font-medium py-2.5 rounded-lg transition-all duration-200 
                           disabled:opacity-50 cursor-pointer"
                       >
@@ -496,7 +496,7 @@ function ZoomMeeting() {
                 <div className="flex flex-col items-center justify-center py-16">
                   <Loader
                     size={40}
-                    className="text-[#eb660f] animate-spin mb-3"
+                    className="text-[#b9fd5c] animate-spin mb-3"
                   />
                   <p className="text-gray-400">Loading meetings...</p>
                 </div>
@@ -504,7 +504,7 @@ function ZoomMeeting() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-[#eb660f] border-b border-[#303f50]">
+                      <tr className="bg-[#b9fd5c] border-b border-[#303f50]">
                         <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
                           S.No
                         </th>
@@ -563,7 +563,7 @@ function ZoomMeeting() {
                                 href={meeting.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-[#eb660f] hover:text-[#eb660f]/80 
+                                className="inline-flex items-center gap-1 text-[#b9fd5c] hover:text-[#b9fd5c]/80 
                                   text-sm transition-colors"
                               >
                                 <ExternalLink size={14} />
@@ -585,8 +585,8 @@ function ZoomMeeting() {
                                 <button
                                   title="Edit"
                                   onClick={() => openEditModal(meeting)}
-                                  className="w-8 h-8 rounded-lg bg-[#eb660f]/10 text-[#eb660f] 
-                                    hover:bg-[#eb660f]/20 flex items-center justify-center 
+                                  className="w-8 h-8 rounded-lg bg-[#b9fd5c]/10 text-[#b9fd5c] 
+                                    hover:bg-[#b9fd5c]/20 flex items-center justify-center 
                                     transition-colors cursor-pointer"
                                 >
                                   <Pencil size={14} />
@@ -664,8 +664,8 @@ function ZoomMeeting() {
                         handlePageChange(pagination.currentPage - 1)
                       }
                       disabled={!pagination.hasPrevPage || loadingMeetings}
-                      className="w-9 h-9 rounded-lg bg-[#1b232d] border border-[#303f50] text-gray-400 
-                        hover:border-[#eb660f]/50 hover:text-white flex items-center justify-center 
+                      className="w-9 h-9 rounded-lg bg-[#282f35] border border-[#303f50] text-gray-400 
+                        hover:border-[#b9fd5c]/50 hover:text-white flex items-center justify-center 
                         transition-colors disabled:opacity-30 cursor-pointer"
                     >
                       <ChevronLeft size={16} />
@@ -678,8 +678,8 @@ function ZoomMeeting() {
                         handlePageChange(pagination.currentPage + 1)
                       }
                       disabled={!pagination.hasNextPage || loadingMeetings}
-                      className="w-9 h-9 rounded-lg bg-[#1b232d] border border-[#303f50] text-gray-400 
-                        hover:border-[#eb660f]/50 hover:text-white flex items-center justify-center 
+                      className="w-9 h-9 rounded-lg bg-[#282f35] border border-[#303f50] text-gray-400 
+                        hover:border-[#b9fd5c]/50 hover:text-white flex items-center justify-center 
                         transition-colors disabled:opacity-30 cursor-pointer"
                     >
                       <ChevronRight size={16} />
@@ -703,12 +703,12 @@ function ZoomMeeting() {
             }}
           />
 
-          <div className="relative w-full max-w-2xl bg-[#1b232d] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
+          <div className="relative w-full max-w-2xl bg-[#282f35] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#303f50]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#eb660f]/10 flex items-center justify-center">
-                  <FileText size={20} className="text-[#eb660f]" />
+                <div className="w-10 h-10 rounded-lg bg-[#b9fd5c]/10 flex items-center justify-center">
+                  <FileText size={20} className="text-[#b9fd5c]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white">
                   Edit Zoom Meeting
@@ -858,7 +858,7 @@ function ZoomMeeting() {
                       <button
                         type="submit"
                         disabled={isSubmitting || updatingMeeting}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#eb660f] hover:bg-[#d55a0e] 
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] 
                           text-white rounded-lg transition-all duration-200 
                           disabled:opacity-50 cursor-pointer"
                       >

@@ -8,7 +8,7 @@ const UserDetailsModal = ({ isOpen, onClose, user, formatDate }) => {
       onClick={onClose}
     >
       <div
-        className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl w-full max-w-2xl 
+        className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl w-full max-w-2xl 
                     max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -16,7 +16,7 @@ const UserDetailsModal = ({ isOpen, onClose, user, formatDate }) => {
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f]">
           <h2 className="text-lg font-semibold text-white">
             User Details —{" "}
-            <span className="text-[#eb660f]">
+            <span className="text-[#b9fd5c]">
               {user?.username || user?.name || "User"}
             </span>
           </h2>
@@ -24,7 +24,7 @@ const UserDetailsModal = ({ isOpen, onClose, user, formatDate }) => {
             onClick={onClose}
             className="w-9 h-9 flex items-center justify-center rounded-full
                        bg-[#111214] border border-[#2a2c2f] text-[#8a8d93]
-                       hover:text-white hover:border-[#eb660f]
+                       hover:text-white hover:border-[#b9fd5c]
                        transition-colors cursor-pointer"
           >
             <CloseIcon />
@@ -110,7 +110,7 @@ const DetailItem = ({ label, value, highlight = false, mono = false }) => (
     <p
       className={`text-sm m-0 break-all ${
         highlight
-          ? "text-[#eb660f] font-semibold"
+          ? "text-[#b9fd5c] font-semibold"
           : mono
           ? "text-[#8a8d93] font-mono text-xs"
           : "text-white"

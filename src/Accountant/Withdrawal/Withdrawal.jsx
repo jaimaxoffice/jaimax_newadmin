@@ -20,7 +20,7 @@
 //         className="absolute inset-0 bg-black/60"
 //         onClick={backdrop === "static" ? undefined : onClose}
 //       />
-//       <div className="relative w-full max-w-lg bg-linear-to-b from-[#1b232d] to-[#141a20] border border-white/10 rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-white z-10 max-h-[90vh] overflow-y-auto animate-slideUp">
+//       <div className="relative w-full max-w-lg bg-linear-to-b from-[#282f35] to-[#141a20] border border-white/10 rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-white z-10 max-h-[90vh] overflow-y-auto animate-slideUp">
 //         {children}
 //       </div>
 //     </div>
@@ -29,7 +29,7 @@
 
 // const TwModalHeader = ({ onClose, children }) => (
 //   <div className="flex items-start justify-between p-4">
-//     <h5 className="text-lg font-bold tracking-wide text-[#eb660f] drop-shadow-[0_0_6px_rgba(235,102,15,0.6)]">
+//     <h5 className="text-lg font-bold tracking-wide text-[#b9fd5c] drop-shadow-[0_0_6px_rgba(235,102,15,0.6)]">
 //       {children}
 //     </h5>
 //     <button
@@ -298,7 +298,7 @@
 //   };
 
 //   const viewBtnClass =
-//     "px-2 py-1.5 text-sm font-medium text-white border border-[#eb660f]/60 bg-transparent hover:bg-[#eb660f] rounded-sm transition-all duration-300 hover:scale-[1.02]";
+//     "px-2 py-1.5 text-sm font-medium text-white border border-[#b9fd5c]/60 bg-transparent hover:bg-[#b9fd5c] rounded-sm transition-all duration-300 hover:scale-[1.02]";
 
 //   return (
 //     <div>
@@ -620,7 +620,7 @@
 //         </TwModalBody>
 //         <TwModalFooter>
 //           <button
-//             className="px-5 py-2 font-semibold text-white bg-[#eb660f] hover:bg-[#ff7b1c] rounded-lg transition-all duration-300 text-sm"
+//             className="px-5 py-2 font-semibold text-white bg-[#b9fd5c] hover:bg-[#ff7b1c] rounded-lg transition-all duration-300 text-sm"
 //             onClick={() =>
 //               setDetailModal({ show: false, title: "", content: "" })
 //             }
@@ -681,7 +681,7 @@ const TwModal = ({ show, onClose, children, backdrop = true }) => {
         className="absolute inset-0 bg-black/60"
         onClick={backdrop === "static" ? undefined : onClose}
       />
-      <div className="relative w-full max-w-lg bg-linear-to-b from-[#1b232d] to-[#141a20] border border-white/10 rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-white z-10 max-h-[90vh] overflow-y-auto animate-slideUp">
+      <div className="relative w-full max-w-lg bg-linear-to-b from-[#282f35] to-[#141a20] border border-white/10 rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-white z-10 max-h-[90vh] overflow-y-auto animate-slideUp">
         {children}
       </div>
     </div>
@@ -690,7 +690,7 @@ const TwModal = ({ show, onClose, children, backdrop = true }) => {
 
 const TwModalHeader = ({ onClose, children }) => (
   <div className="flex items-start justify-between p-4">
-    <h5 className="text-lg font-bold tracking-wide text-[#eb660f] drop-shadow-[0_0_6px_rgba(235,102,15,0.6)]">
+    <h5 className="text-lg font-bold tracking-wide text-[#b9fd5c] drop-shadow-[0_0_6px_rgba(235,102,15,0.6)]">
       {children}
     </h5>
     <button
@@ -963,7 +963,7 @@ const WithDraw = () => {
 
   /* ── View Button Style ── */
   const viewBtnClass =
-    "px-2 py-1.5 text-sm font-medium text-white border border-[#eb660f]/60 bg-transparent hover:bg-[#eb660f] rounded-sm transition-all duration-300 hover:scale-[1.02]";
+    "px-2 py-1.5 text-sm font-medium text-white border border-[#b9fd5c]/60 bg-transparent hover:bg-[#b9fd5c] rounded-sm transition-all duration-300 hover:scale-[1.02]";
 
   /* ── Table Columns ── */
   const columns = [
@@ -1280,7 +1280,7 @@ const WithDraw = () => {
         </TwModalBody>
         <TwModalFooter>
           <button
-            className="px-5 py-2 font-semibold text-white bg-[#eb660f] hover:bg-[#ff7b1c] rounded-lg transition-all duration-300 text-sm"
+            className="px-5 py-2 font-semibold text-white bg-[#b9fd5c] hover:bg-[#ff7b1c] rounded-lg transition-all duration-300 text-sm"
             onClick={closeDetail}
           >
             Close

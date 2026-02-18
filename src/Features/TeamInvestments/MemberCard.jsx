@@ -11,9 +11,9 @@ const MemberCard = ({ member, isActive = true, onClick }) => {
     <div
       onClick={onClick}
       className={`rounded-2xl p-5 mb-3 cursor-pointer transition-all duration-300
-        hover:border-[#eb660f]/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#eb660f]/10
+        hover:border-[#b9fd5c]/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#b9fd5c]/10
         ${isActive
-          ? "bg-white/[0.02] border border-[#eb660f]/15 opacity-100"
+          ? "bg-white/[0.02] border border-[#b9fd5c]/15 opacity-100"
           : "bg-white/[0.01] border border-white/5 opacity-70"
         }`}
     >
@@ -25,7 +25,7 @@ const MemberCard = ({ member, isActive = true, onClick }) => {
             <div className="flex items-center gap-3">
               <div
                 className={`w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold ${
-                  isActive ? "bg-[#eb660f]" : "bg-[#333]"
+                  isActive ? "bg-[#b9fd5c]" : "bg-[#333]"
                 }`}
               >
                 {(member.name || "U")[0].toUpperCase()}
@@ -34,7 +34,7 @@ const MemberCard = ({ member, isActive = true, onClick }) => {
                 <h4 className="text-white font-semibold text-[15px]">
                   {member.name}
                 </h4>
-                <span className="text-[#eb660f] text-xs font-medium">
+                <span className="text-[#b9fd5c] text-xs font-medium">
                   @{member.username}
                 </span>
               </div>
@@ -79,7 +79,7 @@ const MemberCard = ({ member, isActive = true, onClick }) => {
   );
 };
 
-const InfoRow = ({ icon, text, color = "text-[#eb660f]" }) => (
+const InfoRow = ({ icon, text, color = "text-[#b9fd5c]" }) => (
   <div className="flex items-center gap-2 text-white/50 text-[13px]">
     <span className={`flex-shrink-0 ${color}`}>{icon}</span>
     <span className="truncate">{text}</span>

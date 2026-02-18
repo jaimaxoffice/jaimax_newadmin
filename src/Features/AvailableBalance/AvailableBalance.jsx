@@ -195,7 +195,7 @@ const AvailableBalance = () => {
     if (amount > 50000) return "text-[#0ecb6f]";
     if (amount > 10000) return "text-blue-400";
     if (amount > 1000) return "text-yellow-400";
-    if (amount > 0) return "text-[#eb660f]";
+    if (amount > 0) return "text-[#b9fd5c]";
     return "text-red-400";
   };
 
@@ -212,11 +212,11 @@ const AvailableBalance = () => {
     return (
       <div>
         <div className="p-2 sm:p-2 space-y-6">
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]">
+                  <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center text-[#b9fd5c]">
                     <WalletIcon />
                   </div>
                   <h1 className="text-lg font-semibold text-white">
@@ -240,7 +240,7 @@ const AvailableBalance = () => {
                   onClick={() => refetch()}
                   disabled={isLoading}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#eb660f] text-white hover:bg-[#ff8533]
+                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
                   Try Again
@@ -296,7 +296,7 @@ const AvailableBalance = () => {
       render: () => (
         <span
           className="text-[11px] font-semibold px-2 py-0.5 rounded-full
-                     bg-[#eb660f]/10 text-[#eb660f]"
+                     bg-[#b9fd5c]/10 text-[#b9fd5c]"
         >
           Active
         </span>
@@ -319,7 +319,7 @@ const AvailableBalance = () => {
                 onChange={handleAmountChange}
                 disabled={isLoading}
                 className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                           py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                           py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                            transition-colors cursor-pointer disabled:opacity-50 min-w-40"
               >
                 {amountOptions.map((option) => (
@@ -350,7 +350,7 @@ const AvailableBalance = () => {
                         }))
                       }
                       className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                                transition-colors w-28"
                     />
                   </div>
@@ -371,7 +371,7 @@ const AvailableBalance = () => {
                         }))
                       }
                       className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                                transition-colors w-28"
                     />
                   </div>
@@ -382,7 +382,7 @@ const AvailableBalance = () => {
           {/* Right: Per Page + Search */}
         </div>
         {hasActiveFilters && (
-          <div className="flex flex-wrap items-center gap-2 px-4 py-3 bg-[#1b232d] border border-[#2a2c2f] rounded-xl">
+          <div className="flex flex-wrap items-center gap-2 px-4 py-3 bg-[#282f35] border border-[#2a2c2f] rounded-xl">
             <span className="text-[#8a8d93] text-xs">Active Filters:</span>
 
             {state.minAmount !== "" && state.maxAmount !== "" && (
@@ -435,7 +435,7 @@ const AvailableBalance = () => {
           </div>
         )}
         {isFetching && !isLoading && <Loader />}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">

@@ -38,7 +38,7 @@ export const formatPermissionName = (permission) => {
 
 // Color Theme
 export const colors = {
-  primary: "#eb660f",
+  primary: "#b9fd5c",
   primaryHover: "#d55a0d",
   bgDark: "#000000",
   bgCard: "#111111",

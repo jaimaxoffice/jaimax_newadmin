@@ -167,9 +167,9 @@ const Login = () => {
                 className={`w-full bg-[#111214] border ${
                   errors.loginEmail
                     ? "border-red-500/50"
-                    : "border-[#2a2c2f] focus:border-[#eb660f]"
+                    : "border-[#2a2c2f] focus:border-[#b9fd5c]"
                 } text-white placeholder-[#555] rounded-xl py-3 px-4 text-sm
-                  focus:outline-none focus:ring-1 focus:ring-[#eb660f]/50 transition-colors`}
+                  focus:outline-none focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors`}
               />
               {errors.loginEmail && (
                 <p className="mt-1.5 text-xs text-red-400">
@@ -193,15 +193,15 @@ const Login = () => {
                   className={`w-full bg-[#111214] border ${
                     errors.loginPassword
                       ? "border-red-500/50"
-                      : "border-[#2a2c2f] focus:border-[#eb660f]"
+                      : "border-[#2a2c2f] focus:border-[#b9fd5c]"
                   } text-white placeholder-[#555] rounded-xl py-3 px-4 pr-16 text-sm
-                    focus:outline-none focus:ring-1 focus:ring-[#eb660f]/50 transition-colors`}
+                    focus:outline-none focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors`}
                 />
                 <button
                   type="button"
                   onClick={togglePassword}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center 
-                    text-[#8a8d93] hover:text-[#eb660f] text-xs font-medium 
+                    text-[#8a8d93] hover:text-[#b9fd5c] text-xs font-medium 
                     transition-colors cursor-pointer"
                 >
                   {type === "password" ? "Show" : "Hide"}
@@ -217,8 +217,8 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#eb660f] hover:bg-[#eb660f]/90 
-                disabled:bg-[#eb660f]/50 disabled:cursor-not-allowed
+              className="w-full bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 
+                disabled:bg-[#b9fd5c]/50 disabled:cursor-not-allowed
                 text-[#111214] font-semibold py-3.5 rounded-full 
                 transition-all duration-200 cursor-pointer text-sm"
             >

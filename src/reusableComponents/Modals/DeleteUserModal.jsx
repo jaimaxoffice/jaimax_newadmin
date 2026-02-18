@@ -15,7 +15,7 @@ const DeleteUserModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl w-full max-w-md overflow-hidden"
+        className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl w-full max-w-md overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

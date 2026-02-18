@@ -63,7 +63,7 @@ const ZoomMeetingForm = ({
 
             {/* Meeting Type Select */}
             <div>
-              <label className="block text-sm font-medium text-[#eb660f] mb-2">
+              <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
                 Meeting Type <span className="text-red-400">*</span>
               </label>
               <Field
@@ -71,8 +71,8 @@ const ZoomMeetingForm = ({
                 name="type"
                 disabled={isProcessing}
                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                  py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                  focus:ring-1 focus:ring-[#eb660f]/30 transition-colors cursor-pointer"
+                  py-2.5 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                  focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors cursor-pointer"
               >
                 {MEETING_TYPES.map((type) => (
                   <option key={type.value} value={type.value} className="bg-[#111214]">
@@ -90,7 +90,7 @@ const ZoomMeetingForm = ({
               type="submit"
               disabled={isSubmitting || isProcessing}
               className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl
-                text-sm font-semibold text-white bg-[#eb660f] hover:bg-[#ff7b1c]
+                text-sm font-semibold text-white bg-[#b9fd5c] hover:bg-[#ff7b1c]
                 transition-colors cursor-pointer disabled:opacity-50"
             >
               {isSubmitting || isProcessing ? (
@@ -139,7 +139,7 @@ const ZoomMeetingForm = ({
 // Reusable Form Field
 const FormField = ({ name, label, type = "text", placeholder, disabled }) => (
   <div>
-    <label className="block text-sm font-medium text-[#eb660f] mb-2">
+    <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
       {label} <span className="text-red-400">*</span>
     </label>
     <Field
@@ -149,7 +149,7 @@ const FormField = ({ name, label, type = "text", placeholder, disabled }) => (
       disabled={disabled}
       className={`w-full bg-[#111214] border text-white rounded-xl
         py-2.5 px-4 text-sm focus:outline-none transition-colors placeholder-[#555]
-        border-[#2a2c2f] focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/30
+        border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30
         disabled:opacity-50`}
     />
     <ErrorMessage name={name} component="p" className="text-red-400 text-xs mt-1" />

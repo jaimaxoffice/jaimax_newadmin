@@ -169,7 +169,7 @@ const BulkNotificationManagement = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#2a2c2f]">
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-3">
-            <Send size={24} className="text-[#eb660f]" />
+            <Send size={24} className="text-[#b9fd5c]" />
             Bulk Notification Center
           </h2>
           <p className="text-[#8a8d93] text-sm mt-1">
@@ -195,7 +195,7 @@ const BulkNotificationManagement = () => {
                 )}
                 Refresh
               </button>
-              <span className="bg-[#eb660f] text-white text-sm font-semibold px-3 py-1.5 rounded-full">
+              <span className="bg-[#b9fd5c] text-white text-sm font-semibold px-3 py-1.5 rounded-full">
                 {userCount} users selected
               </span>
             </>
@@ -211,7 +211,7 @@ const BulkNotificationManagement = () => {
 
         {currentLoading && !selectedCategory ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-8 h-8 border-2 border-[#eb660f]/30 border-t-[#eb660f] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[#b9fd5c]/30 border-t-[#b9fd5c] rounded-full animate-spin" />
             <p className="text-[#8a8d93] mt-4 text-sm">Fetching user categories...</p>
           </div>
         ) : (
@@ -279,7 +279,7 @@ const BulkNotificationManagement = () => {
           {({ values, isSubmitting, errors, touched }) => (
             <Form className="space-y-6">
               {/* Form Fields */}
-              <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 space-y-5">
+              <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Type */}
                   <FormFieldWrapper label="Notification Type" icon={MessageCircle} required>
@@ -290,7 +290,7 @@ const BulkNotificationManagement = () => {
                         py-2.5 px-4 text-sm focus:outline-none transition-colors cursor-pointer
                         ${errors.notificationType && touched.notificationType
                           ? "border-red-500 focus:border-red-500"
-                          : "border-[#2a2c2f] focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/30"
+                          : "border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30"
                         }`}
                     >
                       <option value="">Select notification type</option>
@@ -313,7 +313,7 @@ const BulkNotificationManagement = () => {
                         placeholder-[#555]
                         ${errors.notificationTitle && touched.notificationTitle
                           ? "border-red-500 focus:border-red-500"
-                          : "border-[#2a2c2f] focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/30"
+                          : "border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30"
                         }`}
                     />
                     <div className="flex justify-between mt-1">
@@ -335,7 +335,7 @@ const BulkNotificationManagement = () => {
                         placeholder-[#555] resize-y
                         ${errors.notificationMessage && touched.notificationMessage
                           ? "border-red-500 focus:border-red-500"
-                          : "border-[#2a2c2f] focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/30"
+                          : "border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30"
                         }`}
                     />
                     <div className="flex justify-between mt-1">
@@ -355,7 +355,7 @@ const BulkNotificationManagement = () => {
                         placeholder-[#555]
                         ${errors.notificationLink && touched.notificationLink
                           ? "border-red-500 focus:border-red-500"
-                          : "border-[#2a2c2f] focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/30"
+                          : "border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30"
                         }`}
                     />
                     <ErrorMessage name="notificationLink" component="p" className="text-red-400 text-xs mt-1" />
@@ -377,11 +377,11 @@ const BulkNotificationManagement = () => {
                 {sendingStatus && <SendingStatusBanner status={sendingStatus} userCount={userCount} />}
 
                 {/* Send Card */}
-                <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5">
+                <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5">
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div>
                       <h3 className="text-white font-bold flex items-center gap-2 mb-1">
-                        <Send size={18} className="text-[#eb660f]" />
+                        <Send size={18} className="text-[#b9fd5c]" />
                         Ready to Launch?
                       </h3>
                       <p className="text-[#8a8d93] text-sm">
@@ -406,7 +406,7 @@ const BulkNotificationManagement = () => {
                         !values.notificationType ||
                         userCount === 0 || sendingStatus === "sending"
                       }
-                      className="bg-[#eb660f] hover:bg-[#ff7b1c] text-white rounded-xl
+                      className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
                         py-3 px-6 text-sm font-bold transition-colors cursor-pointer
                         disabled:opacity-50 disabled:cursor-not-allowed
                         flex items-center gap-2 whitespace-nowrap"
@@ -458,7 +458,7 @@ export default BulkNotificationManagement;
 
 const StepHeader = ({ number, title, subtitle }) => (
   <div className="flex items-start gap-3">
-    <span className="w-8 h-8 rounded-full bg-[#eb660f] text-white text-sm font-bold flex items-center justify-center shrink-0">
+    <span className="w-8 h-8 rounded-full bg-[#b9fd5c] text-white text-sm font-bold flex items-center justify-center shrink-0">
       {number}
     </span>
     <div>
@@ -477,28 +477,28 @@ const CategoryCard = ({ category, isSelected, userCount, onClick }) => {
       className={`relative text-left w-full p-5 rounded-2xl transition-all duration-300
         cursor-pointer group
         ${isSelected
-          ? "bg-[#2a2c2f] border-2 border-[#eb660f] shadow-lg shadow-[#eb660f]/10 -translate-y-1"
-          : "bg-[#1b232d] border border-[#2a2c2f] hover:border-[#eb660f]/30 hover:-translate-y-0.5"
+          ? "bg-[#2a2c2f] border-2 border-[#b9fd5c] shadow-lg shadow-[#b9fd5c]/10 -translate-y-1"
+          : "bg-[#282f35] border border-[#2a2c2f] hover:border-[#b9fd5c]/30 hover:-translate-y-0.5"
         }`}
     >
       {isSelected && (
-        <div className="absolute top-0 left-0 right-0 h-1 bg-[#eb660f] rounded-t-2xl" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-[#b9fd5c] rounded-t-2xl" />
       )}
 
       <div className="flex flex-col items-center text-center">
         <div
           className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 transition-colors ${
-            isSelected ? "bg-[#eb660f]" : "bg-[#111214] group-hover:bg-[#eb660f]/10"
+            isSelected ? "bg-[#b9fd5c]" : "bg-[#111214] group-hover:bg-[#b9fd5c]/10"
           }`}
         >
-          <Icon size={24} className={isSelected ? "text-white" : "text-[#eb660f]"} />
+          <Icon size={24} className={isSelected ? "text-white" : "text-[#b9fd5c]"} />
         </div>
 
         <h4 className="text-white font-bold text-sm mb-1">{category.name}</h4>
         <p className="text-[#8a8d93] text-xs leading-relaxed">{category.description}</p>
 
         {isSelected && userCount !== null && (
-          <span className="mt-3 bg-[#eb660f] text-white text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+          <span className="mt-3 bg-[#b9fd5c] text-white text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
             <CheckCircle size={12} />
             Selected • {userCount} users
           </span>
@@ -513,9 +513,9 @@ const CategoryCard = ({ category, isSelected, userCount, onClick }) => {
 };
 
 const UserPreviewList = ({ users, totalCount }) => (
-  <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 space-y-3">
+  <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 space-y-3">
     <h4 className="text-white font-bold text-sm flex items-center gap-2">
-      <Users2 size={16} className="text-[#eb660f]" />
+      <Users2 size={16} className="text-[#b9fd5c]" />
       Preview Users ({totalCount} total)
     </h4>
 
@@ -525,7 +525,7 @@ const UserPreviewList = ({ users, totalCount }) => (
           key={user.id || index}
           className="flex items-center gap-3 p-3 bg-[#111214] border border-[#2a2c2f] rounded-xl"
         >
-          <div className="w-10 h-10 rounded-full bg-[#eb660f] flex items-center justify-center text-white font-bold text-sm shrink-0">
+          <div className="w-10 h-10 rounded-full bg-[#b9fd5c] flex items-center justify-center text-white font-bold text-sm shrink-0">
             {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || "U"}
           </div>
           <div className="flex-1 min-w-0">
@@ -538,7 +538,7 @@ const UserPreviewList = ({ users, totalCount }) => (
           </div>
           {user.directRefs !== undefined && (
             <div className="text-right shrink-0">
-              <span className="bg-[#eb660f] text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+              <span className="bg-[#b9fd5c] text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
                 {user.directRefs} Direct
               </span>
               <p className="text-[#8a8d93] text-[10px] mt-1">{user.totalRefs || 0} Total</p>
@@ -557,7 +557,7 @@ const UserPreviewList = ({ users, totalCount }) => (
 const FormFieldWrapper = ({ label, icon: Icon, required, optional, children }) => (
   <div>
     <label className="flex items-center gap-2 text-sm font-semibold text-white mb-2">
-      <Icon size={16} className="text-[#eb660f]" />
+      <Icon size={16} className="text-[#b9fd5c]" />
       {label}
       {required && <span className="text-red-400">*</span>}
       {optional && <span className="text-[#555] text-xs font-normal">(Optional)</span>}
@@ -569,14 +569,14 @@ const FormFieldWrapper = ({ label, icon: Icon, required, optional, children }) =
 const NotificationPreview = ({ values }) => (
   <div className="space-y-3">
     <h4 className="text-white font-semibold text-sm flex items-center gap-2">
-      <Eye size={16} className="text-[#eb660f]" />
+      <Eye size={16} className="text-[#b9fd5c]" />
       Live Preview
     </h4>
 
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Preview Card */}
-      <div className="bg-[#1b232d] border-2 border-[#eb660f] rounded-2xl overflow-hidden">
-        <div className="bg-[#eb660f] px-4 py-3 flex items-center justify-between">
+      <div className="bg-[#282f35] border-2 border-[#b9fd5c] rounded-2xl overflow-hidden">
+        <div className="bg-[#b9fd5c] px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs">📢</span>
             <span className="text-white text-sm font-bold">
@@ -597,9 +597,9 @@ const NotificationPreview = ({ values }) => (
           {values.notificationLink && (
             <button
               type="button"
-              className="mt-3 flex items-center gap-1 text-[#eb660f] text-xs
-                border border-[#eb660f]/30 px-3 py-1.5 rounded-lg
-                hover:bg-[#eb660f]/10 transition-colors cursor-pointer"
+              className="mt-3 flex items-center gap-1 text-[#b9fd5c] text-xs
+                border border-[#b9fd5c]/30 px-3 py-1.5 rounded-lg
+                hover:bg-[#b9fd5c]/10 transition-colors cursor-pointer"
             >
               <ExternalLink size={12} />
               Open Link
@@ -611,7 +611,7 @@ const NotificationPreview = ({ values }) => (
       {/* Tips Card */}
       <div className="bg-[#111214] border border-[#2a2c2f] rounded-2xl p-5">
         <h5 className="text-white text-sm font-semibold flex items-center gap-2 mb-3">
-          <Info size={14} className="text-[#eb660f]" />
+          <Info size={14} className="text-[#b9fd5c]" />
           Preview Tips
         </h5>
         <ul className="space-y-2">
@@ -694,15 +694,15 @@ const InfoFooter = () => {
   ];
 
   return (
-    <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5">
+    <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5">
       <h4 className="text-white text-sm font-semibold flex items-center gap-2 mb-4">
-        <Info size={16} className="text-[#eb660f]" />
+        <Info size={16} className="text-[#b9fd5c]" />
         Important Information
       </h4>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {items.map((item, i) => (
           <div key={i} className="flex items-start gap-3">
-            <item.icon size={16} className="text-[#eb660f] shrink-0 mt-0.5" />
+            <item.icon size={16} className="text-[#b9fd5c] shrink-0 mt-0.5" />
             <div>
               <p className="text-white text-xs font-semibold">{item.title}</p>
               <p className="text-[#8a8d93] text-xs mt-0.5">{item.desc}</p>

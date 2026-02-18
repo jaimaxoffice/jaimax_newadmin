@@ -25,7 +25,7 @@ const ConfirmModal = ({
       icon: "✅",
     },
     warning: {
-      btn: "bg-[#eb660f] hover:bg-[#ff7b1c]",
+      btn: "bg-[#b9fd5c] hover:bg-[#ff7b1c]",
       icon: "⚠️",
     },
   };
@@ -62,7 +62,7 @@ const ConfirmModal = ({
               onChange={(e) => setReason(e.target.value)}
               className="w-full px-4 py-3 rounded-lg text-white text-sm
                 bg-[#232528] border border-[#2a2c2f]
-                focus:outline-none focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/30
+                focus:outline-none focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30
                 placeholder:text-[#8a8d93] transition-all duration-200 resize-none"
             />
           </div>

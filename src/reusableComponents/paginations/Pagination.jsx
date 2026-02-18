@@ -39,7 +39,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === 1}
         className="w-9 h-9 flex items-center justify-center rounded-full
           text-[#ccc] bg-transparent
-          hover:bg-[#eb660f] hover:text-[#111214]
+          hover:bg-[#b9fd5c] hover:text-[#111214]
           disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-[#ccc]
           disabled:cursor-not-allowed transition-all cursor-pointer"
       >
@@ -59,8 +59,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             className={`w-9 h-9 flex items-center justify-center rounded-full text-sm transition-all cursor-pointer
               ${
                 page === currentPage
-                  ? "bg-[#eb660f] text-[#111214] font-bold scale-110"
-                  : "text-[#ccc] hover:bg-[#eb660f]/10 hover:text-[#eb660f]"
+                  ? "bg-[#b9fd5c] text-[#111214] font-bold scale-110"
+                  : "text-[#ccc] hover:bg-[#b9fd5c]/10 hover:text-[#b9fd5c]"
               }`}
           >
             {page}
@@ -74,7 +74,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === totalPages}
         className="w-9 h-9 flex items-center justify-center rounded-full
           text-[#ccc] bg-transparent
-          hover:bg-[#eb660f] hover:text-[#111214]
+          hover:bg-[#b9fd5c] hover:text-[#111214]
           disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-[#ccc]
           disabled:cursor-not-allowed transition-all cursor-pointer"
       >

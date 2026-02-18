@@ -51,7 +51,7 @@ const Logout = ({ onLogout, userName = "User", userEmail = "" }) => {
 
           {/* Modal Content */}
           <div
-            className="relative w-full max-w-sm bg-[#1b232d] border border-[#2a2c2f]
+            className="relative w-full max-w-sm bg-[#282f35] border border-[#2a2c2f]
                         rounded-2xl overflow-hidden shadow-2xl animate-fadeIn"
             onClick={(e) => e.stopPropagation()}
           >
@@ -79,8 +79,8 @@ const Logout = ({ onLogout, userName = "User", userEmail = "" }) => {
               <div className="mx-6 mb-4 p-3 bg-[#111214] border border-[#2a2c2f] rounded-xl">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-10 h-10 rounded-full bg-[#eb660f]/10 flex items-center
-                                justify-center text-[#eb660f] font-semibold text-sm shrink-0"
+                    className="w-10 h-10 rounded-full bg-[#b9fd5c]/10 flex items-center
+                                justify-center text-[#b9fd5c] font-semibold text-sm shrink-0"
                   >
                     {(userName?.charAt(0) || "U").toUpperCase()}
                   </div>

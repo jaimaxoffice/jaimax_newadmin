@@ -106,7 +106,7 @@
 //       />
 //       <span
 //         className={`absolute inset-0 rounded-full transition-colors duration-300 ${
-//           isActive ? "bg-[#eb660f]" : "bg-[#4b4545]"
+//           isActive ? "bg-[#b9fd5c]" : "bg-[#4b4545]"
 //         }`}
 //       >
 //         <span
@@ -134,7 +134,7 @@
 //         onClick={() => handleEditUser(user._id)}
 //         title="Edit User"
 //         className="w-8 h-8 flex items-center justify-center rounded-lg
-//           bg-[#eb660f]/10 text-[#eb660f] hover:bg-[#eb660f]/20
+//           bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20
 //           transition-colors cursor-pointer text-sm"
 //       >
 //         ✎
@@ -233,7 +233,7 @@
 //           {
 //             label: "Edit",
 //             onClick: () => handleEditUser(row._id),
-//             className: "text-[#eb660f] hover:bg-[#eb660f]/5",
+//             className: "text-[#b9fd5c] hover:bg-[#b9fd5c]/5",
 //           },
 //         ]}
 //       />
@@ -268,7 +268,7 @@
 //             {/* Add User */}
 //             <button
 //               onClick={() => setModals((prev) => ({ ...prev, add: true }))}
-//               className="bg-[#eb660f] hover:bg-[#ff7b1c] text-white rounded-xl
+//               className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
 //                 py-2.5 px-4 text-sm font-semibold transition-colors cursor-pointer
 //                 flex items-center gap-2"
 //             >
@@ -292,9 +292,9 @@
 //         </div>
 
 //         {/* Table Section */}
-//         <div className="bg-[#1b232d] border border-[#1b232d] rounded-2xl overflow-hidden">
+//         <div className="bg-[#282f35] border border-[#282f35] rounded-2xl overflow-hidden">
 //           {/* Header */}
-//           <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
+//           <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
 //             <h1 className="text-lg font-semibold text-white">Admin Users</h1>
 //           </div>
 
@@ -471,7 +471,7 @@ const AdminManagement = () => {
       />
       <span
         className={`absolute inset-0 rounded-full transition-colors duration-300 ${
-          isActive ? "bg-[#eb660f]" : "bg-[#4b4545]"
+          isActive ? "bg-[#b9fd5c]" : "bg-[#4b4545]"
         }`}
       >
         <span
@@ -499,7 +499,7 @@ const AdminManagement = () => {
         onClick={() => handleEditUser(user._id)}
         title="Edit User"
         className="w-8 h-8 flex items-center justify-center rounded-lg
-           text-[#eb660f] hover:bg-[#eb660f]/20
+           text-[#b9fd5c] hover:bg-[#b9fd5c]/20
           transition-colors cursor-pointer text-sm"
       >
         <PencilLine size={17}/>
@@ -593,7 +593,7 @@ const AdminManagement = () => {
           {
             label: "Edit",
             onClick: () => handleEditUser(row._id),
-            className: "text-[#eb660f] hover:bg-[#eb660f]/5",
+            className: "text-[#b9fd5c] hover:bg-[#b9fd5c]/5",
           },
         ]}
       />
@@ -609,9 +609,9 @@ const AdminManagement = () => {
 
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d] flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#282f35] flex items-center justify-between">
             {/* <h1 className="text-lg font-semibold text-white">Admin Users</h1> */}
                     {/* Filters */}
         <div className="flex w-full">
@@ -636,7 +636,7 @@ const AdminManagement = () => {
 
             <button
               onClick={() => setModals((prev) => ({ ...prev, add: true }))}
-              className="bg-[#eb660f] hover:bg-[#ff7b1c] text-white rounded-xl
+              className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
                 py-2.5 px-4 text-sm font-semibold transition-colors cursor-pointer
                 flex items-center gap-2"
             >

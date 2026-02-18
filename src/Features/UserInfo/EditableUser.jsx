@@ -3,11 +3,11 @@ import { useUpdateUserInfoMutation } from "./userinfoApiSlice";
 import { toast } from "react-toastify";
 import { Pencil, Loader2, X } from "lucide-react";
 
-const inputClass = `w-full bg-[#1b232d] border border-[#303f50] text-gray-400 rounded-lg 
+const inputClass = `w-full bg-[#282f35] border border-[#303f50] text-gray-400 rounded-lg 
   px-4 py-2.5 text-sm focus:outline-none transition-colors disabled:opacity-70`;
 
-const editInputClass = `w-full bg-[#1b232d] border border-[#eb660f] text-white rounded-lg 
-  px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#eb660f]/50 transition-colors font-medium`;
+const editInputClass = `w-full bg-[#282f35] border border-[#b9fd5c] text-white rounded-lg 
+  px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors font-medium`;
 
 const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
   const [updateUserInfo, { isLoading: isUpdating }] = useUpdateUserInfoMutation();
@@ -112,7 +112,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
                 setShowSecretModal(true);
               } else handleEditClick(fieldName);
             }}
-            className="text-[#eb660f] hover:text-[#eb660f]/80 cursor-pointer"
+            className="text-[#b9fd5c] hover:text-[#b9fd5c]/80 cursor-pointer"
           >
             <Pencil size={14} />
           </button>
@@ -130,7 +130,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
           <button
             onClick={() => handleSaveField(fieldName)}
             disabled={isUpdating || isLoading}
-            className="shrink-0 bg-[#eb660f] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
+            className="shrink-0 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
               rounded-lg transition-colors disabled:opacity-50 cursor-pointer text-sm"
           >
             {isUpdating || isLoading ? "Saving..." : "Save"}
@@ -147,7 +147,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
         <div className="flex items-center gap-1.5 mb-1.5">
           <label className="text-sm font-medium text-gray-300">Phone</label>
           {!editMode.phone && (
-            <button onClick={() => handleEditClick("phone")} className="text-[#eb660f] cursor-pointer">
+            <button onClick={() => handleEditClick("phone")} className="text-[#b9fd5c] cursor-pointer">
               <Pencil size={14} />
             </button>
           )}
@@ -165,7 +165,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
               <button
                 onClick={() => handleSaveField("phone")}
                 disabled={isUpdating || isLoading}
-                className="shrink-0 bg-[#eb660f] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
+                className="shrink-0 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
                   rounded-lg transition-colors disabled:opacity-50 cursor-pointer text-sm"
               >
                 {isUpdating || isLoading ? "Saving..." : "Save"}
@@ -189,7 +189,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
   if (!user) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 size={24} className="text-[#eb660f] animate-spin mr-2" />
+        <Loader2 size={24} className="text-[#b9fd5c] animate-spin mr-2" />
         <span className="text-gray-400">Loading user details...</span>
       </div>
     );
@@ -208,20 +208,20 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
       {showSecretModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => { setShowSecretModal(false); setSecretCode(""); }} />
-          <div className="relative bg-[#1b232d] rounded-xl p-6 w-full max-w-xs text-center border border-[#303f50]">
-            <h3 className="text-[#eb660f] font-semibold mb-4">Enter Secret Code</h3>
+          <div className="relative bg-[#282f35] rounded-xl p-6 w-full max-w-xs text-center border border-[#303f50]">
+            <h3 className="text-[#b9fd5c] font-semibold mb-4">Enter Secret Code</h3>
             <input
               type="password"
               placeholder="Secret Code"
               value={secretCode}
               onChange={(e) => setSecretCode(e.target.value)}
               className="w-full bg-[#111827] border border-[#303f50] text-white rounded-lg px-4 py-2.5 text-sm 
-                focus:outline-none focus:border-[#eb660f] mb-4 placeholder-gray-500"
+                focus:outline-none focus:border-[#b9fd5c] mb-4 placeholder-gray-500"
             />
             <div className="flex gap-2">
               <button
                 onClick={handleVerifySecretCode}
-                className="flex-1 bg-[#eb660f] text-white py-2.5 rounded-lg font-semibold hover:bg-[#d55a0e] 
+                className="flex-1 bg-[#b9fd5c] text-white py-2.5 rounded-lg font-semibold hover:bg-[#d55a0e] 
                   transition-colors cursor-pointer"
               >
                 Verify
@@ -238,7 +238,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
         </div>
       )}
 
-      <h2 className="text-[#eb660f] text-xl font-bold text-center mb-6">User Details</h2>
+      <h2 className="text-[#b9fd5c] text-xl font-bold text-center mb-6">User Details</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {renderEditableField("name", "Name")}

@@ -161,11 +161,11 @@ const UsdtBonusList = () => {
     return (
       <div>
         <div className="p-2 sm:p-2 space-y-6">
-          <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  {/* <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center text-[#eb660f]"></div> */}
+                  {/* <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center text-[#b9fd5c]"></div> */}
                   <h1 className="text-lg font-semibold text-white">
                     USDT Bonus Withdrawals
                   </h1>
@@ -186,7 +186,7 @@ const UsdtBonusList = () => {
                   onClick={() => refetch()}
                   disabled={isLoading}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#eb660f] text-white hover:bg-[#ff8533]
+                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
                  
@@ -230,7 +230,7 @@ const UsdtBonusList = () => {
       header: "Transaction ID",
       render: (row) => (
         <span
-          className="text-xs text-[#8a8d93] font-mono cursor-pointer hover:text-[#eb660f] transition-colors"
+          className="text-xs text-[#8a8d93] font-mono cursor-pointer hover:text-[#b9fd5c] transition-colors"
           title={row?._id}
         >
           {row?._id ? `${row._id.slice(0, 10)}...` : "N/A"}
@@ -333,8 +333,8 @@ const UsdtBonusList = () => {
             )
           }
           className="text-[11px] font-semibold px-2.5 py-1 rounded-lg
-                     bg-[#eb660f]/10 text-[#eb660f] border border-[#eb660f]/20
-                     hover:bg-[#eb660f]/20 hover:border-[#eb660f]/40
+                     bg-[#b9fd5c]/10 text-[#b9fd5c] border border-[#b9fd5c]/20
+                     hover:bg-[#b9fd5c]/20 hover:border-[#b9fd5c]/40
                      transition-all duration-200 cursor-pointer"
         >
           View
@@ -408,7 +408,7 @@ const UsdtBonusList = () => {
         )}
 
         {/* Main Table Card */}
-        <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -423,7 +423,7 @@ const UsdtBonusList = () => {
                         value={state.perPage}
                         disabled={isLoading}
                         className="bg-[#111214] border border-[#2a2c2f] text-white rounded-lg
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                          transition-colors cursor-pointer disabled:opacity-50"
                       >
                         <option value="10">10</option>
@@ -448,7 +448,7 @@ const UsdtBonusList = () => {
                         value={selectedType}
                         disabled={isLoading}
                         className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#eb660f]
+                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                          transition-colors cursor-pointer disabled:opacity-50"
                       >
                         <option value="">All Types</option>
@@ -495,7 +495,7 @@ const UsdtBonusList = () => {
         <Modal.Accent
           color={
             detailModal.title === "Wallet Address"
-              ? "from-[#eb660f] via-[#ff8533] to-yellow-500"
+              ? "from-[#b9fd5c] via-[#ff8533] to-yellow-500"
               : "from-blue-500 via-blue-400 to-cyan-500"
           }
         />
@@ -511,7 +511,7 @@ const UsdtBonusList = () => {
             }
             bgClass={
               detailModal.title === "Wallet Address"
-                ? "bg-[#eb660f]/10"
+                ? "bg-[#b9fd5c]/10"
                 : "bg-blue-500/10"
             }
           />
@@ -583,7 +583,7 @@ const WalletLargeIcon = () => (
     height="32"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="#eb660f"
+    stroke="#b9fd5c"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"

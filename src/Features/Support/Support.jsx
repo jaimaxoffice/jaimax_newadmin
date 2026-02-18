@@ -203,7 +203,7 @@ const Support = () => {
           avatar: row.author_name?.charAt(0)?.toUpperCase() || "?",
           avatarBg:
             row.status === "open"
-              ? "bg-[#eb660f]/10 text-[#eb660f]"
+              ? "bg-[#b9fd5c]/10 text-[#b9fd5c]"
               : row.status === "closed"
               ? "bg-red-500/10 text-red-400"
               : "bg-yellow-500/10 text-yellow-400",
@@ -229,7 +229,7 @@ const Support = () => {
           {
             label: "Edit Status",
             onClick: () => openEditModal(row._id),
-            className: "text-[#eb660f] hover:bg-[#eb660f]/5",
+            className: "text-[#b9fd5c] hover:bg-[#b9fd5c]/5",
           },
         ]}
       />
@@ -242,8 +242,8 @@ const Support = () => {
         {/* Header */}
                 
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#eb660f]/10 flex items-center justify-center">
-            <MessageSquare size={20} className="text-[#eb660f]" />
+          <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
+            <MessageSquare size={20} className="text-[#b9fd5c]" />
           </div>
           <div>
             <h1 className="text-lg font-bold text-white">Support Tickets</h1>
@@ -257,9 +257,9 @@ const Support = () => {
 
 
         {/* Table Section */}
-        <div className="bg-[#1b232d] border border-[#303f50] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#303f50] rounded-lg  overflow-hidden">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#1b232d]">
+          <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
             <div className="flex items-center justify-between">
               
 <div className="flex w-full">
@@ -319,7 +319,7 @@ const Support = () => {
         <div className="space-y-5">
           {/* Status Select */}
           <div>
-            <label className="block text-sm font-medium text-[#eb660f] mb-2">
+            <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
               Select Status
             </label>
             <select
@@ -328,8 +328,8 @@ const Support = () => {
                 setEditTarget((prev) => ({ ...prev, status: e.target.value }))
               }
               className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                py-2.5 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-                focus:ring-1 focus:ring-[#eb660f]/30 transition-colors cursor-pointer"
+                py-2.5 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
+                focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors cursor-pointer"
             >
               {STATUS_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value} className="bg-[#111214]">
@@ -362,7 +362,7 @@ const Support = () => {
               onClick={handleEditStatus}
               disabled={isEditing || !editTarget.status}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white
-                bg-[#eb660f] hover:bg-[#ff7b1c] transition-colors cursor-pointer
+                bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
                 disabled:opacity-50 flex items-center gap-2"
             >
               {isEditing ? (
