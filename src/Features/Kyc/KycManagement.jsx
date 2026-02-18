@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import KycViewModal from "./KycViewModal";
 import KycActionModal from "./KycActionModal";
 import { useKycListQuery } from "./kycApiSlice";

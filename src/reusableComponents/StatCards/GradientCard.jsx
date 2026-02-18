@@ -25,6 +25,15 @@ function StatCard({ icon: Icon, value, title, variant = "blue" }) {
       ghostColor: "text-yellow-400/[0.08]",
       dotColor: "bg-yellow-400",
     },
+    // Add to StatCard variants object:
+lime: {
+  bg: "bg-[#1a1a1a]",
+  border: "border-[#2a2a2a]",
+  iconColor: "text-[#b9fd5c]",
+  iconBg: "bg-[#b9fd5c]/10",
+  ghostColor: "text-[#b9fd5c]/[0.08]",
+  dotColor: "bg-[#b9fd5c]",
+},
   };
 
   const v = variants[variant] || variants.blue;
@@ -39,13 +48,13 @@ function StatCard({ icon: Icon, value, title, variant = "blue" }) {
       {/* ── Transparent ghost icon — bottom right ── */}
       <div
         className={`
-          absolute -bottom-3 -right-5 ${v.ghostColor}
+          absolute -bottom-5 -right-5 ${v.ghostColor}
           transition-all duration-500
           group-hover:-bottom-3 group-hover:-right-3
         `}
       >
         <Icon
-          size={100}
+          size={120}
           strokeWidth={2.5}
           className="transition-transform duration-500 group-hover:rotate-[-6deg] group-hover:scale-110"
         />

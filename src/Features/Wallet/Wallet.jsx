@@ -1,10 +1,7 @@
-// src/features/wallet/WalletApprove.jsx
 import React, { useState, useEffect } from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import WalletActionModal from "./WalletActionModal";
 import EditTransactionModal from "./EditTransactionModal";
 import {
@@ -14,20 +11,31 @@ import {
 import { toast } from "react-toastify";
 import { PencilLine } from "lucide-react";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
-import { Clock, CheckCircle, PauseCircle, XCircle } from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import { formatDateWithAmPm } from "../../utils/dateUtils";
+import useTableState from "../../hooks/useTableState";
+import pendingSvg from "/images/card.svg";
+import completedSvg from "/images/memeber.svg";
+import holdSvg from "/images/hold.svg";
+import failedSvg from "/images/fail.svg";
 const WalletApprove = () => {
-  const [state, setState] = useState({
-    currentPage: 1,
-    perPage: 10,
-    search: "",
+   const {
+    state,
+    setState,
+    selectedStatus,
+    handlePageChange,
+    handleStatusChange,
+    handleSearch,
+    handlePerPageChange,
+  } = useTableState({
+    initialPerPage: 10,
+    initialStatus: "Transaction Type",
+    searchDelay: 1000,
   });
 
-  const [selectedStatus, setSelectedStatus] = useState("Transaction Type");
-  const [selectedData, setSelectedData] = useState(null);
+const [selectedData, setSelectedData] = useState(null);
 
-  const [modals, setModals] = useState({
+const [modals, setModals] = useState({
     action: false,
     edit: false,
   });
@@ -54,24 +62,6 @@ const WalletApprove = () => {
   useEffect(() => {
     refetch();
   }, []);
-
-  // Handlers
-  const handlePageChange = (page) => {
-    setState((prev) => ({ ...prev, currentPage: page }));
-  };
-
-  const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
-    setState((prev) => ({ ...prev, currentPage: 1 }));
-  };
-
-  let searchTimeout;
-  const handleSearch = (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      setState((prev) => ({ ...prev, search: e.target.value, currentPage: 1 }));
-    }, 1000);
-  };
 
   const handleAction = (id, type) => {
     setActionId(id);
@@ -268,48 +258,34 @@ const WalletApprove = () => {
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-        {statusCounts && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              title="Pending"
-              value={statusCounts.Pending || 0}
-              valueClass=""
-              bgClass="bg-[#544a24]"
-              icon={<Clock size={25} strokeWidth={2} className="text-white" />}
-              // iconBg="bg-yellow-500/20"
-            />
-            <StatCard
-              title="Completed"
-              value={statusCounts.Completed || 0}
-              valueClass=""
-              bgClass="bg-[#1a3c37]"
-              icon={
-                <CheckCircle size={25} strokeWidth={2} className="text-white" />
-              }
-              // iconBg="bg-green-500/20"
-            />
-            <StatCard
-              title="Hold"
-              value={statusCounts.Hold || 0}
-              valueClass=""
-              bgClass="bg-[#174d5e]"
-              icon={
-                <PauseCircle size={25} strokeWidth={2} className="text-white" />
-              }
-              // iconBg="bg-blue-500/20"
-            />
-            <StatCard
-              title="Failed"
-              value={statusCounts.Failed || 0}
-              valueClass=""
-              bgClass="bg-[#4b2733]"
-              icon={
-                <XCircle size={25} strokeWidth={2} className="text-white" />
-              }
-              // iconBg="bg-red-500/20"
-            />
-          </div>
-        )}
+{statusCounts && (
+  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <StatCard
+      title="Pending"
+      value={statusCounts.Pending || 0}
+      image={pendingSvg}
+      variant="pending"
+    />
+    <StatCard
+      title="Completed"
+      value={statusCounts.Completed || 0}
+      image={completedSvg}
+      variant="completed"
+    />
+    <StatCard
+      title="Hold"
+      value={statusCounts.Hold || 0}
+      image={holdSvg}
+      variant="hold"
+    />
+    <StatCard
+      title="Failed"
+      value={statusCounts.Failed || 0}
+      image={failedSvg}
+      variant="failed"
+    />
+  </div>
+)}
         {/* Table Section */}
         <div className="bg-[#282f35] border border-[#303f50] rounded-lg overflow-hidden ">
           {/* Header */}

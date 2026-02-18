@@ -190,8 +190,6 @@ const Withdrawal = () => {
     };
     return map[status] || "bg-[#2a2c2f] text-[#8a8d93]";
   };
-
-  // View Button
   const ViewBtn = ({ onClick, label = "View" }) => (
     <button
       onClick={onClick}
@@ -203,7 +201,6 @@ const Withdrawal = () => {
     </button>
   );
 
-  // Action Buttons
   const WithdrawalActions = ({ data }) => {
     if (data.status !== 0) {
       return <span className="text-xs text-[#555]">—</span>;
@@ -233,10 +230,10 @@ const Withdrawal = () => {
     );
   };
 
-  // Desktop Table Columns
   const columns = [
     {
       header: "S.No",
+      
       render: (_, index, currentPage, perPage) =>
         currentPage * perPage - (perPage - 1) + index + ".",
     },

@@ -1,13 +1,11 @@
 // src/features/users/UserManagement.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import Modal from "../../reusableComponents/Modals/Modals";
-import StatCard from "../../reusableComponents/StatCards/GradientCard";
+import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import ToggleSwitch from "../../reusableComponents/Switch/ToggleSwitch";
 import ReadOnlyField from "../../reusableComponents/Inputs/ReadOnlyField";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import TransactionModal from "./TransactionModal";
 import {
   useBlockUserMutation,
@@ -17,17 +15,26 @@ import {
 } from "./usersApiSlice";
 import { toast } from "react-toastify";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
-import {Eye ,Send } from "lucide-react";
+import { Eye, Send, UserStar, ShieldX, UserCheck } from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
-import { UserStar , ShieldX , UserCheck } from "lucide-react";
+import useTableState from "../../hooks/useTableState";
+import completedSvg from "/images/memeber.svg";
 const UserManagement = () => {
-  const [state, setState] = useState({
-    currentPage: 1,
-    perPage: 10,
-    search: "",
-    selectedUserId: "",
-    userStatus: {},
+  // ✅ Table state from hook
+  const {
+    state,
+    handlePageChange,
+    handleSearch,
+    handlePerPageChange,
+  } = useTableState({
+    initialPerPage: 10,
+    searchDelay: 1000,
   });
+
+  // ✅ Component-specific state (NOT in the hook)
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [userStatus, setUserStatus] = useState({});
+  const [selectedWithdrawId, setSelectedWithdrawId] = useState(null);
 
   const [modals, setModals] = useState({
     viewUser: false,
@@ -35,14 +42,12 @@ const UserManagement = () => {
     transaction: false,
   });
 
-  const [selectedWithdrawId, setSelectedWithdrawId] = useState(null);
-  const [refresh, setRefresh] = useState(false);
-
+  // API Calls
   const queryParams = `limit=${state.perPage}&page=${state.currentPage}&search=${state.search}`;
   const { data: getUser, isLoading, refetch } = useGetUserQuery(queryParams);
   const { data: viewUser, isLoading: isUserLoading } = useViewUserQuery(
-    state.selectedUserId,
-    { skip: !state.selectedUserId },
+    selectedUserId,
+    { skip: !selectedUserId }
   );
   const [sendTransaction] = useSendTransactionMutation();
   const [blockUser] = useBlockUserMutation();
@@ -52,45 +57,19 @@ const UserManagement = () => {
   const blockedUser = getUser?.data?.pagination?.blocked || 0;
   const activeMembers = getUser?.data?.pagination?.active || 0;
 
-  let searchTimeout;
-  const handleSearch = (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      setState((prev) => ({ ...prev, search: e.target.value, currentPage: 1 }));
-    }, 1000);
-  };
-
-  useEffect(() => {
-    refetch();
-    return () => clearTimeout(searchTimeout);
-  }, []);
-
-  useEffect(() => {
-    if (refresh) {
-      refetch();
-      setRefresh(false);
-    }
-  }, [refresh, refetch]);
-
-  const handlePageChange = (page) => {
-    setState((prev) => ({ ...prev, currentPage: page }));
-  };
-
+  // ✅ Component-specific handlers
   const handleUserView = (userId, modalType) => {
-    setState((prev) => ({ ...prev, selectedUserId: userId }));
+    setSelectedUserId(userId);
     setModals((prev) => ({ ...prev, [modalType]: true }));
   };
 
   const handleToggleActive = async (userId, isBlock) => {
     try {
       const payload = { is_blocked: isBlock ? 0 : 1, user_id: userId };
-      setState((prev) => ({
-        ...prev,
-        userStatus: { ...prev.userStatus, [userId]: !isBlock },
-      }));
+      setUserStatus((prev) => ({ ...prev, [userId]: !isBlock }));
       const response = await blockUser(payload);
       toast.success(`${response?.data?.message}`, { position: "top-center" });
-      setRefresh(true);
+      refetch();
     } catch (error) {
       toast.error(`${error?.data?.message}`, { position: "top-center" });
     }
@@ -146,7 +125,6 @@ const UserManagement = () => {
     return countryCode === 91 ? `₹${value}` : `$${value}`;
   };
 
-  // Desktop Table Columns
   const columns = [
     {
       header: "S.No",
@@ -181,7 +159,11 @@ const UserManagement = () => {
       header: "Status",
       render: (row) => (
         <span
-          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${row.isActive ? "bg-[#0ecb6f]/10 text-[#0ecb6f]" : "bg-red-500/10 text-red-400"}`}
+          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+            row.isActive
+              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
+              : "bg-red-500/10 text-red-400"
+          }`}
         >
           {row.isActive ? "Active" : "Inactive"}
         </span>
@@ -192,9 +174,9 @@ const UserManagement = () => {
       render: (row) => (
         <button
           onClick={() => handleUserView(row._id, "viewUser")}
-          className="text-[#ffffff] hover:text-[#0ecb6f]/80 text-xs font-medium  px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+          className="text-[#ffffff] hover:text-[#0ecb6f]/80 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
         >
-         <Eye size={18}/>
+          <Eye size={18} />
         </button>
       ),
     },
@@ -203,7 +185,7 @@ const UserManagement = () => {
       render: (row) => (
         <button
           onClick={() => handleUserView(row.referenceUserId, "viewReferrer")}
-          className="text-white hover:text-blue-300 text-xs font-medium  px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+          className="text-white hover:text-blue-300 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
         >
           <Eye size={18} />
         </button>
@@ -228,9 +210,6 @@ const UserManagement = () => {
     },
   ];
 
-
-
-  // Modal Fields
   const getUserFields = (data) => [
     { label: "Name", value: data?.name },
     { label: "User ID", value: data?.username },
@@ -263,10 +242,9 @@ const UserManagement = () => {
     { label: "KYC Status", value: getKycStatus(data?.kycStatus) },
   ];
 
-  // Modal Content
   const ModalContent = ({ modalKey }) => (
     <>
-      {state.selectedUserId && !isUserLoading && viewUser ? (
+      {selectedUserId && !isUserLoading && viewUser ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {getUserFields(viewUser?.data).map((field, i) => (
@@ -301,57 +279,42 @@ const UserManagement = () => {
     <>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Stats */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-  <StatCard
-    title="Total Members"
-    value={totalMembers}
-    icon={UserStar }
-    variant="blue"
-  />
-  <StatCard
-    title="Total Blocked"
-    value={blockedUser}
-    icon={ShieldX }
-    variant="red"
-  />
-  <StatCard
-    title="Total Active Members"
-    value={activeMembers}
-    icon={UserCheck}
-    variant="green"
-  />
-</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <StatCard
+            title="Total Members"
+            value={totalMembers}
+            image={completedSvg}
+            variant="blue"
+          />
+         
+          <StatCard
+            title="Total Blocked"
+            value={blockedUser}
+            icon={ShieldX}
+            variant="red"
+          />
+          <StatCard
+            title="Total Active Members"
+            value={activeMembers}
+            icon={UserCheck}
+            variant="green"
+          />
+        </div>
 
-        {/* Table + Cards */}
+        {/* Table */}
         <div className="bg-[#282f35] border border-[#303f50] rounded-[5px] overflow-hidden">
-          {/* Search Header */}
+          {/* ✅ CLEANED: Search Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-             
               <div className="flex w-full">
                 <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-
                   <PerPageSelector
-                    options={[10,20,40,60,80,100]}
-                    onChange={(value) =>
-                      setState((prev) => ({
-                        ...prev,
-                        perPage: value,
-                        currentPage: 1,
-                      }))
-                    }
+                    value={state.perPage}
+                    options={[10, 20, 40, 60, 80, 100]}
+                    onChange={handlePerPageChange}
                   />
                   <SearchBar
-                    onSearch={(e) => {
-                      clearTimeout(window._searchTimeout);
-                      window._searchTimeout = setTimeout(() => {
-                        setState((prev) => ({
-                          ...prev,
-                          search: e.target.value,
-                          currentPage: 1,
-                        }));
-                      }, 0);
-                    }}
+                    onSearch={handleSearch}
                     placeholder="Search..."
                   />
                 </div>
@@ -359,8 +322,7 @@ const UserManagement = () => {
             </div>
           </div>
 
-          {/* Desktop Table */}
-          <div className="">
+          <div>
             <Table
               columns={columns}
               data={TableData}
@@ -369,8 +331,6 @@ const UserManagement = () => {
               perPage={state.perPage}
             />
           </div>
-
-
         </div>
 
         {/* Pagination */}
@@ -394,7 +354,9 @@ const UserManagement = () => {
 
       <Modal
         isOpen={modals.viewReferrer}
-        onClose={() => setModals((prev) => ({ ...prev, viewReferrer: false }))}
+        onClose={() =>
+          setModals((prev) => ({ ...prev, viewReferrer: false }))
+        }
         title="Referrer User Details"
       >
         <ModalContent modalKey="viewReferrer" />
@@ -402,7 +364,9 @@ const UserManagement = () => {
 
       <TransactionModal
         isOpen={modals.transaction}
-        onClose={() => setModals((prev) => ({ ...prev, transaction: false }))}
+        onClose={() =>
+          setModals((prev) => ({ ...prev, transaction: false }))
+        }
         onSubmit={handleTransactionSubmit}
       />
     </>
