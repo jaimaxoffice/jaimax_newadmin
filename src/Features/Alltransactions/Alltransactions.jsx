@@ -291,7 +291,7 @@ const AllTransactions = () => {
         <div className="flex w-full">
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
            <PerPageSelector
-  options={[5, 15, 25, 50, 100]}
+  options={[10,20,40,60,80,100]}
   onChange={(value) =>
     setState((prev) => ({
       ...prev,

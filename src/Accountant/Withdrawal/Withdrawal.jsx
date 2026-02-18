@@ -668,7 +668,7 @@ import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
-
+import { Clock, CheckCircle, BarChart3, XCircle } from "lucide-react";
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL || "http://192.168.128.1:3002/api";
 
@@ -1120,37 +1120,38 @@ const WithDraw = () => {
     <div>
       <section className="py-3 sm:py-4 px-1 sm:px-3 md:px-4 min-h-screen bg-[#0b1218] overflow-x-hidden">
         {/* ── Summary Cards (✅ StatCard - SAME as before) ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-          <StatCard
-            icon="mdi:dots-horizontal"
-            value={pagination?.pending ?? 0}
-            title="Pending"
-            variant="yellow"
-            bgClass="bg-[#4c4320]"
-          />
-          <StatCard
-            icon="mdi:check-circle-outline"
-            value={pagination?.approved ?? 0}
-            title="Approved"
-            variant="green"
-            bgClass="bg-[#173631]"
-            
-          />
-          <StatCard
-            icon="mdi:pause-circle-outline"
-            value={pagination?.total ?? 0}
-            title="Total"
-            variant="blue"
-            bgClass="bg-[#174d5e]"
-          />
-          <StatCard
-            icon="mdi:close-circle-outline"
-            value={pagination?.rejected ?? 0}
-            title="Rejected"
-            variant="red"
-            bgClass="bg-[#4a262f]"
-          />
-        </div>
+
+
+<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+  <StatCard
+    icon={<Clock />}
+    value={pagination?.pending ?? 0}
+    title="Pending"
+    variant="yellow"
+    bgClass="bg-[#4c4320]"
+  />
+  <StatCard
+    icon={<CheckCircle />}
+    value={pagination?.approved ?? 0}
+    title="Approved"
+    variant="green"
+    bgClass="bg-[#173631]"
+  />
+  <StatCard
+    icon={<BarChart3 />}
+    value={pagination?.total ?? 0}
+    title="Total"
+    variant="blue"
+    bgClass="bg-[#174d5e]"
+  />
+  <StatCard
+    icon={<XCircle />}
+    value={pagination?.rejected ?? 0}
+    title="Rejected"
+    variant="red"
+    bgClass="bg-[#4a262f]"
+  />
+</div>
 
         {/* ── Main Card ── */}
         <div className="bg-[#1a2128] border border-[#2b3440] rounded-xl px-3 sm:px-4 md:px-5 pb-1 pt-4 overflow-x-hidden">

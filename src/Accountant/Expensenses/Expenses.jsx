@@ -1402,7 +1402,7 @@ const InternalExpenses = () => {
       key: "description",
       header: "Description",
       render: (doc) => (
-        <span className="block min-w-[250px] max-w-[300px] whitespace-normal break-words">
+        <span className="block min-w-62.5 max-w-75 whitespace-normal wrap-break-words">
           {doc.description || ""}
         </span>
       ),
@@ -1616,7 +1616,7 @@ const InternalExpenses = () => {
 
                 {/* Fetch Button */}
                 <button
-                  className="px-4 py-2 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 h-[38px] w-full sm:w-auto"
+                  className="px-4 py-2 bg-[#eb660f] hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 h-9.5 w-full sm:w-auto"
                   onClick={handleFilter}
                   disabled={isLoading}
                 >

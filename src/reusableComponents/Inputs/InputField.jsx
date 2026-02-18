@@ -35,7 +35,7 @@ const InputField = ({
           placeholder={placeholder}
           disabled={disabled}
           autoComplete="off"
-          className={`w-full bg-[#111214] border text-white placeholder-[#c6bfbf] rounded-xl 
+          className={`w-full bg-[#111214] border text-white placeholder-[#c6bfbf] rounded-lg
             py-3 text-sm focus:outline-none focus:ring-1 transition-colors
             disabled:opacity-50 disabled:cursor-not-allowed
             ${prefix ? "pl-8 pr-4" : "px-4"}

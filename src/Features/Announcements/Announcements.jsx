@@ -57,14 +57,14 @@ const AnnouncementForm = ({
       {/* Alerts */}
       {formError && (
         <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/5 border border-red-500/20">
-          <AlertTriangle size={18} className="text-red-400 flex-shrink-0" />
+          <AlertTriangle size={18} className="text-red-400 shrink-0" />
           <span className="text-red-400 text-sm">{formError}</span>
         </div>
       )}
 
       {submitSuccess && (
         <div className="flex items-center gap-3 p-4 rounded-xl bg-[#0ecb6f]/5 border border-[#0ecb6f]/20">
-          <CheckCircle size={18} className="text-[#0ecb6f] flex-shrink-0" />
+          <CheckCircle size={18} className="text-[#0ecb6f] shrink-0" />
           <span className="text-[#0ecb6f] text-sm">
             Announcement {isEditing ? "updated" : "created"} successfully!
           </span>
@@ -125,7 +125,7 @@ const AnnouncementForm = ({
             >
               <span
                 className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${
-                  isActive ? "left-[22px]" : "left-0.5"
+                  isActive ? "left-5.5" : "left-0.5"
                 }`}
               />
             </button>
@@ -448,7 +448,7 @@ const AnnouncementCard = ({
           >
             <span
               className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${
-                announcement.isActive ? "left-[18px]" : "left-0.5"
+                announcement.isActive ? "left-4.5" : "left-0.5"
               }`}
             />
           </span>
@@ -839,7 +839,7 @@ const AnnouncementList = () => {
             className="flex items-center gap-3 p-4 rounded-xl
               bg-red-500/5 border border-red-500/20"
           >
-            <AlertTriangle size={18} className="text-[#eb660f] flex-shrink-0" />
+            <AlertTriangle size={18} className="text-[#eb660f] shrink-0" />
             <p className="text-[#eb660f] text-sm">
               {error.data?.message || "An error occurred while fetching announcements."}
             </p>

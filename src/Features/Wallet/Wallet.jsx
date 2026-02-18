@@ -320,7 +320,7 @@ const WalletApprove = () => {
                   {/* Per Page */}
 
                   <PerPageSelector
-                    options={[5, 15, 25, 50, 100]}
+                    options={[10,20,40,60,80,100]}
                     onChange={(value) =>
                       setState((prev) => ({
                         ...prev,

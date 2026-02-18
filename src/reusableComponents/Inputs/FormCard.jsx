@@ -3,7 +3,7 @@ import React from "react";
 
 const FormCard = ({ title, subtitle, children }) => {
   return (
-    <div className="bg-[#1a1c1f] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+    <div className="bg-[#1a1c1f] border border-[#2a2c2f] rounded-lg overflow-hidden">
       {/* Header */}
       {title && (
         <div className="px-6 py-4 border-b border-[#2a2c2f]">

@@ -56,7 +56,7 @@ const Logout = ({ onLogout, userName = "User", userEmail = "" }) => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Accent Line */}
-            <div className="h-1 bg-gradient-to-r from-red-500 via-red-400 to-orange-500" />
+            <div className="h-1 bg-linear-to-r from-red-500 via-red-400 to-orange-500" />
 
             {/* Icon & Title */}
             <div className="flex flex-col items-center pt-8 pb-4 px-6">

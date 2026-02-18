@@ -1177,14 +1177,14 @@ const Credits = () => {
             {statusCounts && (
               <div className="flex flex-col sm:flex-row justify-center gap-3 mb-5">
                 <StatCard
-                  icon="material-symbols:check-circle"
+                  icon={<Check />}                  
                   value={statusCounts.Completed}
                   title="Completed"
                   variant="green"
                   bgClass="bg-[#193b33] "
                 />
                 <StatCard
-                  icon="material-symbols:cancel"
+                  icon={<X />}
                   value={statusCounts.Failed}
                   title="Failed"
                   variant="red"

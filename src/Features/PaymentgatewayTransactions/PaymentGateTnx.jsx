@@ -279,7 +279,7 @@ const PaymentGatewaysTransactions = () => {
   <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:justify-end">
 <PerPageSelector
-  options={[5, 15, 25, 50, 100]}
+  options={[10,20,40,60,80,100]}
   onChange={(value) =>
     setState((prev) => ({
       ...prev,

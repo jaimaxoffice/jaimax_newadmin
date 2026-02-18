@@ -215,7 +215,7 @@ function ZoomMeeting() {
         <button
           key={i}
           onClick={() => handlePageChange(i)}
-          className={`min-w-[36px] h-9 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
+          className={`min-w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
             ${
               i === current
                 ? "bg-[#eb660f] text-white shadow-lg shadow-[#eb660f]/25"
@@ -486,7 +486,7 @@ function ZoomMeeting() {
                 <div className="flex items-center gap-3">
                   <PerPageSelector
                     value={limit}
-                    options={[10, 20, 50, 100]}
+                    options={[10,20,40,60,80,100]}
                     onChange={handleLimitChange}
                   />
                 </div>
@@ -541,10 +541,10 @@ function ZoomMeeting() {
                             <td className="px-4 py-3 text-sm text-gray-400">
                               {(currentPage - 1) * limit + i + 1}
                             </td>
-                            <td className="px-4 py-3 text-sm text-white font-medium max-w-[150px] truncate">
+                            <td className="px-4 py-3 text-sm text-white font-medium max-w-37.5 truncate">
                               {meeting.title}
                             </td>
-                            <td className="px-4 py-3 text-sm text-gray-300 max-w-[150px] truncate">
+                            <td className="px-4 py-3 text-sm text-gray-300 max-w-37.5 truncate">
                               {meeting.subTitle}
                             </td>
                             <td className="px-4 py-3">

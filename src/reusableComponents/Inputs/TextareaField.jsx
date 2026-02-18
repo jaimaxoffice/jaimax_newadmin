@@ -26,7 +26,7 @@ const TextareaField = ({
         placeholder={placeholder}
         rows={rows}
         autoComplete="off"
-        className={`w-full bg-[#111214] border text-white placeholder-[#c4b9b9] rounded-xl 
+        className={`w-full bg-[#111214] border text-white placeholder-[#c4b9b9] rounded-lg
           py-3 px-4 text-sm focus:outline-none focus:ring-1 transition-colors resize-none
           ${
             error

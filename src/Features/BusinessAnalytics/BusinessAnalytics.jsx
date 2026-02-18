@@ -497,7 +497,7 @@ function GetBusinessDetails() {
     }
 
     return (
-      <div className="bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-2xl p-4 sm:p-6">
+      <div className="bg-linear-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-2xl p-4 sm:p-6">
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-white text-xl sm:text-2xl font-bold mb-1">
@@ -985,7 +985,7 @@ function GetBusinessDetails() {
                   <div className="overflow-x-auto rounded-xl border border-[#303f50]">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-gradient-to-r from-[#eb660f] to-[#f07d2c]">
+                        <tr className="bg-linear-to-r from-[#eb660f] to-[#f07d2c]">
                           {["S.No", "Date", "Amount", "JAIMAX Tokens", "Status"].map((h) => (
                             <th key={h} className="text-white text-sm font-semibold uppercase tracking-wider px-4 py-3 text-center">
                               {h}
@@ -1045,7 +1045,7 @@ function GetBusinessDetails() {
                   <div className="overflow-x-auto rounded-xl border border-[#303f50]">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-gradient-to-r from-[#eb660f] to-[#f07d2c]">
+                        <tr className="bg-linear-to-r from-[#eb660f] to-[#f07d2c]">
                           {["S.No", "Date", "Amount", "Payment Mode", "Transaction ID", "Status"].map((h) => (
                             <th key={h} className="text-white text-sm font-semibold uppercase tracking-wider px-4 py-3 text-center">
                               {h}
@@ -1136,7 +1136,7 @@ function GetBusinessDetails() {
 function GradientStatCard({ title, value, gradient, shadow, icon: Icon }) {
   return (
     <div
-      className={`bg-gradient-to-br ${gradient} rounded-xl p-4 sm:p-5 ${shadow} 
+      className={`bg-linear-to-br ${gradient} rounded-xl p-4 sm:p-5 ${shadow} 
         border border-white/10 relative overflow-hidden`}
     >
       <div className="absolute top-0 right-0 p-2 opacity-20">

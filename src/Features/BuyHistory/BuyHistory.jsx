@@ -154,7 +154,7 @@ const BuyHistory = () => {
               {/* Filters - Right */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <PerPageSelector
-                  options={[5, 15, 25, 50, 100]}
+                  options={[10,20,40,60,80,100]}
                   onChange={(value) =>
                     setState((prev) => ({
                       ...prev,

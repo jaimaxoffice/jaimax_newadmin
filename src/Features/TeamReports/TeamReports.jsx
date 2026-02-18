@@ -217,7 +217,7 @@ const TeamInfoPdfDownloader = () => {
           {/* Error */}
           {isError && (
             <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/5 border border-red-500/20">
-              <AlertCircle size={18} className="text-red-400 flex-shrink-0" />
+              <AlertCircle size={18} className="text-red-400 shrink-0" />
               <p className="text-red-400 text-sm">
                 Error fetching data. Please check the username and try again.
               </p>
@@ -453,7 +453,7 @@ const StatPreviewCard = ({ icon: Icon, label, value, color, bgColor }) => (
   <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-2xl p-5 hover:border-[#eb660f]/30 transition-colors">
     <div className="flex items-center gap-3">
       <div
-        className={`w-10 h-10 rounded-xl ${bgColor} flex items-center justify-center flex-shrink-0`}
+        className={`w-10 h-10 rounded-xl ${bgColor} flex items-center justify-center shrink-0`}
       >
         <Icon size={20} className={color} />
       </div>

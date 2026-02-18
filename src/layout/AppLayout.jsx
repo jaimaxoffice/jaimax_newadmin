@@ -84,7 +84,7 @@ export default function AppLayout() {
       <main className="flex-1 overflow-y-auto transition-all duration-300 bg-[#000000]">
         {/* Mobile top spacing for fixed mobile header */}
         <div className="pt-12 lg:pt-0">
-          <div className="p-4 sm:p-6">
+          <div className="p-2 sm:p-4">
             <Outlet />
           </div>
         </div>

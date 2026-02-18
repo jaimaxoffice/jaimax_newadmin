@@ -65,6 +65,7 @@ import Announcements from "./Features/Announcements/Announcements";
 import Notifications from "./Features/Notifications/Notifications";
 import ZoomMeeting from "./Features/Zoom/Zoom";
 import Blog from "./Features/Blogs/Blogs";
+import SocialMedia from "./Features/SocialMediaChart/SocialChart";
 
 // Support & Settings
 import Support from "./Features/Support/Support";
@@ -128,6 +129,7 @@ const ADMIN_ROUTES = [
   { path: "/settings", element: <Settings /> },
   { path: "/logout", element: <Logout /> },
   { path: "/businessanalytics", element: <BusinessAnalytics /> },
+  { path: "/socialmedia", element: <SocialMedia /> },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───

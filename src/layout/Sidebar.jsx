@@ -711,7 +711,7 @@ const ADMIN_SECTIONS = [
     label: "USERS",
     items: [
       { label: "user-info", icon: "/sidebar/tree.png", path: "/user-info" },
-      { label: "Admin-User", icon: "/sidebar/admin.png", path: "/admin-user" },
+      { label: "Admin-Users", icon: "/sidebar/admin.png", path: "/admin-user" },
     ],
   },
   {
@@ -765,6 +765,7 @@ const ADMIN_SECTIONS = [
       { label: "Notifications", icon: "/sidebar/notifications.png", path: "/notifications" },
       { label: "zoom-meetings", icon: "/sidebar/meet.png", path: "/zoommeetings" },
       { label: "Blogs", icon: "/sidebar/book-open-check.png", path: "/blogs" },
+      { label: "SocialMedia", icon: "/sidebar/book-open-check.png", path: "/socialmedia" },
     ],
   },
   {
@@ -786,94 +787,7 @@ const ADMIN_SECTIONS = [
   },
 ];
 
-// ─── SUB-ADMIN (role === 2) ───
-const ROLE2_SECTIONS = [
-  {
-    label: "DASHBOARDS",
-    items: [
-      { label: "Dashboard", icon: LayoutDashboard, path: "/", permission: "DASHBOARD" },
-      { label: "Wallet", icon: ShoppingCart, path: "/wallet", permission: "WALLET MANAGEMENT" },
-      { label: "Kyc", icon: Users, path: "/kyc", permission: "KYC MANAGEMENT" },
-      { label: "Withdrawal Bonus", icon: Users, path: "/withdrawal", permission: "WITHDRAW MANAGEMENT" },
-      { label: "USDT Withdrawal", icon: Users, path: "/usdt-withdrawal", permission: "WITHDRAW MANAGEMENT" },
-    ],
-  },
-  {
-    label: "USERS",
-    items: [
-      { label: "user-info", icon: Users, path: "/user-info", permission: "USER INFO" },
-    ],
-  },
-  {
-    label: "TRANSACTIONS",
-    items: [
-      { label: "All Transactions", icon: Mail, path: "/all-transactions", permission: "WALLET MANAGEMENT" },
-      { label: "PG Transactions", icon: Mail, path: "/pg-transactions", permission: "WALLET MANAGEMENT" },
-      { label: "Payment-Gateway", icon: Mail, path: "/paymentgateway", permission: "PAYMENTGATEWAYS" },
-      { label: "Buy-History", icon: Mail, path: "/buy-history", permission: "BUY HISTORY" },
-    ],
-  },
-  {
-    label: "MANUALS",
-    items: [
-      { label: "ManualKYC", icon: Mail, path: "/manual-kyc", permission: "MANUAL KYC" },
-      { label: "ManualAccounts", icon: Mail, path: "/manual-accounts", permission: "MANUAL TRANSACTION" },
-    ],
-  },
-  {
-    label: "REPORTS",
-    items: [
-      { label: "Team-Reports", icon: Mail, path: "/team-reports", permission: "TEAM REPORT" },
-      { label: "Team-Investments", icon: Mail, path: "/team-investments", permission: "TEAM REPORT" },
-      { label: "Reports", icon: Mail, path: "/reports", permission: "TEAM REPORT" },
-    ],
-  },
-  {
-    label: "BONUS",
-    items: [
-      { label: "Gradual Bonus", icon: Mail, path: "/gradual-bonus", permission: "GRADUAL BONUS" },
-      { label: "Bonus Coin History", icon: Mail, path: "/bonus-coin-history", permission: "SUPER BONUS" },
-      { label: "Available-Balance", icon: Mail, path: "/available-balance", permission: "AVAILABLE BALANCE" },
-    ],
-  },
-  {
-    label: "WEALTHPLANS",
-    items: [
-      { label: "Wealth Plan order-1", icon: Mail, path: "/wealth-plan-1", permission: "WEALTH PLANS" },
-      { label: "Wealth Plan log 1", icon: Mail, path: "/wealth-plan-log-1", permission: "WEALTH PLANS" },
-      { label: "Wealth Plan order-2", icon: Mail, path: "/wealth-plan-2", permission: "WEALTH PLANS" },
-      { label: "Wealth Plan log 2", icon: Mail, path: "/wealth-plan-log-2", permission: "WEALTH PLANS" },
-      { label: "Wealth Plan order-3", icon: Mail, path: "/wealth-plan-3", permission: "WEALTH PLANS" },
-      { label: "Wealth Plan log 3", icon: Mail, path: "/wealth-plan-log-3", permission: "WEALTH PLANS" },
-    ],
-  },
-  {
-    label: "NOTIFICATIONS",
-    items: [
-      { label: "Announcements", icon: Mail, path: "/announcements", permission: "APP ANNOUNCEMENTS" },
-      { label: "Notifications", icon: Mail, path: "/notifications", permission: "NOTIFICATIONS" },
-      { label: "zoom-meetings", icon: Mail, path: "/zoommeetings", permission: "ZOOM MEETING" },
-      { label: "Blogs", icon: Mail, path: "/blogs", permission: "BLOGS" },
-    ],
-  },
-  {
-    label: "SUPPORT",
-    items: [
-      { label: "Support", icon: Mail, path: "/support", permission: "SUPPORT" },
-      { label: "Legal", icon: Mail, path: "/legal", permission: "LEGAL UPDATION" },
-      { label: "freezed-Groups", icon: Mail, path: "/freezedgroups", permission: "FREEZED GROUPS" },
-      { label: "Not-Verified-Users", icon: Mail, path: "/not-verified-users", permission: "NOT VERIFIED USERS" },
-    ],
-  },
-  {
-    label: "SETTINGS",
-    items: [
-      { label: "ICO", icon: Mail, path: "/ico", permission: "ICO MANAGEMENT" },
-      { label: "Delete Accounts", icon: Star, path: "/delete-accounts", permission: "DELETE ACCOUNTS" },
-      { label: "Settings", icon: Settings, path: "/settings", permission: "SETTING" },
-    ],
-  },
-];
+
 
 // ─── ACCOUNTANT (role === 3) ───
 const ACCOUNTANT_SECTIONS = [
@@ -890,25 +804,13 @@ const ACCOUNTANT_SECTIONS = [
   },
 ];
 
-// ─── ROLE 4 ───
-const ROLE4_SECTIONS = [
-  {
-    label: "REPORTS",
-    items: [
-      { label: "CreditReport", icon: "/sidebar/tree.png", path: "/credit-report" },
-      { label: "DebitReport", icon: "/sidebar/tree.png", path: "/debit-report" },
-      { label: "WithdrawalReport", icon: "/sidebar/tree.png", path: "/withdraw-report" },
-      { label: "User Info", icon: "/sidebar/usericon.png", path: "/get-user-details" },
-    ],
-  },
-];
 
 function getSectionsByRole(role, permissions) {
   switch (role) {
     case 0:
       return ADMIN_SECTIONS;
     case 2:
-      return ROLE2_SECTIONS
+      return ADMIN_SECTIONS
         .map((section) => ({
           ...section,
           items: section.items.filter(
@@ -919,7 +821,7 @@ function getSectionsByRole(role, permissions) {
     case 3:
       return ACCOUNTANT_SECTIONS;
     case 4:
-      return ROLE4_SECTIONS;
+      return ADMIN_SECTIONS;
     default:
       return [];
   }
@@ -990,7 +892,7 @@ function NavItem({ item, open, activePath, navigate, searchQuery = "" }) {
           className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${
             active
               ? "bg-[#eb660f] text-white shadow-lg shadow-[#eb660f]/25"
-              : "text-gray-500 group-hover:bg-[#252d38] group-hover:text-white"
+              : "text-white group-hover:bg-[#252d38] group-hover:text-white"
           }`}
         >
           {renderIcon(16)}
@@ -1002,10 +904,10 @@ function NavItem({ item, open, activePath, navigate, searchQuery = "" }) {
   return (
     <button
       onClick={handleClick}
-      className={`w-full flex items-center gap-2.5 px-2.5 py-3 rounded-[2px] mb-1.5 text-[15px] transition-all duration-200 cursor-pointer ${
+      className={`w-full flex items-center gap-2.5 px-2.5 py-3 rounded-xs mb-1.5 text-[12.5px] transition-all duration-200 cursor-pointer ${
         active
           ? "bg-[#eb660f] text-white font-base shadow-sm shadow-[#eb660f]/20"
-          : "hover:bg-[#252d38] text-gray-300 hover:text-white"
+          : "hover:bg-[#252d38] text-white hover:text-white"
       }`}
     >
       <span className="shrink-0">{renderIcon(16)}</span>
@@ -1098,7 +1000,7 @@ function SidebarContent({
           {expanded && (
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-8 h-8 rounded-full bg-[#eb660f]/20 flex items-center justify-center text-[#eb660f] font-bold text-sm shrink-0">
-                {(name?.charAt(0) || "A").toUpperCase()}
+                <img src="/logo.png"/>
               </div>
               <div className="min-w-0">
                 <p className="text-white text-xs font-semibold leading-tight truncate">
@@ -1334,8 +1236,8 @@ export default function Sidebar({ open, setOpen }) {
       {/* Desktop Sidebar */}
       <aside
         className={`hidden lg:flex h-screen flex-col bg-[#0a0a0a] text-white
-          border-r border-[#1a1a1a] transition-all duration-300
-          ${open ? "w-65" : "w-14"}`}
+          border-r border-[#1a1a1a] transition-all duration-300 p-0
+          ${open ? "w-60" : "w-14"}`}
       >
         <SidebarContent open={open} setOpen={setOpen} {...sharedProps} />
       </aside>

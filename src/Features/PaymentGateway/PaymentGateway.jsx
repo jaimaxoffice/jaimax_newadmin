@@ -268,7 +268,7 @@ const PaymentGatewayManagement = () => {
 
       {/* Stats Section */}
       {loadingStats ? (
-        <Loader />
+        <div></div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatCard
@@ -323,7 +323,7 @@ const PaymentGatewayManagement = () => {
 
         <button
           onClick={() => setFilterActive("all")}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer ${
+          className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "all"
               ? "bg-[#eb660f] text-white shadow-md shadow-[#eb660f]/20"
               : "bg-transparent border border-[#64748b] text-white hover:border-[#eb660f]/50"
@@ -334,7 +334,7 @@ const PaymentGatewayManagement = () => {
 
         <button
           onClick={() => setFilterActive("active")}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer ${
+          className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "active"
               ? "bg-[#eb660f] text-white shadow-md shadow-[#eb660f]/20"
               : "bg-transparent border border-[#64748b] text-white hover:border-[#eb660f]/50"
@@ -345,7 +345,7 @@ const PaymentGatewayManagement = () => {
 
         <button
           onClick={() => setFilterActive("inactive")}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer ${
+          className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "inactive"
               ? "bg-[#eb660f] text-white shadow-md shadow-[#eb660f]/20"
               : "bg-transparent border border-[#64748b] text-white hover:border-[#eb660f]/50"
@@ -363,7 +363,7 @@ const PaymentGatewayManagement = () => {
           {filteredGateways.map((gateway) => (
             <div
               key={gateway._id}
-              className={`relative overflow-hidden rounded-2xl shadow-lg
+              className={`relative overflow-hidden rounded-lg shadow-lg
                 transition-all duration-300 hover:-translate-y-2 group
                 bg-[#1b232d] border
                 ${
@@ -426,7 +426,7 @@ const PaymentGatewayManagement = () => {
 
                 {/* Info Rows */}
                 <div className="space-y-2 mb-5">
-                  <div className="bg-[#eb660f]/10 border border-[#eb660f]/20 rounded-xl p-3">
+                  <div className="bg-[#eb660f]/10 border border-[#eb660f]/20 rounded-xs p-3">
                     <div className="flex items-center gap-2 text-white mb-1">
                       <Calendar size={14} className="text-white" />
                       <span className="text-xs font-medium">Created</span>
@@ -440,7 +440,7 @@ const PaymentGatewayManagement = () => {
                     </p>
                   </div>
 
-                  <div className="bg-[#64748b]/10 border border-[#64748b]/20 rounded-xl p-3">
+                  <div className="bg-[#64748b]/10 border border-[#64748b]/20 rounded-xs p-3">
                     <div className="flex items-center gap-2 text-white mb-1">
                       <Activity size={14} className="text-white" />
                       <span className="text-xs font-medium">Last Updated</span>
@@ -468,7 +468,7 @@ const PaymentGatewayManagement = () => {
                       disabled={activatingGateway || updatingGateway}
                       className="flex-1 flex items-center justify-center gap-2 
                         bg-[#f59e0b] hover:bg-[#f59e0b]/90 text-white
-                        font-semibold py-2.5 px-4 rounded-lg text-sm
+                        font-semibold py-2.5 px-4 rounded-xs text-sm
                         disabled:opacity-50 disabled:cursor-not-allowed
                         transition-all duration-200 cursor-pointer min-h-10 "
                     >
@@ -487,9 +487,9 @@ const PaymentGatewayManagement = () => {
                       disabled={activatingGateway}
                       className="flex-1 flex items-center justify-center gap-2 
                         bg-[#eb660f] hover:bg-[#eb660f]/90 text-white
-                        font-semibold py-2.5 px-4 rounded-lg text-sm
+                        font-semibold py-2.5 px-4 rounded-xs text-sm
                         disabled:opacity-50 disabled:cursor-not-allowed
-                        transition-all duration-200 cursor-pointer min-h-[40px]"
+                        transition-all duration-200 cursor-pointer min-h-10"
                     >
                       {activatingGateway ? (
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -525,7 +525,7 @@ const PaymentGatewayManagement = () => {
             <button
               onClick={() => setShowCreateModal(true)}
               className="flex items-center gap-2 bg-[#eb660f] hover:bg-[#eb660f]/90 
-                text-white font-semibold py-3 px-6 rounded-xl text-sm
+                text-white font-semibold py-3 px-6 rounded-lg text-sm
                 transition-colors cursor-pointer"
             >
               <Plus size={20} />
@@ -562,7 +562,7 @@ const PaymentGatewayManagement = () => {
                 type="text"
                 value={editGatewayName}
                 onChange={(e) => setEditGatewayName(e.target.value)}
-                className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl 
+                className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-lg
                   py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f] 
                   focus:ring-1 focus:ring-[#eb660f]/50 transition-colors"
                 placeholder="Enter gateway name"
@@ -580,7 +580,7 @@ const PaymentGatewayManagement = () => {
               <button
                 onClick={handleEditGateway}
                 disabled={updatingGateway}
-                className="px-5 py-2.5 rounded-xl text-sm font-medium 
+                className="px-5 py-2.5 rounded-lg text-sm font-medium 
                   bg-[#eb660f] text-white hover:bg-[#eb660f]/90 
                   disabled:opacity-50 disabled:cursor-not-allowed 
                   transition-colors cursor-pointer flex items-center gap-2"
@@ -606,7 +606,7 @@ const PaymentGatewayManagement = () => {
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={resetCreateModal}
           />
-          <div className="relative bg-[#1b232d] border border-[#2a2c2f] rounded-2xl w-full max-w-md shadow-2xl">
+          <div className="relative bg-[#1b232d] border border-[#2a2c2f] rounded-lg w-full max-w-md shadow-2xl">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f]">
               <div className="flex items-center gap-2">

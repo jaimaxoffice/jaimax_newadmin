@@ -1,93 +1,26 @@
-// src/features/userinfo/EditableUser.jsx
 import React, { useState, useEffect } from "react";
 import { useUpdateUserInfoMutation } from "./userinfoApiSlice";
 import { toast } from "react-toastify";
-import ReadOnlyField from "../../reusableComponents/Inputs/ReadOnlyField";
-import Modal from "../../reusableComponents/Modals/Modals";
+import { Pencil, Loader2, X } from "lucide-react";
 
-const EditableField = ({
-  label,
-  fieldName,
-  value,
-  editValue,
-  isEditing,
-  onEdit,
-  onChange,
-  onSave,
-  isSaving,
-}) => {
-  return (
-    <div>
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <label className="text-xs font-medium text-[#8a8d93]">{label}</label>
-        {!isEditing && (
-          <button
-            onClick={onEdit}
-            className="text-[#eb660f] hover:text-[#eb660f]/80 cursor-pointer"
-          >
-            <svg
-              width="13"
-              height="13"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 20h9" />
-              <path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z" />
-            </svg>
-          </button>
-        )}
-      </div>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          autoComplete="off"
-          value={isEditing ? editValue : value}
-          onChange={(e) => onChange(e.target.value)}
-          readOnly={!isEditing}
-          className={`w-full bg-[#111214] border rounded-xl py-2.5 px-4 text-sm 
-            focus:outline-none transition-colors
-            ${
-              isEditing
-                ? "border-[#eb660f] text-white focus:ring-1 focus:ring-[#eb660f]/50"
-                : "border-[#2a2c2f] text-[#8a8d93] cursor-default"
-            }`}
-        />
-        {isEditing && (
-          <button
-            onClick={onSave}
-            disabled={isSaving}
-            className="bg-[#eb660f] hover:bg-[#eb660f]/90 disabled:bg-[#eb660f]/50
-              disabled:cursor-not-allowed text-[#111214] font-semibold px-4 py-2.5
-              rounded-xl text-xs transition-colors cursor-pointer whitespace-nowrap"
-          >
-            {isSaving ? "Saving..." : "Save"}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+const inputClass = `w-full bg-[#1b232d] border border-[#303f50] text-gray-400 rounded-lg 
+  px-4 py-2.5 text-sm focus:outline-none transition-colors disabled:opacity-70`;
+
+const editInputClass = `w-full bg-[#1b232d] border border-[#eb660f] text-white rounded-lg 
+  px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#eb660f]/50 transition-colors font-medium`;
 
 const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
-  const [updateUserInfo, { isLoading: isUpdating }] =
-    useUpdateUserInfoMutation();
+  const [updateUserInfo, { isLoading: isUpdating }] = useUpdateUserInfoMutation();
   const [isLoading, setIsLoading] = useState(false);
-
   const [editMode, setEditMode] = useState({
     name: false,
     email: false,
     phone: false,
     referenceId: false,
   });
-
   const [showSecretModal, setShowSecretModal] = useState(false);
   const [secretCode, setSecretCode] = useState("");
   const [pendingField, setPendingField] = useState(null);
-
   const [editedUser, setEditedUser] = useState({
     name: "",
     email: "",
@@ -96,6 +29,18 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
     referenceId: "",
     username: "",
   });
+
+  const formatDateWithAmPm = (isoString) => {
+    const date = new Date(isoString);
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    let hours = date.getUTCHours();
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+    const amPm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    return `${day}-${month}-${year} ${hours}:${minutes} ${amPm}`;
+  };
 
   useEffect(() => {
     if (user) {
@@ -110,55 +55,19 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
     }
   }, [user]);
 
-  const formatDateWithAmPm = (isoString) => {
-    if (!isoString || isoString === "N/A") return "N/A";
-    const date = new Date(isoString);
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    let hours = date.getUTCHours();
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-    const amAndPm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${day}-${month}-${year} ${hours}:${minutes} ${amAndPm}`;
-  };
-
-  const getCurrency = (countryCode, value) => {
-    return countryCode === 91
-      ? `₹${value?.toFixed(2)}`
-      : `$${value?.toFixed(2)}`;
-  };
-
-  const getKycStatus = (status) => {
-    const map = {
-      open: "In Open",
-      approve: "Approved",
-      inprogress: "In Progress",
-      reject: "Rejected",
-    };
-    return map[status] || "N/A";
-  };
-
   const handleEditClick = (fieldName) => {
-    if (fieldName === "referenceId" && user.isActive) {
-      setPendingField("referenceId");
-      setShowSecretModal(true);
-    } else {
-      setEditMode((prev) => ({ ...prev, [fieldName]: true }));
-    }
+    setEditMode((prev) => ({ ...prev, [fieldName]: true }));
   };
 
-  const handleInputChange = (fieldName, value) => {
-    setEditedUser((prev) => ({ ...prev, [fieldName]: value }));
+  const handleInputChange = (e, fieldName) => {
+    setEditedUser((prev) => ({ ...prev, [fieldName]: e.target.value }));
   };
 
   const handleSaveField = async (fieldName) => {
     if (isLoading || isUpdating) return;
-
     try {
       setIsLoading(true);
       const updateData = { username: user.username };
-
       if (fieldName === "phone") {
         updateData.phone = editedUser.phone.replace(/\D/g, "");
         updateData.countryCode = user.countryCode;
@@ -170,26 +79,14 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
 
       if (response?.success) {
         setEditMode((prev) => ({ ...prev, [fieldName]: false }));
-
-        if (setSearchTerm && searchTerm !== user.username) {
-          setSearchTerm(user.username);
-        }
-
+        if (setSearchTerm && searchTerm !== user.username) setSearchTerm(user.username);
         if (refetchUserInfo) refetchUserInfo();
-
-        toast.success(
-          `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} updated successfully!`,
-          { position: "top-center" }
-        );
+        toast.success(`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} updated successfully!`);
       } else {
-        toast.error(`Failed to update ${fieldName}: ${response?.message || "Unknown error"}`, {
-          position: "top-center",
-        });
+        toast.error(`Failed to update ${fieldName}: ${response?.message || "Unknown error"}`);
       }
     } catch (error) {
-      toast.error(`Error updating ${fieldName}: ${error.message || "Unknown error"}`, {
-        position: "top-center",
-      });
+      toast.error(`Error updating ${fieldName}: ${error.message || "Unknown error"}`);
     } finally {
       setIsLoading(false);
     }
@@ -199,207 +96,182 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
     if (secretCode === "devteam") {
       setShowSecretModal(false);
       setSecretCode("");
-      setEditMode((prev) => ({ ...prev, [pendingField]: true }));
-    } else {
-      toast.error("Invalid secret code!");
-    }
+      handleEditClick(pendingField);
+    } else toast.error("Invalid secret code!");
   };
+
+  const renderEditableField = (fieldName, label) => (
+    <div>
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <label className="text-sm font-medium text-gray-300">{label}</label>
+        {!editMode[fieldName] && (
+          <button
+            onClick={() => {
+              if (fieldName === "referenceId" && user.isActive) {
+                setPendingField("referenceId");
+                setShowSecretModal(true);
+              } else handleEditClick(fieldName);
+            }}
+            className="text-[#eb660f] hover:text-[#eb660f]/80 cursor-pointer"
+          >
+            <Pencil size={14} />
+          </button>
+        )}
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={editMode[fieldName] ? editedUser[fieldName] : user[fieldName]}
+          onChange={(e) => handleInputChange(e, fieldName)}
+          readOnly={!editMode[fieldName]}
+          className={editMode[fieldName] ? editInputClass : inputClass}
+        />
+        {editMode[fieldName] && (
+          <button
+            onClick={() => handleSaveField(fieldName)}
+            disabled={isUpdating || isLoading}
+            className="shrink-0 bg-[#eb660f] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
+              rounded-lg transition-colors disabled:opacity-50 cursor-pointer text-sm"
+          >
+            {isUpdating || isLoading ? "Saving..." : "Save"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderPhoneField = () => {
+    const phoneDisplay = `+${user.countryCode} ${user.phone}`;
+    return (
+      <div>
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <label className="text-sm font-medium text-gray-300">Phone</label>
+          {!editMode.phone && (
+            <button onClick={() => handleEditClick("phone")} className="text-[#eb660f] cursor-pointer">
+              <Pencil size={14} />
+            </button>
+          )}
+        </div>
+        <div className="flex gap-2">
+          {editMode.phone ? (
+            <>
+              <input
+                type="text"
+                value={editedUser.phone}
+                onChange={(e) => handleInputChange(e, "phone")}
+                placeholder="Phone number without country code"
+                className={editInputClass}
+              />
+              <button
+                onClick={() => handleSaveField("phone")}
+                disabled={isUpdating || isLoading}
+                className="shrink-0 bg-[#eb660f] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
+                  rounded-lg transition-colors disabled:opacity-50 cursor-pointer text-sm"
+              >
+                {isUpdating || isLoading ? "Saving..." : "Save"}
+              </button>
+            </>
+          ) : (
+            <input type="text" value={phoneDisplay} readOnly className={inputClass} />
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderReadOnlyField = (label, value) => (
+    <div>
+      <label className="block text-sm font-medium text-gray-300 mb-1.5">{label}</label>
+      <input type="text" value={value} readOnly disabled className={inputClass + " disabled:opacity-60"} />
+    </div>
+  );
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="w-8 h-8 border-4 border-[#eb660f] border-t-transparent rounded-full animate-spin" />
+      <div className="flex items-center justify-center py-8">
+        <Loader2 size={24} className="text-[#eb660f] animate-spin mr-2" />
+        <span className="text-gray-400">Loading user details...</span>
       </div>
     );
   }
 
-  const isSaving = isUpdating || isLoading;
+  const kycStatusMap = {
+    open: "In Open",
+    approve: "Approved",
+    inprogress: "In Progress",
+    reject: "Rejected",
+  };
 
   return (
-    <div className="space-y-5">
-      {/* Title */}
-      <h2 className="text-center text-2xl font-semibold text-[#eb660f]">
-        User Details
-      </h2>
-
-      {/* Editable Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <EditableField
-          label="Name"
-          fieldName="name"
-          value={user.name}
-          editValue={editedUser.name}
-          isEditing={editMode.name}
-          onEdit={() => handleEditClick("name")}
-          onChange={(val) => handleInputChange("name", val)}
-          onSave={() => handleSaveField("name")}
-          isSaving={isSaving}
-        />
-
-        <ReadOnlyField label="User ID" value={user.username} />
-
-        <EditableField
-          label="Email"
-          fieldName="email"
-          value={user.email}
-          editValue={editedUser.email}
-          isEditing={editMode.email}
-          onEdit={() => handleEditClick("email")}
-          onChange={(val) => handleInputChange("email", val)}
-          onSave={() => handleSaveField("email")}
-          isSaving={isSaving}
-        />
-
-        {/* Phone */}
-        <div>
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <label className="text-xs font-medium text-[#8a8d93]">Phone</label>
-            {!editMode.phone && (
-              <button
-                onClick={() => handleEditClick("phone")}
-                className="text-[#eb660f] hover:text-[#eb660f]/80 cursor-pointer"
-              >
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 20h9" />
-                  <path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z" />
-                </svg>
-              </button>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              autoComplete="off"
-              value={
-                editMode.phone
-                  ? editedUser.phone
-                  : `+${user.countryCode} ${user.phone}`
-              }
-              onChange={(e) => handleInputChange("phone", e.target.value)}
-              readOnly={!editMode.phone}
-              placeholder={editMode.phone ? "Phone without country code" : ""}
-              className={`w-full bg-[#111214] border rounded-xl py-2.5 px-4 text-sm 
-                focus:outline-none transition-colors placeholder-[#555]
-                ${
-                  editMode.phone
-                    ? "border-[#eb660f] text-white focus:ring-1 focus:ring-[#eb660f]/50"
-                    : "border-[#2a2c2f] text-[#8a8d93] cursor-default"
-                }`}
-            />
-            {editMode.phone && (
-              <button
-                onClick={() => handleSaveField("phone")}
-                disabled={isSaving}
-                className="bg-[#eb660f] hover:bg-[#eb660f]/90 disabled:bg-[#eb660f]/50
-                  disabled:cursor-not-allowed text-[#111214] font-semibold px-4 py-2.5
-                  rounded-xl text-xs transition-colors cursor-pointer whitespace-nowrap"
-              >
-                {isSaving ? "Saving..." : "Save"}
-              </button>
-            )}
-          </div>
-        </div>
-
-        <ReadOnlyField
-          label="Referral Amount"
-          value={getCurrency(user.countryCode, user.referenceInr)}
-        />
-
-        <EditableField
-          label="Referrer ID"
-          fieldName="referenceId"
-          value={user.referenceId}
-          editValue={editedUser.referenceId}
-          isEditing={editMode.referenceId}
-          onEdit={() => handleEditClick("referenceId")}
-          onChange={(val) => handleInputChange("referenceId", val)}
-          onSave={() => handleSaveField("referenceId")}
-          isSaving={isSaving}
-        />
-
-        <ReadOnlyField label="Tokens" value={user.tokens} />
-        <ReadOnlyField label="INR" value={user.Inr} />
-        <ReadOnlyField label="Referral Count" value={user.referenceCount} />
-        <ReadOnlyField
-          label="Status"
-          value={user.isActive ? "Active" : "Inactive"}
-        />
-        <ReadOnlyField
-          label="Account Created On"
-          value={formatDateWithAmPm(user.createdAt)}
-        />
-        <ReadOnlyField
-          label="Account Activated At"
-          value={
-            user.activeDate && user.activeDate !== "N/A"
-              ? formatDateWithAmPm(user.activeDate)
-              : "N/A"
-          }
-        />
-        <ReadOnlyField
-          label="Wallet Amount"
-          value={getCurrency(user.countryCode, user.walletBalance)}
-        />
-        <ReadOnlyField
-          label="Verified"
-          value={user.isVerified ? "Verified" : "Not Verified"}
-        />
-        <ReadOnlyField
-          label="KYC Status"
-          value={getKycStatus(user.kycStatus)}
-        />
-      </div>
-
+    <div>
       {/* Secret Code Modal */}
-      <Modal
-        isOpen={showSecretModal}
-        onClose={() => {
-          setShowSecretModal(false);
-          setSecretCode("");
-        }}
-        title="Enter Secret Code"
-        size="sm"
-      >
-        <div className="space-y-4">
-          <input
-            type="password"
-            value={secretCode}
-            onChange={(e) => setSecretCode(e.target.value)}
-            placeholder="Secret Code"
-            className="w-full bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555]
-              rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[#eb660f]
-              focus:ring-1 focus:ring-[#eb660f]/50 transition-colors"
-          />
-          <div className="flex gap-3">
-            <button
-              onClick={() => {
-                setShowSecretModal(false);
-                setSecretCode("");
-              }}
-              className="flex-1 bg-[#2a2c2f] hover:bg-[#333] text-white py-3
-                rounded-xl text-sm font-medium transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleVerifySecretCode}
-              className="flex-1 bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 text-[#111214] py-3
-                rounded-xl text-sm font-semibold transition-colors cursor-pointer"
-            >
-              Verify
-            </button>
+      {showSecretModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60" onClick={() => { setShowSecretModal(false); setSecretCode(""); }} />
+          <div className="relative bg-[#1b232d] rounded-xl p-6 w-full max-w-xs text-center border border-[#303f50]">
+            <h3 className="text-[#eb660f] font-semibold mb-4">Enter Secret Code</h3>
+            <input
+              type="password"
+              placeholder="Secret Code"
+              value={secretCode}
+              onChange={(e) => setSecretCode(e.target.value)}
+              className="w-full bg-[#111827] border border-[#303f50] text-white rounded-lg px-4 py-2.5 text-sm 
+                focus:outline-none focus:border-[#eb660f] mb-4 placeholder-gray-500"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={handleVerifySecretCode}
+                className="flex-1 bg-[#eb660f] text-white py-2.5 rounded-lg font-semibold hover:bg-[#d55a0e] 
+                  transition-colors cursor-pointer"
+              >
+                Verify
+              </button>
+              <button
+                onClick={() => { setShowSecretModal(false); setSecretCode(""); }}
+                className="flex-1 bg-gray-600 text-white py-2.5 rounded-lg font-semibold hover:bg-gray-500 
+                  transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
+
+      <h2 className="text-[#eb660f] text-xl font-bold text-center mb-6">User Details</h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {renderEditableField("name", "Name")}
+        {renderReadOnlyField("User ID", user.username)}
+        {renderEditableField("email", "Email")}
+        {renderPhoneField()}
+        {renderReadOnlyField(
+          "Referral Amount",
+          user.countryCode === 91
+            ? `₹${user.referenceInr.toFixed(2)}`
+            : `$${user.referenceInr.toFixed(2)}`
+        )}
+        {renderEditableField("referenceId", "Referrer ID")}
+        {renderReadOnlyField("Tokens", user.tokens)}
+        {renderReadOnlyField("INR", user.Inr)}
+        {renderReadOnlyField("Referral Count", user.referenceCount)}
+        {renderReadOnlyField("Status", user.isActive ? "Active" : "Inactive")}
+        {renderReadOnlyField("Account Created On", formatDateWithAmPm(user.createdAt))}
+        {renderReadOnlyField(
+          "Account Activated At",
+          user.activeDate && user.activeDate !== "N/A"
+            ? formatDateWithAmPm(user.activeDate)
+            : "N/A"
+        )}
+        {renderReadOnlyField(
+          "Wallet Amount",
+          user.countryCode === 91
+            ? `₹${user.walletBalance.toFixed(2)}`
+            : `$${user.walletBalance.toFixed(2)}`
+        )}
+        {renderReadOnlyField("Verified", user.isVerified ? "Verified" : "Not Verified")}
+        {renderReadOnlyField("KYC Status", kycStatusMap[user.kycStatus] || "N/A")}
+      </div>
     </div>
   );
 };

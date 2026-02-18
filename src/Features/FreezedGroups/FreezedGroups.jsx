@@ -257,7 +257,7 @@ const FrezzedGroupManagement = () => {
         <div className="flex w-full">
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
 <PerPageSelector
-  options={[5, 15, 25, 50, 100]}
+  options={[10,20,40,60,80,100]}
   onChange={(value) =>
     setState((prev) => ({
       ...prev,
@@ -484,7 +484,7 @@ const GroupFormModal = ({
                          rounded-xl py-2.5 px-4 placeholder-[#555]
                          focus:outline-none focus:border-[#eb660f] focus:ring-1 focus:ring-[#eb660f]/50
                          transition-all duration-200 hover:border-[#3a3c3f]
-                         [color-scheme:dark]"
+                         [scheme:dark]"
             />
           </FormField>
 
@@ -551,7 +551,7 @@ const AddUsersModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-gradient-to-r from-[#eb660f] to-[#ff8533]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#eb660f] to-[#ff8533]">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <UserPlus size={14} />
             Add Users to Group
@@ -572,7 +572,7 @@ const AddUsersModal = ({
           <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl p-3 flex items-center gap-3">
             <div
               className="w-8 h-8 rounded-full bg-[#eb660f]/10 flex items-center 
-                          justify-center text-[#eb660f] flex-shrink-0"
+                          justify-center text-[#eb660f] shrink-0"
             >
               <KeyPersonIcon />
             </div>
@@ -658,7 +658,7 @@ const DynamicUserInputs = ({ users, onChange, onAdd, onRemove }) => (
           <button
             type="button"
             onClick={() => onRemove(index)}
-            className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-xl
+            className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl
                        border border-red-500/30 text-red-400 bg-transparent
                        hover:bg-red-500 hover:text-white hover:border-red-500
                        transition-all duration-200 cursor-pointer"

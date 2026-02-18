@@ -120,7 +120,7 @@ const Wealthlogs3O = () => {
                 <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
                   <PerPageSelector
                     value={state.perPage}
-                    options={[10, 30, 50]}
+                    options={[10,20,40,60,80,100]}
                     onChange={(value) =>
                       setState((prev) => ({
                         ...prev,
