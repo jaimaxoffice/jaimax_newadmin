@@ -633,6 +633,7 @@ const ADMIN_SECTIONS = [
     items: [
       { label: "user-info", icon: UserSearch, path: "/user-info" },
       { label: "Admin-Users", icon: UserCog, path: "/admin-user" },
+      { label: "User-Summary", icon: UserCog, path: "/user-summary" },
     ],
   },
   {
@@ -800,14 +801,13 @@ function NavItem({ item, open, activePath, navigate, searchQuery = "" }) {
         className="w-full flex justify-center mb-1 group cursor-pointer"
       >
         <div
-          className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${
-            active
-              ? "bg-[#b9fd5c] text-black shadow-lg shadow-[#b9fd5c]/25"
-              : "text-white group-hover:bg-[#ffff] group-hover:text-[#b9fd5c]"
-          }`}
+          className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${active
+            ? "bg-[#b9fd5c] text-black shadow-lg shadow-[#b9fd5c]/25"
+            : "text-white group-hover:bg-[#ffff] group-hover:text-[#b9fd5c]"
+            }`}
         >
           <IconComponent
-            size={16}
+            size={20}
             strokeWidth={active ? 2.5 : 1.8}
             className="transition-all duration-200"
           />
@@ -819,21 +819,19 @@ function NavItem({ item, open, activePath, navigate, searchQuery = "" }) {
   return (
     <button
       onClick={handleClick}
-      className={`group w-full flex items-center gap-2.5 px-2.5 py-3 rounded-xs mb-1.5 text-[12.5px] transition-all duration-200 cursor-pointer ${
-        active
-          ? "bg-[#b9fd5c] text-black font-semibold shadow-sm shadow-[#b9fd5c]/20"
-          : "hover:bg-[#252d38] text-white hover:text-white font-semibold"
-      }`}
+      className={`group w-full flex items-center gap-2.5 px-2.5 py-3 rounded-xs mb-1.5 text-[12.5px] transition-all duration-200 cursor-pointer ${active
+        ? "bg-[#b9fd5c] text-black font-semibold shadow-sm shadow-[#b9fd5c]/20"
+        : "hover:bg-[#252d38] text-white hover:text-white font-semibold"
+        }`}
     >
       <span
-        className={`shrink-0 transition-all duration-200 ${
-          active
-            ? "text-black"
-            : "text-white group-hover:text-[#b9fd5c]"
-        }`}
+        className={`shrink-0 transition-all duration-200 ${active
+          ? "text-black"
+          : "text-white group-hover:text-[#b9fd5c]"
+          }`}
       >
         <IconComponent
-          size={16}
+          size={20}
           strokeWidth={active ? 2.5 : 1.8}
           className="transition-all duration-200"
         />
@@ -968,11 +966,10 @@ function SidebarContent({
         {expanded && (
           <div className="mt-2">
             <div
-              className={`flex items-center gap-2 bg-[#111111] rounded-lg px-2.5 py-2 text-xs border transition-colors duration-200 ${
-                searchQuery
-                  ? "border-[#b9fd5c]/50 ring-1 ring-[#b9fd5c]/20"
-                  : "border-[#1a1a1a]"
-              }`}
+              className={`flex items-center gap-2 bg-[#111111] rounded-lg px-2.5 py-2 text-xs border transition-colors duration-200 ${searchQuery
+                ? "border-[#b9fd5c]/50 ring-1 ring-[#b9fd5c]/20"
+                : "border-[#1a1a1a]"
+                }`}
             >
               <Search
                 size={13}

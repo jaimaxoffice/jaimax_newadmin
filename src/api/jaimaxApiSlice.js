@@ -9,7 +9,7 @@ const baseQuery = fetchBaseQuery({
     headers.set("Access-Control-Allow-Origin", "*");
     headers.set(
       "Access-Control-Allow-Methods",
-      "GET, POST, PUT,PATCH, DELETE, OPTIONS"
+      "GET, POST, PUT,PATCH, DELETE, OPTIONS",
     );
 
     const token = localStorage.getItem("token");
@@ -33,7 +33,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
     const refreshResult = await baseQuery(
       { url: "/Auth/refreshToken", method: "GET" },
       api,
-      extraOptions
+      extraOptions,
     );
 
     if (refreshResult?.data) {

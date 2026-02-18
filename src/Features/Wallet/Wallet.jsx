@@ -19,7 +19,7 @@ import completedSvg from "/images/memeber.svg";
 import holdSvg from "/images/hold.svg";
 import failedSvg from "/images/fail.svg";
 const WalletApprove = () => {
-   const {
+  const {
     state,
     setState,
     selectedStatus,
@@ -33,9 +33,9 @@ const WalletApprove = () => {
     searchDelay: 1000,
   });
 
-const [selectedData, setSelectedData] = useState(null);
+  const [selectedData, setSelectedData] = useState(null);
 
-const [modals, setModals] = useState({
+  const [modals, setModals] = useState({
     action: false,
     edit: false,
   });
@@ -258,34 +258,34 @@ const [modals, setModals] = useState({
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-{statusCounts && (
-  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    <StatCard
-      title="Pending"
-      value={statusCounts.Pending || 0}
-      image={pendingSvg}
-      variant="pending"
-    />
-    <StatCard
-      title="Completed"
-      value={statusCounts.Completed || 0}
-      image={completedSvg}
-      variant="completed"
-    />
-    <StatCard
-      title="Hold"
-      value={statusCounts.Hold || 0}
-      image={holdSvg}
-      variant="hold"
-    />
-    <StatCard
-      title="Failed"
-      value={statusCounts.Failed || 0}
-      image={failedSvg}
-      variant="failed"
-    />
-  </div>
-)}
+        {statusCounts && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              title="Pending"
+              value={statusCounts.Pending || 0}
+              image={pendingSvg}
+              variant="pending"
+            />
+            <StatCard
+              title="Completed"
+              value={statusCounts.Completed || 0}
+              image={completedSvg}
+              variant="completed"
+            />
+            <StatCard
+              title="Hold"
+              value={statusCounts.Hold || 0}
+              image={holdSvg}
+              variant="hold"
+            />
+            <StatCard
+              title="Failed"
+              value={statusCounts.Failed || 0}
+              image={failedSvg}
+              variant="failed"
+            />
+          </div>
+        )}
         {/* Table Section */}
         <div className="bg-[#282f35] border border-[#303f50] rounded-lg overflow-hidden ">
           {/* Header */}
@@ -296,7 +296,7 @@ const [modals, setModals] = useState({
                   {/* Per Page */}
 
                   <PerPageSelector
-                    options={[10,20,40,60,80,100]}
+                    options={[10, 20, 40, 60, 80, 100]}
                     onChange={(value) =>
                       setState((prev) => ({
                         ...prev,
