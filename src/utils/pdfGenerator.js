@@ -4,6 +4,7 @@ import autoTable from "jspdf-autotable";
 
 const T = {
   primary: [235, 102, 15],
+  // primary: [185, 253, 92],
   bg: [255, 255, 255],
   text: [33, 37, 41],
   muted: [108, 117, 125],
@@ -20,7 +21,11 @@ const T = {
 
 class PDFGenerator {
   constructor(opts = {}) {
-    this.doc = new jsPDF(opts.orientation || "portrait", "mm", opts.format || "a4");
+    this.doc = new jsPDF(
+      opts.orientation || "portrait",
+      "mm",
+      opts.format || "a4",
+    );
     this.theme = T;
     this.title = opts.title || "Report";
     this.subtitle = opts.subtitle || "";
@@ -72,11 +77,19 @@ class PDFGenerator {
     doc.setFontSize(6.5);
     doc.setTextColor(...theme.light);
     doc.text(
-      new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
-      this.pageWidth - margins.right, 8, { align: "right" }
+      new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }),
+      this.pageWidth - margins.right,
+      8,
+      { align: "right" },
     );
     doc.setFontSize(6);
-    doc.text(`Page ${currentPage}`, this.pageWidth - margins.right, 12, { align: "right" });
+    doc.text(`Page ${currentPage}`, this.pageWidth - margins.right, 12, {
+      align: "right",
+    });
 
     // Bottom line
     doc.setDrawColor(...theme.border);
@@ -103,8 +116,14 @@ class PDFGenerator {
 
       doc.setFontSize(5.5);
       doc.setTextColor(...theme.light);
-      doc.text(`© ${new Date().getFullYear()} ${this.company}`, margins.left, fy);
-      doc.text(`${i}/${total}`, this.pageWidth - margins.right, fy, { align: "right" });
+      doc.text(
+        `© ${new Date().getFullYear()} ${this.company}`,
+        margins.left,
+        fy,
+      );
+      doc.text(`${i}/${total}`, this.pageWidth - margins.right, fy, {
+        align: "right",
+      });
     }
     return this;
   }
@@ -139,8 +158,16 @@ class PDFGenerator {
     doc.setFont("helvetica", opts.bold ? "bold" : opts.fontStyle || "normal");
     doc.setTextColor(...color);
 
-    const lines = doc.splitTextToSize(String(text), opts.maxWidth || this.contentWidth);
-    const x = align === "center" ? this.pageWidth / 2 : align === "right" ? this.pageWidth - margins.right : margins.left;
+    const lines = doc.splitTextToSize(
+      String(text),
+      opts.maxWidth || this.contentWidth,
+    );
+    const x =
+      align === "center"
+        ? this.pageWidth / 2
+        : align === "right"
+          ? this.pageWidth - margins.right
+          : margins.left;
     doc.text(lines, x, this.currentY, { align });
     this.currentY += lines.length * (fs * 0.42) + 1.5;
     doc.setFont("helvetica", "normal");
@@ -163,11 +190,21 @@ class PDFGenerator {
     if (opts.style === "dashed") {
       let x = margins.left;
       while (x < this.pageWidth - margins.right) {
-        doc.line(x, this.currentY, Math.min(x + 2.5, this.pageWidth - margins.right), this.currentY);
+        doc.line(
+          x,
+          this.currentY,
+          Math.min(x + 2.5, this.pageWidth - margins.right),
+          this.currentY,
+        );
         x += 4;
       }
     } else {
-      doc.line(margins.left, this.currentY, this.pageWidth - margins.right, this.currentY);
+      doc.line(
+        margins.left,
+        this.currentY,
+        this.pageWidth - margins.right,
+        this.currentY,
+      );
     }
 
     this.currentY += 2.5;
@@ -218,7 +255,15 @@ class PDFGenerator {
     this.checkPageBreak(ch);
 
     doc.setFillColor(...theme.cardBg);
-    doc.roundedRect(margins.left, this.currentY, this.contentWidth, ch, 1, 1, "F");
+    doc.roundedRect(
+      margins.left,
+      this.currentY,
+      this.contentWidth,
+      ch,
+      1,
+      1,
+      "F",
+    );
 
     pairs.forEach((p, i) => {
       const col = i % cols;
@@ -247,9 +292,12 @@ class PDFGenerator {
     const self = this;
 
     autoTable(doc, {
-      head: opts.showHead !== false ? [columns.map((c) => c.header)] : undefined,
+      head:
+        opts.showHead !== false ? [columns.map((c) => c.header)] : undefined,
       body: data.map((row, rowIndex) =>
-        columns.map((c) => (c.render ? c.render(row, rowIndex) : row[c.accessor] ?? "—"))
+        columns.map((c) =>
+          c.render ? c.render(row, rowIndex) : (row[c.accessor] ?? "—"),
+        ),
       ),
       startY: opts.startY || this.currentY,
       margin: {
@@ -275,7 +323,8 @@ class PDFGenerator {
         cellPadding: opts.compact !== false ? 2 : 3,
       },
       bodyStyles: { fillColor: theme.rowEven },
-      alternateRowStyles: opts.striped !== false ? { fillColor: theme.rowOdd } : undefined,
+      alternateRowStyles:
+        opts.striped !== false ? { fillColor: theme.rowOdd } : undefined,
       columnStyles: opts.columnStyles || {},
       tableLineColor: theme.border,
       tableLineWidth: 0.08,
@@ -301,7 +350,15 @@ class PDFGenerator {
     const { doc, theme, margins } = this;
 
     doc.setFillColor(...theme.cardBg);
-    doc.roundedRect(margins.left, this.currentY, this.contentWidth, ch, 1, 1, "F");
+    doc.roundedRect(
+      margins.left,
+      this.currentY,
+      this.contentWidth,
+      ch,
+      1,
+      1,
+      "F",
+    );
 
     doc.setFillColor(...theme.primary);
     doc.rect(margins.left, this.currentY + 1.5, 1.2, ch - 3, "F");
@@ -321,7 +378,7 @@ class PDFGenerator {
 
       doc.setFont("helvetica", "bold");
       doc.setTextColor(...(item.color || theme.text));
-      doc.text(String(item.value), margins.left + 45, iy);
+      doc.text(String(item.value), margins.left + 65, iy);
     });
 
     this.currentY += ch + 3;
@@ -338,7 +395,15 @@ class PDFGenerator {
     const colW = this.contentWidth / 2;
 
     doc.setFillColor(...theme.cardBg);
-    doc.roundedRect(margins.left, this.currentY, this.contentWidth, ch, 1, 1, "F");
+    doc.roundedRect(
+      margins.left,
+      this.currentY,
+      this.contentWidth,
+      ch,
+      1,
+      1,
+      "F",
+    );
 
     doc.setFillColor(...theme.primary);
     doc.rect(margins.left, this.currentY, this.contentWidth, 0.8, "F");
@@ -371,7 +436,15 @@ class PDFGenerator {
 
   // ─── Status Helper ───────────────────────────────────────
   static status(s) {
-    const map = { 0: "Pending", 1: "Approved", 2: "Rejected", active: "Active", inactive: "Inactive", completed: "Completed", failed: "Failed" };
+    const map = {
+      0: "Pending",
+      1: "Approved",
+      2: "Rejected",
+      active: "Active",
+      inactive: "Inactive",
+      completed: "Completed",
+      failed: "Failed",
+    };
     return map[s] || String(s);
   }
 
@@ -394,7 +467,9 @@ class PDFGenerator {
   // ─── Download ────────────────────────────────────────────
   download(filename) {
     this.addFooter();
-    this.doc.save(filename || `${this.title.replace(/\s+/g, "_")}_${Date.now()}.pdf`);
+    this.doc.save(
+      filename || `${this.title.replace(/\s+/g, "_")}_${Date.now()}.pdf`,
+    );
     return this;
   }
 
