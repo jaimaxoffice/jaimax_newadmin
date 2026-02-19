@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useAddManualAccountsMutation } from "./manualAccountsApiSlice";
-import { FileText, Upload } from "lucide-react";
+import { FileText, Upload ,RotateCcw } from "lucide-react";
 import InputField from "../../reusableComponents/Inputs/InputField";
 import FileUpload from "../../reusableComponents/Inputs/FileUpload";
 import Alert from "../../reusableComponents/Alerts/Alerts";
-import SubmitButton from "../../reusableComponents/Buttons/SubmitButton";
-
+import Button from "../../reusableComponents/Buttons/Button";
 const AddManualAccountsForm = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -156,9 +155,9 @@ const AddManualAccountsForm = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 rounded-lg">
             {/* Left - Fields */}
-            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-[5px] overflow-hidden">
               <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
                 <div className="w-8 h-8 rounded-lg bg-[#b9fd5c]/15 flex items-center justify-center">
                   <FileText size={16} className="text-[#b9fd5c]" />
@@ -210,7 +209,7 @@ const AddManualAccountsForm = () => {
             </div>
 
             {/* Right - Upload */}
-            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+            <div className="bg-[#282f35] border border-[#2a2c2f] rounded-[5px] overflow-hidden">
               <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2c2f]">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
                   <Upload size={16} className="text-[#b9fd5c]" />
@@ -239,37 +238,37 @@ const AddManualAccountsForm = () => {
           </div>
 
           {/* Submit */}
-          <div className="flex flex-col-reverse sm:flex-row items-center gap-3 justify-end 
-            bg-[#282f35] border border-[#2a2c2f] rounded-lg px-5 py-4"
-          >
-            <button
-              type="button"
-              onClick={() => {
-                setFormData({
-                  username: "",
-                  transactionId: "",
-                  transactionAmount: "",
-                  utrRef: "",
-                });
-                removeFile();
-                setErrors({});
-                reset();
-              }}
-              className="w-full sm:w-auto bg-[#111214] hover:bg-[#2a2c2f] text-[#8a8d93] 
-                hover:text-white border border-[#2a2c2f] px-8 py-2 rounded-lg text-sm 
-                font-medium transition-colors cursor-pointer"
-            >
-              Reset Form
-            </button>
-            <div className="w-full sm:w-auto">
-              <SubmitButton
-                label="Add Transaction"
-                loadingLabel="Processing..."
-                isLoading={isLoading}
-                fullWidth
-              />
-            </div>
-          </div>
+<div className="flex flex-col-reverse sm:flex-row items-center gap-3 justify-end 
+  bg-[#282f35] border border-[#2a2c2f] rounded-[5px] px-5 py-4"
+>
+  <Button
+    type="button"
+    onClick={() => {
+      setFormData({
+        username: "",
+        transactionId: "",
+        transactionAmount: "",
+        utrRef: "",
+      });
+      removeFile();
+      setErrors({});
+      reset();
+    }}
+    variant="secondary"
+    icon={RotateCcw}
+    className="w-full sm:w-auto"
+  >
+    Reset Form
+  </Button>
+  
+  <Button
+    type="submit"
+    loading={isLoading}
+    className="w-full sm:w-auto"
+  >
+    {isLoading ? "Processing..." : "Add Transaction"}
+  </Button>
+</div>
         </form>
       </div>
     </div>

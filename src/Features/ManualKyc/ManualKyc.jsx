@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useAddManualKycMutation } from "./manualKycApiSlice";
 import { toast } from "react-toastify";
-import { FileText, User, Building2, Info } from "lucide-react";
+import { FileText, User, Building2, Info,RotateCcw  } from "lucide-react";
 import InputField from "../../reusableComponents/Inputs/InputField";
 import TextareaField from "../../reusableComponents/Inputs/TextareaField";
-import SectionCard from "../../reusableComponents/Cards/SectionCard";
 import DocumentUpload from "../../reusableComponents/Inputs/DocumentUpload";
 import Alert from "../../reusableComponents/Alerts/Alerts";
 import SubmitButton from "../../reusableComponents/Buttons/SubmitButton";
 
+import Button from "../../reusableComponents/Buttons/Button";
 const ManualKycAccounts = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -388,28 +388,26 @@ const ManualKycAccounts = () => {
           </div>
 
           {/* Action Buttons */}
-          <div
-            className="flex flex-col-reverse sm:flex-row items-center gap-3 justify-end 
-               rounded-lg px-5 py-4"
-          >
-            <button
-              type="button"
-              onClick={resetForm}
-              className="w-full sm:w-auto bg-[#111214] hover:bg-[#2a2c2f] text-[#8a8d93] 
-                hover:text-white border border-[#2a2c2f] px-8 py-2 rounded-lg text-sm 
-                font-medium transition-colors cursor-pointer"
-            >
-              Reset Form
-            </button>
-            <div className="w-full sm:w-auto">
-              <SubmitButton
-                label="Submit KYC"
-                loadingLabel="Submitting..."
-                isLoading={isLoading || !!apiError}
-                fullWidth
-              />
-            </div>
-          </div>
+<div className="flex flex-col-reverse sm:flex-row items-center gap-3 justify-end rounded-lg px-5 py-4">
+  <Button
+    type="button"
+    onClick={resetForm}
+    variant="secondary"
+    className="w-full sm:w-auto"
+    icon={RotateCcw}
+  >
+    Reset Form
+  </Button>
+  
+  <Button
+    type="submit"
+    loading={isLoading}
+    disabled={!!apiError}
+    className="w-full sm:w-auto"
+  >
+    {isLoading ? "Submitting..." : "Submit KYC"}
+  </Button>
+</div>
         </form>
       </div>
     </div>

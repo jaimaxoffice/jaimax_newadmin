@@ -5,7 +5,8 @@ import Modal from "../../reusableComponents/Modals/Modals";
 import { useSendUserMutation } from "./adminmanagementApiSlice";
 import { allPermissions, formatPermissionName } from "./permissions";
 import countryCodes from "../../layout/countryCodes.json";
-
+import Button from "../../reusableComponents/Buttons/Button";
+import FormField from "../../reusableComponents/Inputs/FormField";
 const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
   const [sendUser, { isLoading }] = useSendUserMutation();
 
@@ -117,7 +118,12 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Add New Admin User" size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Add New Admin User"
+      size="lg"
+    >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Name */}
@@ -166,7 +172,11 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
                 focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors"
             >
               {countryCodes.map((item, i) => (
-                <option key={i} value={item.countryCode} className="bg-[#111214]">
+                <option
+                  key={i}
+                  value={item.countryCode}
+                  className="bg-[#111214]"
+                >
                   {item.flag} {item.countryCode} - {item.country_name}
                 </option>
               ))}
@@ -231,76 +241,32 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
           )}
         </div>
 
-        {/* Footer Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t border-[#2a2c2f]">
-          <button
+          <Button
             type="button"
             onClick={handleClose}
             disabled={isLoading}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-              bg-transparent border border-[#2a2c2f] hover:bg-[#2a2c2f]
-              transition-colors cursor-pointer disabled:opacity-50"
+            variant="outline"
+            size="md"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+
+          <Button
             type="submit"
             disabled={isLoading}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-              bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
-              disabled:opacity-50 flex items-center gap-2"
+            variant="primary"
+            size="md"
+            icon={isLoading ? Loader2 : null}
+            className={isLoading ? "[&>svg]:animate-spin" : ""}
           >
-            {isLoading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Creating...
-              </>
-            ) : (
-              "Create User"
-            )}
-          </button>
+            {isLoading ? "Creating..." : "Create User"}
+          </Button>
         </div>
       </form>
     </Modal>
   );
 };
 
-// Reusable Form Field
-const FormField = ({
-  label,
-  name,
-  type = "text",
-  value,
-  onChange,
-  onKeyPress,
-  placeholder,
-  error,
-  maxLength,
-}) => (
-  <div>
-    <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
-      {label} *
-    </label>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      onKeyPress={onKeyPress}
-      placeholder={placeholder}
-      maxLength={maxLength}
-      autoComplete="off"
-      className={`w-full bg-[#111214] border text-white rounded-lg
-        py-2.5 px-3 text-sm focus:outline-none transition-colors
-        placeholder-[#555]
-        ${
-          error
-            ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/30"
-            : "border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30"
-        }`}
-    />
-    {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
-  </div>
-);
 
 export default AddAdminUser;

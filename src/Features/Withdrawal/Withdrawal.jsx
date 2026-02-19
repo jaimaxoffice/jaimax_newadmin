@@ -4,8 +4,6 @@ import { toast } from "react-toastify";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import DetailModal from "../../reusableComponents/Modals/DetailModal";
 import UTRModal from "../../reusableComponents/Modals/UTRModal";
 import ConfirmModal from "../../reusableComponents/Modals/ConfirmModal";
@@ -15,7 +13,7 @@ import {
 } from "./withdrawalApiSlice";
 import { formatDateWithAmPm, formatCurrency } from "../../utils/dateUtils";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
-import { Eye } from "lucide-react";
+import { Eye,Clock, CheckCircle2,XCircle} from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const Withdrawal = () => {
   const [state, setState] = useState({
@@ -311,29 +309,31 @@ const Withdrawal = () => {
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          <StatCard
-            title="Pending"
-            value={totalPending}
-            valueClass="text-white"
-            image="/images/pending.png"
-          />
-          <StatCard
-            title="Approved"
-            value={totalApproved}
-            valueClass="text-[#ffffffff]"
-            image="/images/approve.png"
-          />
-          <StatCard
-            title="Rejected"
-            value={totalRejected}
-            valueClass="text-white"
-            image="/images/approve.png"
-          />
-        </div>
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+  <StatCard
+    title="Pending"
+    value={totalPending}
+    icon={Clock}
+    status="pending"
+  />
+
+  <StatCard
+    title="Approved"
+    value={totalApproved}
+    icon={CheckCircle2}
+    status="approved"
+  />
+
+  <StatCard
+    title="Rejected"
+    value={totalRejected}
+    icon={XCircle}
+    status="rejected"
+  />
+</div>
 
         {/* Table Section */}
-        <div className="bg-[#282f35] border border-[#303f50] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35]  rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

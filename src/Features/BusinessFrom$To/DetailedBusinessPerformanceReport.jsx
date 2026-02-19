@@ -22,7 +22,7 @@ import {
   useGetDetailedDirectChainUsersBusinessMutation,
 } from "./businessApiSlice";
 
-const inputClass = `w-full bg-[#282f35] border border-[#303f50] text-white rounded-lg 
+const inputClass = `w-full bg-[#282f35]  text-white rounded-lg 
   px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
   focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
   placeholder-gray-500 disabled:opacity-50`;
@@ -370,7 +370,7 @@ const DetailedBusinessPerformanceReport = () => {
       </div>
 
       {/* Search Form */}
-      <div className="bg-[#282f35] border border-[#303f50] rounded-xl p-5 mb-6">
+      <div className="bg-[#282f35]  rounded-xl p-5 mb-6">
         <form onSubmit={formik.handleSubmit}>
           <div className="flex flex-col sm:flex-row items-end gap-4">
             <div className="w-full sm:flex-1 max-w-md">
@@ -453,7 +453,7 @@ const DetailedBusinessPerformanceReport = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+          <div className="bg-[#282f35]  rounded-xl overflow-hidden mb-6">
             {activeTab === "direct" && (
               <>
                 <SearchBar
@@ -491,7 +491,7 @@ const DetailedBusinessPerformanceReport = () => {
 
           {/* Excluded Users Summary */}
           {(excludedDirectUsers.length > 0 || excludedChainUsers.length > 0) && (
-            <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+            <div className="bg-[#282f35]  rounded-xl overflow-hidden mb-6">
               <div className="px-5 py-3 bg-red-500/20 border-b border-[#303f50]">
                 <div className="flex items-center gap-2">
                   <AlertTriangle size={16} className="text-red-400" />
@@ -564,7 +564,7 @@ const DetailedBusinessPerformanceReport = () => {
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setShowReportModal(false)}
           />
-          <div className="relative w-full max-w-2xl bg-[#282f35] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
+          <div className="relative w-full max-w-2xl bg-[#282f35]  rounded-xl shadow-2xl overflow-hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#303f50]">
               <div className="flex items-center gap-3">
@@ -712,7 +712,7 @@ function SearchBar({ query, setQuery, placeholder, totalCount, filteredCount }) 
             placeholder={placeholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-[#111827] border border-[#303f50] text-white rounded-lg 
+            className="w-full bg-[#111827]  text-white rounded-lg 
               pl-9 pr-9 py-2 text-sm focus:outline-none focus:border-[#b9fd5c] 
               focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors placeholder-gray-500"
           />

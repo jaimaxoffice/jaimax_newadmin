@@ -52,7 +52,7 @@ const initialValues = {
   type: "",
 };
 
-const inputClass = `w-full bg-[#111827] border border-[#303f50] text-white rounded-lg 
+const inputClass = `w-full bg-[#111827]  text-white rounded-lg 
   px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
   focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
   placeholder-gray-500 disabled:opacity-50`;
@@ -219,7 +219,7 @@ function ZoomMeeting() {
             ${
               i === current
                 ? "bg-[#b9fd5c] text-white shadow-lg shadow-[#b9fd5c]/25"
-                : "bg-[#282f35] text-gray-400 border border-[#303f50] hover:border-[#b9fd5c]/50 hover:text-white"
+                : "bg-[#282f35] text-gray-400  hover:border-[#b9fd5c]/50 hover:text-white"
             }`}
         >
           {i}
@@ -318,7 +318,7 @@ function ZoomMeeting() {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
           {/* Form Section */}
           <div className="xl:col-span-4">
-            <div className="bg-[#1e293b] border border-[#303f50] rounded-xl p-6">
+            <div className="bg-[#1e293b]  rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-11 h-11 rounded-full bg-[#b9fd5c] flex items-center justify-center">
                   <Plus size={22} className="text-white" />
@@ -664,7 +664,7 @@ function ZoomMeeting() {
                         handlePageChange(pagination.currentPage - 1)
                       }
                       disabled={!pagination.hasPrevPage || loadingMeetings}
-                      className="w-9 h-9 rounded-lg bg-[#282f35] border border-[#303f50] text-gray-400 
+                      className="w-9 h-9 rounded-lg bg-[#282f35]  text-gray-400 
                         hover:border-[#b9fd5c]/50 hover:text-white flex items-center justify-center 
                         transition-colors disabled:opacity-30 cursor-pointer"
                     >
@@ -678,7 +678,7 @@ function ZoomMeeting() {
                         handlePageChange(pagination.currentPage + 1)
                       }
                       disabled={!pagination.hasNextPage || loadingMeetings}
-                      className="w-9 h-9 rounded-lg bg-[#282f35] border border-[#303f50] text-gray-400 
+                      className="w-9 h-9 rounded-lg bg-[#282f35]  text-gray-400 
                         hover:border-[#b9fd5c]/50 hover:text-white flex items-center justify-center 
                         transition-colors disabled:opacity-30 cursor-pointer"
                     >
@@ -703,7 +703,7 @@ function ZoomMeeting() {
             }}
           />
 
-          <div className="relative w-full max-w-2xl bg-[#282f35] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden">
+          <div className="relative w-full max-w-2xl bg-[#282f35]  rounded-xl shadow-2xl overflow-hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#303f50]">
               <div className="flex items-center gap-3">

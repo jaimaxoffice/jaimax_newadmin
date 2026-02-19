@@ -14,10 +14,7 @@ import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import { formatDateWithAmPm } from "../../utils/dateUtils";
 import useTableState from "../../hooks/useTableState";
-import pendingSvg from "/images/card.svg";
-import completedSvg from "/images/memeber.svg";
-import holdSvg from "/images/hold.svg";
-import failedSvg from "/images/fail.svg";
+import { Clock, CheckCircle2, PauseCircle, XCircle ,Check,Pause,X} from "lucide-react";
 const WalletApprove = () => {
   const {
     state,
@@ -134,10 +131,10 @@ const WalletApprove = () => {
 
   const getStatusStyle = (status) => {
     const map = {
-      Completed: "bg-[#0ecb6f]/10 text-[#0ecb6f]",
-      Pending: "bg-yellow-500/10 text-yellow-400",
-      Hold: "bg-blue-500/10 text-blue-400",
-      Failed: "bg-red-500/10 text-red-400",
+      Completed: " text-[#0ecb6f]",
+      Pending: " text-yellow-400",
+      Hold: " text-blue-400",
+      Failed: " text-red-400",
     };
     return map[status] || "bg-[#2a2c2f] text-[#8a8d93]";
   };
@@ -152,47 +149,45 @@ const WalletApprove = () => {
     }
 
     return (
-      <div className="flex items-center gap-1.5">
-        <button
-          onClick={() => handleAction(data.transactionId, "Approve")}
-          title="Approve"
-          className="w-8 h-8 flex items-center justify-center rounded-lg 
-            bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20 
-            transition-colors cursor-pointer text-sm font-bold"
-        >
-          ✓
-        </button>
+<div className="flex items-center gap-1.5">
+  <Button
+    onClick={() => handleAction(data.transactionId, "Approve")}
+    title="Approve"
+    variant="approve"
+    size="sm"
+  >
+    <Check size={16} />
+  </Button>
 
-        {data.transactionStatus !== "Hold" && (
-          <button
-            onClick={() => handleAction(data.transactionId, "Hold")}
-            title="Hold"
-            className="w-8 h-8 flex items-center justify-center rounded-lg 
-              bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 
-              transition-colors cursor-pointer text-sm font-bold"
-          >
-            ⏸
-          </button>
-        )}
+  {data.transactionStatus !== "Hold" && (
+    <Button
+      onClick={() => handleAction(data.transactionId, "Hold")}
+      title="Hold"
+      variant="hold"
+      size="sm"
+    >
+      <Pause size={16} />
+    </Button>
+  )}
 
-        <button
-          onClick={() => handleAction(data.transactionId, "Reject")}
-          title="Reject"
-          className="w-8 h-8 flex items-center justify-center rounded-lg 
-            bg-red-500/10 text-red-400 hover:bg-red-500/20 
-            transition-colors cursor-pointer text-sm font-bold"
-        >
-          ✕
-        </button>
+  <Button
+    onClick={() => handleAction(data.transactionId, "Reject")}
+    title="Reject"
+    variant="reject"
+    size="sm"
+  >
+    <X size={16} />
+  </Button>
 
-        <button
-          onClick={() => handleEdit(data)}
-          title="Edit"
-          className=" w-8 h-8  items-center justify-center rounded-lg  bg-green-500/10 text-blue-500 transition-colors cursor-pointer text-sm font-bold"
-        >
-          <PencilLine size={15} />
-        </button>
-      </div>
+  <Button
+    onClick={() => handleEdit(data)}
+    title="Edit"
+    variant="edit"
+    size="sm"
+  >
+    <PencilLine size={15} />
+  </Button>
+</div>
     );
   };
 
@@ -219,7 +214,7 @@ const WalletApprove = () => {
             href={row.screenshotUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-blue-800 hover:underline text-xs"
+            className="text-blue-500 hover:underline text-xs"
           >
             {row.transactionId}
           </a>
@@ -263,33 +258,33 @@ const WalletApprove = () => {
             <StatCard
               title="Pending"
               value={statusCounts.Pending || 0}
-              image={pendingSvg}
+              icon={Clock}
               variant="pending"
             />
             <StatCard
               title="Completed"
               value={statusCounts.Completed || 0}
-              image={completedSvg}
+              icon={CheckCircle2}
               variant="completed"
             />
             <StatCard
               title="Hold"
               value={statusCounts.Hold || 0}
-              image={holdSvg}
+              icon={PauseCircle}
               variant="hold"
             />
             <StatCard
               title="Failed"
               value={statusCounts.Failed || 0}
-              image={failedSvg}
+              icon={XCircle}
               variant="failed"
             />
           </div>
         )}
         {/* Table Section */}
-        <div className="bg-[#282f35] border border-[#303f50] rounded-lg overflow-hidden ">
+        <div className="bg-[#282f35]  rounded-lg overflow-hidden ">
           {/* Header */}
-          <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
+          <div className="px-4 sm:px-6 py-4 ">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex w-full">
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
@@ -338,13 +333,16 @@ const WalletApprove = () => {
           </div>
 
           {/* Desktop Table */}
-          <div className=" border border-[#303f50]">
+          <div className=" ">
             <Table
               columns={columns}
               data={transactions}
               isLoading={isLoading}
               currentPage={state.currentPage}
               perPage={state.perPage}
+              noDataTitle="No Transactions Found"
+              noDataMessage="You haven't made any transactions yet."
+              noDataIcon="search"
             />
           </div>
 

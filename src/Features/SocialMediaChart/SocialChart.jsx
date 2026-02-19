@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   const data = payload[0];
   return (
-    <div className="bg-[#282f35] border border-[#303f50] rounded-lg px-3 py-2 shadow-xl">
+    <div className="bg-[#282f35]  rounded-lg px-3 py-2 shadow-xl">
       <div className="flex items-center gap-2 mb-1">
         <div
           className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -176,7 +176,7 @@ export default function ReferralChart() {
 
 
       {/* Chart Card */}
-      <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden">
+      <div className="bg-[#282f35]  rounded-xl overflow-hidden">
         <div className="px-4 sm:px-5 py-4 border-b border-[#303f50] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <h2 className="text-white font-semibold">Referral Distribution</h2>
           <span className="text-gray-400 text-sm">
@@ -346,7 +346,7 @@ export default function ReferralChart() {
 
 function StatCard({ label, value, color, dotColor, isText = false }) {
   return (
-    <div className="bg-[#282f35] border border-[#303f50] rounded-xl p-4 hover:border-[#b9fd5c]/30 transition-all">
+    <div className="bg-[#282f35]  rounded-xl p-4 hover:border-[#b9fd5c]/30 transition-all">
       <div className="flex items-center gap-2 mb-2">
         <div
           className="w-2.5 h-2.5 rounded-full shrink-0"

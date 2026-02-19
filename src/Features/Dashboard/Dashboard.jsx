@@ -63,7 +63,7 @@ const SL = ({ children }) => (
 );
 
 const Card = ({ children, className = "", accent = false }) => (
-  <div className={`relative overflow-hidden rounded-[8px] border transition-all duration-300
+  <div className={`relative overflow-hidden rounded-[8px]  transition-all duration-300
     hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]
     ${accent
       ? "bg-gradient-to-br from-[#1a0e05] to-[#111820]"
@@ -75,8 +75,8 @@ const Card = ({ children, className = "", accent = false }) => (
 );
 
 const CardHeader = ({ title, action }) => (
-  <div className="flex items-center justify-between mb-4 serialHeading text-[20px]">
-    <p className=" font-bold text-white">{title}</p>
+  <div className="flex items-center justify-between mb-4  text-[20px] serialHeading">
+    <p className=" font-bold text-white serialHeading">{title}</p>
     {action && <span className=" font-bold text-[#b9fd5c] cursor-pointer hover:underline">{action}</span>}
   </div>
 );
@@ -523,7 +523,7 @@ const WithdrawalsCard = ({ withdrawals }) => {
           <span className="flex-1 text-[20px] font-bold  text-white serialHeading">Withdrawals</span>
         </div>
         <div className="grid grid-cols-2 gap-2 mb-3">
-          <div className="bg-[#0d1218] border  rounded-xl p-3 text-center">
+          <div className="bg-[#0d1218]   rounded-xl p-3 text-center">
             <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">Total</p>
             <p className="text-lg font-bold text-white">{fmtWhole(total)}</p>
           </div>
@@ -533,15 +533,15 @@ const WithdrawalsCard = ({ withdrawals }) => {
           </div>
         </div>
         <div className="space-y-2">
-          <div className="bg-[#0d1218] border  rounded-xl px-3 py-2">
+          <div className="bg-[#0d1218]   rounded-xl px-3 py-2">
             <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">Total Amount</p>
             <p className="text-lg font-bold text-[#b9fd5c]">₹{fmt(withdrawals.totalAmount?.$numberDecimal || 0)}</p>
           </div>
-          <div className="bg-[#0d1218] border  rounded-xl px-3 py-2">
+          <div className="bg-[#0d1218]   rounded-xl px-3 py-2">
             <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">Total Admin Fee</p>
             <p className="text-lg font-bold text-[#b9fd5c]">₹{fmt(withdrawals.totalAdminCharges?.$numberDecimal || 0)}</p>
           </div>
-          <div className="flex items-center justify-between bg-[#0d1218] border  rounded-lg px-3 py-2">
+          <div className="flex items-center justify-between bg-[#0d1218]   rounded-lg px-3 py-2">
             <span className="text-[10px] font-bold uppercase tracking-widest text-white">Approval Rate</span>
             <span className="text-xs font-bold text-green-400">{approvalRate}%</span>
           </div>
@@ -573,12 +573,12 @@ const WealthPlansCard = ({ wealthPlans }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-[#0d1218] border  rounded-xl p-3 text-center">
+          <div className="bg-[#0d1218]   rounded-xl p-3 text-center">
             <p className="text-xl font-bold text-white">{fmtWhole(totalOrders)}</p>
             <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">Total Orders</p>
 
           </div>
-          <div className="bg-[#d3e7b8ae] border  rounded-xl p-3 text-center">
+          <div className="bg-[#d3e7b8ae]   rounded-xl p-3 text-center">
 
             <p className="text-xl font-bold text-black">₹{fmtCompact(totalRaised)}</p>
 
@@ -590,7 +590,7 @@ const WealthPlansCard = ({ wealthPlans }) => {
           {plans.map(({ key, name, color }) => {
             const plan = wealthPlans[key] || {};
             return (
-              <div key={key} className="bg-[#0d1218] border  rounded-lg p-3">
+              <div key={key} className="bg-[#0d1218]   rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold" style={{ color }}>{name}</span>
                   <span className="text-[10px] text-black bg-[#b9fd5c] px-2 py-0.5 rounded-full">
@@ -685,18 +685,18 @@ const ActiveICOCard = ({ round, completedRounds, totalRounds }) => {
             {/* <p className="text-[9px] font-bold uppercase tracking-widest text-white">Active ICO</p> */}
             <p className="text-xl font-bold text-white serialHeading">Round {round.round}</p>
           </div>
-          <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/25 rounded-full px-2.5 py-1">
+          <div className="flex items-center gap-1.5 bg-green-500/10  rounded-full px-2.5 py-1">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             <span className="text-[9px] font-bold uppercase tracking-widest text-green-400">Live</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-[#0d1218] border  rounded-xl p-3 text-center">
+          <div className="bg-[#0d1218]   rounded-xl p-3 text-center">
             <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">Price INR</p>
             <p className="text-lg font-bold text-white">₹{round.atPriceInr}</p>
           </div>
-          <div className="bg-[#b9fd5c]/5 border border-[#b9fd5c]/20 rounded-xl p-3 text-center">
+          <div className="bg-[#b9fd5c]/5  rounded-xl p-3 text-center">
             <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">Price USDT</p>
             <p className="text-lg font-bold text-[#b9fd5c]">${round.atPriceUsdt}</p>
           </div>
@@ -745,7 +745,7 @@ const USDTCard = ({ usdt }) => (
 
       <div className="space-y-3">
         {/* Rate */}
-        <div className="bg-gradient-to-br from-emerald-500/5 to-emerald-600/5 border border-emerald-500/15 rounded-xl p-3">
+        <div className="bg-gradient-to-br from-emerald-500/5 to-emerald-600/5  rounded-xl p-3">
           <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1.5">Exchange Rate</p>
           <div className="flex items-baseline gap-2">
             <p className="text-2xl font-bold text-white">₹{fmt(usdt.rateInr)}</p>
@@ -754,7 +754,7 @@ const USDTCard = ({ usdt }) => (
         </div>
 
         {/* Equivalent Required */}
-        <div className="bg-[#0d1218] border  rounded-xl p-3">
+        <div className="bg-[#0d1218]   rounded-xl p-3">
           <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1.5">Equivalent Required</p>
           <div className="flex items-baseline gap-2">
             <p className="text-xl font-bold text-blue-400">{fmtWhole(usdt.equivalentUsdtRequired)}</p>
@@ -766,7 +766,7 @@ const USDTCard = ({ usdt }) => (
         </div>
 
         {/* Admin Balance */}
-        <div className="bg-[#0d1218] border  rounded-xl p-3">
+        <div className="bg-[#0d1218]   rounded-xl p-3">
           <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1.5">Admin Wallet</p>
           <div className="flex items-center justify-between">
             <div className="flex items-baseline gap-2">
@@ -874,7 +874,7 @@ const TopInvestorsCard = ({ topInvestors = [] }) => {
   };
 
   return (
-    <div className="bg-[#282f35] rounded-[8px] p-4 sm:p-6 w-full shadow-2xl">
+    <div className="bg-[#282f35] rounded-lg p-4 sm:p-6 w-full shadow-2xl">
 
       {/* Header */}
       <div className="mb-5">
@@ -1024,8 +1024,8 @@ const Dashboard = () => {
   const completedRounds = d.ico?.rounds?.filter(r => r.status === 2).length || 0;
 
   return (
-    <div className="min-h-screentext-white">
-      <div className="max-w-[1800px] mx-auto p-3 sm:p-5 mt-2 lg:p-6">
+    <div className="min-h-screen text-white mb-5 sm:mb-15">
+      <div className="max-w-450 mx-auto p-3 sm:p-5 mt-2 lg:p-6">
 
         {/* HEADER */}
         <Card className="mb-6 overflow-hidden border-0 bg-[#282f35] shadow-xl shadow-black/30">
@@ -1153,7 +1153,7 @@ const Dashboard = () => {
                     // { label: "Admin Users", value: d.community.adminUsers, icon: Shield, color: "text-amber-400" },
                     // { label: "Blocked Users", value: d.community.blockedUsers, icon: XCircle, color: "text-red-400" },
                   ].map(({ label, value, icon: Icon, color }) => (
-                    <div key={label} className="flex items-center justify-between bg-[#0d1218] border  rounded-[8px] p-3">
+                    <div key={label} className="flex items-center justify-between bg-[#0d1218]   rounded-[8px] p-3">
                       <div className="flex items-center gap-2">
                         <Icon size={14} className={color} />
                         <span className="text-[10px] text-white font-medium">{label}</span>

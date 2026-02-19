@@ -1,7 +1,7 @@
 // src/components/UTRModal.jsx
 import React from "react";
 import Modal from "./Modals";
-
+import Button from "../../reusableComponents/Buttons/Button";
 const UTRModal = ({ show, onClose, utrNumber, setUtrNumber, onSubmit }) => {
   return (
     <Modal isOpen={show} onClose={onClose} title="Enter UTR Number" size="sm">
@@ -23,22 +23,15 @@ const UTRModal = ({ show, onClose, utrNumber, setUtrNumber, onSubmit }) => {
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-              bg-transparent border border-[#2a2c2f] 
-              hover:bg-[#2a2c2f] transition-all duration-300 cursor-pointer"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onSubmit}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-              bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-all duration-300
-              cursor-pointer"
-          >
-            Submit & Approve
-          </button>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button onClick={onClose} variant="primary" size="md">
+              Cancel
+            </Button>
+
+            <Button onClick={onSubmit} variant="primary" size="md">
+              Submit & Approve
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>

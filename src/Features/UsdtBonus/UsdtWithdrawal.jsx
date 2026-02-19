@@ -16,8 +16,15 @@ import { useGetUsdtBonusListQuery } from "./usdtwithdrawalApiSlice";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import Loader from "../../reusableComponents/Loader/Loader";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
-import {formatDateWithAmPm} from "../../utils/dateUtils";
-       import { Clock, CheckCircle, XCircle, Wallet,PencilIcon  } from "lucide-react";
+import { formatDateWithAmPm } from "../../utils/dateUtils";
+import {
+  Hourglass,
+  CheckCircle,
+  XCircle,
+  Wallet,
+  PencilIcon,
+} from "lucide-react";
+
 const UsdtBonusList = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -174,7 +181,6 @@ const UsdtBonusList = () => {
             </div>
 
             <div className="flex flex-col items-center justify-center py-20 px-4">
-              
               <h3 className="text-white text-lg font-semibold mb-2">
                 Error Loading Data
               </h3>
@@ -189,7 +195,6 @@ const UsdtBonusList = () => {
                              bg-[#b9fd5c] text-white hover:bg-[#ff8533]
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
-                 
                   Try Again
                 </button>
                 <button
@@ -204,13 +209,10 @@ const UsdtBonusList = () => {
               </div>
             </div>
           </div>
-
-          
         </div>
       </div>
     );
   }
-
 
   const columns = [
     {
@@ -359,114 +361,92 @@ const UsdtBonusList = () => {
     },
   ];
 
-
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
-
         {/* Stat Cards */}
+        {/* USDT Withdrawal Stats */}
+        // Inside your component return:
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Pending"
+            value={totalPending}
+            // numericValue={totalPending}
+            icon={Hourglass}
+            status="pending"
+          />
 
+          <StatCard
+            title="Approved"
+            value={totalApproved}
+            // numericValue={totalApproved}
+            icon={CheckCircle}
+            status="approved"
+          />
 
-{/* USDT Withdrawal Stats */}
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-  <StatCard
-    title="Pending"
-    value={totalPending}
-    valueClass="text-white"
-   image="/images/pending.png"
-    // iconBg="bg-yellow-500/20"
-  />
-  <StatCard
-    title="Approved"
-    value={totalApproved}
-    valueClass="text-white"
-    image="/images/approve.png"
-    // iconBg="bg-green-500/20"
-  />
-  <StatCard
-    title="Rejected"
-    value={totalRejected}
-    valueClass="text-white"
-    image="/images/approve.png"
-    // iconBg="bg-red-500/20"
-  />
-  <StatCard
-    title="Total USDT"
-    value={`${totalUsdtAmount.toFixed(2)} USDT`}
-    valueClass="text-white"
-    icon={<Wallet size={32} strokeWidth={2} className="text-white" />}
-    bgClass="bg-[#544a24]"
-  />
-</div>
+          <StatCard
+            title="Rejected"
+            value={totalRejected}
+            // numericValue={totalRejected}
+            icon={XCircle}
+            status="rejected"
+          />
 
-
-
+          <StatCard
+            title="Total USDT"
+            value={totalUsdtAmount.toFixed(2)}
+            // numericValue={Math.floor(totalUsdtAmount)}
+            // suffix="USDT"
+            icon={Wallet}
+            // status="info"
+            // customBgClass="bg-[#544a24]"
+            // customIconColorClass="text-white"
+          />
+        </div>
         {/* Fetching Indicator */}
-        {isFetching && !isLoading && (
-          <Loader/>
-        )}
-
+        {isFetching && !isLoading && <Loader />}
         {/* Main Table Card */}
         <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              
-               
-                 
-                  <div className="flex w-full">
-                    <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-                      {/* Per Page */}
-                      {/* <select
-                        onChange={handlePerPageChange}
-                        value={state.perPage}
-                        disabled={isLoading}
-                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-lg
+              <div className="flex w-full">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
+                  <PerPageSelector
+                    options={[10, 20, 40, 60, 80, 100]}
+                    onChange={(value) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: value,
+                        currentPage: 1,
+                      }))
+                    }
+                  />
+
+                  {/* Type Filter */}
+                  <select
+                    onChange={handleTypeChange}
+                    value={selectedType}
+                    disabled={isLoading}
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
                          py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
                          transition-colors cursor-pointer disabled:opacity-50"
-                      >
-                        <option value="10">10</option>
-                        <option value="30">30</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                      </select> */}
-                     <PerPageSelector
-  options={[10,20,40,60,80,100]}
-  onChange={(value) =>
-    setState((prev) => ({
-      ...prev,
-      perPage: value,
-      currentPage: 1,
-    }))
-  }
-/>
+                  >
+                    <option value="">All Types</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
 
-                      {/* Type Filter */}
-                      <select
-                        onChange={handleTypeChange}
-                        value={selectedType}
-                        disabled={isLoading}
-                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                         py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
-                         transition-colors cursor-pointer disabled:opacity-50"
-                      >
-                        <option value="">All Types</option>
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
-                      </select>
-
-                      <SearchBar
-                        onSearch={handleSearch}
-                        placeholder={
-                          isSearching ? "Searching..." : "Search username..."
-                        }
-                      />
-                    </div>
-                  </div>
-                
-              
+                  <SearchBar
+                    onSearch={handleSearch}
+                    placeholder={
+                      isSearching ? "Searching..." : "Search username..."
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div className="rounded-lg ">
@@ -476,6 +456,9 @@ const UsdtBonusList = () => {
               isLoading={isLoading}
               currentPage={state.currentPage}
               perPage={state.perPage}
+              noDataTitle="No Transactions Found"
+              noDataMessage="You didn't got any transactions yet."
+              noDataIcon="search"
             />
           </div>
         </div>
@@ -506,7 +489,7 @@ const UsdtBonusList = () => {
               detailModal.title === "Wallet Address" ? (
                 <WalletLargeIcon />
               ) : (
-                <PencilIcon  />
+                <PencilIcon />
               )
             }
             bgClass={
@@ -575,7 +558,6 @@ function getDecimalValue(field) {
   return parseFloat(field) || 0;
 }
 
-
 const WalletLargeIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -614,8 +596,6 @@ const NoteIcon = ({ className = "" }) => (
     <line x1="10" y1="9" x2="8" y2="9" />
   </svg>
 );
-
-
 
 const CopyIcon = ({ className = "" }) => (
   <svg

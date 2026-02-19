@@ -38,7 +38,7 @@ const BonusHistory = () => {
   const uniqueEmails = new Set(TableData.map((item) => item.email)).size;
   const totalTransactionAmount = TableData.reduce(
     (sum, item) => sum + (parseFloat(item.transactionAmount) || 0),
-    0
+    0,
   );
 
   // ─── Handlers ────────────────────────────────────────────────
@@ -105,8 +105,8 @@ const BonusHistory = () => {
       error?.status === 524
         ? "The request timed out. This might be due to a large dataset."
         : error?.status === 500
-        ? "Server error. Please try again later."
-        : error?.data?.message || "Something went wrong. Please try again.";
+          ? "Server error. Please try again later."
+          : error?.data?.message || "Something went wrong. Please try again.";
 
     return (
       <div>
@@ -215,35 +215,21 @@ const BonusHistory = () => {
     },
     {
       header: "Email",
-      render: (row) => (
-        <span className="">{row?.email || "N/A"}</span>
-      ),
+      render: (row) => <span className="">{row?.email || "N/A"}</span>,
     },
     {
       header: "Transaction Amount",
-      render: (row) => (
-        <span className="">
-          {row?.transactionAmount}
-        </span>
-      ),
+      render: (row) => <span className="">{row?.transactionAmount}</span>,
     },
     {
       header: "Transaction Type",
       render: (row) => (
-        <span
-          className={``}
-        >
-          {row?.transactionType || "N/A"}
-        </span>
+        <span className={``}>{row?.transactionType || "N/A"}</span>
       ),
     },
     {
       header: "Transaction ID",
-      render: (row) => (
-        <span className="">
-          {row?.transactionId || "N/A"}
-        </span>
-      ),
+      render: (row) => <span className="">{row?.transactionId || "N/A"}</span>,
     },
     {
       header: "Helped User",
@@ -261,40 +247,36 @@ const BonusHistory = () => {
     },
   ];
 
-
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
 
-
-
-
         {/* Main Table Card */}
         <div className="bg-[#1b232d] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+            {/* Filters - Right */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+              <PerPageSelector
+                options={[10, 20, 40, 60, 80, 100]}
+                onChange={(value) =>
+                  setState((prev) => ({
+                    ...prev,
+                    perPage: value,
+                    currentPage: 1,
+                  }))
+                }
+              />
 
-
-  {/* Filters - Right */}
-  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
-<PerPageSelector
-  options={[10,20,40,60,80,100]}
-  onChange={(value) =>
-    setState((prev) => ({
-      ...prev,
-      perPage: value,
-      currentPage: 1,
-    }))
-  }
-/>
-
-    <SearchBar
-      onSearch={handleSearch}
-      placeholder={isSearching ? "Searching..." : "Search name, email..."}
-    />
-  </div>
-</div>
+              <SearchBar
+                onSearch={handleSearch}
+                placeholder={
+                  isSearching ? "Searching..." : "Search name, email..."
+                }
+              />
+            </div>
+          </div>
 
           {/* Desktop Table */}
           <div className="rounded-lg ">
@@ -306,7 +288,6 @@ const BonusHistory = () => {
               perPage={state.perPage}
             />
           </div>
-
         </div>
 
         {/* Pagination */}

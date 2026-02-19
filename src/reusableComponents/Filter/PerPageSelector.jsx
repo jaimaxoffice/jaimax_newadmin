@@ -2,7 +2,7 @@
 //   return (
 //     <select
 //       onChange={(e) => onChange(Number(e.target.value))}
-//       className="bg-[#282f35] border border-[#303f50] text-white rounded-lg 
+//       className="bg-[#282f35]  text-white rounded-lg 
 //         py-2 px-3 text-sm focus:outline-none focus:border-[#b9fd5c] 
 //         hover:border-[#b9fd5c]/50 transition-colors duration-200 cursor-pointer
 //         appearance-none pr-8

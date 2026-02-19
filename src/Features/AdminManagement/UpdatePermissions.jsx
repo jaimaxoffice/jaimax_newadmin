@@ -2,10 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Modal from "../../reusableComponents/Modals/Modals";
-import { useViewUserQuery, useEditUserMutation } from "./adminmanagementApiSlice";
+import {
+  useViewUserQuery,
+  useEditUserMutation,
+} from "./adminmanagementApiSlice";
 import { allPermissions, formatPermissionName } from "./permissions";
 import countryCodes from "../../layout/countryCodes.json";
+import FormField from "../../reusableComponents/Inputs/FormField";
 
+import Button from "../../reusableComponents/Buttons/Button";
 const EditAdminUser = ({ isOpen, onClose, userId, onSuccess }) => {
   const { data: viewUser, isLoading: isFetching } = useViewUserQuery(userId, {
     skip: !userId,
@@ -125,7 +130,12 @@ const EditAdminUser = ({ isOpen, onClose, userId, onSuccess }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Edit Admin User" size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Edit Admin User"
+      size="lg"
+    >
       {isFetching ? (
         <div className="space-y-4">
           {[...Array(6)].map((_, i) => (
@@ -173,7 +183,11 @@ const EditAdminUser = ({ isOpen, onClose, userId, onSuccess }) => {
                   focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors"
               >
                 {countryCodes.map((item, i) => (
-                  <option key={i} value={item.countryCode} className="bg-[#111214]">
+                  <option
+                    key={i}
+                    value={item.countryCode}
+                    className="bg-[#111214]"
+                  >
                     {item.flag} {item.countryCode} - {item.country_name}
                   </option>
                 ))}
@@ -238,77 +252,29 @@ const EditAdminUser = ({ isOpen, onClose, userId, onSuccess }) => {
             )}
           </div>
 
-          {/* Footer */}
           <div className="flex justify-end gap-3 pt-4 border-t border-[#2a2c2f]">
-            <button
+            <Button
               type="button"
               onClick={handleClose}
               disabled={isUpdating}
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-                bg-transparent border border-[#2a2c2f] hover:bg-[#2a2c2f]
-                transition-colors cursor-pointer disabled:opacity-50"
+              variant="outline"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+
+            <Button
               type="submit"
-              disabled={isUpdating || isFetching}
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-                bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
-                disabled:opacity-50 flex items-center gap-2"
+              disabled={isFetching}
+              loading={isUpdating}
+              variant="primary"
             >
-              {isUpdating ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                "Update User"
-              )}
-            </button>
+              {isUpdating ? "Updating..." : "Update User"}
+            </Button>
           </div>
         </form>
       )}
     </Modal>
   );
 };
-
-// Reusable Form Field
-const FormField = ({
-  label,
-  name,
-  type = "text",
-  value,
-  onChange,
-  onKeyPress,
-  placeholder,
-  error,
-  maxLength,
-}) => (
-  <div>
-    <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
-      {label} *
-    </label>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      onKeyPress={onKeyPress}
-      placeholder={placeholder}
-      maxLength={maxLength}
-      autoComplete="off"
-      className={`w-full bg-[#111214] border text-white rounded-lg
-        py-2.5 px-3 text-sm focus:outline-none transition-colors
-        placeholder-[#555]
-        ${
-          error
-            ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/30"
-            : "border-[#2a2c2f] focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/30"
-        }`}
-    />
-    {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
-  </div>
-);
 
 export default EditAdminUser;

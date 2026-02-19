@@ -11,7 +11,7 @@ const NoAccess = () => {
       <section className="py-4 px-2 sm:px-4">
         <div className="w-full">
           {/* Header */}
-          <div className="bg-[#b9fd5c] border border-[#303f50] rounded-lg p-4 sm:p-6 mb-6">
+          <div className="bg-[#b9fd5c]  rounded-lg p-4 sm:p-6 mb-6">
             <h1 className="text-lg sm:text-xl font-semibold text-white">
               NO Access
             </h1>

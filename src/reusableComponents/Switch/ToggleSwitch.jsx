@@ -10,7 +10,7 @@ const ToggleSwitch = ({ checked, onChange }) => {
       }`}
     >
       <span
-        className={`absolute top-0 left-0 w-4 h-4 bg-white rounded-full transition-transform ${
+        className={`absolute top-0 left-0 w-3 h-3 bg-white rounded-full transition-transform ${
           checked ? "translate-x-5" : "translate-x-0"
         }`}
       />

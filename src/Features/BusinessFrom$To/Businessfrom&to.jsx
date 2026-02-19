@@ -36,7 +36,7 @@ import {
 } from "recharts";
 import { useGetBusinessDetailsByDateMutation } from "./getBusinessDetailsApiSlice";
 
-const inputClass = `w-full bg-[#282f35] border border-[#303f50] text-white rounded-lg 
+const inputClass = `w-full bg-[#282f35]  text-white rounded-lg 
   px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
   focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
   placeholder-gray-500 disabled:opacity-50`;
@@ -747,7 +747,7 @@ function GetBusinessDetails() {
 
       {/* View Toggle */}
       <div className="flex items-center gap-3 mb-6 flex-wrap">
-        <div className="flex bg-[#282f35] border border-[#303f50] rounded-lg p-0.5">
+        <div className="flex bg-[#282f35]  rounded-lg p-0.5">
           <button
             onClick={() => setCurrentView("analytics")}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
@@ -772,7 +772,7 @@ function GetBusinessDetails() {
       </div>
 
       {/* Search Form */}
-      <div className="bg-[#282f35] border border-[#303f50] rounded-xl p-5 mb-6">
+      <div className="bg-[#282f35]  rounded-xl p-5 mb-6">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -819,7 +819,7 @@ function GetBusinessDetails() {
         <>
           {/* Business Summary */}
           {dataFetched && usersData.length > 0 && (
-            <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+            <div className="bg-[#282f35]  rounded-xl overflow-hidden mb-6">
               <div className="px-5 py-4 border-b border-[#303f50]">
                 <h3 className="text-[#b9fd5c] font-semibold">Business Summary</h3>
               </div>
@@ -887,7 +887,7 @@ function GetBusinessDetails() {
 
           {/* User Info Card */}
           {dataFetched && currentUserData && (
-            <div className="bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden mb-6">
+            <div className="bg-[#282f35]  rounded-xl overflow-hidden mb-6">
               <div className="px-5 py-4 border-b border-[#303f50]">
                 <h3 className="text-[#b9fd5c] font-semibold">User Information</h3>
               </div>
@@ -942,7 +942,7 @@ function GetBusinessDetails() {
       {showModal && currentUserData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-          <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#282f35] border border-[#303f50] rounded-xl shadow-2xl overflow-hidden flex flex-col">
+          <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#282f35]  rounded-xl shadow-2xl overflow-hidden flex flex-col">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#303f50] shrink-0">
               <h3 className="text-lg font-semibold text-[#b9fd5c]">
@@ -982,7 +982,7 @@ function GetBusinessDetails() {
                     <SummaryCard label="Total Tokens" value={currentUserData.user.totalOrderedCoins?.toLocaleString() || "0"} />
                   </div>
 
-                  <div className="overflow-x-auto rounded-xl border border-[#303f50]">
+                  <div className="overflow-x-auto rounded-xl ">
                     <table className="w-full">
                       <thead>
                         <tr className="bg-gradient-to-r from-[#b9fd5c] to-[#f07d2c]">
@@ -1042,7 +1042,7 @@ function GetBusinessDetails() {
                     <SummaryCard label="Total Investment" value={`₹${currentUserData.user.totalInvestments?.toLocaleString() || "0"}`} />
                   </div>
 
-                  <div className="overflow-x-auto rounded-xl border border-[#303f50]">
+                  <div className="overflow-x-auto rounded-xl ">
                     <table className="w-full">
                       <thead>
                         <tr className="bg-linear-to-r from-[#b9fd5c] to-[#f07d2c]">

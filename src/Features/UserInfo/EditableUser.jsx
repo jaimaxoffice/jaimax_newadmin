@@ -3,7 +3,7 @@ import { useUpdateUserInfoMutation } from "./userinfoApiSlice";
 import { toast } from "react-toastify";
 import { Pencil, Loader2, X } from "lucide-react";
 
-const inputClass = `w-full bg-[#282f35] border border-[#303f50] text-gray-400 rounded-lg 
+const inputClass = `w-full bg-[#282f35]  text-gray-400 rounded-lg 
   px-4 py-2.5 text-sm focus:outline-none transition-colors disabled:opacity-70`;
 
 const editInputClass = `w-full bg-[#282f35] border border-[#b9fd5c] text-white rounded-lg 
@@ -208,14 +208,14 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
       {showSecretModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => { setShowSecretModal(false); setSecretCode(""); }} />
-          <div className="relative bg-[#282f35] rounded-xl p-6 w-full max-w-xs text-center border border-[#303f50]">
+          <div className="relative bg-[#282f35] rounded-xl p-6 w-full max-w-xs text-center ">
             <h3 className="text-[#b9fd5c] font-semibold mb-4">Enter Secret Code</h3>
             <input
               type="password"
               placeholder="Secret Code"
               value={secretCode}
               onChange={(e) => setSecretCode(e.target.value)}
-              className="w-full bg-[#111827] border border-[#303f50] text-white rounded-lg px-4 py-2.5 text-sm 
+              className="w-full bg-[#111827]  text-white rounded-lg px-4 py-2.5 text-sm 
                 focus:outline-none focus:border-[#b9fd5c] mb-4 placeholder-gray-500"
             />
             <div className="flex gap-2">

@@ -1,88 +1,43 @@
 
-// import React from "react";
-// import Loader from "../Loader/Loader";
-
-// const Table = ({ columns, data, isLoading, currentPage, perPage }) => {
-//   return (
-//     <div className="relative overflow-x-auto sidebar-scroll  p-4">
-//       {/* Overlay Loader */}
-//       {isLoading && <Loader />}
-
-//       {/* Table */}
-//       <table className="w-full ">
-//         <thead >
-//           <tr className="bg-[#b9fd5c]">
-//             {columns.map((col, i) => (
-//               <th
-//                 key={i}
-//                 className="px-2 py-2.5 text-[13.5px] font-bold text-black whitespace-nowrap text-center tableHead"
-//               >
-//                 {col.header}
-//               </th>
-//             ))}
-//           </tr>
-//         </thead>
-
-//         <tbody>
-//           {isLoading ? (
-//             // Placeholder rows to maintain table height
-//             Array.from({ length: perPage || 5 }).map((_, rowIndex) => (
-//               <tr
-//                 key={rowIndex}
-//                 className="bg-[#282f35] "
-//               >
-//                 {columns.map((_, colIndex) => (
-//                   <td
-//                     key={colIndex}
-//                     className="px-4 py-3 text-[12px] text-base whitespace-nowrap text-center"
-//                   >
-//                     —
-//                   </td>
-//                 ))}
-//               </tr>
-//             ))
-//           ) : data?.length === 0 ? (
-//             <tr>
-//               <td
-//                 colSpan={columns.length}
-//                 className="px-4 py-16 text-center text-white text-sm"
-//               >
-//                 No records found
-//               </td>
-//             </tr>
-//           ) : (
-//             data?.map((row, rowIndex) => (
-//               <tr
-//                 key={rowIndex}
-//                 className="bg-[#282f35] hover:bg-[#4851418d] transition-colors border-b border-[#343638]"
-//               >
-//                 {columns.map((col, colIndex) => (
-//                   <td
-//                     key={colIndex}
-//                     className={`px-4 py-3 text-[12px] text-white whitespace-nowrap tablebody ${col.cellClass || "text-center"}`}
-//                   >
-//                     {col.render
-//                       ? col.render(row, rowIndex, currentPage, perPage)
-//                       : (row[col.accessor] ?? "—")}
-//                   </td>
-//                 ))}
-//               </tr>
-//             ))
-//           )}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// export default Table;
-
-
 
 import React from "react";
 import Loader from "../Loader/Loader";
+import NoData from "./NoDataFound";
 
-const Table = ({ columns, data, isLoading, currentPage, perPage }) => {
+const Table = ({
+  columns,
+  data,
+  isLoading,
+  currentPage,
+  perPage,
+  // NoData props
+  noDataTitle = "No Records Found",
+  noDataMessage = "There are no records to display at the moment.",
+  noDataIcon = "inbox",
+  noDataAction = false,
+  noDataActionLabel = "Refresh",
+  onNoDataAction,
+}) => {
+  // Check if data is empty and not loading
+  const isEmpty = !isLoading && (!data || data.length === 0);
+
+  // If empty, show only NoData component (no table)
+  if (isEmpty) {
+    return (
+      <div className="p-4">
+        <NoData
+          title={noDataTitle}
+          message={noDataMessage}
+          icon={noDataIcon}
+          size="md"
+          action={noDataAction}
+          actionLabel={noDataActionLabel}
+          onAction={onNoDataAction}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-x-auto sidebar-scroll p-4">
       {isLoading && <Loader />}
@@ -119,6 +74,7 @@ const Table = ({ columns, data, isLoading, currentPage, perPage }) => {
 
         <tbody>
           {isLoading ? (
+            // Skeleton Loading Rows
             Array.from({ length: perPage || 5 }).map((_, rowIndex) => (
               <tr key={rowIndex} className="bg-[#282f35]">
                 {columns.map((col, colIndex) => (
@@ -136,21 +92,13 @@ const Table = ({ columns, data, isLoading, currentPage, perPage }) => {
                       }
                     `}
                   >
-                    —
+                    <div className="h-4 bg-gray-700/50 rounded animate-pulse mx-auto w-16" />
                   </td>
                 ))}
               </tr>
             ))
-          ) : data?.length === 0 ? (
-            <tr>
-              <td
-                colSpan={columns.length}
-                className="px-4 py-16 text-center text-white text-sm"
-              >
-                No records found
-              </td>
-            </tr>
           ) : (
+            // Data Rows
             data?.map((row, rowIndex) => (
               <tr
                 key={rowIndex}

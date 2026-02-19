@@ -257,7 +257,7 @@ const Support = () => {
 
 
         {/* Table Section */}
-        <div className="bg-[#282f35] border border-[#303f50] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35]  rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
             <div className="flex items-center justify-between">

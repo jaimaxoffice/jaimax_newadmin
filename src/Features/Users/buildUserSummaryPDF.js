@@ -126,7 +126,7 @@ export const buildUserSummaryPDF = (pdf, data) => {
         { header: "Name", accessor: "name" },
         { header: "Transaction ID", accessor: "transactionId" },
         // paymentMode
-        { header: "Payment Mode", render: (r) => r.paymentMode || "—" },
+        { header: "Payment Mode", render: (r) => r.paymentMode || "UPI" },
         { header: "Amount", render: (r) => fmtCur(r.transactionAmount) },
         {
           header: "Fee",
@@ -139,22 +139,7 @@ export const buildUserSummaryPDF = (pdf, data) => {
       { striped: true },
     );
   }
-
-  // if (invoices.length) {
-  //   pdf.checkPageBreak(30);
-  //   pdf.addSectionTitle(`Invoices (${invoices.length})`);
-  //   pdf.addTable(
-  //     [
-  //       { header: "Invoice No", accessor: "invoiceNo" },
-  //       { header: "Date", render: (r) => fmtDate(r.orderDate) },
-  //       { header: "Status", render: (r) => pdf.constructor.status(r.status) },
-  //       { header: "Coins", render: (r) => fmt(r.coins) },
-  //       { header: "Amount", render: (r) => fmtCur(r.amount) },
-  //     ],
-  //     invoices,
-  //     { striped: true },
-  //   );
-  // }
+  
 
   if (totalWithdrawn.length) {
     pdf.checkPageBreak(30);

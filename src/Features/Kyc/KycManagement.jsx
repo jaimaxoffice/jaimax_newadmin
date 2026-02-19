@@ -96,8 +96,8 @@ const KycApprove = () => {
 
   const getStatusIcon = (status) => {
     const map = {
-      open: <AlertCircle size={32} strokeWidth={2} className="text-white" />,
-      approve: <CheckCircle size={32} strokeWidth={2} className="text-white" />,
+      open: <AlertCircle size={32} strokeWidth={2} className="text-[#b9fd5c]" />,
+      approve: <CheckCircle size={32} strokeWidth={2} className="text-[#b9fd5c]" />,
       inprogress: <Clock size={32} strokeWidth={2} className="text-white" />,
       reject: <XCircle size={32} strokeWidth={2} className="text-white" />,
     };
@@ -228,16 +228,16 @@ const KycApprove = () => {
                 key={i}
                 title={getStatusText(item._id) || item._id}
                 value={item.count}
-                valueClass="text-[#b9fd5c]"
+                // valueClass="text-[#b9fd5c]"
                 icon={getStatusIcon(item._id)}
-                iconBg="bg-[#66462a]"
+                
               />
             ))}
           </div>
         )}
 
         {/* Table Section */}
-        <div className="bg-[#282f35] border border-[#303f50] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35]  rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

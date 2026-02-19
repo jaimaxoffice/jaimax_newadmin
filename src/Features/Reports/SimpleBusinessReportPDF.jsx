@@ -547,7 +547,7 @@ function ReportCard({
 }) {
   return (
     <div
-      className={`bg-[#282f35] border border-[#303f50] rounded-xl overflow-hidden 
+      className={`bg-[#282f35]  rounded-xl overflow-hidden 
         hover:${borderColor} transition-all duration-300 flex flex-col`}
     >
       <div className="p-5 flex flex-col flex-1">
@@ -570,7 +570,7 @@ function ReportCard({
           <>
             {/* Count */}
             <div className="flex-1 flex items-center justify-center mb-4">
-              <div className="w-full border border-[#303f50] rounded-xl p-4 text-center">
+              <div className="w-full  rounded-xl p-4 text-center">
                 <p className="text-3xl font-bold text-white mb-1">
                   {count || 0}
                 </p>

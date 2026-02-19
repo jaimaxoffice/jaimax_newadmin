@@ -613,6 +613,7 @@ import {
   Receipt,
   Banknote,
   HandCoins,
+  UserPen 
 } from "lucide-react";
 
 // ─── ADMIN (role === 0) ───
@@ -633,7 +634,7 @@ const ADMIN_SECTIONS = [
     items: [
       { label: "user-info", icon: UserSearch, path: "/user-info" },
       { label: "Admin-Users", icon: UserCog, path: "/admin-user" },
-      { label: "User-Summary", icon: UserCog, path: "/user-summary" },
+      { label: "User-Summary", icon: UserPen , path: "/user-summary" },
     ],
   },
   {
