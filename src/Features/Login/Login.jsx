@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "./loginApiSlice";
-import { toast } from "react-toastify";
-
+// import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
+import Cookies from "js-cookie";
 const Login = () => {
+  const toast = useToast();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     loginEmail: "",
@@ -58,88 +60,146 @@ const Login = () => {
 
   const [login, { isLoading }] = useLoginMutation();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    if (validate()) {
-      try {
-        const response = await login({
-          email: formData.loginEmail,
-          password: formData.loginPassword,
-          role: 0,
-        }).unwrap();
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   if (validate()) {
+  //     try {
+  //       const response = await login({
+  //         email: formData.loginEmail,
+  //         password: formData.loginPassword,
+  //         role: 0,
+  //       }).unwrap();
 
-        toast.success(`${response?.message}`, {
-          position: "top-center",
-        });
+  //       toast.success(`${response?.message}`, {
+  //         position: "top-center",
+  //       });
 
-        setRefresh(true);
-        localStorage.setItem("token", response?.data?.token);
-        localStorage.setItem("userData", JSON.stringify(response));
-        localStorage.setItem("username", response?.data?.username);
+  //       setRefresh(true);
+  //       localStorage.setItem("token", response?.data?.token);
+  //       localStorage.setItem("userData", JSON.stringify(response));
+  //       localStorage.setItem("username", response?.data?.username);
 
-        const userDataString = localStorage.getItem("userData");
-        localStorage.setItem("permissions", permissions);
+  //       const userDataString = localStorage.getItem("userData");
+  //       localStorage.setItem("permissions", permissions);
 
-        const userData = JSON.parse(userDataString);
-        permissions = userData?.data?.permissions;
+  //       const userData = JSON.parse(userDataString);
+  //       permissions = userData?.data?.permissions;
 
-        const isKycS = permissions?.includes("KYC MANAGEMENT");
-        const isWalletS = permissions?.includes("WALLET MANAGEMENT");
-        const isWithdrawalS = permissions?.includes("WITHDRAW MANAGEMENT");
+  //       const isKycS = permissions?.includes("KYC MANAGEMENT");
+  //       const isWalletS = permissions?.includes("WALLET MANAGEMENT");
+  //       const isWithdrawalS = permissions?.includes("WITHDRAW MANAGEMENT");
 
-        setRefresh(true);
-        localStorage.setItem("User Roles", isKycS);
+  //       setRefresh(true);
+  //       localStorage.setItem("User Roles", isKycS);
 
-        if (isKycS && isWalletS && !isWithdrawalS) {
-          setTimeout(() => {
-            setRefresh(true);
-            navigate("/kyc-management");
-          }, 1000);
-        } else if (!isKycS && isWalletS && isWithdrawalS) {
-          setRefresh(true);
-          setTimeout(() => {
-            navigate("/withdrawal");
-          }, 1000);
-        } else if (isKycS && !isWalletS && isWithdrawalS) {
-          setRefresh(true);
-          setTimeout(() => {
-            navigate("/kyc-management");
-          }, 1000);
-        } else if (isKycS && !isWalletS && !isWithdrawalS) {
-          setRefresh(true);
-          setTimeout(() => {
-            navigate("/kyc-management");
-          }, 1000);
-        } else if (!isKycS && isWalletS && !isWithdrawalS) {
-          setRefresh(true);
-          setTimeout(() => {
-            navigate("/wallet-management");
-          }, 1000);
-        } else if (!isKycS && !isWalletS && isWithdrawalS) {
-          setRefresh(true);
-          setTimeout(() => {
-            navigate("/withdrawal");
-          }, 1000);
-        } else if (isKycS && isWalletS && isWithdrawalS) {
-          setRefresh(true);
-          setTimeout(() => {
-            navigate("/kyc-management");
-          }, 1000);
-        } else {
-          setRefresh(true);
-          setTimeout(() => {
-            navigate("/");
-          }, 1000);
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error(`${error?.data?.message}`, {
-          position: "top-center",
-        });
-      }
-    }
-  };
+  //       if (isKycS && isWalletS && !isWithdrawalS) {
+  //         setTimeout(() => {
+  //           setRefresh(true);
+  //           navigate("/kyc-management");
+  //         }, 1000);
+  //       } else if (!isKycS && isWalletS && isWithdrawalS) {
+  //         setRefresh(true);
+  //         setTimeout(() => {
+  //           navigate("/withdrawal");
+  //         }, 1000);
+  //       } else if (isKycS && !isWalletS && isWithdrawalS) {
+  //         setRefresh(true);
+  //         setTimeout(() => {
+  //           navigate("/kyc-management");
+  //         }, 1000);
+  //       } else if (isKycS && !isWalletS && !isWithdrawalS) {
+  //         setRefresh(true);
+  //         setTimeout(() => {
+  //           navigate("/kyc-management");
+  //         }, 1000);
+  //       } else if (!isKycS && isWalletS && !isWithdrawalS) {
+  //         setRefresh(true);
+  //         setTimeout(() => {
+  //           navigate("/wallet-management");
+  //         }, 1000);
+  //       } else if (!isKycS && !isWalletS && isWithdrawalS) {
+  //         setRefresh(true);
+  //         setTimeout(() => {
+  //           navigate("/withdrawal");
+  //         }, 1000);
+  //       } else if (isKycS && isWalletS && isWithdrawalS) {
+  //         setRefresh(true);
+  //         setTimeout(() => {
+  //           navigate("/kyc-management");
+  //         }, 1000);
+  //       } else {
+  //         setRefresh(true);
+  //         setTimeout(() => {
+  //           navigate("/");
+  //         }, 1000);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //       toast.error(`${error?.data?.message}`, {
+  //         position: "top-center",
+  //       });
+  //     }
+  //   }
+  // };
 
+const handleLogin = async (e) => {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  try {
+    const response = await login({
+      email: formData.loginEmail,
+      password: formData.loginPassword,
+      role: 0,
+    }).unwrap();
+
+    toast.success(`${response?.message}`, { position: "top-center" });
+
+    setRefresh(true);
+
+    // ✅ If backend sets HTTP-only cookie, DO NOT store token in JS
+    // Cookies.set("token", ...) ❌ not needed / not possible for httpOnly
+
+    // ✅ Optional: store only small non-sensitive UI data (JS-readable cookie)
+    Cookies.set("adminUserData", JSON.stringify(response), {
+      expires: 7,
+      sameSite: "Lax",
+      secure: false, // set true in HTTPS production
+    });
+
+    Cookies.set("adminUsername", response?.data?.username || "", {
+      expires: 7,
+      sameSite: "Lax",
+      secure: false,
+    });
+    Cookies.set("adminToken", response?.data?.token || "", {
+      expires: 7,
+      sameSite: "Lax",
+      secure: false,
+    });
+
+    // ✅ permissions from response
+    const permissions = response?.data?.permissions || [];
+    const isKycS = permissions.includes("KYC MANAGEMENT");
+    const isWalletS = permissions.includes("WALLET MANAGEMENT");
+    const isWithdrawalS = permissions.includes("WITHDRAW MANAGEMENT");
+
+    // ✅ Optional: store UI flags (DON'T trust this for security)
+    Cookies.set("UserRoles", String(isKycS), {
+      expires: 7,
+      sameSite: "Lax",
+      secure: false,
+    });
+
+    setTimeout(() => {
+     navigate("/");
+    }, 0);
+  } catch (error) {
+    console.log(error);
+    toast.error(`${error?.data?.message}`, { position: "top-center" });
+  }
+};
   return (
     <div className="min-h-screen bg-[#111214] flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">

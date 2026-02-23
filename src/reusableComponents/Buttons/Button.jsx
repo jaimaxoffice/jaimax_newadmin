@@ -37,7 +37,7 @@ const variants = {
 
   const sizes = {
     sm: "px-3 py-1.5 text-xs",
-    md: "px-4 py-2.5 text-xs",
+    md: "px-4 py-2.5 text-sm",
     lg: "px-6 py-3 text-xs",
   };
 
@@ -49,9 +49,9 @@ const variants = {
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
-      {Icon && iconPosition === "left" && <Icon size={size === "sm" ? 14 : 16} />}
+      {Icon && iconPosition === "left" && <Icon size={size === "sm" ? 16 : 18} />}
       {children}
-      {Icon && iconPosition === "right" && <Icon size={size === "sm" ? 14 : 16} />}
+      {Icon && iconPosition === "right" && <Icon size={size === "sm" ? 18 : 16} />}
     </button>
   );
 };

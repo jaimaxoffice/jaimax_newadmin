@@ -3,16 +3,19 @@ import React, { useState, useEffect } from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import EditRoundModal from "./EditRoundModal";
+import {SquarePen } from "lucide-react"
 import {
   useGetRoundQuery,
   useUpdateRoundMutation,
   useGetExchangeQuery,
 } from "./icoApiSlice";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import Loader from "../../reusableComponents/Loader/Loader";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const IcoManagement = () => {
+  const toast = useToast();
   const [currentEditData, setCurrentEditData] = useState(null);
   const [errors, setErrors] = useState({});
   const [refresh, setRefresh] = useState(false);
@@ -203,7 +206,7 @@ const IcoManagement = () => {
           className="text-[#b9fd5c] text-xs font-medium 
             bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
         >
-          Edit
+          <SquarePen  size={17}/>
         </button>
       ),
     },

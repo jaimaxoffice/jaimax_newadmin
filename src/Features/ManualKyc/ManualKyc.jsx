@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAddManualKycMutation } from "./manualKycApiSlice";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import { FileText, User, Building2, Info,RotateCcw  } from "lucide-react";
 import InputField from "../../reusableComponents/Inputs/InputField";
 import TextareaField from "../../reusableComponents/Inputs/TextareaField";
@@ -10,6 +11,7 @@ import SubmitButton from "../../reusableComponents/Buttons/SubmitButton";
 
 import Button from "../../reusableComponents/Buttons/Button";
 const ManualKycAccounts = () => {
+  const toast = useToast();
   const [formData, setFormData] = useState({
     username: "",
     name: "",

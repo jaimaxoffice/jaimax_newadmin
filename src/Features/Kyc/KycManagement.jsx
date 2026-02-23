@@ -6,11 +6,13 @@ import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import KycViewModal from "./KycViewModal";
 import KycActionModal from "./KycActionModal";
 import { useKycListQuery } from "./kycApiSlice";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import { CheckCircle, XCircle, Clock, AlertCircle, Eye } from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const KycApprove = () => {
+  const toast = useToast();
   const [state, setState] = useState({
     currentPage: 1,
     perPage: 10,
@@ -209,7 +211,10 @@ const KycApprove = () => {
         </span>
       ),
     },
-    { header: "UPI ID", accessor: "upi_id" },
+   { 
+  header: "UPI ID", 
+  render: (row) => row?.upi_id || "N/A" 
+},
     {
       header: "Action",
       render: (row) => <ActionButtons data={row} />,

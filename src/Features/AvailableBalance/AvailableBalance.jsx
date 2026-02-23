@@ -223,12 +223,10 @@ const AvailableBalance = () => {
                     User Available Balance
                   </h1>
                 </div>
-                
               </div>
             </div>
 
             <div className="flex flex-col items-center justify-center py-20 px-4">
-              
               <h3 className="text-white text-lg font-semibold mb-2">
                 Error Loading Data
               </h3>
@@ -307,80 +305,6 @@ const AvailableBalance = () => {
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          {/* Left: Amount Filter */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3">
-            <div>
-              <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
-                Filter by Amount
-              </label>
-              <select
-                value={state.presetAmount}
-                onChange={handleAmountChange}
-                disabled={isLoading}
-                className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                           py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
-                           transition-colors cursor-pointer disabled:opacity-50 min-w-40"
-              >
-                {amountOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Custom Range Inputs */}
-            {state.amountType === "custom" &&
-              state.presetAmount === "custom" && (
-                <div className="flex items-end gap-2">
-                  <div>
-                    <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
-                      Min
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="₹ Min"
-                      value={state.minAmount}
-                      onChange={(e) =>
-                        setState((prev) => ({
-                          ...prev,
-                          minAmount: e.target.value,
-                          currentPage: 1,
-                        }))
-                      }
-                      className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
-                               transition-colors w-28"
-                    />
-                  </div>
-                  <span className="text-[#8a8d93] text-sm pb-2.5">–</span>
-                  <div>
-                    <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
-                      Max
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="₹ Max"
-                      value={state.maxAmount}
-                      onChange={(e) =>
-                        setState((prev) => ({
-                          ...prev,
-                          maxAmount: e.target.value,
-                          currentPage: 1,
-                        }))
-                      }
-                      className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
-                               transition-colors w-28"
-                    />
-                  </div>
-                </div>
-              )}
-          </div>
-
-          {/* Right: Per Page + Search */}
-        </div>
         {hasActiveFilters && (
           <div className="flex flex-wrap items-center gap-2 px-4 py-3 bg-[#282f35] border border-[#2a2c2f] rounded-xl">
             <span className="text-[#8a8d93] text-xs">Active Filters:</span>
@@ -405,7 +329,7 @@ const AvailableBalance = () => {
                   }
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                 close
+                  close
                 </button>
               </span>
             )}
@@ -427,9 +351,7 @@ const AvailableBalance = () => {
                       searchInputRef.current.value = "";
                   }}
                   className="hover:text-white transition-colors cursor-pointer"
-                >
-                  
-                </button>
+                ></button>
               </span>
             )}
           </div>
@@ -439,14 +361,87 @@ const AvailableBalance = () => {
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <h1 className="text-lg font-semibold text-white">
-                  User Available Balance
-                </h1>
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                  {/* Left: Amount Filter */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3">
+                    <div>
+                      <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+                        Filter by Amount
+                      </label>
+                      <select
+                        value={state.presetAmount}
+                        onChange={handleAmountChange}
+                        disabled={isLoading}
+                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                           py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+                           transition-colors cursor-pointer disabled:opacity-50 min-w-40"
+                      >
+                        {amountOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Custom Range Inputs */}
+                    {state.amountType === "custom" &&
+                      state.presetAmount === "custom" && (
+                        <div className="flex items-end gap-2">
+                          <div>
+                            <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+                              Min
+                            </label>
+                            <input
+                              type="number"
+                              placeholder="₹ Min"
+                              value={state.minAmount}
+                              onChange={(e) =>
+                                setState((prev) => ({
+                                  ...prev,
+                                  minAmount: e.target.value,
+                                  currentPage: 1,
+                                }))
+                              }
+                              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+                               transition-colors w-28"
+                            />
+                          </div>
+                          <span className="text-[#8a8d93] text-sm pb-2.5">
+                            –
+                          </span>
+                          <div>
+                            <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+                              Max
+                            </label>
+                            <input
+                              type="number"
+                              placeholder="₹ Max"
+                              value={state.maxAmount}
+                              onChange={(e) =>
+                                setState((prev) => ({
+                                  ...prev,
+                                  maxAmount: e.target.value,
+                                  currentPage: 1,
+                                }))
+                              }
+                              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+                               transition-colors w-28"
+                            />
+                          </div>
+                        </div>
+                      )}
+                  </div>
+
+                  {/* Right: Per Page + Search */}
+                </div>
               </div>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <PerPageSelector
                   value={state.perPage}
-                  options={[10,20,40,60,80,100]}
+                  options={[10, 20, 40, 60, 80, 100]}
                   onChange={(value) =>
                     setState((prev) => ({
                       ...prev,
@@ -492,4 +487,3 @@ const AvailableBalance = () => {
 };
 
 export default AvailableBalance;
-

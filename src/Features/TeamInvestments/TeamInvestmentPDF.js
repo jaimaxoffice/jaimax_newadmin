@@ -3,7 +3,9 @@
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
   const date = new Date(dateString);
-  return `${String(date.getDate()).padStart(2, "0")}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+  return `${String(date.getDate()).padStart(2, "0")}-${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}-${date.getFullYear()}`;
 };
 
 const formatAmountPDF = (amount) => {
@@ -39,7 +41,11 @@ const getInvestedStats = (layersData) => {
   return { totalInvestedUsers, totalLayers, totalInvestment };
 };
 
-export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, toDate }) => {
+export const buildTeamInvestmentPDF = (
+  pdf,
+  { layersData, username, fromDate, toDate }
+) => {
+  // ✅ "username" param now actually contains the NAME from TeamInfo.jsx
   const stats = getInvestedStats(layersData);
   const fw = pdf.contentWidth;
 
@@ -55,27 +61,42 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
   // Stat Cards
   pdf.addStatCards([
     { label: "Total Layers", value: stats.totalLayers, color: [59, 130, 246] },
-    { label: "Invested Users", value: stats.totalInvestedUsers, color: [14, 203, 111] },
-    { label: "Total Investment", value: formatAmountPDF(stats.totalInvestment), color: [235, 102, 15] },
+    {
+      label: "Invested Users",
+      value: stats.totalInvestedUsers,
+      color: [14, 203, 111],
+    },
+    {
+      label: "Total Investment",
+      value: formatAmountPDF(stats.totalInvestment),
+      color: [235, 102, 15],
+    },
   ]);
 
   pdf.addSpace(3);
 
   // Date range info
   if (fromDate || toDate) {
-    pdf.addText(`Period: ${fromDate || "Start"} → ${toDate || "Present"}`, {
-      fontSize: 9,
-      color: pdf.theme.muted,
-    });
+    pdf.addText(
+      `Period: ${fromDate || "Start"} → ${toDate || "Present"}`,
+      {
+        fontSize: 9,
+        color: pdf.theme.muted,
+      }
+    );
     pdf.addSpace(3);
   }
 
-  // Summary Box
+  // ✅ CHANGED: "Username" → "Name"
   pdf.addSummaryBox("Report Summary", [
-    { label: "Username", value: username },
+    { label: "Name", value: username },
     { label: "Invested Users", value: stats.totalInvestedUsers },
     { label: "Active Layers", value: stats.totalLayers },
-    { label: "Total Investment", value: formatAmountPDF(stats.totalInvestment), color: [14, 203, 111] },
+    {
+      label: "Total Investment",
+      value: formatAmountPDF(stats.totalInvestment),
+      color: [14, 203, 111],
+    },
     { label: "Report Date", value: new Date().toLocaleString() },
   ]);
 
@@ -94,11 +115,15 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
     .sort((a, b) => Number(a) - Number(b))
     .filter((key) => {
       const layer = layersData[key];
-      return (layer?.active?.filter((u) => u.investments?.length > 0) || []).length > 0;
+      return (
+        (layer?.active?.filter((u) => u.investments?.length > 0) || [])
+          .length > 0
+      );
     })
     .map((key) => {
       const layer = layersData[key];
-      const invested = layer?.active?.filter((u) => u.investments?.length > 0) || [];
+      const invested =
+        layer?.active?.filter((u) => u.investments?.length > 0) || [];
       let amount = 0;
       invested.forEach((u) => (amount += getTotalInvestment(u.investments)));
       return {
@@ -133,18 +158,29 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
       if (investedUsers.length === 0) return;
 
       let layerTotal = 0;
-      investedUsers.forEach((u) => (layerTotal += getTotalInvestment(u.investments)));
+      investedUsers.forEach(
+        (u) => (layerTotal += getTotalInvestment(u.investments))
+      );
 
       pdf.addNewPage();
-      pdf.addSectionTitle(`Layer ${layerKey}`, { icon: "◆", color: [59, 130, 246] });
+      pdf.addSectionTitle(`Layer ${layerKey}`, {
+        icon: "◆",
+        color: [59, 130, 246],
+      });
 
       pdf.addText(
-        `Invested Users: ${investedUsers.length} | Total Investment: ${formatAmountPDF(layerTotal)}`,
+        `Invested Users: ${investedUsers.length} | Total Investment: ${formatAmountPDF(
+          layerTotal
+        )}`,
         { fontSize: 9, color: pdf.theme.muted }
       );
 
       pdf.addSpace(3);
-      pdf.addText("Invested Users", { fontSize: 11, fontStyle: "bold", color: [14, 203, 111] });
+      pdf.addText("Invested Users", {
+        fontSize: 11,
+        fontStyle: "bold",
+        color: [14, 203, 111],
+      });
       pdf.addSpace(2);
 
       const columns = [
@@ -156,12 +192,18 @@ export const buildTeamInvestmentPDF = (pdf, { layersData, username, fromDate, to
           header: "Investments",
           render: (row) =>
             row.investments
-              ?.map((inv, idx) => `${idx + 1}. ${formatAmountPDF(inv.amount)} (${formatDate(inv.transactionDate)})`)
+              ?.map(
+                (inv, idx) =>
+                  `${idx + 1}. ${formatAmountPDF(inv.amount)} (${formatDate(
+                    inv.transactionDate
+                  )})`
+              )
               .join("\n") || "—",
         },
         {
           header: "Total",
-          render: (row) => formatAmountPDF(getTotalInvestment(row.investments)),
+          render: (row) =>
+            formatAmountPDF(getTotalInvestment(row.investments)),
         },
       ];
 

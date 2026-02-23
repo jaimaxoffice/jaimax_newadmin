@@ -18,8 +18,8 @@ const DetailModal = ({ show, title, content, onClose }) => {
       <div className="flex justify-end mt-4">
         <button
           onClick={onClose}
-          className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
-            bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-all duration-300
+          className="px-5 py-2.5 rounded-3xl text-sm font-semibold text-black
+            bg-[#b9fd5c]  transition-all duration-300
             cursor-pointer"
         >
           Close

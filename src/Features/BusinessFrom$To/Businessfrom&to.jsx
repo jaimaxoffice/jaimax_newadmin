@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import {
@@ -44,6 +45,7 @@ const inputClass = `w-full bg-[#282f35]  text-white rounded-lg
 const labelClass = "block text-sm font-medium text-gray-300 mb-1.5";
 
 function GetBusinessDetails() {
+  const toast = useToast();
   const [usersData, setUsersData] = useState([]);
   const [selectedUserIndex, setSelectedUserIndex] = useState(0);
   const [dataFetched, setDataFetched] = useState(false);
@@ -794,7 +796,7 @@ function GetBusinessDetails() {
                 <button
                   type="submit"
                   disabled={isSubmitting || isLoading}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] 
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] 
                     text-white font-medium px-6 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting || isLoading ? (
@@ -909,7 +911,7 @@ function GetBusinessDetails() {
                   <button
                     onClick={() => handleViewDetails("orders")}
                     disabled={!currentUserData.orders?.length}
-                    className="flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
+                    className="flex items-center justify-center gap-2 bg-[#b9fd5c] text-white 
                       font-medium py-3 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
                   >
                     <ShoppingCart size={16} />
@@ -1110,7 +1112,7 @@ function GetBusinessDetails() {
               {modalType === "orders" && currentUserData?.walletTransactions?.length > 0 && (
                 <button
                   onClick={() => setModalType("walletTransactions")}
-                  className="px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#b9fd5c] text-white rounded-lg transition-colors cursor-pointer"
                 >
                   View Wallet Transactions
                 </button>
@@ -1118,7 +1120,7 @@ function GetBusinessDetails() {
               {modalType === "walletTransactions" && currentUserData?.orders?.length > 0 && (
                 <button
                   onClick={() => setModalType("orders")}
-                  className="px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#b9fd5c] text-white rounded-lg transition-colors cursor-pointer"
                 >
                   View Orders
                 </button>

@@ -131,7 +131,7 @@ const PaymentGatewaysTransactions = () => {
       header: "Transaction Fee",
       render: (row) => (
         <span className={`font-semibold text-sm `}>
-          {(row.userId?.countryCode, row.transactionAmount)}
+          {(row.userId?.countryCode, row.transactionFee)}
         </span>
       ),
     },
@@ -139,7 +139,7 @@ const PaymentGatewaysTransactions = () => {
       header: "Transaction Amount",
       render: (row) => (
         <span className={`font-semibold text-sm `}>
-          {(row.userId?.countryCode, row.transactionAmount)}
+          {(row.userId?.countryCode, row.transactionAmount+row.transactionFee)}
         </span>
       ),
     },

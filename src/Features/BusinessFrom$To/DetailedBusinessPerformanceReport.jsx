@@ -3,8 +3,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
+import Loader from "../../reusableComponents/Loader/Loader"
 import {
   Search,
   X,
@@ -22,12 +22,13 @@ import {
   useGetDetailedDirectChainUsersBusinessMutation,
 } from "./businessApiSlice";
 
-const inputClass = `w-full bg-[#282f35]  text-white rounded-lg 
+const inputClass = `w-full bg-[#282f35] border text-white rounded-lg 
   px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
   focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
   placeholder-gray-500 disabled:opacity-50`;
 
 const DetailedBusinessPerformanceReport = () => {
+  const toast = useToast();
   const [username, setUsername] = useState("");
   const [excludedDirectUsers, setExcludedDirectUsers] = useState([]);
   const [excludedChainUsers, setExcludedChainUsers] = useState([]);
@@ -394,12 +395,12 @@ const DetailedBusinessPerformanceReport = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] 
-                text-white font-medium px-6 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] 
+                text-black font-medium px-6 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader />
                   Loading...
                 </>
               ) : (
@@ -422,7 +423,7 @@ const DetailedBusinessPerformanceReport = () => {
                 onClick={() => setActiveTab("direct")}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border transition-all cursor-pointer ${
                   activeTab === "direct"
-                    ? "bg-[#b9fd5c] text-white border-[#b9fd5c]"
+                    ? "bg-[#b9fd5c] text-black border-[#b9fd5c]"
                     : "bg-transparent text-[#b9fd5c] border-[#b9fd5c] hover:bg-[#b9fd5c]/10"
                 }`}
               >
@@ -433,7 +434,7 @@ const DetailedBusinessPerformanceReport = () => {
                 onClick={() => setActiveTab("chain")}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border border-l-0 transition-all cursor-pointer ${
                   activeTab === "chain"
-                    ? "bg-[#b9fd5c] text-white border-[#b9fd5c]"
+                    ? "bg-[#b9fd5c] text-black border-[#b9fd5c]"
                     : "bg-transparent text-[#b9fd5c] border-[#b9fd5c] hover:bg-[#b9fd5c]/10"
                 }`}
               >
@@ -444,7 +445,7 @@ const DetailedBusinessPerformanceReport = () => {
 
             <button
               onClick={handleShowReport}
-              className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
+              className="flex items-center gap-2 bg-[#b9fd5c] text-black 
                 font-semibold px-5 py-2.5 rounded-lg transition-all cursor-pointer"
             >
               <FileText size={16} />
@@ -651,7 +652,7 @@ const DetailedBusinessPerformanceReport = () => {
               <button
                 onClick={reportFormik.handleSubmit}
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] 
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#b9fd5c] 
                   text-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
@@ -751,7 +752,7 @@ function ReferralsTable({ data, excludedList, toggleFunction }) {
               (head, i) => (
                 <th
                   key={head}
-                  className={`text-white text-xs font-semibold uppercase tracking-wider px-4 py-3 text-left
+                  className={`text-black text-xs font-semibold uppercase tracking-wider px-4 py-3 text-left
                     ${head === "Email" ? "hidden md:table-cell" : ""}
                     ${head === "Phone" ? "hidden lg:table-cell" : ""}
                     ${head === "Exclude?" ? "text-center" : ""}`}

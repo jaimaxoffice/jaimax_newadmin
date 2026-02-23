@@ -1,4 +1,5 @@
 // src/reusableComponents/Modals/DeleteUserModal.jsx (or keep inline)
+import {TrashIcon ,X,CircleAlert } from "lucide-react";
 const DeleteUserModal = ({
   isOpen,
   onClose,
@@ -33,7 +34,7 @@ const DeleteUserModal = ({
                        hover:text-white hover:border-red-500
                        transition-colors cursor-pointer"
           >
-            <CloseIcon />
+            <X />
           </button>
         </div>
 
@@ -96,7 +97,7 @@ const DeleteUserModal = ({
                           bg-yellow-500/10 border border-yellow-500/20"
             >
               <span className="text-yellow-400 mt-0.5">
-                <WarningIcon />
+                <CircleAlert /> 
               </span>
               <p className="text-xs text-yellow-400/90 m-0 leading-relaxed">
                 <strong className="text-yellow-400">Warning:</strong> This

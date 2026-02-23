@@ -63,9 +63,9 @@ const AnnouncementForm = ({
       )}
 
       {submitSuccess && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-[#0ecb6f]/5 border border-[#0ecb6f]/20">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-[#0ecb6f]/5 border border-[#0ecb6f]/20 text-black">
           <CheckCircle size={18} className="text-[#0ecb6f] shrink-0" />
-          <span className="text-[#0ecb6f] text-sm">
+          <span className="text-[#0ecb6f] text-sm text-black">
             Announcement {isEditing ? "updated" : "created"} successfully!
           </span>
         </div>
@@ -313,7 +313,7 @@ const AnnouncementForm = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white
+          className="px-6 py-2.5 rounded-lg text-sm font-semibold text-black
             bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
             disabled:opacity-50 flex items-center gap-2"
         >
@@ -407,7 +407,7 @@ const AnnouncementCard = ({
         <span
           className={`absolute top-3 right-3 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
             announcement.isActive
-              ? "bg-[#b9fd5c] text-white"
+              ? "bg-[#b9fd5c] text-black"
               : "bg-[#2a2c2f] text-[#8a8d93]"
           }`}
         >

@@ -1,23 +1,15 @@
 // src/features/support/Support.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import {
-  Eye, Pencil, MessageSquare, Loader,
-} from "lucide-react";
-
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
+import { Eye, Pencil, MessageSquare } from "lucide-react";
 import Table from "../../reusableComponents/Tables/Table";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import Modal from "../../reusableComponents/Modals/Modals";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
-import {
-  useSupportDataQuery,
-  useEditStatusMutation,
-} from "./supportApiSlice";
-
+import { useSupportDataQuery, useEditStatusMutation } from "./supportApiSlice";
+import Loader from "../../reusableComponents/Loader/Loader"
 // ─── Constants ──────────────────────────────────────────────
 const STATUS_STYLES = {
   open: "text-[#0ecb6f]",
@@ -39,6 +31,7 @@ const capitalize = (str) => {
 
 // ─── Main Component ─────────────────────────────────────────
 const Support = () => {
+  const toast = useToast();
   const navigate = useNavigate();
 
   const [state, setState] = useState({
@@ -107,9 +100,12 @@ const Support = () => {
 
       if (response?.data?.status_code === 200) {
         setModals((prev) => ({ ...prev, edit: false }));
-        toast.success(response?.data?.message || "Status updated successfully", {
-          position: "top-center",
-        });
+        toast.success(
+          response?.data?.message || "Status updated successfully",
+          {
+            position: "top-center",
+          },
+        );
         refetch();
       }
     } catch (error) {
@@ -132,7 +128,7 @@ const Support = () => {
 
   // Action Buttons
   const SupportActions = ({ data }) => (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-15">
       <button
         onClick={() => navigate(`/support-chart/${data._id}`)}
         title="View Ticket"
@@ -159,9 +155,7 @@ const Support = () => {
     },
     {
       header: "User ID",
-      render: (row) => (
-        <span className="">{row._id || "N/A"}</span>
-      ),
+      render: (row) => <span className="">{row._id || "N/A"}</span>,
     },
     {
       header: "Name",
@@ -169,9 +163,7 @@ const Support = () => {
     },
     {
       header: "Email",
-      render: (row) => (
-        <span className="">{row.author_email || "N/A"}</span>
-      ),
+      render: (row) => <span className="">{row.author_email || "N/A"}</span>,
     },
     {
       header: "Username",
@@ -191,97 +183,37 @@ const Support = () => {
     },
   ];
 
-  // Mobile Card
-  const renderSupportCard = (row, index) => {
-    const sNo =
-      state.currentPage * state.perPage - (state.perPage - 1) + index;
-
-    return (
-      <MobileCard
-        key={row._id || index}
-        header={{
-          avatar: row.author_name?.charAt(0)?.toUpperCase() || "?",
-          avatarBg:
-            row.status === "open"
-              ? "bg-[#b9fd5c]/10 text-[#b9fd5c]"
-              : row.status === "closed"
-              ? "bg-red-500/10 text-red-400"
-              : "bg-yellow-500/10 text-yellow-400",
-          title: row.author_name || "Unknown",
-          subtitle: `#${sNo} • ${row.author_username || "N/A"}`,
-          badge: capitalize(row.status),
-          badgeClass: STATUS_STYLES[row.status] || "bg-[#2a2c2f] text-[#8a8d93]",
-        }}
-        rows={[
-          { label: "Email", value: row.author_email || "N/A" },
-          { label: "Phone", value: row.author_phone || "N/A" },
-          {
-            label: "User ID",
-            value: row._id || "N/A",
-          },
-        ]}
-        actions={[
-          {
-            label: "View",
-            onClick: () => navigate(`/support-chart/${row._id}`),
-            className: "text-[#0ecb6f] hover:bg-[#0ecb6f]/5",
-          },
-          {
-            label: "Edit Status",
-            onClick: () => openEditModal(row._id),
-            className: "text-[#b9fd5c] hover:bg-[#b9fd5c]/5",
-          },
-        ]}
-      />
-    );
-  };
-
   return (
     <>
-      <div className="p-2 sm:p-2 space-y-6">
+      <div className="p-2 sm:p-2 space-y-6 sidebar-scroll">
         {/* Header */}
-                
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
-            <MessageSquare size={20} className="text-[#b9fd5c]" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white">Support Tickets</h1>
-            <p className="text-[#8a8d93] text-sm">
-              Manage and respond to support requests
-            </p>
-          </div>
-        </div>
+
+        
 
         {/* Filters */}
-
 
         {/* Table Section */}
         <div className="bg-[#282f35]  rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
             <div className="flex items-center justify-between">
-              
-<div className="flex w-full">
-  <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-    <PerPageSelector
-      value={state.perPage}
-      options={[10,20,40,60,80,100]}
-      onChange={(value) =>
-        setState((prev) => ({
-          ...prev,
-          perPage: value,
-          currentPage: 1,
-        }))
-      }
-    />
+              <div className="flex w-full">
+                <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
+                  <PerPageSelector
+                    value={state.perPage}
+                    options={[10, 20, 40, 60, 80, 100]}
+                    onChange={(value) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: value,
+                        currentPage: 1,
+                      }))
+                    }
+                  />
 
-    <SearchBar
-      onChange={handleSearch}
-      placeholder="Search..."
-    />
-  </div>
-</div>
+                  <SearchBar onChange={handleSearch} placeholder="Search..." />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -295,8 +227,6 @@ const Support = () => {
               perPage={state.perPage}
             />
           </div>
-
-
         </div>
 
         {/* Pagination */}
@@ -332,7 +262,11 @@ const Support = () => {
                 focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors cursor-pointer"
             >
               {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-[#111214]">
+                <option
+                  key={opt.value}
+                  value={opt.value}
+                  className="bg-[#111214]"
+                >
                   {opt.label}
                 </option>
               ))}
@@ -361,13 +295,13 @@ const Support = () => {
             <button
               onClick={handleEditStatus}
               disabled={isEditing || !editTarget.status}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white
-                bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
+              className="px-5 py-2.5 rounded-3xl text-sm font-semibold text-black
+                bg-[#b9fd5c]  transition-colors cursor-pointer
                 disabled:opacity-50 flex items-center gap-2"
             >
               {isEditing ? (
                 <>
-                  <Loader size={14} className="animate-spin" />
+                  <Loader />
                   Saving...
                 </>
               ) : (
@@ -381,15 +315,5 @@ const Support = () => {
   );
 };
 
-// Extracted for reuse in modal preview
-const StatusBadge = ({ status }) => (
-  <span
-    className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-      STATUS_STYLES[status] || "bg-[#2a2c2f] text-[#8a8d93]"
-    }`}
-  >
-    {capitalize(status) || "N/A"}
-  </span>
-);
 
 export default Support;

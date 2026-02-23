@@ -23,6 +23,7 @@ import {
   XCircle,
   Wallet,
   PencilIcon,
+  Clock
 } from "lucide-react";
 
 const UsdtBonusList = () => {
@@ -373,7 +374,7 @@ const UsdtBonusList = () => {
             title="Pending"
             value={totalPending}
             // numericValue={totalPending}
-            icon={Hourglass}
+            icon={Clock}
             status="pending"
           />
 

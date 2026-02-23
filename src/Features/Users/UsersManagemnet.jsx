@@ -14,8 +14,7 @@ import {
   useSendTransactionMutation,
   useViewUserQuery,
 } from "./usersApiSlice";
-import { toast } from "react-toastify";
-import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import { Eye, Send, ShieldX, UserCheck, Users } from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import useTableState from "../../hooks/useTableState";
@@ -61,6 +60,7 @@ const ModalContent = ({
 );
 
 const UserManagement = () => {
+  const toast = useToast();
   const { state, handlePageChange, handleSearch, handlePerPageChange } =
     useTableState({
       initialPerPage: 10,

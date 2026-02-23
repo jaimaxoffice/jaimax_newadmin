@@ -47,7 +47,7 @@ const LayerAccordion = ({
           transition-colors ${isExpanded ? "bg-[#b9fd5c]/5 border-b border-[#b9fd5c]/12" : ""}`}
       >
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="w-9 h-9 rounded-xl bg-[#b9fd5c] flex items-center justify-center text-white font-extrabold text-[15px]">
+          <span className="w-9 h-9 rounded-xl bg-[#b9fd5c] flex items-center justify-center text-black font-extrabold text-[15px]">
             {layerNum}
           </span>
           <span className="text-white text-base font-semibold">

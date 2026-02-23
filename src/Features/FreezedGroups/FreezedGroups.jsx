@@ -1,17 +1,15 @@
-// src/features/frezzedgroup/FrezzedGroupManagement.jsx
 import React, { useState } from "react";
 import Table from "../../reusableComponents/Tables/Table";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import Pagination from "../../reusableComponents/paginations/Pagination";
-
 import {
   useGetFrezzedGroupsQuery,
   useAddFrezzedGroupMutation,
   useUpdateFrezzedGroupMutation,
   useAddUsersToGroupMutation,
 } from "./freezedgroupsApiSlice";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import Loader from "../../reusableComponents/Loader/Loader";
 import {
   X,
@@ -28,6 +26,7 @@ import {
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const FrezzedGroupManagement = () => {
+  const toast = useToast();
   const [state, setState] = useState({
     currentPage: 1,
     perPage: 10,
@@ -59,8 +58,7 @@ const FrezzedGroupManagement = () => {
 
   // ─── Handlers ────────────────────────────────────────────────
 
-  const handlePageChange = (page) =>
-    setState({ ...state, currentPage: page });
+  const handlePageChange = (page) => setState({ ...state, currentPage: page });
 
   const handleFormChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -106,9 +104,7 @@ const FrezzedGroupManagement = () => {
   const openEditModal = (group) => {
     setSelectedGroup(group);
     setFormData({
-      affectedUsers: group.affectedUsers.length
-        ? group.affectedUsers
-        : [""],
+      affectedUsers: group.affectedUsers.length ? group.affectedUsers : [""],
       affectedDate: group.affectedDate,
       keyPerson: group.keyPerson,
     });
@@ -180,18 +176,13 @@ const FrezzedGroupManagement = () => {
     {
       header: "S.No",
       render: (_, index) => (
-        <span
-         
-        >
-          {(state.currentPage - 1) * state.perPage + index + 1}
-        </span>
+        <span>{(state.currentPage - 1) * state.perPage + index + 1}</span>
       ),
     },
     {
       header: "Key Person",
       render: (row) => (
         <div className="flex items-center gap-2">
-          
           <span className="text-white font-semibold text-sm">
             {row.keyPerson}
           </span>
@@ -203,17 +194,14 @@ const FrezzedGroupManagement = () => {
       render: (row) => (
         <div className="flex flex-wrap gap-1">
           {row.affectedUsers.slice(0, 3).map((user, idx) => (
-            <span
-              key={idx}
-              className=""
-            >
-              {user}
+            <span key={idx} className="">
+              {user},
             </span>
           ))}
           {row.affectedUsers.length > 3 && (
             <span
               className="text-[11px] font-semibold px-2 py-0.5 rounded-full
-                         bg-[#b9fd5c] text-white"
+                         bg-[#b9fd5c] text-black"
             >
               +{row.affectedUsers.length - 3}
             </span>
@@ -249,65 +237,52 @@ const FrezzedGroupManagement = () => {
     },
   ];
 
-
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
-        <div className="flex w-full">
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
-<PerPageSelector
-  options={[10,20,40,60,80,100]}
-  onChange={(value) =>
-    setState((prev) => ({
-      ...prev,
-      perPage: value,
-      currentPage: 1,
-    }))
-  }
-/>
-
-      {/* Search */}
-      <SearchBar
-        onSearch={handleSearch}
-        placeholder= "Search name, amount..."
-      />
-    </div>
-        </div>
 
         {/* Main Card */}
         <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
           {/* Header */}
+          {/* Option 1 — Clean & Simple */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center 
-                              justify-center text-[#b9fd5c]"
-                >
-                  <Users size={16}/>
-                </div>
-                <h1 className="text-lg font-semibold text-white">
-                  Frezzed Groups
-                </h1>
-              </div>
-
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+              {/* Left — Add Button */}
               <button
                 onClick={openAddModal}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                           bg-[#b9fd5c] text-white
-                           hover:bg-[#ff8533] hover:shadow-lg hover:shadow-[#b9fd5c]/20
-                           active:scale-[0.98] transition-all duration-200 cursor-pointer"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-3xl text-sm font-semibold
+                 bg-[#b9fd5c] text-black hover:shadow-lg hover:shadow-[#b9fd5c]/20
+                 active:scale-[0.98] transition-all duration-200 cursor-pointer
+                 w-full sm:w-auto"
               >
                 <Plus size={16} />
                 Add New
               </button>
+
+              {/* Right — Filters */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <PerPageSelector
+                  options={[10, 20, 40, 60, 80, 100]}
+                  onChange={(value) =>
+                    setState((prev) => ({
+                      ...prev,
+                      perPage: value,
+                      currentPage: 1,
+                    }))
+                  }
+                />
+                <SearchBar
+                  onSearch={handleSearch}
+                  placeholder="Search name, amount..."
+                />
+              </div>
             </div>
           </div>
 
           {/* Content */}
           {isLoading ? (
-           <Loader/>
+            <Loader />
           ) : groups.length > 0 ? (
             <>
               {/* Desktop Table */}
@@ -320,8 +295,6 @@ const FrezzedGroupManagement = () => {
                   perPage={state.perPage}
                 />
               </div>
-
-             
             </>
           ) : (
             <EmptyState />
@@ -441,15 +414,15 @@ const GroupFormModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#b9fd5c] to-[#ff8533]">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#b9fd5c] to-[#b9fd5c]">
+          <h2 className="text-lg font-semibold text-black flex items-center gap-2">
             {titleIcon}
             {title}
           </h2>
           <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full
-                       bg-white/10 text-white hover:bg-white/20
+                       bg-white/10 text-black hover:bg-white/20
                        transition-colors cursor-pointer"
           >
             <X />
@@ -459,7 +432,7 @@ const GroupFormModal = ({
         {/* Body */}
         <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#2a2c2f]">
           {/* Key Person */}
-          <FormField label="Key Person" icon={<KeyPersonIcon />}>
+          <FormField label="Key Person" icon={<Calendar size={16} />}>
             <input
               type="text"
               name="keyPerson"
@@ -474,7 +447,7 @@ const GroupFormModal = ({
           </FormField>
 
           {/* Affected Date */}
-          <FormField label="Affected Date" icon={<CalendarIcon />}>
+          <FormField label="Affected Date" icon={<Calendar />}>
             <input
               type="date"
               name="affectedDate"
@@ -489,7 +462,7 @@ const GroupFormModal = ({
           </FormField>
 
           {/* Affected Users */}
-          <FormField label="Affected Users" icon={<Users size={16}/>}>
+          <FormField label="Affected Users" icon={<Users size={16} />}>
             <DynamicUserInputs
               users={formData.affectedUsers}
               onChange={onUserChange}
@@ -512,12 +485,12 @@ const GroupFormModal = ({
           </button>
           <button
             onClick={onSubmit}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                       bg-[#b9fd5c] text-white hover:bg-[#ff8533]
+            className="flex items-center gap-2 px-5 py-2.5 rounded-3xl text-sm font-semibold
+                       bg-[#b9fd5c] 
                        hover:shadow-lg hover:shadow-[#b9fd5c]/20
                        active:scale-[0.98] transition-all duration-200 cursor-pointer"
           >
-            <CheckIcon />
+            <Check />
             {submitLabel}
           </button>
         </div>
@@ -551,7 +524,7 @@ const AddUsersModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-linear-to-r from-[#b9fd5c] to-[#ff8533]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2c2f] bg-[#b9fd5c] ">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <UserPlus size={14} />
             Add Users to Group
@@ -559,10 +532,10 @@ const AddUsersModal = ({
           <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full
-                       bg-white/10 text-white hover:bg-white/20
+                       bg-white/10 text-black hover:bg-white/20
                        transition-colors cursor-pointer"
           >
-            <CloseIcon />
+            <X />
           </button>
         </div>
 
@@ -574,7 +547,7 @@ const AddUsersModal = ({
               className="w-8 h-8 rounded-full bg-[#b9fd5c]/10 flex items-center 
                           justify-center text-[#b9fd5c] shrink-0"
             >
-              <KeyPersonIcon />
+              <User />
             </div>
             <div>
               <p className="text-[10px] text-[#8a8d93] uppercase tracking-wider m-0">
@@ -587,7 +560,7 @@ const AddUsersModal = ({
           </div>
 
           {/* New Users */}
-          <FormField label="New Users" icon={<Users size={16}/>}>
+          <FormField label="New Users" icon={<Users size={16} />}>
             <DynamicUserInputs
               users={users}
               onChange={onUserChange}
@@ -610,12 +583,12 @@ const AddUsersModal = ({
           </button>
           <button
             onClick={onSubmit}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                       bg-[#b9fd5c] text-white hover:bg-[#ff8533]
+            className="flex items-center gap-2 px-5 py-2.5 rounded-3xl text-sm font-semibold
+                       bg-[#b9fd5c] text-black hover:bg-[#ff8533]
                        hover:shadow-lg hover:shadow-[#b9fd5c]/20
                        active:scale-[0.98] transition-all duration-200 cursor-pointer"
           >
-            <CheckIcon />
+            {/* <Check /> */}
             Add Users
           </button>
         </div>

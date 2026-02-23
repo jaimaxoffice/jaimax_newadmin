@@ -1,13 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
+import Cookies from "js-cookie";
 
+const PublicRoute = () => {
+  const token = Cookies.get("adminToken"); // user token
 
-const PublicRoute = ({children}) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        return <Navigate to="/" />;
-    } else {
-        return <Outlet />;
-    }
-    return children;
+  // If user is already logged in, block public pages (login/register)
+  return token ? <Navigate to="/" replace /> : <Outlet />;
 };
+
 export default PublicRoute;

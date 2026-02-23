@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
@@ -19,6 +19,7 @@ import Button from "../../reusableComponents/Buttons/Button";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 const AdminManagement = () => {
+  const toast = useToast();
   const [state, setState] = useState({
     currentPage: 1,
     perPage: 10,

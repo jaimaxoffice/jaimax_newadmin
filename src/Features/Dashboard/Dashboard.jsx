@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useGetDetailsQuery } from "./dashboardApiSlice";
 import Loader from "../../reusableComponents/Loader/Loader";
+import StatCard from "../../reusableComponents/StatCards/GradientCard";
+import Cookies from "js-cookie";
 import {
   Users, Coins, Tag, ArrowLeftRight, Wallet, TrendingUp, DollarSign,
   RefreshCw, Zap, Target, Activity, ChevronUp, ChevronLeft, ChevronRight,
@@ -96,33 +98,33 @@ const ChartTip = ({ active, payload, label }) => {
 };
 
 
-const StatCard = ({ label, value, sub, icon: Icon, accent, trend }) => (
-  <Card accent={accent}>
-    <div className="p-4 sm:p-5">
-      <div className="flex flex-col items-start justify-between mb-3">
-        <div className={`p-2 rounded-xl flex items-center justify-center border
-          ${accent ? "bg-[#b9fd5c]/20 border-[#b9fd5c]/30 text-[#b9fd5c]" : "bg-[#b9fd5c] border-[#253040] text-white"}`}>
-          <Icon size={30} color="black" />
-        </div>
+// const StatCard = ({ label, value, sub, icon: Icon, accent, trend }) => (
+//   <Card accent={accent}>
+//     <div className="p-4 sm:p-5">
+//       <div className="flex flex-col items-start justify-between mb-3">
+//         <div className={`p-2 rounded-xl flex items-center justify-center border
+//           ${accent ? "bg-[#b9fd5c]/20 border-[#b9fd5c]/30 text-[#b9fd5c]" : "bg-[#b9fd5c] border-[#253040] text-white"}`}>
+//           <Icon size={30} color="black" />
+//         </div>
 
-        {trend && (
-          <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold
-            ${trend > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-            {trend > 0 ? <ChevronUp size={10} /> : <TrendingDown size={10} />}
-            {Math.abs(trend)}%
-          </div>
-        )}
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-white">{label}</p>
-        {sub && <p className="text-[10px] text-white mt-0.5">{sub}</p>}
-      </div>
+//         {trend && (
+//           <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold
+//             ${trend > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+//             {trend > 0 ? <ChevronUp size={10} /> : <TrendingDown size={10} />}
+//             {Math.abs(trend)}%
+//           </div>
+//         )}
+//         <p className="text-[10px] font-semibold uppercase tracking-wider text-white">{label}</p>
+//         {sub && <p className="text-[10px] text-white mt-0.5">{sub}</p>}
+//       </div>
 
-      <p className={`text-2xl sm:text-3xl font-bold leading-none break-all mb-1.5
-        ${accent ? "text-[#b9fd5c]" : "text-white"}`}>
-        {value}
-      </p>
-    </div>
-  </Card>
-);
+//       <p className={`text-2xl sm:text-3xl font-bold leading-none break-all mb-1.5
+//         ${accent ? "text-[#b9fd5c]" : "text-white"}`}>
+//         {value}
+//       </p>
+//     </div>
+//   </Card>
+// );
 
 
 
@@ -1015,7 +1017,9 @@ const Dashboard = () => {
   const d = response?.data;
   if (!d) return <div className="min-h-screenflex items-center justify-center text-white text-sm">No data available</div>;
 
-  const userData = localStorage.getItem("userData")
+  // const userData = Cookies.get("userData")
+  const userData = Cookies.get("adminUserData");
+  // return userDataObj ? JSON.parse(userData) : null;
   const userDataObj = userData ? JSON.parse(userData) : null;
   console.log("UserData from localStorage:", userDataObj);
 
@@ -1028,10 +1032,8 @@ const Dashboard = () => {
       <div className="max-w-450 mx-auto p-3 sm:p-5 mt-2 lg:p-6">
 
         {/* HEADER */}
-        <Card className="mb-6 overflow-hidden border-0 bg-[#282f35] shadow-xl shadow-black/30">
+        {/* <Card className="mb-6 overflow-hidden border-0 bg-[#282f35] shadow-xl shadow-black/30">
           <div className="relative px-6 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-
-            {/* Left Section */}
             <div>
               <p className="text-xs font-medium tracking-wider text-gray-400 mb-1">
                 {new Date().toLocaleDateString("en-US", {
@@ -1053,30 +1055,73 @@ const Dashboard = () => {
                 Welcome back to your dashboard
               </p>
             </div>
-
-            {/* Right Section */}
             <div className="flex items-center gap-3">
-
-              {/* Live Badge */}
               <div className="flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5">
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse shadow-[0_0_10px_#34d399aa]" />
                 <span className="text-xs font-semibold tracking-wide text-green-800">
                   Live
                 </span>
               </div>
-
-              {/* Refresh Button */}
-              {/* <button
-                onClick={refetch}
-                className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center text-gray-300 hover:text-lime-400 hover:border-lime-400/40 transition-all duration-300"
-                title="Refresh"
-              >
-                <RefreshCw size={16} />
-              </button> */}
             </div>
           </div>
-        </Card>
+        </Card> */}
+<Card className="mb-6 overflow-hidden border-0 bg-[#282f35] shadow-xl shadow-black/30 relative">
+  
+  {/* Grid Background - Fades from Right */}
+  <div 
+    className="absolute inset-0"
+    style={{
+      backgroundImage: `
+        linear-gradient(to right, #b9fd5c08 1px, transparent 1px),
+        linear-gradient(to bottom, #b9fd5c08 1px, transparent 1px)
+      `,
+      backgroundSize: '30px 30px',
+      maskImage: 'linear-gradient(to left, black 50%, transparent 100%)',
+      WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 100%)'
+    }}
+  />
 
+  {/* Diagonal Gradient Highlight */}
+  <div className="absolute inset-0 " />
+
+  {/* Accent Glow */}
+  {/* <div className="absolute right-10 top-1/2 -translate-y-1/2 w-28 h-28 bg-[#b9fd5c]/15 rounded-full blur-3xl" /> */}
+
+  <div className="relative px-6 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+    {/* Left Section */}
+    <div>
+      <p className="text-xs font-medium tracking-wider text-gray-400 mb-1">
+        {new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })}
+      </p>
+
+      <h1 className="text-2xl sm:text-3xl serialHeading font-semibold text-white leading-tight">
+        {getGreeting()}, &nbsp;
+        <span className="text-[#b9fd5c]">
+          {userDataObj ? userDataObj.data.name || "Admin" : "Admin"}
+        </span>
+      </h1>
+
+      <p className="text-sm text-gray-400 mt-1">
+        Welcome back to your dashboard
+      </p>
+    </div>
+
+    {/* Right Section */}
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5">
+        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_10px_#34d399aa]" />
+        <span className="text-xs font-semibold tracking-wide text-green-400">
+          Live
+        </span>
+      </div>
+    </div>
+  </div>
+</Card>
 
         <div className="flex flex-col xl:flex-row gap-4">
 
@@ -1087,10 +1132,10 @@ const Dashboard = () => {
             <section>
               <SL>Key Metrics</SL>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <StatCard label="All Users" value={fmtWhole(d.community.allUsers)} sub={`${fmtWhole(d.community.activeUsers)} active`} icon={Users} />
-                <StatCard label="Tokens Sold" value={fmtCompact(d.tokens.totalSoldFromUsers)} sub="From Users" icon={Coins} />
-                <StatCard label="Available Balance" value={`₹${fmtWhole(d.funds.totalAvailableInr)}`} sub="Total Funds" icon={Wallet} />
-                <StatCard label="USDT Rate" value={`₹${d.usdt.rateInr}`} sub="Per 1 USDT" icon={ArrowLeftRight} />
+                <StatCard title="All Users" value={fmtWhole(d.community.allUsers)} sub={`${fmtWhole(d.community.activeUsers)} active`} icon={Users} />
+                <StatCard title="Tokens Sold" value={fmtCompact(d.tokens.totalSoldFromUsers)} sub="From Users" icon={Coins} />
+                <StatCard title="Available Balance" value={`₹${fmtWhole(d.funds.totalAvailableInr)}`} sub="Total Funds" icon={Wallet} />
+                <StatCard title="USDT Rate" value={`₹${d.usdt.rateInr}`} sub="Per 1 USDT" icon={ArrowLeftRight} />
               </div>
             </section>
 

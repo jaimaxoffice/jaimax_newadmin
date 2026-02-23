@@ -1,410 +1,282 @@
 // src/features/support/SupportChart.jsx
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import {
-  useChatGetQuery,
-  useCreateCommentMutation,
-} from "../features/support/supportApiSlice";
-import DashboardLayout from "../Layout/DashboardLayout";
-import ImageViewerModal from "../../reusableComponents/Modals/ImageViewerModal";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
+import { useChatGetQuery, useCreateCommentMutation } from "./supportApiSlice";
+import Loader from "../../reusableComponents/Loader/Loader";
+import { 
+  ArrowLeft, 
+  Send, 
+  Paperclip, 
+  X, 
+  User, 
+  Mail, 
+  Tag, 
+  FileText, 
+  AlertCircle, 
+  Clock,
+  Image as ImageIcon,
+  CheckCircle2
+} from "lucide-react";
 
 const SupportChart = () => {
+  const toast = useToast();
   const { id } = useParams();
-  const { data, isLoading, error } = useChatGetQuery(id);
-  const [createComment] = useCreateCommentMutation();
+  const scrollRef = useRef(null);
+  const fileInputRef = useRef(null);
+  
+  const { data, isLoading } = useChatGetQuery(id);
+  const [createComment, { isLoading: isSending }] = useCreateCommentMutation();
+  
   const [displayImage, setDisplayImage] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [clickedImage, setClickedImage] = useState("");
+  const [state, setState] = useState({ comment: "", image: null });
 
-  const chartData = data;
+  const chartData = data?.data;
 
-  const [state, setState] = useState({
-    comment: "",
-    image: null,
-  });
+  // Scroll logic
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [chartData?.comments]);
 
-  const openImageViewer = useCallback((item) => {
-    setClickedImage(item.image);
-    setIsViewerOpen(true);
-  }, []);
+  const handleUploadClick = () => fileInputRef.current?.click();
 
-  const closeImageViewer = () => {
-    setIsViewerOpen(false);
-    setClickedImage("");
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const acceptedFormats = ["image/png", "image/jpeg", "image/jpg"];
+      if (!acceptedFormats.includes(file.type)) {
+        toast.warning("Only JPG / PNG files are allowed");
+        return;
+      }
+      setDisplayImage(URL.createObjectURL(file));
+      setState({ ...state, image: file });
+    }
   };
 
-  // Send comment
   const sendComment = async () => {
-    if (state?.comment === "") {
-      return toast?.error("Please enter a message");
+    if (!state.comment.trim() && !state.image) {
+      return toast.error("Please enter a message or attach an image");
     }
+
     const formData = new FormData();
     formData.append("comment", state.comment);
-    if (state?.image) {
-      formData.append("image", state.image);
-    }
+    if (state.image) formData.append("image", state.image);
     formData.append("ticket_id", id);
 
     try {
-      const response = await createComment(formData);
-      if (response?.data?.status_code === 200) {
-        setState({ comment: "", image: null });
-        setDisplayImage("");
-      } else {
-        toast.error(response?.error?.data?.message, {
-          position: "top-center",
-        });
-        setState({ comment: "", image: null });
-        setDisplayImage("");
-      }
+      const response = await createComment(formData).unwrap();
+      setState({ comment: "", image: null });
+      setDisplayImage("");
     } catch (error) {
-      if (error.response.status >= 400 && error.response.status <= 500) {
-        toast.error(error.response.data.message, {
-          position: "top-center",
-        });
-      }
+      toast.error(error?.data?.message || "Failed to send message");
     }
   };
 
-  // Upload file
-  const handleUpload = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.onchange = (_) => {
-      const files = Array.from(input.files);
-      if (files) {
-        const acceptedFormats = ["image/png", "image/jpeg", "image/jpg"];
-        const invalidFile = !acceptedFormats.includes(files[0].type);
-        if (invalidFile) {
-          toast.warning("Only JPG / PNG files are allowed", {
-            position: "top-center",
-          });
-          return;
-        }
-      }
-      const showImage = URL.createObjectURL(files[0]);
-      setDisplayImage(showImage);
-      setState({ ...state, image: files[0] });
-    };
-    input.click();
-  };
-
-  const clearImage = () => {
-    setDisplayImage("");
-    setState({ ...state, image: null });
-  };
-
-  // Scroll to bottom
-  const scrollToBottom = () => {
-    const chatBox = document.getElementById("chat_scroll");
-    if (chatBox) {
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [chartData]);
-
-  // Format date
-  const formatDateWithAmPm = (isoString) => {
-    const date = new Date(isoString);
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    let hours = date.getUTCHours();
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-    const amAndPm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${day}-${month}-${year} ${hours}:${minutes} ${amAndPm}`;
-  };
+  if (isLoading) return <div className="p-10 text-center text-[#8a8d93]">Loading Conversation...</div>;
 
   return (
-    <>
-      <DashboardLayout>
-        <section className="p-2 sm:p-2 text-white">
-          <div className="w-full">
-            {/* Back Button */}
-            <Link
-              to="/support"
-              className="inline-flex items-center gap-1 text-[#b9fd5c] text-lg 
-                         no-underline mb-4 hover:text-[#ff8533] transition-colors"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                className="fill-[#b9fd5c]"
-              >
-                <path d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z" />
-              </svg>
-            </Link>
+    <div className="max-w-[1600px] mx-auto p-4 sm:p-6">
+      {/* Header Navigation */}
+      <div className="flex items-center justify-between mb-6">
+        <Link 
+          to="/support" 
+          className="flex items-center gap-2 text-[#8a8d93] hover:text-[#b9fd5c] transition-colors group"
+        >
+          <div className="p-2 rounded-xl bg-[#282f35] group-hover:bg-[#b9fd5c]/10">
+            <ArrowLeft size={20} />
+          </div>
+          <span className="font-semibold">Back to Tickets</span>
+        </Link>
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-[#b9fd5c]/10 border border-[#b9fd5c]/20">
+          <div className="w-2 h-2 rounded-full bg-[#b9fd5c] animate-pulse" />
+          <span className="text-[12px] font-bold text-[#b9fd5c] uppercase tracking-wider">Live Support</span>
+        </div>
+      </div>
 
-            <div className="flex flex-col xl:flex-row justify-center gap-5">
-              {/* Chat Section */}
-              <div className="w-full xl:w-5/12">
-                {/* Chat Header & Messages */}
-                <div className="bg-[#282f35] border border-[#2a2c2f] rounded-t-2xl px-4 pb-1 pt-5">
-                  <h3 className="text-white text-lg font-semibold pb-3">
-                    Chat Support
-                  </h3>
-
-                  {/* Chat Messages */}
-                  <div className="h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#2a2c2f] scrollbar-track-transparent">
-                    <ul
-                      className="list-none p-0 m-0 pr-1 space-y-4"
-                      id="chat_scroll"
-                    >
-                      {chartData?.data?.comments?.map((item, i) =>
-                        item?.commented_by?.role === "0" ? (
-                          // User message (right side)
-                          <ChatBubble
-                            key={`${item?._id}-${i}`}
-                            item={item}
-                            isUser={true}
-                            onImageClick={openImageViewer}
-                            formatDate={formatDateWithAmPm}
-                          />
-                        ) : (
-                          // Admin message (left side)
-                          <ChatBubble
-                            key={`${item?._id}-${i}`}
-                            item={item}
-                            isUser={false}
-                            onImageClick={openImageViewer}
-                            formatDate={formatDateWithAmPm}
-                          />
-                        )
-                      )}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Chat Input */}
-                <div
-                  className="bg-[#111214] border border-[#2a2c2f] border-t-0 rounded-b-2xl 
-                              flex items-center gap-2 sm:gap-3 px-3 py-3"
-                >
-                  <input
-                    type="text"
-                    placeholder="Type your message..."
-                    value={state?.comment}
-                    onChange={(e) =>
-                      setState({ ...state, comment: e.target.value })
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") sendComment();
-                    }}
-                    className="flex-1 bg-transparent border-none text-white text-sm 
-                               placeholder-[#555] focus:outline-none focus:ring-0"
-                  />
-
-                  <div className="flex items-center gap-3">
-                    {/* File Upload / Preview */}
-                    {displayImage ? (
-                      <div className="relative flex gap-1">
-                        <img
-                          src={displayImage}
-                          alt="file"
-                          className="h-7 w-[50px] object-cover rounded cursor-pointer"
-                        />
-                        <button
-                          onClick={clearImage}
-                          className="absolute -top-2.5 -right-2 bg-white rounded-full 
-                                     h-5 w-5 flex items-center justify-center cursor-pointer
-                                     hover:bg-gray-200 transition-colors"
-                        >
-                          <span
-                            className="text-[10px] font-bold text-[#b9fd5c] leading-none"
-                          >
-                            X
-                          </span>
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={handleUpload}
-                        className="cursor-pointer bg-transparent border-none p-0 
-                                   hover:opacity-80 transition-opacity"
-                      >
-                        <img
-                          src="/images/file.png"
-                          alt="file"
-                          className="h-7"
-                        />
-                      </button>
-                    )}
-
-                    {/* Send Button */}
-                    <button
-                      onClick={sendComment}
-                      className="cursor-pointer bg-transparent border-none p-0 
-                                 hover:opacity-80 transition-opacity"
-                    >
-                      <img
-                        src="/images/send.png"
-                        alt="send"
-                        className="h-5"
-                      />
-                    </button>
-                  </div>
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Chat Section (Left/Center) */}
+        <div className="lg:col-span-8 flex flex-col h-[750px] bg-[#282f35] rounded-3xl border border-[#2a2c2f] overflow-hidden shadow-2xl">
+          {/* Inner Header */}
+          <div className="px-6 py-4 border-b border-[#2a2c2f] bg-[#2d343b] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#b9fd5c] flex items-center justify-center text-[#111214]">
+                <User size={20} />
               </div>
-
-              {/* Ticket Details Section */}
-              <div className="w-full xl:w-5/12">
-                <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 mb-3">
-                  <h3 className="text-white text-lg font-semibold mb-4">
-                    Ticket Details
-                  </h3>
-
-                  <div className="px-3 space-y-3">
-                    <TicketDetailRow
-                      label="Name"
-                      value={
-                        chartData?.data?.ticket?.author_name
-                          ? chartData.data.ticket.author_name
-                              .charAt(0)
-                              .toUpperCase() +
-                            chartData.data.ticket.author_name
-                              .slice(1)
-                              .toLowerCase()
-                          : ""
-                      }
-                    />
-                    <TicketDetailRow
-                      label="Email"
-                      value={chartData?.data?.ticket?.author_email}
-                    />
-                    <TicketDetailRow
-                      label="Title"
-                      value={chartData?.data?.ticket?.title}
-                      capitalize
-                    />
-                    <TicketDetailRow
-                      label="Content"
-                      value={chartData?.data?.ticket?.content}
-                      capitalize
-                    />
-                    <TicketDetailRow
-                      label="Priority"
-                      value={chartData?.data?.ticket?.priority}
-                      capitalize
-                    />
-
-                    {chartData?.data?.ticket?.image && (
-                      <div className="flex items-start gap-3">
-                        <h6 className="text-sm font-bold text-white whitespace-nowrap my-auto">
-                          Image:
-                        </h6>
-                        <img
-                          src={chartData?.data?.ticket?.image}
-                          alt="Ticket"
-                          className="max-h-[200px] max-w-[300px] object-contain rounded-lg 
-                                     cursor-pointer hover:opacity-90 transition-opacity
-                                     border border-[#2a2c2f]"
-                          onClick={() =>
-                            openImageViewer(chartData?.data?.ticket)
-                          }
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
+              <div>
+                <h3 className="text-white font-bold leading-none">{chartData?.ticket?.author_name}</h3>
+                <span className="text-[11px] text-[#8a8d93]">Ticket ID: #{id?.slice(-6).toUpperCase()}</span>
               </div>
             </div>
           </div>
-        </section>
-      </DashboardLayout>
 
-      {/* Image Viewer Modal */}
-      <ImageViewerModal
-        isOpen={isViewerOpen}
-        onClose={closeImageViewer}
-        imageSrc={clickedImage}
-      />
-    </>
+          {/* Messages Area */}
+          <div 
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-[#3a3f44] scrollbar-track-transparent"
+          >
+            {chartData?.comments?.map((item, i) => (
+              <ChatBubble 
+                key={i} 
+                item={item} 
+                isAdmin={item?.commented_by?.role === "0"} 
+                onImageClick={(img) => { setClickedImage(img); setIsViewerOpen(true); }}
+              />
+            ))}
+          </div>
+
+          {/* Input Area */}
+          <div className="p-4 bg-[#1c2126] border-t border-[#2a2c2f]">
+            {displayImage && (
+              <div className="relative inline-block mb-3 ml-2 group">
+                <img src={displayImage} className="h-20 w-20 object-cover rounded-xl border-2 border-[#b9fd5c]" alt="preview" />
+                <button 
+                  onClick={() => { setDisplayImage(""); setState({...state, image: null}); }}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:scale-110 transition-transform"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            )}
+            
+            <div className="flex items-center gap-3 bg-[#282f35] p-2 rounded-2xl border border-[#3a3f44] focus-within:border-[#b9fd5c]/50 transition-all">
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                hidden 
+                accept="image/*" 
+                onChange={handleFileChange} 
+              />
+              <button 
+                onClick={handleUploadClick}
+                className="p-3 text-[#8a8d93] hover:text-[#b9fd5c] transition-colors"
+              >
+                <Paperclip size={22} />
+              </button>
+              
+              <input 
+                type="text"
+                placeholder="Write your message..."
+                className="flex-1 bg-transparent border-none text-white focus:ring-0 placeholder-[#555]"
+                value={state.comment}
+                onChange={(e) => setState({...state, comment: e.target.value})}
+                onKeyDown={(e) => e.key === 'Enter' && sendComment()}
+              />
+              
+              <button 
+                onClick={sendComment}
+                disabled={isSending}
+                className="p-3 bg-[#b9fd5c] text-[#111214] rounded-xl hover:bg-[#a8e650] active:scale-95 transition-all disabled:opacity-50"
+              >
+                {isSending ? <Loader /> : <Send size={22} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Sidebar (Right) */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-3xl p-6 shadow-xl">
+            <h3 className="text-white text-lg font-bold mb-6 flex items-center gap-2">
+              <FileText size={20} className="text-[#b9fd5c]" />
+              Ticket Information
+            </h3>
+            
+            <div className="space-y-5">
+              <InfoRow icon={<User size={16}/>} label="Customer" value={chartData?.ticket?.author_name} isCaps />
+              <InfoRow icon={<Mail size={16}/>} label="Email Address" value={chartData?.ticket?.author_email} />
+              <InfoRow icon={<Tag size={16}/>} label="Subject" value={chartData?.ticket?.title} />
+              <InfoRow icon={<AlertCircle size={16}/>} label="Priority" value={chartData?.ticket?.priority} badge />
+              
+              <div className="pt-4 border-t border-[#3a3f44]">
+                <label className="text-[11px] text-[#8a8d93] font-bold uppercase tracking-widest block mb-2">Description</label>
+                <p className="text-sm text-gray-300 leading-relaxed bg-[#1c2126] p-4 rounded-xl border border-[#2a2c2f]">
+                  {chartData?.ticket?.content}
+                </p>
+              </div>
+
+              {chartData?.ticket?.image && (
+                <div className="pt-4">
+                   <label className="text-[11px] text-[#8a8d93] font-bold uppercase tracking-widest block mb-2">Attached Asset</label>
+                   <img 
+                    src={chartData.ticket.image} 
+                    className="w-full h-48 object-cover rounded-2xl cursor-pointer hover:opacity-80 transition-opacity border border-[#3a3f44]" 
+                    onClick={() => { setClickedImage(chartData.ticket.image); setIsViewerOpen(true); }}
+                    alt="attachment"
+                   />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Reusable Image Viewer */}
+      {isViewerOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setIsViewerOpen(false)}>
+          <button className="absolute top-6 right-6 text-white hover:text-[#b9fd5c]"><X size={32}/></button>
+          <img src={clickedImage} className="max-h-full max-w-full rounded-lg shadow-2xl" alt="Preview" />
+        </div>
+      )}
+    </div>
   );
 };
+
+// ─── Internal Sub-Components ───
+
+const ChatBubble = ({ item, isAdmin, onImageClick }) => (
+  <div className={`flex ${isAdmin ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex flex-col max-w-[85%] sm:max-w-[70%] ${isAdmin ? 'items-end' : 'items-start'}`}>
+      <div className={`flex items-center gap-2 mb-1 px-1`}>
+        {!isAdmin && <div className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-[10px] font-bold">U</div>}
+        <span className="text-[12px] font-bold text-gray-400">{item.commented_by?.name}</span>
+        {isAdmin && <div className="w-6 h-6 rounded-full bg-[#b9fd5c]/20 text-[#b9fd5c] flex items-center justify-center text-[10px] font-bold">A</div>}
+      </div>
+
+      <div className={`px-4 py-3 rounded-2xl text-sm shadow-sm leading-relaxed ${
+        isAdmin 
+          ? 'bg-[#b9fd5c] text-[#111214] rounded-tr-none font-medium' 
+          : 'bg-[#3a3f44] text-white rounded-tl-none border border-[#4a4f55]'
+      }`}>
+        {item.comment}
+        {item.image && (
+          <img 
+            src={item.image} 
+            className="mt-3 rounded-lg max-h-60 w-full object-cover cursor-pointer hover:brightness-110 transition-all border border-black/10" 
+            onClick={() => onImageClick(item.image)}
+            alt="attachment"
+          />
+        )}
+      </div>
+      <span className="text-[10px] text-[#5c636a] mt-1 font-medium flex items-center gap-1">
+        <Clock size={10} /> {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </span>
+    </div>
+  </div>
+);
+
+const InfoRow = ({ icon, label, value, isCaps, badge }) => (
+  <div className="flex items-center justify-between group">
+    <div className="flex items-center gap-3 text-[#8a8d93]">
+      <span className="p-1.5 rounded-lg bg-[#1c2126] group-hover:text-[#b9fd5c] transition-colors">{icon}</span>
+      <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
+    </div>
+    {badge ? (
+      <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase ${
+        value?.toLowerCase() === 'high' ? 'bg-red-500/20 text-red-500' : 'bg-blue-500/20 text-blue-500'
+      }`}>
+        {value}
+      </span>
+    ) : (
+      <span className={`text-sm text-white font-medium ${isCaps ? 'capitalize' : ''}`}>{value || "N/A"}</span>
+    )}
+  </div>
+);
+
+
 
 export default SupportChart;
-
-// ─── Sub-Components ──────────────────────────────────────────────
-
-/**
- * Chat Bubble Component
- */
-const ChatBubble = ({ item, isUser, onImageClick, formatDate }) => {
-  return (
-    <li
-      className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}
-    >
-      <div className={`max-w-[80%] ${isUser ? "items-end" : "items-start"}`}>
-        {/* Avatar + Name */}
-        <div
-          className={`flex items-center gap-1.5 mb-1.5 ${
-            isUser ? "justify-end" : "justify-start"
-          }`}
-        >
-          <img
-            src={item.commented_by?.profile || "/images/chart-user.png"}
-            alt="avatar"
-            className="h-[30px] w-[30px] rounded-full object-cover 
-                       border border-[#2a2c2f]"
-          />
-          <h6 className="text-sm text-white font-medium m-0">
-            {item?.commented_by?.name}
-          </h6>
-        </div>
-
-        {/* Message Bubble */}
-        <div
-          className={`p-3 rounded-xl ${
-            isUser
-              ? "bg-[#b9fd5c]/15 border border-[#b9fd5c]/20 rounded-tr-sm"
-              : "bg-[#2a2c2f] border border-[#333] rounded-tl-sm"
-          }`}
-        >
-          <p className="text-sm text-white m-0 break-words">
-            {item?.comment}
-          </p>
-
-          {item?.image && (
-            <div
-              className={`mt-2 ${isUser ? "text-right" : "text-left"}`}
-            >
-              <img
-                src={item?.image}
-                alt="chat-image"
-                className="h-[100px] w-[100px] object-cover rounded-lg cursor-pointer 
-                           hover:opacity-80 transition-opacity border border-[#2a2c2f]"
-                onClick={() => onImageClick(item)}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Timestamp */}
-        <p
-          className={`text-[10px] text-[#8a8d93] mt-1 mx-1 ${
-            isUser ? "text-right" : "text-left"
-          }`}
-        >
-          {formatDate(item?.created_at)}
-        </p>
-      </div>
-    </li>
-  );
-};
-
-/**
- * Ticket Detail Row Component
- */
-const TicketDetailRow = ({ label, value, capitalize = false }) => (
-  <h6 className={`text-sm font-bold text-white ${capitalize ? "capitalize" : ""}`}>
-    <span className="text-[#8a8d93] font-semibold">{label}:</span>{" "}
-    <span className="font-normal">{value || "N/A"}</span>
-  </h6>
-);

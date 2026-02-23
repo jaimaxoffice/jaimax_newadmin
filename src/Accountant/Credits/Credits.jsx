@@ -724,15 +724,14 @@
 
 // export default Credits;
 
-
-
 // Pages/Credits/Credits.jsx
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Check, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
-
+import Cookies from "js-cookie";
 // API
 import {
   useTransAmountUpdateMutation,
@@ -744,8 +743,6 @@ import Modals from "../../Features/Wallet/EditTransactionModal";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 
 const TwModal = ({ show, onClose, children, backdrop = true }) => {
@@ -846,7 +843,6 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-
 const Credits = () => {
   const API_BASE =
     import.meta.env.VITE_API_BASE_URL || "http://192.168.128.1:3002/api";
@@ -886,7 +882,11 @@ const Credits = () => {
     sort: LIST_SORT,
   }).toString();
 
-  const { data: tableData, isLoading, refetch } = useTransListQuery(queryParams);
+  const {
+    data: tableData,
+    isLoading,
+    refetch,
+  } = useTransListQuery(queryParams);
 
   useEffect(() => {
     refetch();
@@ -941,17 +941,14 @@ const Credits = () => {
       if (state.toDate?.trim()) q.set("toDate", state.toDate);
       q.set("sort", LIST_SORT);
 
-      const res = await fetch(
-        `${API_BASE}/accounts/transactions/export?${q}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-          },
-        }
-      );
+      const res = await fetch(`${API_BASE}/accounts/transactions/export?${q}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token") || ""}`,
+        },
+      });
       if (!res.ok)
         throw new Error(
-          (await res.text().catch(() => "")) || `Export failed ${res.status}`
+          (await res.text().catch(() => "")) || `Export failed ${res.status}`,
         );
 
       const blob = await res.blob();
@@ -991,7 +988,7 @@ const Credits = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+          Authorization: `Bearer ${Cookies.get("token") || ""}`,
         },
         body: JSON.stringify({
           id: utrTx._id,
@@ -1001,7 +998,7 @@ const Credits = () => {
       });
       if (!res.ok)
         throw new Error(
-          (await res.text().catch(() => "")) || `Error ${res.status}`
+          (await res.text().catch(() => "")) || `Error ${res.status}`,
         );
       const result = await res.json();
       if (result?.success) {
@@ -1104,7 +1101,6 @@ const Credits = () => {
     },
   ];
 
-
   const mobileFields = [
     { label: "Name", key: "name" },
     { label: "Payment Method", key: "paymentMode" },
@@ -1164,12 +1160,9 @@ const Credits = () => {
 
       <section className="py-4 px-2 sm:px-4 lg:px-6 min-h-screen bg-[#0b1218]">
         <div className="w-full">
-          <div className="bg-[#1a2128] border border-[#2b3440] rounded-xl px-3 sm:px-4 md:px-5 pb-1 pt-4 overflow-x-hidden">
+          <div className=" rounded-xl px-3 sm:px-4 md:px-5 pb-1 pt-4 overflow-x-hidden">
             {/* ═══ Header ═══ */}
             <div className="flex flex-wrap justify-between items-center mb-4">
-              <h1 className="font-bold text-white text-xl sm:text-2xl md:text-3xl leading-none">
-                Credits
-              </h1>
               <ExportDropdown exporting={exporting} onDownload={download} />
             </div>
 
@@ -1177,18 +1170,18 @@ const Credits = () => {
             {statusCounts && (
               <div className="flex flex-col sm:flex-row justify-center gap-3 mb-5">
                 <StatCard
-                  icon={<Check />}                  
+                  icon={<Check />}
                   value={statusCounts.Completed}
                   title="Completed"
                   variant="green"
-                  bgClass="bg-[#193b33] "
+                  // bgClass="bg-[#193b33] "
                 />
                 <StatCard
                   icon={<X />}
                   value={statusCounts.Failed}
                   title="Failed"
                   variant="red"
-                  bgClass="bg-[#4a262f] "
+                  // bgClass="bg-[#4a262f] "
                 />
               </div>
             )}
@@ -1258,8 +1251,6 @@ const Credits = () => {
                 keyExtractor={(tx, i) => tx.transactionId || i}
               />
             </div>
-
-
           </div>
 
           {/* ═══ Pagination (✅ YOUR Pagination) ═══ */}
@@ -1287,16 +1278,12 @@ const Credits = () => {
 
       {/* ═══ Edit Transaction Modal ═══ */}
       <TwModal show={editShow} onClose={handleClose} backdrop="static">
-        <TwModalHeader onClose={handleClose}>
-          Update Transaction
-        </TwModalHeader>
+        <TwModalHeader onClose={handleClose}>Update Transaction</TwModalHeader>
         <TwModalBody>
           {selectedData ? (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Name
-                </label>
+                <label className="block text-sm text-gray-400 mb-1">Name</label>
                 <input
                   type="text"
                   className={`${inputBase} opacity-60 cursor-not-allowed`}

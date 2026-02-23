@@ -1,11 +1,11 @@
 // src/hooks/usePDFGenerator.js
 import { useState, useCallback } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../reusableComponents/Toasts/ToastContext";
 import PDFGenerator from "../utils/pdfGenerator";
 
 const usePDFGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
-
+const toast = useToast();
   const generatePDF = useCallback(async (builderFn, options = {}) => {
     setIsGenerating(true);
 

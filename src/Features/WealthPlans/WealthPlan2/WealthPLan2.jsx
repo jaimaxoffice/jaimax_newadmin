@@ -2,12 +2,27 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Table from "../../../reusableComponents/Tables/Table";
 import Pagination from "../../../reusableComponents/paginations/Pagination";
-import MobileCard from "../../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../../reusableComponents/MobileCards/MobileCardList";
-import { useGuarantededWealthPlanLogs2OMutation } from "../wealthPlanApiSlice";
+import { useGuaranteedWealthOrders2OMutation } from "../wealthPlanApiSlice";
 import { formatDateWithAmPm } from "../../../utils/dateUtils";
+import Badge from "../../../reusableComponents/Badges/Badge";
 import SearchBar from "../../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../../reusableComponents/Filter/PerPageSelector";
+import StatCards from "../../../reusableComponents/StatCards/StatsCard";
+import {
+  Users,
+  UserCheck,
+  Banknote,
+  Coins,
+  // Alternative options
+  LayoutGrid,
+  Activity,
+  Wallet,
+  CircleDollarSign,
+  TrendingUp,
+  ArrowDownToLine,
+  HandCoins,
+  PiggyBank,
+} from "lucide-react";
 const WealthLogs2O = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -15,8 +30,8 @@ const WealthLogs2O = () => {
     search: "",
   });
 
-  const [trigger, { data, isLoading }] = useGuarantededWealthPlanLogs2OMutation();
-
+  const [trigger, { data, isLoading }] =
+    useGuaranteedWealthOrders2OMutation();
   const fetchData = useCallback(() => {
     trigger({
       limit: state.perPage,
@@ -29,9 +44,8 @@ const WealthLogs2O = () => {
     fetchData();
   }, [fetchData]);
 
-  const tableData = data?.data?.logs || [];
-  const totalRecords = data?.data?.totalLogs || 0;
-
+  const tableData = data?.data?.data || [];
+  const totalRecords = data?.data?.total || 0;
   let searchTimeout;
   const handleSearch = (e) => {
     clearTimeout(searchTimeout);
@@ -56,115 +70,150 @@ const WealthLogs2O = () => {
       render: (_, index, currentPage, perPage) =>
         currentPage * perPage - (perPage - 1) + index + ".",
     },
-    { header: "Name", accessor: "name" },
     {
-      header: "Transaction ID",
+      header: "User ID",
       render: (row) => (
-        <span className="text-[#0ecb6f] text-xs font-mono">
-          {row?.transactionId}
+        <span className="">
+          {row?.user?._id}
         </span>
       ),
     },
     {
-      header: "Amount (₹)",
+      header: "Name",
+      render: (row) => row?.user?.name,
+    },
+    {
+      header: "Email",
       render: (row) => (
-        <span className="font-medium">₹{row?.amountDisbursed}</span>
+        <span className="">{row?.user?.email}</span>
       ),
     },
-    { header: "Tokens", accessor: "tokensCollected" },
     {
-      header: "Order ID",
+      header: "Amount",
       render: (row) => (
-        <span className="text-blue-400 text-xs font-mono">
-          {row?.orderId}
+        <span className="font-medium">₹{row?.amount}</span>
+      ),
+    },
+    {
+      header: "Tokens",
+      accessor: "jaimax",
+    },
+    {
+      header: "Wealth Plan",
+      render: (row) => (
+        <Badge type={row?.isGuaranteedWealthOpted_2 ? "success" : "danger"}>
+          {row?.isGuaranteedWealthOpted_2 ? "Yes" : "No"}
+        </Badge>
+      ),
+    },
+    {
+      header: "Daily Amount",
+      render: (row) => (
+        <span className="text-yellow-400">
+          {row?.guaranteedAmountToBeDisburse_2 || "—"}
         </span>
       ),
     },
     {
-      header: "Day",
+      header: "Daily Tokens",
       render: (row) => (
-        <span className="text-yellow-400">{getDay(row?.reason)}</span>
+        <span className="text-yellow-400">
+          {row?.guaranteedTokensToBeCollect_2 || "—"}
+        </span>
+      ),
+    },
+    {
+      header: "Total Disbursed",
+      render: (row) => (
+        <span className="text-yellow-400">
+          {row?.totalAmountDisbursedForWealthPlan_2 || "—"}
+        </span>
+      ),
+    },
+    {
+      header: "Coins Collected",
+      render: (row) => (
+        <span className="text-yellow-400">
+          {row?.totalCoinsCollectedFormUser_2 || "—"}
+        </span>
+      ),
+    },
+    {
+      header: "Days",
+      render: (row) => (
+        <span className="text-yellow-400">
+          {row?.wealthPalnDisbursedDays_2 || "—"}
+        </span>
+      ),
+    },
+    {
+      header: "Completed",
+      render: (row) => (
+        <Badge type={row?.wealthPlanCompleted_2 ? "success" : "danger"}>
+          {row?.wealthPlanCompleted_2 ? "Yes" : "No"}
+        </Badge>
       ),
     },
     {
       header: "Created On",
       render: (row) => (
-        <span className="text-[#8a8d93]">
-          {formatDateWithAmPm(row?.createdOn)}
+        <span className="">
+          {formatDateWithAmPm(row?.guaranteedWealthPlanChosenDate_2)}
         </span>
       ),
     },
   ];
-
-  // Mobile Card
-  const renderMobileCard = (row, index) => {
-    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
-
-    return (
-      <MobileCard
-        key={index}
-        header={{
-          avatar: row?.name?.charAt(0)?.toUpperCase() || "?",
-          title: row?.name || "Unknown",
-          subtitle: `#${sNo} • ${getDay(row?.reason)}`,
-          badge: getDay(row?.reason),
-          badgeClass: "bg-yellow-500/10 text-yellow-400",
-        }}
-        rows={[
-          {
-            label: "Transaction ID",
-            custom: (
-              <span className="text-[#0ecb6f] text-xs font-mono truncate max-w-[60%] text-right">
-                {row?.transactionId}
-              </span>
-            ),
-          },
-          { label: "Amount", value: `₹${row?.amountDisbursed}`, highlight: true },
-          { label: "Tokens", value: row?.tokensCollected },
-          {
-            label: "Order ID",
-            custom: (
-              <span className="text-blue-400 text-xs font-mono truncate max-w-[60%] text-right">
-                {row?.orderId}
-              </span>
-            ),
-          },
-          { label: "Created On", value: formatDateWithAmPm(row?.createdOn) },
-        ]}
-      />
-    );
-  };
-
   return (
     <div className="p-2 sm:p-2 space-y-6">
-
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCards 
+          title="Total Plans" 
+          value={data?.data?.total || 0} 
+          icon={LayoutGrid} 
+          variant="default" 
+        />
+        <StatCards 
+          title="Active Plans" 
+          value={data?.data?.activeGuaranteedWealthCount || 0} 
+          icon={Activity} 
+          variant="completed" 
+        />
+        <StatCards 
+          title="Amount To Disburse" 
+          value={data?.data?.totalGuaranteedAmountToBeDisbursed || 0} 
+          icon={Banknote} 
+          variant="warning" 
+        />
+        <StatCards 
+          title="Tokens To Collect" 
+          value={data?.data?.totalGuaranteedTokensToBeCollected || 0} 
+          icon={Coins} 
+          variant="info" 
+        />
+      </div>
       <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <h1 className="text-lg font-semibold text-white">
-              Guaranteed Wealth Plan Logs 2.O
-            </h1>
-<div className="flex w-full">
-  <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-    <PerPageSelector
-      value={state.perPage}
-      options={[10,20,40,60,80,100]}
-      onChange={(value) =>
-        setState((prev) => ({
-          ...prev,
-          perPage: value,
-          currentPage: 1,
-        }))
-      }
-    />
+            
+            <div className="flex w-full">
+              <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
+                <PerPageSelector
+                  value={state.perPage}
+                  options={[10, 20, 40, 60, 80, 100]}
+                  onChange={(value) =>
+                    setState((prev) => ({
+                      ...prev,
+                      perPage: value,
+                      currentPage: 1,
+                    }))
+                  }
+                />
 
-    <SearchBar
-      onChange={handleSearch}
-      placeholder="Search..."
-    />
-  </div>
-</div>
+                <SearchBar onChange={handleSearch} placeholder="Search..." />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -178,8 +227,6 @@ const WealthLogs2O = () => {
             perPage={state.perPage}
           />
         </div>
-
-
       </div>
 
       {/* Pagination */}

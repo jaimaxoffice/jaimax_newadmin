@@ -1,14 +1,18 @@
-// src/pages/Setting.jsx
 import React, { useEffect, useState } from "react";
 import {
   useEditSettingsMutation,
   useSettingstDataQuery,
 } from "./settingsApiSlice";
-import { toast } from "react-toastify";
-import Loader from "../../reusableComponents/Loader/Loader"
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
+import Loader from "../../reusableComponents/Loader/Loader";
+import InputField from "../../reusableComponents/Inputs/InputField"; // Import reusable InputField
+import Button from "../../reusableComponents/Buttons/Button"; // Assuming you want to use reusable Button too
+import { Settings, CheckCircle2 } from "lucide-react"; // Icons for header/button
+
 const Setting = () => {
+  const toast = useToast();
   const {
-    data: setting,
+    data: settingData, // Renamed for clarity
     isLoading,
     isSuccess,
   } = useSettingstDataQuery();
@@ -34,37 +38,38 @@ const Setting = () => {
 
   const [update, { isLoading: isUpdating }] = useEditSettingsMutation();
 
-  const handleOnchange = (e) => {
+  const handleOnChange = (e) => {
     let { name, value } = e.target;
-    value = value.replace(/[^0-9. ]/g, "");
-    setSettings({ ...settings, [name]: value });
+    // Allow numbers and decimals only
+    value = value.replace(/[^0-9.]/g, ""); 
+    setSettings((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await update(settings);
-      if (response?.data?.success) {
-        toast.success(response?.data?.message || "Update successful!", {
+      const response = await update(settings).unwrap(); // Using unwrap() for cleaner error handling with RTK Query
+      if (response?.success) {
+        toast.success(response?.message || "Update successful!", {
           position: "top-center",
         });
       } else {
-        toast.error(response?.error?.data?.message, {
+        toast.error(response?.message || "Update failed", {
           position: "top-center",
         });
       }
     } catch (error) {
-      toast.error(error?.data?.message, {
+      toast.error(error?.data?.message || "An error occurred", {
         position: "top-center",
       });
     }
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      setSettings((prev) => ({ ...prev, ...setting?.data }));
+    if (isSuccess && settingData?.data) {
+      setSettings((prev) => ({ ...prev, ...settingData.data }));
     }
-  }, [isSuccess, setting]);
+  }, [isSuccess, settingData]);
 
   // INR Fields Config
   const inrFields = [
@@ -88,66 +93,74 @@ const Setting = () => {
     { label: "User Community Count", name: "user_community_count" },
   ];
 
+  if (isLoading) return <Loader />;
+
   return (
-    <div>
-      <div className="p-2 sm:p-2 space-y-6">
-        {/* Page Header */}
-        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl px-5 py-4">
-          <h1 className="text-xl font-semibold text-white">Software Setting</h1>
+    <div className="p-2 sm:p-2 space-y-6">
+      {/* Page Header */}
+      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl px-5 py-4 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
+          <Settings size={20} className="text-[#b9fd5c]" />
         </div>
+        <h1 className="text-xl font-semibold text-white">Software Settings</h1>
+      </div>
 
-        {/* Loading State */}
-        {isLoading ? (
-          <Loader/>
-        ) : (
-          /* Settings Form */
-          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-            <form onSubmit={handleFormSubmit}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-5">
-                {/* INR Section */}
-                <SettingsSection
-                  title="All values are in INR"
-                  fields={inrFields}
-                  settings={settings}
-                  onChange={handleOnchange}
-                  accentColor="#b9fd5c"
-                />
-
-                {/* USD Section */}
-                <SettingsSection
-                  title="All values are in USD"
-                  fields={usdFields}
-                  settings={settings}
-                  onChange={handleOnchange}
-                  accentColor="#b9fd5c"
-                />
+      {/* Settings Form */}
+      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
+        <form onSubmit={handleFormSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+            
+            {/* INR Section */}
+            <div className="space-y-4">
+              <SectionHeader title="INR Settings" subtitle="All values in INR" />
+              <div className="grid gap-4">
+                {inrFields.map((field) => (
+                  <InputField
+                    key={field.name}
+                    label={field.label}
+                    name={field.name}
+                    value={settings[field.name]}
+                    onChange={handleOnChange}
+                    placeholder={`Enter ${field.label}`}
+                    type="text"
+                  />
+                ))}
               </div>
+            </div>
 
-              {/* Submit Button */}
-              <div className="px-5 pb-6 pt-2 flex justify-center">
-                <button
-                  type="submit"
-                  disabled={isUpdating}
-                  className={`
-                    min-w-[180px] px-8 py-3 rounded-xl text-sm font-semibold
-                    transition-all duration-200 cursor-pointer
-                    ${
-                      isUpdating
-                        ? "bg-[#b9fd5c]/50 text-white/60 cursor-not-allowed"
-                        : "bg-[#b9fd5c] text-white hover:bg-[#ff8533] hover:shadow-lg hover:shadow-[#b9fd5c]/20 active:scale-[0.98]"
-                    }
-                  `}
-                >
-                  {isUpdating ? (
-                    <Loader/>
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
+            {/* USD Section */}
+            <div className="space-y-4">
+              <SectionHeader title="USD Settings" subtitle="All values in USD" />
+              <div className="grid gap-4">
+                {usdFields.map((field) => (
+                  <InputField
+                    key={field.name}
+                    label={field.label}
+                    name={field.name}
+                    value={settings[field.name]}
+                    onChange={handleOnChange}
+                    placeholder={`Enter ${field.label}`}
+                    type="text"
+                  />
+                ))}
               </div>
-            </form>
+            </div>
           </div>
-        )}
+
+          {/* Submit Action */}
+          <div className="px-6 py-6 border-t border-[#2a2c2f] flex justify-center bg-[#282f35]">
+            <Button
+              type="submit"
+              loading={isUpdating}
+              disabled={isUpdating}
+              icon={!isUpdating ? CheckCircle2 : null}
+              className="min-w-[200px]"
+              size="lg"
+            >
+              {isUpdating ? "Updating Settings..." : "Save Changes"}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -155,67 +168,14 @@ const Setting = () => {
 
 export default Setting;
 
-// ─── Sub-Components ──────────────────────────────────────────────
+// ─── Helper Components ──────────────────────────────────────────────
 
-/**
- * Settings Section Component
- */
-const SettingsSection = ({ title, fields, settings, onChange, accentColor }) => {
-  return (
-    <div className="space-y-4">
-      {/* Section Header */}
-      <div className="flex items-center gap-2 pb-2 border-b border-[#2a2c2f]">
-        <div
-          className="w-2 h-2 rounded-full"
-          style={{ backgroundColor: accentColor }}
-        />
-        <p className="text-sm text-[#8a8d93] font-light m-0">
-          {title} <span className="text-red-400">*</span>
-        </p>
-      </div>
-
-      {/* Fields */}
-      <div className="space-y-3">
-        {fields.map((item) => (
-          <SettingsInput
-            key={item.name}
-            label={item.label}
-            name={item.name}
-            value={settings[item.name]}
-            onChange={onChange}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-/**
- * Settings Input Component
- */
-const SettingsInput = ({ label, name, value, onChange }) => {
-  return (
-    <div className="space-y-1.5">
-      <label
-        htmlFor={name}
-        className="block text-xs font-medium text-[#8a8d93] uppercase tracking-wider"
-      >
-        {label}
-      </label>
-      <input
-        type="text"
-        id={name}
-        name={name}
-        autoComplete="off"
-        value={value || ""}
-        onChange={onChange}
-        className="w-full bg-[#111214] border border-[#2a2c2f] text-white text-sm 
-                   rounded-xl py-2.5 px-4 
-                   placeholder-[#555] 
-                   focus:outline-none focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/50 
-                   transition-all duration-200
-                   hover:border-[#3a3c3f]"
-      />
-    </div>
-  );
-};
+const SectionHeader = ({ title, subtitle }) => (
+  <div className="pb-2 border-b border-[#2a2c2f] mb-2">
+    <h3 className="text-white font-medium text-lg flex items-center gap-2">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#b9fd5c]"></span>
+      {title}
+    </h3>
+    <p className="text-[#8a8d93] text-xs ml-3.5 mt-0.5">{subtitle}</p>
+  </div>
+);

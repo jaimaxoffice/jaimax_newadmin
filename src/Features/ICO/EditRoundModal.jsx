@@ -78,7 +78,7 @@ const EditRoundModal = ({
             type="button"
             onClick={onClose}
             className="flex-1 bg-[#2a2c2f] hover:bg-[#333] text-white py-3 
-              rounded-xl text-sm font-medium transition-colors cursor-pointer"
+              rounded-3xl text-sm font-medium transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -86,7 +86,7 @@ const EditRoundModal = ({
             type="button"
             onClick={onUpdate}
             className="flex-1 bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 text-[#111214] py-3 
-              rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+              rounded-3xl text-sm font-semibold transition-colors cursor-pointer"
           >
             Save Changes
           </button>

@@ -2,7 +2,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Cookies from "js-cookie"
 // Auth & Layout
 import Login from "./Features/Login/Login";
 import AppLayout from "./layout/AppLayout";
@@ -66,9 +66,10 @@ import Notifications from "./Features/Notifications/Notifications";
 import ZoomMeeting from "./Features/Zoom/Zoom";
 import Blog from "./Features/Blogs/Blogs";
 import SocialMedia from "./Features/SocialMediaChart/SocialChart";
-
+import MainChat from "./Features/Community/MainChat"
 // Support & Settings
 import Support from "./Features/Support/Support";
+import SupportChart from "./Features/Support/SupportChat"
 import Security from "./Features/Security/Security";
 import Settings from "./Features/Settings/Settings";
 import FreezedGroups from "./Features/FreezedGroups/FreezedGroups";
@@ -92,16 +93,16 @@ const PermissionRoute = ({ element, permission, permissions }) => {
 // ─── ADMIN ROUTES (role === 0) ───
 const ADMIN_ROUTES = [
   { path: "/", element: <Dashboard /> },
-  { path: "/wallet", element: <Wallet /> },
-  { path: "/users", element: <Users /> },
-  { path: "/kyc", element: <Kyc /> },
-  { path: "/withdrawal", element: <Withdrawal /> },
+  { path: "/wallet-management", element: <Wallet /> },
+  { path: "/user-management", element: <Users /> },
+  { path: "/kyc-management", element: <Kyc /> },
+  { path: "/withdrawal-bonus", element: <Withdrawal /> },
   { path: "/usdt-withdrawal", element: <UsdtWithdrawal /> },
   { path: "/user-info", element: <UserInfo /> },
   { path: "/admin-user", element: <AdminUser /> },
   { path: "/all-transactions", element: <AllTransactions /> },
   { path: "/pg-transactions", element: <PaymentGatewaysTransactions /> },
-  { path: "/paymentgateway", element: <PaymentGateway /> },
+  { path: "/payment-gateway", element: <PaymentGateway /> },
   { path: "/buy-history", element: <BuyHistory /> },
   { path: "/manual-accounts", element: <AddManualAccountsForm /> },
   { path: "/manual-kyc", element: <ManualKycAccounts /> },
@@ -119,44 +120,39 @@ const ADMIN_ROUTES = [
   { path: "/wealth-plan-log-3", element: <WealthPlanlog3 /> },
   { path: "/announcements", element: <Announcements /> },
   { path: "/notifications", element: <Notifications /> },
-  { path: "/zoommeetings", element: <ZoomMeeting /> },
+  { path: "/zoom-meetings", element: <ZoomMeeting /> },
   { path: "/blogs", element: <Blog /> },
   { path: "/support", element: <Support /> },
+  {path: "/support-chart/:id",element:<SupportChart/>},
   { path: "/legal", element: <Security /> },
-  { path: "/freezedgroups", element: <FreezedGroups /> },
+  { path: "/freezed-groups", element: <FreezedGroups /> },
   { path: "/not-verified-users", element: <NotVerifiedUser /> },
   { path: "/ico", element: <Ico /> },
   { path: "/delete-accounts", element: <DeletedUsersTable /> },
   { path: "/settings", element: <Settings /> },
   { path: "/logout", element: <Logout /> },
   { path: "/businessanalytics", element: <BusinessAnalytics /> },
-  { path: "/socialmedia", element: <SocialMedia /> },
+  { path: "/social-media", element: <SocialMedia /> },
   { path: "/user-summary", element: <UserSummary /> },
+  { path: "/jaimax-community", element: <MainChat /> },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
 const ROLE2_ROUTES = [
   { path: "/", element: <Dashboard />, permission: "DASHBOARD" },
-  { path: "/wallet", element: <Wallet />, permission: "WALLET MANAGEMENT" },
-  { path: "/users", element: <NoAccess /> },
-  { path: "/kyc", element: <Kyc />, permission: "KYC MANAGEMENT" },
-  { path: "/withdrawal", element: <Withdrawal />, permission: "WITHDRAW MANAGEMENT" },
+  { path: "/wallet-management", element: <Wallet />, permission: "WALLET MANAGEMENT" },
+  { path: "/user-management", element: <NoAccess /> },
+  { path: "/kyc-management", element: <Kyc />, permission: "KYC MANAGEMENT" },
+  { path: "/withdrawal-bonus", element: <Withdrawal />, permission: "WITHDRAW MANAGEMENT" },
   { path: "/usdt-withdrawal", element: <UsdtWithdrawal />, permission: "WITHDRAW MANAGEMENT" },
   { path: "/user-info", element: <UserInfo />, permission: "USER INFO" },
   { path: "/admin-user", element: <NoAccess /> },
+  { path: "/user-summary", element: <UserSummary />,permission: "USER INFO" },
   { path: "/all-transactions", element: <AllTransactions />, permission: "WALLET MANAGEMENT" },
-  {
-    path: "/pg-transactions",
-    element: <PaymentGatewaysTransactions />,
-    permission: "WALLET MANAGEMENT",
-  },
-  { path: "/paymentgateway", element: <PaymentGateway />, permission: "PAYMENTGATEWAYS" },
+  {path: "/pg-transactions",element: <PaymentGatewaysTransactions />,permission: "WALLET MANAGEMENT",},
+  { path: "/payment-gateway", element: <PaymentGateway />, permission: "PAYMENTGATEWAYS" },
   { path: "/buy-history", element: <BuyHistory />, permission: "BUY HISTORY" },
-  {
-    path: "/manual-accounts",
-    element: <AddManualAccountsForm />,
-    permission: "MANUAL TRANSACTION",
-  },
+  {path: "/manual-accounts",element: <AddManualAccountsForm />,permission: "MANUAL TRANSACTION",},
   { path: "/manual-kyc", element: <ManualKycAccounts />, permission: "MANUAL KYC" },
   { path: "/team-reports", element: <TeamReports />, permission: "TEAM REPORT" },
   { path: "/team-investments", element: <TeamInvestments />, permission: "TEAM REPORT" },
@@ -171,16 +167,20 @@ const ROLE2_ROUTES = [
   { path: "/wealth-plan-log-3", element: <WealthPlanlog3 />, permission: "WEALTH PLANS" },
   { path: "/announcements", element: <Announcements />, permission: "APP ANNOUNCEMENTS" },
   { path: "/notifications", element: <Notifications />, permission: "NOTIFICATIONS" },
-  { path: "/zoommeetings", element: <ZoomMeeting />, permission: "ZOOM MEETING" },
+  { path: "/zoom-meetings", element: <ZoomMeeting />, permission: "ZOOM MEETING" },
   { path: "/blogs", element: <Blog />, permission: "BLOGS" },
   { path: "/support", element: <Support />, permission: "SUPPORT" },
   { path: "/legal", element: <Security />, permission: "LEGAL UPDATION" },
-  { path: "/freezedgroups", element: <FreezedGroups />, permission: "FREEZED GROUPS" },
+  { path: "/freezed-groups", element: <FreezedGroups />, permission: "FREEZED GROUPS" },
   { path: "/not-verified-users", element: <NotVerifiedUser />, permission: "NOT VERIFIED USERS" },
   { path: "/ico", element: <Ico />, permission: "ICO MANAGEMENT" },
+  { path: "/social-media", element: <NoAccess /> },
   { path: "/delete-accounts", element: <DeletedUsersTable />, permission: "DELETE ACCOUNTS" },
   { path: "/settings", element: <Settings />, permission: "SETTING" },
   { path: "/logout", element: <Logout /> },
+  { path: "/jaimax-community", element: <MainChat /> },
+  { path: "/businessanalytics", element: <BusinessAnalytics />,permission: "BUSINESS ANALYTICS" },
+  { path: "/reports", element: <Report />, permission: "REPORTS" },
 ];
 
 
@@ -195,10 +195,11 @@ const ACCOUNTANT_ROUTES = [
 ];
 
 const App = () => {
-  const stored = JSON.parse(localStorage.getItem("userData") || "{}");
-  const userData = stored?.data || stored;
-  const { role, permissions = [] } = userData || {};
-
+ // ✅ FIX
+const adminToken = Cookies.get("adminToken");
+const stored = Cookies.get("adminUserData");
+const parsed = stored ? JSON.parse(stored) : {};
+const { role, permissions = [] } = parsed?.data || {};
   const renderRoutes = (routes, checkPermissions = false) =>
     routes.map(({ path, element, permission }) => (
       <Route
@@ -235,22 +236,25 @@ const App = () => {
 
   return (
     <>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <Routes>
         {/* Public */}
         <Route element={<PublicRoute />}>
-          <Route path="/login" element={<Login />} />
-        </Route>
+        <Route path="/login" element={<Login />} />
+      </Route>
 
         {/* Private - wrapped in AppLayout */}
-        {privateRoutes && (
-          <Route element={<PrivateRoute />}>
-            <Route element={<AppLayout />}>{privateRoutes}</Route>
-          </Route>
-        )}
+        {adminToken && privateRoutes && (
+        <Route element={<PrivateRoute />}>
+          <Route element={<AppLayout />}>{privateRoutes}</Route>
+        </Route>
+      )}
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to={role !== undefined ? "/" : "/login"} replace />} />
+       <Route
+        path="*"
+        element={<Navigate to={adminToken ? "/" : "/login"} replace />}
+      />
       </Routes>
     </>
   );

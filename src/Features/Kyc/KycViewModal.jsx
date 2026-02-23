@@ -33,31 +33,41 @@ const KycViewModal = ({ isOpen, onClose, data }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="KYC Details" size="lg">
       <div className="space-y-5">
+        {/* Document Preview */}
+{(data.aadhar_doc_front || data.aadhar_doc_back || data.pan_doc_front) && (
+  <div>
+    <p className="text-xs font-medium text-[#8a8d93] mb-3 uppercase tracking-wider">
+      Identity Documents
+    </p>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {data.aadhar_doc_front && (
+        <DocumentPreview 
+          label="Aadhar Front" 
+          url={data.aadhar_doc_front} 
+        />
+      )}
+      {data.aadhar_doc_back && (
+        <DocumentPreview 
+          label="Aadhar Back" 
+          url={data.aadhar_doc_back} 
+        />
+      )}
+      {data.pan_doc_front && (
+        <DocumentPreview 
+          label="PAN Card Front" 
+          url={data.pan_doc_front} 
+        />
+      )}
+    </div>
+  </div>
+)}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {fields.map((field, i) => (
             <ReadOnlyField key={i} label={field.label} value={field.value} />
           ))}
         </div>
 
-        {/* Document Preview */}
-        {(data.front_image || data.back_image || data.selfie_image) && (
-          <div>
-            <p className="text-xs font-medium text-[#8a8d93] mb-3">
-              Documents
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {data.front_image && (
-                <DocumentPreview label="Front" url={data.front_image} />
-              )}
-              {data.back_image && (
-                <DocumentPreview label="Back" url={data.back_image} />
-              )}
-              {data.selfie_image && (
-                <DocumentPreview label="Selfie" url={data.selfie_image} />
-              )}
-            </div>
-          </div>
-        )}
+
 
         <div className="text-center pt-2">
           <button
@@ -79,17 +89,21 @@ const DocumentPreview = ({ label, url }) => (
     target="_blank"
     rel="noreferrer"
     className="block bg-[#111214] border border-[#2a2c2f] rounded-xl overflow-hidden 
-      hover:border-[#0ecb6f]/30 transition-colors group"
+      hover:border-[#b9fd5c]/50 transition-all group shadow-lg"
   >
-    <img
-      src={url}
-      alt={label}
-      className="w-full h-32 object-cover group-hover:opacity-90 transition-opacity"
-      onError={(e) => {
-        e.target.style.display = "none";
-      }}
-    />
-    <p className="text-xs text-[#8a8d93] text-center py-2">{label}</p>
+    <div className="relative w-full h-40 bg-[#1a1c1e] flex items-center justify-center">
+      <img
+        src={url}
+        alt={label}
+        className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+        loading="lazy"
+      />
+    </div>
+    <div className="bg-[#1a1c1e] border-t border-[#2a2c2f] py-2">
+       <p className="text-[10px] font-bold text-[#8a8d93] text-center uppercase tracking-widest group-hover:text-[#b9fd5c]">
+         {label}
+       </p>
+    </div>
   </a>
 );
 

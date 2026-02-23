@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import "react-toastify/dist/ReactToastify.css";
 import {
   FileText,
@@ -22,8 +22,10 @@ import {
   useGetUsersWithTwentySixToHundredDirectRefsQuery,
   useGetInactiveUsersQuery,
 } from "./reportsApiSlice";
+import Loader from "../../reusableComponents/Loader/Loader"
 
 const SimpleBusinessReportPDF = () => {
+  const toast = useToast();
   const [pdfLoadingZero, setPdfLoadingZero] = useState(false);
   const [pdfLoading1to2, setPdfLoading1to2] = useState(false);
   const [pdfLoading3to5, setPdfLoading3to5] = useState(false);
@@ -547,7 +549,7 @@ function ReportCard({
 }) {
   return (
     <div
-      className={`bg-[#282f35]  rounded-xl overflow-hidden 
+      className={`bg-[#282f35]  rounded-lg overflow-hidden 
         hover:${borderColor} transition-all duration-300 flex flex-col`}
     >
       <div className="p-5 flex flex-col flex-1">
@@ -563,7 +565,7 @@ function ReportCard({
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-8 flex-1">
-            <Loader2 size={32} className="text-[#b9fd5c] animate-spin mb-3" />
+            <Loader />
             <p className="text-gray-400 text-sm">Loading data...</p>
           </div>
         ) : (

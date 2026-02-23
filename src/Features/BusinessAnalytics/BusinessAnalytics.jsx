@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import {
@@ -39,11 +41,12 @@ import { useGetBusinessDetailsByDateMutation } from "./businessApiSlice";
 const inputClass = `w-full bg-[#282f35]  text-white rounded-lg 
   px-4 py-2.5 text-sm focus:outline-none focus:border-[#b9fd5c] 
   focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors duration-200
-  placeholder-gray-500 disabled:opacity-50`;
+  placeholder-gray-500 disabled:opacity-50 border`;
 
 const labelClass = "block text-sm font-medium text-gray-300 mb-1.5";
 
 function GetBusinessDetails() {
+  const toast = useToast();
   const [usersData, setUsersData] = useState([]);
   const [selectedUserIndex, setSelectedUserIndex] = useState(0);
   const [dataFetched, setDataFetched] = useState(false);
@@ -499,15 +502,7 @@ function GetBusinessDetails() {
     return (
       <div className="bg-linear-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-2xl p-4 sm:p-6">
         {/* Header */}
-        <div className="mb-6">
-          <h2 className="text-white text-xl sm:text-2xl font-bold mb-1">
-            📊 Business Analytics Dashboard
-          </h2>
-          <p className="text-gray-400 text-sm">
-            Monitor your business performance • {formatDate(formValues.fromDate)} to{" "}
-            {formatDate(formValues.toDate)}
-          </p>
-        </div>
+        
 
         {/* Metric Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
@@ -752,21 +747,21 @@ function GetBusinessDetails() {
             onClick={() => setCurrentView("analytics")}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
               currentView === "analytics"
-                ? "bg-[#b9fd5c] text-white"
+                ? "bg-[#b9fd5c] text-black"
                 : "text-gray-400 hover:text-white"
             }`}
           >
-            📊 Analytics Dashboard
+             Analytics Dashboard
           </button>
           <button
             onClick={() => setCurrentView("details")}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
               currentView === "details"
-                ? "bg-[#b9fd5c] text-white"
+                ? "bg-[#b9fd5c] text-black"
                 : "text-gray-400 hover:text-white"
             }`}
           >
-            📋 Business Details
+             Business Details
           </button>
         </div>
       </div>
@@ -794,8 +789,8 @@ function GetBusinessDetails() {
                 <button
                   type="submit"
                   disabled={isSubmitting || isLoading}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] 
-                    text-white font-medium px-6 py-2.5 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#b9fd5c] 
+                    text-black font-medium px-6 py-2.5 rounded-3xl transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting || isLoading ? (
                     <>
@@ -837,7 +832,7 @@ function GetBusinessDetails() {
                       <button
                         onClick={exportToPDF}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium
-                          bg-green-500/10 text-green-400 border border-green-500/20
+                          bg-green-500 text-white border border-green-500/20
                           hover:bg-green-500/20 transition-all cursor-pointer"
                       >
                         <Download size={14} />
@@ -848,7 +843,7 @@ function GetBusinessDetails() {
                       {Object.entries(totalStats.paymentModeStats).map(([mode, stats]) => (
                         <div
                           key={mode}
-                          className="bg-[#2e2e2e] border border-[#4a4a4a] rounded-xl p-4 text-center
+                          className="bg-[#000000]  rounded-xl p-4 text-center
                             hover:bg-[#3a3a3a] hover:-translate-y-0.5 transition-all"
                         >
                           <p className="text-[#b9fd5c] font-semibold mb-2">{mode}</p>
@@ -909,7 +904,7 @@ function GetBusinessDetails() {
                   <button
                     onClick={() => handleViewDetails("orders")}
                     disabled={!currentUserData.orders?.length}
-                    className="flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white 
+                    className="flex items-center justify-center gap-2 bg-[#b9fd5c] text-black 
                       font-medium py-3 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
                   >
                     <ShoppingCart size={16} />
@@ -1110,7 +1105,7 @@ function GetBusinessDetails() {
               {modalType === "orders" && currentUserData?.walletTransactions?.length > 0 && (
                 <button
                   onClick={() => setModalType("walletTransactions")}
-                  className="px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#b9fd5c] text-white rounded-lg transition-colors cursor-pointer"
                 >
                   View Wallet Transactions
                 </button>
@@ -1118,7 +1113,7 @@ function GetBusinessDetails() {
               {modalType === "walletTransactions" && currentUserData?.orders?.length > 0 && (
                 <button
                   onClick={() => setModalType("orders")}
-                  className="px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white rounded-lg transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#b9fd5c] text-white rounded-lg transition-colors cursor-pointer"
                 >
                   View Orders
                 </button>
@@ -1157,7 +1152,7 @@ function GradientStatCard({ title, value, gradient, shadow, icon: Icon }) {
 
 function SummaryCard({ label, value }) {
   return (
-    <div className="bg-[#2e2e2e] rounded-xl p-4 text-center">
+    <div className="bg-[#000000] rounded-lg p-4 text-center">
       <p className="text-[#b9fd5c] text-sm font-medium mb-1">{label}</p>
       <p className="text-white text-xl font-bold">{value}</p>
     </div>

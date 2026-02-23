@@ -77,9 +77,7 @@ const Wealthlogs2O = () => {
       render: (row) => (
         <span className="text-[#b9fd5c] font-semibold text-sm">
           ₹
-          {row?.amountDisbursed?.toFixed?.(2) ||
-            row?.amountDisbursed ||
-            "0.00"}
+          {row?.amountDisbursed?.toFixed?.(2) || row?.amountDisbursed || "0.00"}
         </span>
       ),
     },
@@ -101,9 +99,7 @@ const Wealthlogs2O = () => {
     },
     {
       header: "Day",
-      render: (row) => (
-        <Badge type="warning">{extractDay(row?.reason)}</Badge>
-      ),
+      render: (row) => <Badge type="warning">{extractDay(row?.reason)}</Badge>,
     },
     {
       header: "Created On",
@@ -117,8 +113,7 @@ const Wealthlogs2O = () => {
 
   // Mobile Card
   const renderMobileCard = (row, index) => {
-    const sNo =
-      state.currentPage * state.perPage - (state.perPage - 1) + index;
+    const sNo = state.currentPage * state.perPage - (state.perPage - 1) + index;
 
     return (
       <MobileCard
@@ -184,7 +179,6 @@ const Wealthlogs2O = () => {
       <div className="p-2 sm:p-2 space-y-6">
         {/* Filters Row */}
 
-
         {/* Table Card */}
         <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
           {/* Header */}
@@ -193,29 +187,23 @@ const Wealthlogs2O = () => {
               className="flex flex-col sm:flex-row items-start sm:items-center 
               justify-between gap-4"
             >
-              <h1 className="text-lg font-semibold text-white">
-                Guaranteed Wealth Plan Logs 2.O
-              </h1>
-<div className="flex w-full">
-  <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-    <PerPageSelector
-      value={state.perPage}
-      options={[10,20,40,60,80,100]}
-      onChange={(value) =>
-        setState((prev) => ({
-          ...prev,
-          perPage: value,
-          currentPage: 1,
-        }))
-      }
-    />
+              <div className="flex w-full">
+                <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
+                  <PerPageSelector
+                    value={state.perPage}
+                    options={[10, 20, 40, 60, 80, 100]}
+                    onChange={(value) =>
+                      setState((prev) => ({
+                        ...prev,
+                        perPage: value,
+                        currentPage: 1,
+                      }))
+                    }
+                  />
 
-    <SearchBar
-      onChange={handleSearch}
-      placeholder="Search..."
-    />
-  </div>
-</div>
+                  <SearchBar onChange={handleSearch} placeholder="Search..." />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -229,8 +217,6 @@ const Wealthlogs2O = () => {
               perPage={state.perPage}
             />
           </div>
-
-
         </div>
 
         {/* Pagination */}

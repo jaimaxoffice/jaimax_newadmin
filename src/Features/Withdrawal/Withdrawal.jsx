@@ -1,6 +1,6 @@
 // src/features/withdrawal/Withdrawal.jsx
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
@@ -16,6 +16,7 @@ import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import { Eye,Clock, CheckCircle2,XCircle} from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 const Withdrawal = () => {
+  const toast = useToast();
   const [state, setState] = useState({
     currentPage: 1,
     perPage: 10,

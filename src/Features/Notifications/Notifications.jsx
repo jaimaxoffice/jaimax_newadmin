@@ -1,6 +1,6 @@
 // src/features/notifications/BulkNotificationManagement.jsx
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {
@@ -56,6 +56,7 @@ const validationSchema = Yup.object({
 
 // ─── Main Component ─────────────────────────────────────────
 const BulkNotificationManagement = () => {
+  const toast = useToast();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const [sendingStatus, setSendingStatus] = useState(null);
@@ -167,15 +168,7 @@ const BulkNotificationManagement = () => {
     <div className="p-2 sm:p-2 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#2a2c2f]">
-        <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-3">
-            <Send size={24} className="text-[#b9fd5c]" />
-            Bulk Notification Center
-          </h2>
-          <p className="text-[#8a8d93] text-sm mt-1">
-            Send targeted notifications to specific user groups
-          </p>
-        </div>
+        
 
         <div className="flex items-center gap-3 flex-wrap">
           {selectedCategory && (
@@ -350,7 +343,7 @@ const BulkNotificationManagement = () => {
                       type="url"
                       name="notificationLink"
                       placeholder="https://example.com/action"
-                      className={`w-full bg-[#111214] border text-white rounded-xl
+                      className={`w-full bg-[#111214] border text-black rounded-xl
                         py-2.5 px-4 text-sm focus:outline-none transition-colors
                         placeholder-[#555]
                         ${errors.notificationLink && touched.notificationLink
@@ -406,7 +399,7 @@ const BulkNotificationManagement = () => {
                         !values.notificationType ||
                         userCount === 0 || sendingStatus === "sending"
                       }
-                      className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
+                      className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-black rounded-xl
                         py-3 px-6 text-sm font-bold transition-colors cursor-pointer
                         disabled:opacity-50 disabled:cursor-not-allowed
                         flex items-center gap-2 whitespace-nowrap"
@@ -474,10 +467,10 @@ const CategoryCard = ({ category, isSelected, userCount, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className={`relative text-left w-full p-5 rounded-2xl transition-all duration-300
+      className={`relative text-left w-full p-5 rounded-lg transition-all duration-300
         cursor-pointer group
         ${isSelected
-          ? "bg-[#2a2c2f] border-2 border-[#b9fd5c] shadow-lg shadow-[#b9fd5c]/10 -translate-y-1"
+          ? "bg-[#2a2c2f] border-2 border-[#b9fd5c] shadow-lg shadow-[#b9fd5c]/10 -translate-y-1 text-black"
           : "bg-[#282f35] border border-[#2a2c2f] hover:border-[#b9fd5c]/30 hover:-translate-y-0.5"
         }`}
     >
@@ -491,14 +484,14 @@ const CategoryCard = ({ category, isSelected, userCount, onClick }) => {
             isSelected ? "bg-[#b9fd5c]" : "bg-[#111214] group-hover:bg-[#b9fd5c]/10"
           }`}
         >
-          <Icon size={24} className={isSelected ? "text-white" : "text-[#b9fd5c]"} />
+          <Icon size={24} className={isSelected ? "text-black" : "text-[#b9fd5c]"} />
         </div>
 
         <h4 className="text-white font-bold text-sm mb-1">{category.name}</h4>
         <p className="text-[#8a8d93] text-xs leading-relaxed">{category.description}</p>
 
         {isSelected && userCount !== null && (
-          <span className="mt-3 bg-[#b9fd5c] text-white text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+          <span className="mt-3 bg-[#b9fd5c] text-black text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1">
             <CheckCircle size={12} />
             Selected • {userCount} users
           </span>
@@ -538,10 +531,10 @@ const UserPreviewList = ({ users, totalCount }) => (
           </div>
           {user.directRefs !== undefined && (
             <div className="text-right shrink-0">
-              <span className="bg-[#b9fd5c] text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+              <span className="bg-[#b9fd5c] text-black text-[10px] font-semibold px-2 py-0.5 rounded-full">
                 {user.directRefs} Direct
               </span>
-              <p className="text-[#8a8d93] text-[10px] mt-1">{user.totalRefs || 0} Total</p>
+              <p className="text-[#ffffff] text-[10px] mt-1">{user.totalRefs || 0} Total</p>
             </div>
           )}
         </div>

@@ -1,6 +1,6 @@
 // src/features/admin/AddPermissions.jsx
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import Modal from "../../reusableComponents/Modals/Modals";
 import { useSendUserMutation } from "./adminmanagementApiSlice";
 import { allPermissions, formatPermissionName } from "./permissions";
@@ -8,6 +8,7 @@ import countryCodes from "../../layout/countryCodes.json";
 import Button from "../../reusableComponents/Buttons/Button";
 import FormField from "../../reusableComponents/Inputs/FormField";
 const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
+  const toast = useToast();
   const [sendUser, { isLoading }] = useSendUserMutation();
 
   const initialFormState = {

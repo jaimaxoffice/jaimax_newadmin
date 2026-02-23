@@ -1,6 +1,6 @@
 // src/features/admin/UpdatePermissions.jsx
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import Modal from "../../reusableComponents/Modals/Modals";
 import {
   useViewUserQuery,
@@ -12,6 +12,7 @@ import FormField from "../../reusableComponents/Inputs/FormField";
 
 import Button from "../../reusableComponents/Buttons/Button";
 const EditAdminUser = ({ isOpen, onClose, userId, onSuccess }) => {
+  const toast = useToast();
   const { data: viewUser, isLoading: isFetching } = useViewUserQuery(userId, {
     skip: !userId,
   });

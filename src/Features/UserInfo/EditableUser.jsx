@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useUpdateUserInfoMutation } from "./userinfoApiSlice";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import { Pencil, Loader2, X } from "lucide-react";
 
 const inputClass = `w-full bg-[#282f35]  text-gray-400 rounded-lg 
@@ -10,6 +10,7 @@ const editInputClass = `w-full bg-[#282f35] border border-[#b9fd5c] text-white r
   px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors font-medium`;
 
 const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
+  const toast = useToast();
   const [updateUserInfo, { isLoading: isUpdating }] = useUpdateUserInfoMutation();
   const [isLoading, setIsLoading] = useState(false);
   const [editMode, setEditMode] = useState({
@@ -130,7 +131,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
           <button
             onClick={() => handleSaveField(fieldName)}
             disabled={isUpdating || isLoading}
-            className="shrink-0 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
+            className="shrink-0 bg-[#b9fd5c] text-white font-bold px-4 py-2.5 
               rounded-lg transition-colors disabled:opacity-50 cursor-pointer text-sm"
           >
             {isUpdating || isLoading ? "Saving..." : "Save"}
@@ -165,7 +166,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
               <button
                 onClick={() => handleSaveField("phone")}
                 disabled={isUpdating || isLoading}
-                className="shrink-0 bg-[#b9fd5c] hover:bg-[#d55a0e] text-white font-bold px-4 py-2.5 
+                className="shrink-0 bg-[#b9fd5c] text-white font-bold px-4 py-2.5 
                   rounded-lg transition-colors disabled:opacity-50 cursor-pointer text-sm"
               >
                 {isUpdating || isLoading ? "Saving..." : "Save"}
@@ -221,7 +222,7 @@ const Edituser = ({ user, searchTerm, setSearchTerm, refetchUserInfo }) => {
             <div className="flex gap-2">
               <button
                 onClick={handleVerifySecretCode}
-                className="flex-1 bg-[#b9fd5c] text-white py-2.5 rounded-lg font-semibold hover:bg-[#d55a0e] 
+                className="flex-1 bg-[#b9fd5c] text-white py-2.5 rounded-lg font-semibold 
                   transition-colors cursor-pointer"
               >
                 Verify

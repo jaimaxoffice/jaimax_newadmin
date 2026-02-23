@@ -5,9 +5,10 @@ import {
   useGetLegalQuery,
 } from "./securityApiSlice";
 import { Editor } from "@tinymce/tinymce-react";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 
 const LegalUpdation = () => {
+  const toast = useToast();
   const [legalData, setLegalData] = useState("");
   const [ids, setIds] = useState("");
   const [loading, setLoading] = useState(false);

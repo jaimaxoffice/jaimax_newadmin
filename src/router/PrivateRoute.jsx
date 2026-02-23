@@ -1,13 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
+import Cookies from "js-cookie";
 
-const PrivateRoute = ({children}) => {
-    const token = localStorage.getItem("token");
-    if(!token) {
-        return <Navigate to="/login" />;
-    } else {
-        return <Outlet />
-    }
-    return children
+const PrivateRoute = () => {
+  const token = Cookies.get("adminToken"); // admin token
+
+  // If admin not logged in, block private pages
+  return !token ? <Navigate to="/login" replace /> : <Outlet />;
 };
 
 export default PrivateRoute;

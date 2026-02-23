@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../reusableComponents/Loader/Loader"
 import {
@@ -22,7 +22,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
-import StatCard from "../../reusableComponents/StatCards/ZoomCards";
+import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import {
   useCreateZoomMeetingMutation,
   useGetAllZoomMeetingsQuery,
@@ -67,6 +67,7 @@ const TYPE_COLORS = {
     "bg-purple-500/20 text-purple-400 border border-purple-500/30",
 };
 function ZoomMeeting() {
+  const toast = useToast();
   const [submittedMeeting, setSubmittedMeeting] = useState(null);
   const [editingMeeting, setEditingMeeting] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -445,7 +446,7 @@ function ZoomMeeting() {
                       <button
                         type="submit"
                         disabled={isSubmitting || creatingMeeting}
-                        className="flex-1 flex items-center justify-center gap-2 bg-[#b9fd5c] hover:bg-[#d55a0e] 
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#b9fd5c] 
                           text-white font-medium py-2.5 rounded-lg transition-all duration-200 
                           disabled:opacity-50 cursor-pointer"
                       >
@@ -505,28 +506,28 @@ function ZoomMeeting() {
                   <table className="w-full">
                     <thead>
                       <tr className="bg-[#b9fd5c] border-b border-[#303f50]">
-                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-left text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           S.No
                         </th>
-                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-left text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           Title
                         </th>
-                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-left text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           Sub Title
                         </th>
-                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-left text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           Type
                         </th>
-                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-left text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           Video ID
                         </th>
-                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-left text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           URL
                         </th>
-                        <th className="text-left text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-left text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           Created
                         </th>
-                        <th className="text-center text-xs font-semibold text-[#ffff] uppercase tracking-wider px-4 py-3">
+                        <th className="text-center text-xs font-semibold text-[#000000] uppercase tracking-wider px-4 py-3">
                           Actions
                         </th>
                       </tr>
@@ -858,7 +859,7 @@ function ZoomMeeting() {
                       <button
                         type="submit"
                         disabled={isSubmitting || updatingMeeting}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#b9fd5c] hover:bg-[#d55a0e] 
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[#b9fd5c] 
                           text-white rounded-lg transition-all duration-200 
                           disabled:opacity-50 cursor-pointer"
                       >

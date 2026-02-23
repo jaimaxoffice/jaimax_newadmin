@@ -1,43 +1,82 @@
-// src/features/wallet/WalletActionModal.jsx
 import React, { useState } from "react";
 import Modal from "../../reusableComponents/Modals/Modals";
+// ✅ IMPORT THIS ONE (Hits /wallet/updateStatus)
+import { useTransUpdateMutation } from "./walletApiSlice"; 
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 
 const WalletActionModal = ({
   isOpen,
   onClose,
   type,
   id,
-  onApprove,
-  onReject,
-  onHold,
+  refetch,
 }) => {
+  const toast = useToast();
   const [reason, setReason] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
-    if (type === "Approve") onApprove(id);
-    if (type === "Hold") onHold(id);
-    if (type === "Reject") onReject(id, reason);
-    setReason("");
-    onClose();
+  // ✅ USE THE STATUS UPDATE MUTATION
+  const [updateStatus] = useTransUpdateMutation(); 
+
+  const handleSubmit = async () => {
+    if (type === "Reject" && !reason.trim()) {
+      toast.warning("Please enter a reason for rejection");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const statusMap = {
+        Approve: "Completed",
+        Hold: "Hold",
+        Reject: "Failed",
+      };
+
+      // ✅ PAYLOAD for /wallet/updateStatus
+      const payload = {
+        transactionId: id,
+        transactionStatus: statusMap[type],
+      };
+
+      if (type === "Reject") {
+        payload.reason = reason;
+      }
+
+      // Execute the API call
+      await updateStatus(payload).unwrap();
+
+      toast.success(`Transaction ${type}d successfully`);
+      
+      setReason("");
+      onClose();
+      refetch?.(); // Refresh the table
+    } catch (error) {
+      toast.error(
+        `Failed to ${type.toLowerCase()} transaction`,
+        error?.data?.message || "Something went wrong"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const config = {
     Approve: {
       title: "Approve Transaction",
       message: "Are you sure you want to approve this transaction?",
-      btnClass: "bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 text-[#111214]",
+      btnClass: "bg-[#b9fd5c] text-[#111214]",
       btnText: "Approve",
     },
     Hold: {
       title: "Hold Transaction",
       message: "Are you sure you want to hold this transaction?",
-      btnClass: "bg-yellow-500 hover:bg-yellow-500/90 text-[#111214]",
+      btnClass: "bg-yellow-500 text-[#111214]",
       btnText: "Hold",
     },
     Reject: {
       title: "Reject Transaction",
       message: "Are you sure you want to reject this transaction?",
-      btnClass: "bg-red-500 hover:bg-red-500/90 text-white",
+      btnClass: "bg-red-500 text-white",
       btnText: "Reject",
       showReason: true,
     },
@@ -50,37 +89,34 @@ const WalletActionModal = ({
       <div className="space-y-4">
         <p className="text-[#8a8d93] text-sm">{current.message}</p>
 
+        <div className="bg-[#111214] border border-[#2a2c2f] rounded-xl px-4 py-2.5">
+          <span className="text-xs text-[#8a8d93]">Transaction ID: </span>
+          <span className="text-xs text-white font-medium">{id}</span>
+        </div>
+
         {current.showReason && (
           <div>
-            <label className="block text-sm font-medium text-[#8a8d93] mb-2">
-              Reason
-            </label>
+            <label className="block text-sm font-medium text-[#8a8d93] mb-2">Reason</label>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Enter reason for rejection..."
+              placeholder="Enter reason..."
               rows={3}
-              className="w-full bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555] 
-                rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[#0ecb6f] 
-                focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors resize-none"
+              className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-3 px-4 text-sm"
             />
           </div>
         )}
 
         <div className="flex gap-3 pt-2">
-          <button
-            onClick={onClose}
-            className="flex-1 bg-[#2a2c2f] hover:bg-[#333] text-white py-3 rounded-xl 
-              text-sm font-medium transition-colors cursor-pointer"
-          >
+          <button onClick={onClose} className="flex-1 bg-[#2a2c2f] text-white py-3 rounded-3xl text-sm">
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className={`flex-1 py-3 rounded-xl text-sm font-semibold 
-              transition-colors cursor-pointer ${current.btnClass}`}
+            disabled={isSubmitting}
+            className={`flex-1 py-3 rounded-3xl text-sm font-semibold ${current.btnClass} disabled:opacity-50`}
           >
-            {current.btnText}
+            {isSubmitting ? "Processing..." : current.btnText}
           </button>
         </div>
       </div>

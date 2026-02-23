@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import {
   CreditCard,
   CheckCircle,
@@ -24,8 +24,9 @@ import {
   useDeletePaymentGatewayMutation,
 } from "./paymentGatewayApiSlice";
 import Loader from "../../reusableComponents/Loader/Loader";
-import StatCard from "../../reusableComponents/StatCards/ZoomCards";
+import StatCard from "../../reusableComponents/StatCards/StatsCard";
 const PaymentGatewayManagement = () => {
+  const toast = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingGateway, setEditingGateway] = useState(null);
@@ -325,7 +326,7 @@ const PaymentGatewayManagement = () => {
           onClick={() => setFilterActive("all")}
           className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "all"
-              ? "bg-[#b9fd5c] text-white shadow-md shadow-[#b9fd5c]/20"
+              ? "bg-[#b9fd5c] text-black shadow-md shadow-[#b9fd5c]/20"
               : "bg-transparent border border-[#64748b] text-white hover:border-[#b9fd5c]/50"
           }`}
         >
@@ -336,7 +337,7 @@ const PaymentGatewayManagement = () => {
           onClick={() => setFilterActive("active")}
           className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "active"
-              ? "bg-[#b9fd5c] text-white shadow-md shadow-[#b9fd5c]/20"
+              ? "bg-[#b9fd5c] text-black shadow-md shadow-[#b9fd5c]/20"
               : "bg-transparent border border-[#64748b] text-white hover:border-[#b9fd5c]/50"
           }`}
         >
@@ -347,7 +348,7 @@ const PaymentGatewayManagement = () => {
           onClick={() => setFilterActive("inactive")}
           className={`px-4 py-2 rounded-xs text-xs font-medium transition-all duration-200 cursor-pointer ${
             filterActive === "inactive"
-              ? "bg-[#b9fd5c] text-white shadow-md shadow-[#b9fd5c]/20"
+              ? "bg-[#b9fd5c] text-black shadow-md shadow-[#b9fd5c]/20"
               : "bg-transparent border border-[#64748b] text-white hover:border-[#b9fd5c]/50"
           }`}
         >
@@ -384,7 +385,7 @@ const PaymentGatewayManagement = () => {
                   />
                   <CheckCircle
                     size={16}
-                    className="absolute text-white"
+                    className="absolute text-black"
                     style={{ top: "5px", right: "5px" }}
                   />
                 </div>
@@ -398,7 +399,7 @@ const PaymentGatewayManagement = () => {
                       gateway.isActive ? "bg-[#b9fd5c]" : "bg-[#64748b]"
                     }`}
                   >
-                    <CreditCard size={24} className="text-white" />
+                    <CreditCard size={24} className="text-black" />
                   </div>
                   <div>
                     <h3 className="text-white font-bold text-lg mb-1">
@@ -407,7 +408,7 @@ const PaymentGatewayManagement = () => {
                     <span
                       className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${
                         gateway.isActive
-                          ? "bg-[#b9fd5c] text-white"
+                          ? "bg-[#b9fd5c] text-black"
                           : "bg-[#64748b] text-white"
                       }`}
                     >
@@ -467,7 +468,7 @@ const PaymentGatewayManagement = () => {
                       }
                       disabled={activatingGateway || updatingGateway}
                       className="flex-1 flex items-center justify-center gap-2 
-                        bg-[#f59e0b] hover:bg-[#f59e0b]/90 text-white
+                        bg-[#f59e0b] hover:bg-[#f59e0b]/90 text-black
                         font-semibold py-2.5 px-4 rounded-xs text-sm
                         disabled:opacity-50 disabled:cursor-not-allowed
                         transition-all duration-200 cursor-pointer min-h-10 "
@@ -486,13 +487,13 @@ const PaymentGatewayManagement = () => {
                       }
                       disabled={activatingGateway}
                       className="flex-1 flex items-center justify-center gap-2 
-                        bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 text-white
+                        bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 text-black
                         font-semibold py-2.5 px-4 rounded-xs text-sm
                         disabled:opacity-50 disabled:cursor-not-allowed
                         transition-all duration-200 cursor-pointer min-h-10"
                     >
                       {activatingGateway ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white/30  rounded-full animate-spin text-black" />
                       ) : (
                         <Play size={16} />
                       )}
@@ -525,7 +526,7 @@ const PaymentGatewayManagement = () => {
             <button
               onClick={() => setShowCreateModal(true)}
               className="flex items-center gap-2 bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 
-                text-white font-semibold py-3 px-6 rounded-lg text-sm
+                text-black font-semibold py-3 px-6 rounded-lg text-sm
                 transition-colors cursor-pointer"
             >
               <Plus size={20} />
@@ -708,7 +709,7 @@ const PaymentGatewayManagement = () => {
               >
                 {creatingGateway ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin text-black" />
                     Creating...
                   </>
                 ) : (

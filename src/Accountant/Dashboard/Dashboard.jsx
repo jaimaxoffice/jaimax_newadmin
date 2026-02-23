@@ -1,6 +1,6 @@
 import { Wallet, Users, KeyRound, User, Globe, Calendar } from "lucide-react";
 import { useUserDataQuery } from "../../Features/Users/usersApiSlice";
-
+import Loader from "../../reusableComponents/Loader/Loader";
 export default function AccountantDashboard() {
   const { data, isLoading, isError } = useUserDataQuery();
   const u = data?.data;
@@ -11,7 +11,7 @@ export default function AccountantDashboard() {
     d ? new Date(d).toLocaleString("en-IN", { hour12: true }) : "—";
 
   if (isLoading)
-    return <div className="text-white p-4">Loading…</div>;
+    return <Loader/>
   if (isError || !u)
     return <div className="text-red-500 p-4">Unable to load user.</div>;
 
