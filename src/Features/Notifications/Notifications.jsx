@@ -333,7 +333,7 @@ const BulkNotificationManagement = () => {
                     />
                     <div className="flex justify-between mt-1">
                       <ErrorMessage name="notificationMessage" component="p" className="text-red-400 text-xs" />
-                      <span className="text-[#555] text-xs">{values.notificationMessage.length}/500</span>
+                      <span className="text-[#b1abab] text-xs">{values.notificationMessage.length}/500</span>
                     </div>
                   </FormFieldWrapper>
 
@@ -352,7 +352,7 @@ const BulkNotificationManagement = () => {
                         }`}
                     />
                     <ErrorMessage name="notificationLink" component="p" className="text-red-400 text-xs mt-1" />
-                    <p className="text-[#555] text-xs mt-1">Add a clickable link to your notification</p>
+                    <p className="text-[#ada7a7] text-xs mt-1">Add a clickable link to your notification</p>
                   </FormFieldWrapper>
                 </div>
               </div>
@@ -451,7 +451,7 @@ export default BulkNotificationManagement;
 
 const StepHeader = ({ number, title, subtitle }) => (
   <div className="flex items-start gap-3">
-    <span className="w-8 h-8 rounded-full bg-[#b9fd5c] text-white text-sm font-bold flex items-center justify-center shrink-0">
+    <span className="w-8 h-8 rounded-full bg-[#b9fd5c] text-black text-sm font-bold flex items-center justify-center shrink-0">
       {number}
     </span>
     <div>

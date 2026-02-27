@@ -24,8 +24,8 @@ const MemberDetailModal = ({ isOpen, onClose, member }) => {
         {/* Profile Header */}
         <div className="flex items-center gap-4 pb-4 border-b border-[#2a2c2f]">
           <div
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0 ${
-              member.isActive ? "bg-[#b9fd5c]" : "bg-[#333]"
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center  text-xl font-bold flex-shrink-0 serialHeading ${
+              member.isActive ? "bg-[#b9fd5c] text-black" : "bg-[#333] text-white"
             }`}
           >
             {(member.name || "U")[0].toUpperCase()}
@@ -86,38 +86,44 @@ export const InvestmentSection = ({ investments }) => {
   }
 
   return (
-    <div className="bg-[#b9fd5c]/5 border border-[#b9fd5c]/15 rounded-xl p-4 space-y-3">
-      <div className="flex items-center justify-between pb-3 border-b border-white/5">
-        <span className="text-[#b9fd5c] text-[13px] font-semibold flex items-center gap-2">
-          <TrendingUp size={12} />
-          Investments ({investments.length})
-        </span>
-        <span className="text-[#0ecb6f] text-sm font-bold bg-[#0ecb6f]/10 px-3 py-1 rounded-full">
-          {formatAmount(getTotalInvestment(investments))}
-        </span>
-      </div>
+<div className="bg-[#b9fd5c]/5 border border-[#b9fd5c]/15 rounded-xl p-3 sm:p-4 space-y-3 w-full">
+  {/* Header */}
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-white/5">
+    <span className="text-[#b9fd5c] text-[13px] font-semibold flex items-center gap-2">
+      <TrendingUp size={12} />
+      Investments ({investments.length})
+    </span>
 
-      <div className="max-h-48 overflow-y-auto space-y-2 custom-scrollbar">
-        {investments.map((inv, idx) => (
-          <div
-            key={idx}
-            className="flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-lg"
-          >
-            <div className="flex items-center gap-3">
-              <span className="w-7 h-7 rounded-lg bg-[#b9fd5c] flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0">
-                {idx + 1}
-              </span>
-              <span className="text-[#0ecb6f] font-bold text-sm">
-                {formatAmount(inv.amount)}
-              </span>
-            </div>
-            <span className="text-white/40 text-[11px] flex items-center gap-1">
-              <Clock size={10} />
-              {formatDateTime(inv.transactionDate)}
-            </span>
-          </div>
-        ))}
+    <span className="text-[#0ecb6f] text-xs sm:text-sm font-bold bg-[#0ecb6f]/10 px-3 py-1 rounded-full w-fit">
+      {formatAmount(getTotalInvestment(investments))}
+    </span>
+  </div>
+
+  {/* List */}
+  <div className="max-h-44 sm:max-h-48 md:max-h-56 overflow-y-auto space-y-2 custom-scrollbar">
+    {investments.map((inv, idx) => (
+      <div
+        key={idx}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-white/2 border border-white/5 rounded-lg"
+      >
+        {/* Left */}
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="w-7 h-7 rounded-lg bg-[#b9fd5c] flex items-center justify-center text-black text-[11px] font-bold shrink-0">
+            {idx + 1}
+          </span>
+
+          <span className="text-[#0ecb6f] font-bold text-sm sm:text-base truncate">
+            {formatAmount(inv.amount)}
+          </span>
+        </div>
+
+        {/* Right */}
+        <span className="text-white/40 text-[11px] sm:text-[12px] whitespace-nowrap">
+          {formatDateTime(inv.transactionDate)}
+        </span>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
   );
 };

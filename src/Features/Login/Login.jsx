@@ -194,6 +194,7 @@ const handleLogin = async (e) => {
 
     setTimeout(() => {
      navigate("/");
+      window.location.href = "/";
     }, 0);
   } catch (error) {
     console.log(error);

@@ -12,8 +12,8 @@ const NoAccess = () => {
         <div className="w-full">
           {/* Header */}
           <div className="bg-[#b9fd5c]  rounded-lg p-4 sm:p-6 mb-6">
-            <h1 className="text-lg sm:text-xl font-semibold text-white">
-              NO Access
+            <h1 className="text-lg sm:text-xl font-semibold text-black">
+              No Access
             </h1>
           </div>
 
@@ -24,3 +24,5 @@ const NoAccess = () => {
 };
 
 export default NoAccess;
+
+

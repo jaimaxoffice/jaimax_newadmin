@@ -1,5 +1,4 @@
 // src/features/team/TeamPDF.js
-import PDFGenerator from "../../utils/pdfGenerator";
 
 // ─── Get Total Stats ────────────────────────────────────────
 const getTotalStats = (layersData) => {
@@ -38,7 +37,10 @@ const USER_COLUMNS = [
 ];
 
 // ─── Build Team PDF ─────────────────────────────────────────
-export const buildTeamPDF = (pdf, { layersData, username }) => {
+export const buildTeamPDF = (pdf, { layersData, name, username }) => {
+  // Use name if available, fallback to username
+  const displayName = name || username || "Unknown";
+  
   const stats = getTotalStats(layersData);
 
   // Full content width for column calculations
@@ -55,9 +57,10 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
 
   pdf.addSpace(3);
 
-  // Summary Box
+  // Summary Box - Show Name prominently
   pdf.addSummaryBox("Report Summary", [
-    { label: "Username", value: username },
+    { label: "Name", value: displayName },
+    ...(username && username !== displayName ? [{ label: "Username", value: username }] : []),
     { label: "Total Layers", value: stats.totalLayers },
     { label: "Active Users", value: stats.totalActive, color: [14, 203, 111] },
     { label: "Inactive Users", value: stats.totalInactive, color: [239, 68, 68] },
@@ -135,19 +138,18 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
 
     pdf.addSpace(2);
 
-    // Column widths — proportional, adds up to 100% of content width
     const userColStyles = {
-      0: { cellWidth: fw * 0.05, halign: "center" },  // #
-      1: { cellWidth: fw * 0.18 },                      // Name
-      2: { cellWidth: fw * 0.16 },                      // Username
-      3: { cellWidth: fw * 0.27 },                      // Email
-      4: { cellWidth: fw * 0.14 },                      // Phone
-      5: { cellWidth: fw * 0.20 },                      // Reference ID
+      0: { cellWidth: fw * 0.05, halign: "center" },
+      1: { cellWidth: fw * 0.18 },
+      2: { cellWidth: fw * 0.16 },
+      3: { cellWidth: fw * 0.27 },
+      4: { cellWidth: fw * 0.14 },
+      5: { cellWidth: fw * 0.20 },
     };
 
     // Active Users
     if (activeUsers.length > 0) {
-      pdf.addText("✓ Active Users", {
+      pdf.addText("Active Users", {
         fontSize: 8,
         bold: true,
         color: [14, 203, 111],
@@ -167,7 +169,7 @@ export const buildTeamPDF = (pdf, { layersData, username }) => {
     if (inactiveUsers.length > 0) {
       pdf.checkPageBreak(20);
 
-      pdf.addText("✗ Inactive Users", {
+      pdf.addText("Inactive Users", {
         fontSize: 8,
         bold: true,
         color: [239, 68, 68],

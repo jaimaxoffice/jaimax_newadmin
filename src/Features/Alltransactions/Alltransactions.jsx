@@ -97,10 +97,17 @@ const AllTransactions = () => {
       header: "Name",
       accessor: "name",
     },
-    {
-      header: "Payment Method",
-      accessor: "paymentMode",
-    },
+{
+  header: "Payment Method",
+  render: (row) => {
+    const mode = row?.paymentMode;
+    return mode ? (
+      <span className="font-medium text-white">{mode}</span>
+    ) : (
+      <span className="text-[#fff] text-sm">N/A</span>
+    );
+  },
+},
     {
       header: "Transaction Type",
       render: (row) => (
@@ -165,82 +172,10 @@ const AllTransactions = () => {
         </span>
       ),
     },
-    {
-      header: "Reason",
-      render: (row) => (
-        <span className="">{row.reason || "N/A"}</span>
-      ),
-    },
+   
   ];
 
-  // Mobile Card Builder
-  const renderTransactionCard = (row, index) => {
-    const sNo =
-      state.currentPage * state.perPage - (state.perPage - 1) + index;
 
-    return (
-      <MobileCard
-        key={row.transactionId || index}
-        header={{
-          avatar: row.name?.charAt(0)?.toUpperCase(),
-          avatarBg: `${
-            row.transactionType === "Credit"
-              ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-              : "bg-red-500/10 text-red-400"
-          }`,
-          title: row.name,
-          subtitle: `#${sNo} • ${row.transactionType}`,
-          badge: row.transactionStatus,
-          badgeClass: getStatusStyle(row.transactionStatus),
-        }}
-        rows={[
-          {
-            label: "Payment Method",
-            value: row.paymentMode || "N/A",
-          },
-          {
-            label: "Amount",
-            value: getCurrency(row.userId?.countryCode, row.transactionAmount),
-            highlight: true,
-          },
-          {
-            label: "Transaction ID",
-            custom: row.screenshotUrl ? (
-              <a
-                href={row.screenshotUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#b9fd5c] hover:underline text-xs 
-                  truncate max-w-[60%] text-right"
-              >
-                {row.transactionId}
-              </a>
-            ) : (
-              <span
-                className="text-xs text-white truncate 
-                max-w-[60%] text-right"
-              >
-                {row.transactionId}
-              </span>
-            ),
-          },
-          {
-            label: "Date",
-            value: formatDateWithAmPm(row.transactionDate),
-          },
-          {
-            label: "Updated By",
-            value: row.updatedBy?.name || "N/A",
-          },
-          {
-            label: "Reason",
-            value: row.reason || "N/A",
-          },
-        ]}
-        actions={[]}
-      />
-    );
-  };
 
   return (
     <div>

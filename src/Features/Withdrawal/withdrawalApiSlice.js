@@ -15,8 +15,15 @@ export const withdrawalApiSlice = apiSlice.injectEndpoints({
         body: credentials,
       }),
     }),
+    updateWithdrawUTR: builder.mutation({
+      query: ({id, utrNo}) => ({
+        url: `withdraw/updateWithdrawUTR`,
+        method: "POST",
+        body: { id, utrNo },
+      })
+    })
   }),
 });
 
-export const { useGetWithdrawListQuery, useWithdrawApprovalMutation } =
+export const { useGetWithdrawListQuery, useWithdrawApprovalMutation,useUpdateWithdrawUTRMutation  } =
   withdrawalApiSlice;

@@ -7,6 +7,7 @@ import { allPermissions, formatPermissionName } from "./permissions";
 import countryCodes from "../../layout/countryCodes.json";
 import Button from "../../reusableComponents/Buttons/Button";
 import FormField from "../../reusableComponents/Inputs/FormField";
+import Loader from "../../reusableComponents/Loader/Loader"
 const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
   const toast = useToast();
   const [sendUser, { isLoading }] = useSendUserMutation();
@@ -258,7 +259,7 @@ const AddAdminUser = ({ isOpen, onClose, onSuccess }) => {
             disabled={isLoading}
             variant="primary"
             size="md"
-            icon={isLoading ? Loader2 : null}
+            // icon={isLoading ? Loader : null}
             className={isLoading ? "[&>svg]:animate-spin" : ""}
           >
             {isLoading ? "Creating..." : "Create User"}

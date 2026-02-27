@@ -85,7 +85,7 @@ const WalletApprove = () => {
     } catch (error) {
       toast.error(
         "Failed to update transaction",
-        error?.data?.message || "Something went wrong"
+        error?.data?.message || "Something went wrong",
       );
     }
   };
@@ -111,7 +111,7 @@ const WalletApprove = () => {
       data.transactionStatus === "Completed" ||
       data.transactionStatus === "Failed"
     ) {
-      return <span className="text-xs text-[#555]">—</span>;
+      return <span className="text-xs text-[#fff]">N/A</span>;
     }
 
     return (
@@ -175,8 +175,12 @@ const WalletApprove = () => {
       header: "Transaction ID",
       render: (row) =>
         row.screenshotUrl ? (
-          <a href={row.screenshotUrl} target="_blank" rel="noreferrer"
-            className="text-blue-500 hover:underline text-xs">
+          <a
+            href={row.screenshotUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-500 hover:underline text-xs"
+          >
             {row.transactionId}
           </a>
         ) : (
@@ -194,7 +198,9 @@ const WalletApprove = () => {
     {
       header: "Status",
       render: (row) => (
-        <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full text-center ${getStatusStyle(row.transactionStatus)}`}>
+        <span
+          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full text-center ${getStatusStyle(row.transactionStatus)}`}
+        >
           {row.transactionStatus}
         </span>
       ),
@@ -205,21 +211,42 @@ const WalletApprove = () => {
     },
     {
       header: "Action",
-      render: (row) => <ActionButtons data={row} />,
+      render: (row) => (row ? <ActionButtons data={row} /> : "N/A"),
     },
   ];
 
   return (
     <>
-      <div className="p-2 sm:p-2 space-y-6">
-        {statusCounts && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Pending" value={statusCounts.Pending || 0} icon={Clock} variant="pending" />
-            <StatCard title="Completed" value={statusCounts.Completed || 0} icon={CheckCircle2} variant="completed" />
-            <StatCard title="Hold" value={statusCounts.Hold || 0} icon={PauseCircle} variant="hold" />
-            <StatCard title="Failed" value={statusCounts.Failed || 0} icon={XCircle} variant="failed" />
-          </div>
-        )}
+      <div className="p-2 sm:p-2 space-y-6 sidebar-scroll">
+{statusCounts && (
+  <div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+    <StatCard
+      title="Pending"
+      value={statusCounts.Pending || 0}
+      icon={Clock}
+      variant="pending"
+    />
+    <StatCard
+      title="Completed"
+      value={statusCounts.Completed || 0}
+      icon={CheckCircle2}
+      variant="completed"
+    />
+    <StatCard
+      title="Hold"
+      value={statusCounts.Hold || 0}
+      icon={PauseCircle}
+      variant="hold"
+    />
+    <StatCard
+      title="Failed"
+      value={statusCounts.Failed || 0}
+      icon={XCircle}
+      variant="failed"
+    />
+  </div>
+)}
 
         <div className="bg-[#282f35] rounded-lg overflow-hidden">
           <div className="px-4 sm:px-6 py-4">
@@ -228,7 +255,11 @@ const WalletApprove = () => {
                 <PerPageSelector
                   options={[10, 20, 40, 60, 80, 100]}
                   onChange={(value) =>
-                    setState((prev) => ({ ...prev, perPage: value, currentPage: 1 }))
+                    setState((prev) => ({
+                      ...prev,
+                      perPage: value,
+                      currentPage: 1,
+                    }))
                   }
                 />
                 <select
@@ -246,7 +277,11 @@ const WalletApprove = () => {
                   onSearch={(e) => {
                     clearTimeout(window._searchTimeout);
                     window._searchTimeout = setTimeout(() => {
-                      setState((prev) => ({ ...prev, search: e.target.value, currentPage: 1 }));
+                      setState((prev) => ({
+                        ...prev,
+                        search: e.target.value,
+                        currentPage: 1,
+                      }));
                     }, 1000);
                   }}
                   placeholder="Search..."

@@ -79,6 +79,14 @@ const WealthLogs2O = () => {
       ),
     },
     {
+      header: "Order ID",
+      render: (row) => (
+        <span className="">
+          {row?._id}
+        </span>
+      ),
+    },
+    {
       header: "Name",
       render: (row) => row?.user?.name,
     },
@@ -89,7 +97,7 @@ const WealthLogs2O = () => {
       ),
     },
     {
-      header: "Amount",
+      header: "Amount(₹)",
       render: (row) => (
         <span className="font-medium">₹{row?.amount}</span>
       ),
@@ -99,7 +107,7 @@ const WealthLogs2O = () => {
       accessor: "jaimax",
     },
     {
-      header: "Wealth Plan",
+      header: "Wealth Plan status",
       render: (row) => (
         <Badge type={row?.isGuaranteedWealthOpted_2 ? "success" : "danger"}>
           {row?.isGuaranteedWealthOpted_2 ? "Yes" : "No"}
@@ -107,7 +115,7 @@ const WealthLogs2O = () => {
       ),
     },
     {
-      header: "Daily Amount",
+      header: "Everyday Amount",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.guaranteedAmountToBeDisburse_2 || "—"}
@@ -115,7 +123,7 @@ const WealthLogs2O = () => {
       ),
     },
     {
-      header: "Daily Tokens",
+      header: "Everyday Tokens Collected",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.guaranteedTokensToBeCollect_2 || "—"}
@@ -123,7 +131,7 @@ const WealthLogs2O = () => {
       ),
     },
     {
-      header: "Total Disbursed",
+      header: "Total Amount Disbursed",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.totalAmountDisbursedForWealthPlan_2 || "—"}
@@ -131,7 +139,7 @@ const WealthLogs2O = () => {
       ),
     },
     {
-      header: "Coins Collected",
+      header: "Everyday Tokens Collected",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.totalCoinsCollectedFormUser_2 || "—"}
@@ -139,7 +147,7 @@ const WealthLogs2O = () => {
       ),
     },
     {
-      header: "Days",
+      header: "Total Days Collected",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.wealthPalnDisbursedDays_2 || "—"}
@@ -147,7 +155,7 @@ const WealthLogs2O = () => {
       ),
     },
     {
-      header: "Completed",
+      header: "Wealth plan Completed",
       render: (row) => (
         <Badge type={row?.wealthPlanCompleted_2 ? "success" : "danger"}>
           {row?.wealthPlanCompleted_2 ? "Yes" : "No"}
@@ -165,7 +173,8 @@ const WealthLogs2O = () => {
   ];
   return (
     <div className="p-2 sm:p-2 space-y-6">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
         <StatCards 
           title="Total Plans" 
           value={data?.data?.total || 0} 

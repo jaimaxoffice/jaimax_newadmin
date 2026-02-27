@@ -152,7 +152,7 @@ const NotVerifiedUsers = () => {
                   onClick={() => refetch()}
                   disabled={isLoading}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
+                             bg-[#b9fd5c] text-white 
                              transition-all duration-200 cursor-pointer disabled:opacity-50"
                 >
                   {/* <RefreshIcon className={isLoading ? "animate-spin" : ""} /> */}

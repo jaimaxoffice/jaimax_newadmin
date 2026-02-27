@@ -59,7 +59,13 @@ export const walletApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-
+updateUTR: builder.mutation({
+      query: ({id, txId, utrNo}) => ({
+        url: `/wallet/update-utr`,
+        method: "POST",
+        body: { id, txId, utrNo },
+      })
+    })
     // getkycDetails: builder.query({
 
     //   query: (id) => ({
@@ -78,4 +84,5 @@ export const {
   useTransAmountUpdateMutation,
   useAllTransListQuery,
   useGetpaymentgatewaytransactionsQuery,
+  useUpdateUTRMutation
 } = walletApiSlice;

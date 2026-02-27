@@ -24,8 +24,8 @@ const MemberCard = ({ member, isActive = true, onClick }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div
-                className={`w-9 h-9 rounded-xl flex items-center justify-center text-black text-sm font-bold ${
-                  isActive ? "bg-[#b9fd5c]" : "bg-[#333]"
+                className={`w-9 h-9 rounded-xl flex items-center justify-center text-black text-sm font-bold serialHeading ${
+                  isActive ? "bg-[#b9fd5c] text-black " : "bg-[#333] "
                 }`}
               >
                 {(member.name || "U")[0].toUpperCase()}

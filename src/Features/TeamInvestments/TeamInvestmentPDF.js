@@ -43,9 +43,11 @@ const getInvestedStats = (layersData) => {
 
 export const buildTeamInvestmentPDF = (
   pdf,
-  { layersData, username, fromDate, toDate }
+  { layersData, name, username, fromDate, toDate }
 ) => {
-  // ✅ "username" param now actually contains the NAME from TeamInfo.jsx
+  // Use name if available, fallback to username
+  const displayName = name || username || "Unknown";
+  
   const stats = getInvestedStats(layersData);
   const fw = pdf.contentWidth;
 
@@ -87,9 +89,10 @@ export const buildTeamInvestmentPDF = (
     pdf.addSpace(3);
   }
 
-  // ✅ CHANGED: "Username" → "Name"
+  // Report Summary with Name
   pdf.addSummaryBox("Report Summary", [
-    { label: "Name", value: username },
+    { label: "Name", value: displayName },
+    ...(username && username !== displayName ? [{ label: "Username", value: username }] : []),
     { label: "Invested Users", value: stats.totalInvestedUsers },
     { label: "Active Layers", value: stats.totalLayers },
     {

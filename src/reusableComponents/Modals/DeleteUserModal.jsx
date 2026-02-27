@@ -12,7 +12,7 @@ const DeleteUserModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 sidebar-scroll"
       onClick={onClose}
     >
       <div
@@ -40,7 +40,7 @@ const DeleteUserModal = ({
 
         {/* Form */}
         <form onSubmit={onSubmit}>
-          <div className="p-6 space-y-4">
+          <div className="p-6 space-y-4 sidebar-scroll">
             {/* Username Input */}
             <div className="space-y-1.5">
               <label

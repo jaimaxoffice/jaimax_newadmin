@@ -23,11 +23,12 @@ const TransactionModal = ({ isOpen, onClose, onSubmit }) => {
             value={transactionType}
             onChange={(e) => setTransactionType(e.target.value)}
             className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-3 px-4 text-sm
-              focus:outline-none focus:border-[#0ecb6f] focus:ring-1 focus:ring-[#0ecb6f]/50 
+              focus:outline-none focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/50 
               transition-colors cursor-pointer"
           >
             <option value="referral_amount">Referral Amount</option>
-            <option value="wallet_amount">Wallet Amount</option>
+                  <option value="jaimax">Jaimax Coins</option>
+                  <option value="super_bonus">Super Bonus</option>
           </select>
         </div>
 
@@ -41,7 +42,7 @@ const TransactionModal = ({ isOpen, onClose, onSubmit }) => {
             onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter amount"
             className="w-full bg-[#111214] border border-[#2a2c2f] text-white placeholder-[#555] rounded-xl py-3 px-4 text-sm
-              focus:outline-none focus:border-[#0ecb6f] focus:ring-1 focus:ring-[#0ecb6f]/50 transition-colors"
+              focus:outline-none focus:border-[#b9fd5c] focus:ring-1 focus:ring-[#b9fd5c]/50 transition-colors"
           />
         </div>
 
@@ -49,13 +50,13 @@ const TransactionModal = ({ isOpen, onClose, onSubmit }) => {
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 bg-[#2a2c2f] hover:bg-[#333] text-white py-3 rounded-xl text-sm font-medium transition-colors cursor-pointer"
+            className="flex-1 bg-[#2a2c2f] hover:bg-[#333] text-white py-3 rounded-3xl text-sm font-medium transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 bg-[#0ecb6f] hover:bg-[#0ecb6f]/90 text-[#111214] py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+            className="flex-1 bg-[#b9fd5c] hover:bg-[#b9fd5c]/90 text-[#111214] py-3 rounded-3xl text-sm font-semibold transition-colors cursor-pointer"
           >
             Send
           </button>

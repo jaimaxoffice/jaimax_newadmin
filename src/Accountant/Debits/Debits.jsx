@@ -1,82 +1,51 @@
+// src/features/accountant/Debits.jsx
 import React, { useState, useEffect } from "react";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import Pagination from "../../reusableComponents/paginations/Pagination";
+import Modals from "../../reusableComponents/Modals/Modals";
 import {
   useTransAmountUpdateMutation,
   useTransListQuery,
 } from "../../Features/Wallet/walletApiSlice";
-import Modals from "../../Features/Wallet/EditTransactionModal";
-import {X,Check} from "lucide-react"
-// ✅ YOUR REUSABLE COMPONENTS
-import Table from "../../reusableComponents/Tables/Table";
-import Pagination from "../../reusableComponents/paginations/Pagination";
-import StatCard from "../../reusableComponents/StatCards/StatsCard";
-import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import  ClipLoader  from "../../reusableComponents/Loader/Loader";
 
-/* ── Modal Components ── */
-const TwModal = ({ show, onClose, children, backdrop = true }) => {
+// Custom Modal Component
+const Modal = ({ show, onClose, title, children, footer }) => {
   if (!show) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60"
-        onClick={backdrop === "static" ? undefined : onClose}
+        className="fixed inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
       />
-      <div className="relative w-full max-w-lg bg-[#1a2128] border border-[#2b3440] rounded-xl shadow-2xl text-white z-10 max-h-[90vh] overflow-y-auto">
-        {children}
+      {/* Modal Content */}
+      <div className="relative z-50 w-full max-w-md mx-4 bg-gray-800 rounded-lg shadow-xl">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <h3 className="text-lg font-semibold text-white">{title}</h3>
+          <button
+            onClick={onClose}
+            className="p-1 text-gray-400 hover:text-white transition-colors"
+          >
+            <Icon icon="mdi:close" width="24" height="24" />
+          </button>
+        </div>
+        {/* Body */}
+        <div className="p-4">{children}</div>
+        {/* Footer */}
+        {footer && (
+          <div className="flex justify-center gap-3 p-4 border-t border-gray-700">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const TwModalHeader = ({ onClose, children }) => (
-  <div className="flex items-start justify-between p-4 border-b border-[#2b3440]">
-    <h5 className="text-lg font-semibold leading-snug">{children}</h5>
-    <button
-      onClick={onClose}
-      className="ml-4 text-gray-400 hover:text-white transition text-2xl leading-none"
-    >
-      ×
-    </button>
-  </div>
-);
-
-const TwModalBody = ({ children }) => <div className="p-4">{children}</div>;
-
-const TwModalFooter = ({ children }) => (
-  <div className="flex flex-nowrap justify-center gap-4 p-4">{children}</div>
-);
-
-/* ── Status Badge ── */
-const StatusBadge = ({ status }) => {
-  const colors = {
-    Completed: "bg-green-500/20 text-green-400",
-    Failed: "bg-red-500/20 text-red-400",
-    Pending: "bg-yellow-500/20 text-yellow-400",
-  };
-  return (
-    <span
-      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-        colors[status] || "bg-gray-500/20 text-gray-400"
-      }`}
-    >
-      {status}
-    </span>
-  );
-};
-
-const formatDate = (iso) => {
-  const d = new Date(iso);
-  const dd = String(d.getUTCDate()).padStart(2, "0");
-  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const yyyy = d.getUTCFullYear();
-  let hh = d.getUTCHours();
-  const min = String(d.getUTCMinutes()).padStart(2, "0");
-  const ampm = hh >= 12 ? "PM" : "AM";
-  hh = hh % 12 || 12;
-  return `${dd}-${mm}-${yyyy} ${hh}:${min} ${ampm}`;
-};
-
 const Debits = () => {
-  /* ── State ── */
   const [show, setShow] = useState(false);
   const [deleteModal1, setDeleteModal1] = useState(false);
   const [check, setCheck] = useState(false);
@@ -84,6 +53,8 @@ const Debits = () => {
   const [status, setStatus] = useState("");
   const [editShow, setEditShow] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
+  const handleClose = () => setEditShow(false);
+  const handleEditShow = () => setEditShow(true);
   const [updateTransaction] = useTransAmountUpdateMutation();
 
   const [state, setState] = useState({
@@ -94,9 +65,7 @@ const Debits = () => {
     toDate: "",
   });
 
-  const update = (patch) => setState((p) => ({ ...p, ...patch }));
-
-  /* ── API ── */
+  // Build query params dynamically
   const queryParams = new URLSearchParams({
     limit: state.perPage,
     page: state.currentPage,
@@ -106,217 +75,327 @@ const Debits = () => {
     toDate: state.toDate || "",
   }).toString();
 
-  const { data: tableData, isLoading, refetch } = useTransListQuery(queryParams);
+  const { data, isLoading, refetch } = useTransListQuery(queryParams);
+  const tableData = data;
 
   useEffect(() => {
     refetch();
   }, [state, refetch]);
 
-  /* ── Computed ── */
-  const transactions = tableData?.data?.transactions || [];
-  const statusCounts = tableData?.data?.statusCounts;
-  const totalPages = tableData
-    ? Math.ceil(tableData.data.total / state.perPage)
-    : 1;
-
-  const getSerialNo = (i) =>
-    state.currentPage * state.perPage - (state.perPage - 1) + i;
-
-  /* ── Handlers ── */
-  const handleClose = () => setEditShow(false);
+  const handlePageChange = (page) => {
+    setState({ ...state, currentPage: page });
+  };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setSelectedData((p) => ({ ...p, [name]: value }));
+    setSelectedData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCheck = (id, status) => {
+    setCheck(true);
+    setId(id);
+    setStatus(status);
+  };
+
+  const handleDelete = (id) => {
+    setDeleteModal1(true);
+    setId(id);
+  };
+
+  const handleEdit = (data) => {
+    handleEditShow();
+    setSelectedData(data);
   };
 
   const handleUpdate = async () => {
     try {
-      await updateTransaction({
+      const payload = {
         transactionId: selectedData.transactionId,
         transactionAmount: parseFloat(selectedData.transactionAmount),
-      });
+      };
+      await updateTransaction(payload);
       handleClose();
-    } catch (err) {
-      console.error("Update failed:", err);
+    } catch (error) {
+      console.error("Failed to update transaction:", error);
     }
   };
 
-  /* ── Table Columns ── */
-  const columns = [
-    {
-      key: "sno",
-      header: "S.No",
-      render: (_, i) => getSerialNo(i),
-    },
-    {
-      key: "name",
-      header: "Name",
-      accessor: "name",
-      nowrap: true,
-    },
-    {
-      key: "paymentMode",
-      header: "Payment Method",
-      accessor: "paymentMode",
-    },
-    {
-      key: "txnType",
-      header: "Txn Type",
-      accessor: "transactionType",
-    },
-    {
-      key: "amount",
-      header: "Amount",
-      render: (tx) => tx.transactionAmount.toFixed(2),
-    },
-    {
-      key: "txnId",
-      header: "Transaction ID",
-      render: (tx) =>
-        tx.screenshotUrl ? (
-          <a
-            href={tx.screenshotUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
-          >
-            {tx.transactionId}
-          </a>
-        ) : (
-          tx.transactionId
-        ),
-    },
-    {
-      key: "date",
-      header: "Date",
-      nowrap: true,
-      render: (tx) => formatDate(tx.transactionDate),
-    },
-    {
-      key: "updatedBy",
-      header: "Updated By",
-      render: (tx) => tx.updatedBy?.name || "N/A",
-    },
-    {
-      key: "status",
-      header: "Status",
-      render: (tx) => <StatusBadge status={tx.transactionStatus} />,
-    },
-  ];
+  const formatDateWithAmPm = (isoString) => {
+    const date = new Date(isoString);
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    let hours = date.getUTCHours();
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+    const amAndPm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    return `${day}-${month}-${year} ${hours}:${minutes} ${amAndPm}`;
+  };
 
-
-
-  const inputBase =
-    "w-full bg-transparent border border-[#313b48] rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500";
-
-  /* ═══════════ RENDER ═══════════ */
   return (
     <div>
-      <section className="py-4 px-2 sm:px-4 lg:px-6 min-h-screen bg-[#0b1218]">
-        <div className="w-full">
-          <div className="  rounded-xl px-3 sm:px-4 md:px-5 pb-1 pt-4 overflow-x-hidden">
+      <section className="profile_section">
+        <div className="w-full pl-0">
+          <div className="flex flex-wrap">
+            <div className="w-full">
+              <div className="my_total_team_data rounded-lg px-3 pb-0 py-4">
+                {/* <h1 className="mb-3 text-white text-2xl font-bold">Debits</h1> */}
 
+                {/* Status Counts Section */}
+                {tableData?.data?.statusCounts && (
+                  <div className="flex flex-wrap mb-4">
+                    <div className="w-full">
+                      <div className="flex flex-wrap mb-4 justify-center gap-4">
+                        {/* Completed */}
+                        <div className="w-full sm:w-1/2 md:w-1/3 px-2">
+                          <div className="bg-[#282f35] bg-opacity-25 shadow rounded-lg">
+                            <div className="text-center py-3 text-white">
+                              <div className="flex items-center justify-center">
+                                <Icon
+                                  icon="material-symbols:check-circle"
+                                  width="24"
+                                  height="24"
+                                  className="text-white mr-2"
+                                />
+                                <div>
+                                  <h5 className="mb-0 font-bold text-white text-lg">
+                                    {tableData.data.statusCounts.Completed}
+                                  </h5>
+                                  <small className="text-white text-sm">
+                                    Completed
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
-            {/* ── Status Cards (✅ StatCard) ── */}
-            {statusCounts && (
-              <div className="flex flex-col sm:flex-row justify-center gap-3 mb-5">
-                <StatCard
-                  icon={Check}
-                  value={statusCounts.Completed}
-                  title="Completed"
-                  variant="green"
-                  // bgClass="bg-[#193b33]"
-                />
-                <StatCard
-                  icon={X}
-                  value={statusCounts.Failed}
-                  title="Failed"
-                  variant="red"
-                  // bgClass="bg-[#4a262f] "
-                />
+                        {/* Failed */}
+                        <div className="w-full sm:w-1/2 md:w-1/3 px-2">
+                          <div className="bg-[#282f35] bg-opacity-25 shadow rounded-lg">
+                            <div className="text-center py-3 text-white">
+                              <div className="flex items-center justify-center">
+                                <Icon
+                                  icon="material-symbols:cancel"
+                                  width="24"
+                                  height="24"
+                                  className="text-white mr-2"
+                                />
+                                <div>
+                                  <h5 className="mb-0 font-bold text-white text-lg">
+                                    {tableData.data.statusCounts.Failed}
+                                  </h5>
+                                  <small className="text-white text-sm">
+                                    Failed
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Filters */}
+                <div className="flex flex-wrap justify-between mb-3 gap-3">
+                  {/* Rows per page */}
+                  <div className="w-full sm:w-auto">
+                    <select
+                      className="w-full sm:w-20 px-3 py-2 bg-transparent border border-gray-600 rounded text-white focus:outline-none focus:ring-0"
+                      value={state.perPage}
+                      onChange={(e) =>
+                        setState({
+                          ...state,
+                          perPage: e.target.value,
+                          currentPage: 1,
+                        })
+                      }
+                    >
+                      <option value="10" className="bg-gray-800">10</option>
+                      <option value="30" className="bg-gray-800">30</option>
+                      <option value="50" className="bg-gray-800">50</option>
+                    </select>
+                  </div>
+
+                  {/* Date range - From */}
+                  <div className="w-full sm:w-auto">
+                    <div className="flex items-center gap-2">
+                      <label className="text-white whitespace-nowrap">From</label>
+                      <input
+                        type="date"
+                        className="px-3 py-2 bg-white text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={state.fromDate}
+                        onChange={(e) =>
+                          setState({
+                            ...state,
+                            fromDate: e.target.value,
+                            currentPage: 1,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* Date range - To */}
+                  <div className="w-full sm:w-auto">
+                    <div className="flex items-center gap-2">
+                      <label className="text-white whitespace-nowrap">To</label>
+                      <input
+                        type="date"
+                        className="px-3 py-2 bg-white text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={state.toDate}
+                        onChange={(e) =>
+                          setState({
+                            ...state,
+                            toDate: e.target.value,
+                            currentPage: 1,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* Search */}
+                  <div className="w-full sm:w-auto flex-1 max-w-xs">
+                    <div className="flex items-center bg-transparent border border-gray-600 rounded px-3">
+                      <Icon
+                        icon="tabler:search"
+                        width="16"
+                        height="16"
+                        className="text-white"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Search by name or email"
+                        className="flex-1 px-2 py-2 bg-transparent border-0 text-white placeholder-gray-400 focus:outline-none focus:ring-0"
+                        value={state.search}
+                        onChange={(e) =>
+                          setState({
+                            ...state,
+                            search: e.target.value,
+                            currentPage: 1,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Table */}
+                <div className="overflow-x-auto">
+                  {isLoading ? (
+                    <div className="text-center py-8">
+                      <ClipLoader
+                        size={50}
+                        color={"#123abc"}
+                        loading={isLoading}
+                      />
+                    </div>
+                  ) : (
+                    <table className="w-full min-w-max sidebar-scroll text-xs">
+                      <thead className="bg-[#b9fd5c] text-black">
+                        <tr className="border-b border-gray-700">
+                          <th className="px-4 py-3 text-left text-black font-semibold">S.No</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Name</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Payment Method</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Transaction Type</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Transaction Amount</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Transaction ID</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Transaction Date</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Updated By</th>
+                          <th className="px-4 py-3 text-left text-black font-semibold">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableData?.data?.transactions?.length > 0 ? (
+                          tableData.data.transactions.map((tx, i) => (
+                            <tr
+                              key={i}
+                              className="border-b border-gray-700 hover:bg-gray-700/30 transition-colors"
+                            >
+                              <td className="px-4 py-3 text-white text-xs">
+                                {state.currentPage * state.perPage -
+                                  (state.perPage - 1) +
+                                  i}
+                              </td>
+                              <td className="px-4 py-3 text-white text-xs">{tx.name}</td>
+                              <td className="px-4 py-3 text-white text-xs">{tx.paymentMode}</td>
+                              <td className="px-4 py-3 text-white text-xs">{tx.transactionType}</td>
+                              <td className="px-4 py-3 text-white text-xs">
+                                {tx.transactionAmount.toFixed(2)}
+                              </td>
+                              <td className="px-4 py-3 text-white text-xs">
+                                {tx.screenshotUrl ? (
+                                  <a
+                                    href={tx.screenshotUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:text-blue-300 hover:underline"
+                                  >
+                                    {tx.transactionId}
+                                  </a>
+                                ) : (
+                                  tx.transactionId
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-white text-xs">
+                                {formatDateWithAmPm(tx.transactionDate)}
+                              </td>
+                              <td className="px-4 py-3 text-white text-xs">
+                                {tx.updatedBy?.name || "N/A"}
+                              </td>
+                              <td className="px-4 py-3 text-white text-xs">
+                                <span
+                                  className={`px-2 py-1 rounded text-xs ${
+                                    tx.transactionStatus === "Completed"
+                                      ? "bg-green-500/20 text-green-400"
+                                      : tx.transactionStatus === "Failed"
+                                      ? "bg-red-500/20 text-red-400"
+                                      : tx.transactionStatus === "Hold"
+                                      ? "bg-yellow-500/20 text-yellow-400"
+                                      : "bg-gray-500/20 text-gray-400"
+                                  }`}
+                                >
+                                  {tx.transactionStatus}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              colSpan="9"
+                              className="px-4 py-8 text-center text-gray-400"
+                            >
+                              No debit transactions found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
               </div>
-            )}
-
-            {/* ── Filters ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_1fr] gap-3 mb-4 items-end">
-              {/* Per-page */}
-              <select
-                className="bg-[#1a2128] text-white border border-[#313b48] rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto"
-                value={state.perPage}
-                onChange={(e) =>
-                  update({ perPage: e.target.value, currentPage: 1 })
+              <Pagination
+                currentPage={state.currentPage}
+                totalPages={
+                  tableData
+                    ? Math.ceil(tableData.data.total / state.perPage)
+                    : 1
                 }
-              >
-                <option value="10">10</option>
-                <option value="30">30</option>
-                <option value="50">50</option>
-              </select>
-
-              {/* From */}
-              <div className="flex items-center gap-2">
-                <label className="text-white text-sm whitespace-nowrap">
-                  From
-                </label>
-                <input
-                  type="date"
-                  className="bg-white text-gray-900 rounded-md px-2 py-2 text-sm w-full focus:outline-none"
-                  value={state.fromDate}
-                  onChange={(e) =>
-                    update({ fromDate: e.target.value, currentPage: 1 })
-                  }
-                />
-              </div>
-
-              {/* To */}
-              <div className="flex items-center gap-2">
-                <label className="text-white text-sm whitespace-nowrap">
-                  To
-                </label>
-                <input
-                  type="date"
-                  className="bg-white text-gray-900 rounded-md px-2 py-2 text-sm w-full focus:outline-none"
-                  value={state.toDate}
-                  onChange={(e) =>
-                    update({ toDate: e.target.value, currentPage: 1 })
-                  }
-                />
-              </div>
-
-              {/* ✅ SearchBar */}
-              <SearchBar
-                value={state.search}
-                onChange={(e) =>
-                  update({ search: e.target.value, currentPage: 1 })
-                }
-                placeholder="Search by name or email"
+                onPageChange={handlePageChange}
               />
             </div>
-
-            {/* ── Desktop Table (✅ Table) ── */}
-            <div className="">
-              <Table
-                columns={columns}
-                data={transactions}
-                isLoading={isLoading}
-                emptyMessage="No debit transactions found"
-                keyExtractor={(tx, i) => tx.transactionId || i}
-              />
-            </div>
-
-
           </div>
-
-          {/* ── Pagination (✅ Pagination) ── */}
-          <Pagination
-            currentPage={state.currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => update({ currentPage: page })}
-          />
         </div>
       </section>
 
-      {/* ── Wallet Modals ── */}
+      {/* Modals */}
       <Modals
         {...{
           show,
@@ -330,68 +409,67 @@ const Debits = () => {
         }}
       />
 
-      {/* ── Edit Transaction Modal ── */}
-      <TwModal show={editShow} onClose={handleClose} backdrop="static">
-        <TwModalHeader onClose={handleClose}>
-          Update Transaction
-        </TwModalHeader>
-        <TwModalBody>
-          {selectedData ? (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  className={`${inputBase} opacity-60 cursor-not-allowed`}
-                  value={selectedData.name}
-                  readOnly
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Transaction Amount
-                </label>
-                <input
-                  type="text"
-                  name="transactionAmount"
-                  className={inputBase}
-                  value={selectedData.transactionAmount}
-                  onChange={handleEditChange}
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Transaction Id
-                </label>
-                <input
-                  type="text"
-                  className={`${inputBase} opacity-60 cursor-not-allowed`}
-                  value={selectedData.transactionId}
-                  readOnly
-                />
-              </div>
+      {/* Edit Modal */}
+      <Modal
+        show={editShow}
+        onClose={handleClose}
+        title="Update Transaction"
+        footer={
+          <>
+            <button
+              className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded transition-colors"
+              onClick={handleClose}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
+              onClick={handleUpdate}
+            >
+              Update
+            </button>
+          </>
+        }
+      >
+        {selectedData ? (
+          <form className="space-y-4">
+            <div>
+              <label className="block text-gray-300 text-sm mb-1">Name</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedData.name}
+                readOnly
+              />
             </div>
-          ) : (
-            <p className="text-gray-500">No data available.</p>
-          )}
-        </TwModalBody>
-        <TwModalFooter>
-          <button
-            className="px-6 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white text-sm transition"
-            onClick={handleClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-6 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm transition"
-            onClick={handleUpdate}
-          >
-            Update
-          </button>
-        </TwModalFooter>
-      </TwModal>
+            <div>
+              <label className="block text-gray-300 text-sm mb-1">
+                Transaction Amount
+              </label>
+              <input
+                type="text"
+                name="transactionAmount"
+                className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedData.transactionAmount}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div>
+              <label className="block text-gray-300 text-sm mb-1">
+                Transaction Id
+              </label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 bg-transparent border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedData.transactionId}
+                readOnly
+              />
+            </div>
+          </form>
+        ) : (
+          <p className="text-gray-400">No data available.</p>
+        )}
+      </Modal>
     </div>
   );
 };

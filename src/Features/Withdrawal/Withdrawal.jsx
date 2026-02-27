@@ -206,7 +206,7 @@ const Withdrawal = () => {
     }
 
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-3">
         <button
           onClick={() => handleApproveClick(data._id)}
           title="Approve"
@@ -245,7 +245,7 @@ const Withdrawal = () => {
       render: (row) => <span className=" ">{row?._id || "—"}</span>,
     },
     {
-      header: "Customer Id",
+      header: "UserName",
       render: (row) => row?.userId?.username || "—",
     },
     {
@@ -276,9 +276,15 @@ const Withdrawal = () => {
       ),
     },
     {
-      header: "Date",
+      header: "Created Date",
       render: (row) => (
         <span className="text-xs">{formatDateWithAmPm(row?.created_at)}</span>
+      ),
+    },
+    {
+      header: "Updated Date",
+      render: (row) => (
+        <span className="text-xs">{formatDateWithAmPm(row?.updated_at)}</span>
       ),
     },
     {
@@ -310,7 +316,8 @@ const Withdrawal = () => {
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6">
-<div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+<div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
   <StatCard
     title="Pending"
     value={totalPending}

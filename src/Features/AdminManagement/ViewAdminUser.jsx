@@ -24,7 +24,7 @@ const ViewAdminUser = ({ isOpen, onClose, userId }) => {
             {/* Avatar */}
             <div
               className="w-20 h-20 rounded-full bg-[#b9fd5c] flex items-center justify-center
-                text-white text-3xl font-bold flex-shrink-0"
+                text-black text-3xl font-bold flex-shrink-0 serialHeading"
             >
               {user.name?.charAt(0)?.toUpperCase() || "U"}
             </div>

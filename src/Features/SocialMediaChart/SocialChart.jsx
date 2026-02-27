@@ -6,9 +6,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Loader2, PieChart as PieChartIcon, AlertCircle } from "lucide-react";
+import {  PieChart as PieChartIcon, AlertCircle } from "lucide-react";
 import { useGetMediaSourceAnalyticsQuery } from "./socialMediaApiSlice";
-
+import Loader from "../../reusableComponents/Loader/Loader"
 const COLOR_MAP = {
   Instagram: "#E1306C",
   Facebook: "#1877F2",
@@ -112,7 +112,7 @@ export default function ReferralChart() {
     return (
       <div className="min-h-screen p-4 sm:p-6">
         <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 size={40} className="text-[#b9fd5c] animate-spin mb-3" />
+          <Loader />
           <p className="text-gray-400">Loading referral data...</p>
         </div>
       </div>

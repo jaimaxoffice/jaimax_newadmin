@@ -29,14 +29,14 @@ class PDFGenerator {
     this.theme = T;
     this.title = opts.title || "Report";
     this.subtitle = opts.subtitle || "";
-    this.company = opts.companyName || "Admin Panel";
+    this.company = opts.companyName || "";
     this.showFooter = opts.footer !== false;
     this.margins = opts.margins || { top: 12, right: 8, bottom: 12, left: 8 };
     this.currentY = this.margins.top;
     this.pageWidth = this.doc.internal.pageSize.getWidth();
     this.pageHeight = this.doc.internal.pageSize.getHeight();
     this.contentWidth = this.pageWidth - this.margins.left - this.margins.right;
-    this._headerDrawnPages = new Set(); // Track which pages have headers
+    this._headerDrawnPages = new Set();
   }
 
   // ─── Header ──────────────────────────────────────────────
@@ -134,12 +134,11 @@ class PDFGenerator {
     const { doc, theme, margins } = this;
 
     doc.setFillColor(...theme.primary);
-    doc.rect(margins.left, this.currentY, 1.5, 5, "F");
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...theme.text);
-    doc.text(title, margins.left + 4, this.currentY + 3.5);
+    doc.text(title, margins.left + 0, this.currentY + 3.5);
 
     this.currentY += 7;
     doc.setFont("helvetica", "normal");

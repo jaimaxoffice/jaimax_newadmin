@@ -1,9 +1,6 @@
 // src/pages/LegalUpdation.jsx
 import React, { useEffect, useState } from "react";
-import {
-  useUpdateLegalMutation,
-  useGetLegalQuery,
-} from "./securityApiSlice";
+import { useUpdateLegalMutation, useGetLegalQuery } from "./securityApiSlice";
 import { Editor } from "@tinymce/tinymce-react";
 import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 
@@ -92,17 +89,24 @@ const LegalUpdation = () => {
               <div className="space-y-5">
                 {/* TinyMCE Editor Wrapper */}
                 <div
-                  className="rounded-xl overflow-hidden border border-[#2a2c2f] 
-                              [&_.tox-tinymce]:!border-0
-                              [&_.tox_.tox-menubar]:!bg-[#111214]
-                              [&_.tox_.tox-toolbar__primary]:!bg-[#111214]
-                              [&_.tox_.tox-toolbar__overflow]:!bg-[#111214]
-                              [&_.tox_.tox-statusbar]:!bg-[#111214]
-                              [&_.tox_.tox-statusbar]:!border-t-[#2a2c2f]
-                              [&_.tox_.tox-mbtn__select-label]:!text-[#8a8d93]
-                              [&_.tox_.tox-tbtn]:!text-[#8a8d93]
-                              [&_.tox_.tox-statusbar__wordcount]:!text-[#555]
-                              [&_.tox_.tox-statusbar__path-item]:!text-[#555]"
+                  className="relative isolate z-0 rounded-xl overflow-hidden border border-[#2a2c2f]
+    [&_.tox]:!z-0
+    [&_.tox-tinymce]:!z-0
+    [&_.tox-editor-header]:!z-0
+    [&_.tox-toolbar__primary]:!z-0
+    [&_.tox-toolbar__overflow]:!z-0
+    [&_.tox-statusbar]:!z-0
+
+    [&_.tox-tinymce]:!border-0
+    [&_.tox_.tox-menubar]:!bg-[#111214]
+    [&_.tox_.tox-toolbar__primary]:!bg-[#111214]
+    [&_.tox_.tox-toolbar__overflow]:!bg-[#111214]
+    [&_.tox_.tox-statusbar]:!bg-[#111214]
+    [&_.tox_.tox-statusbar]:!border-t-[#2a2c2f]
+    [&_.tox_.tox-mbtn__select-label]:!text-[#8a8d93]
+    [&_.tox_.tox-tbtn]:!text-[#8a8d93]
+    [&_.tox_.tox-statusbar__wordcount]:!text-[#555]
+    [&_.tox_.tox-statusbar__path-item]:!text-[#555]"
                 >
                   <Editor
                     apiKey={tinyMceApiKey}
@@ -119,7 +123,7 @@ const LegalUpdation = () => {
                       content_css: "dark",
                       ai_request: (request, respondWith) =>
                         respondWith.string(() =>
-                          Promise.reject("See docs to implement AI Assistant")
+                          Promise.reject("See docs to implement AI Assistant"),
                         ),
                     }}
                     value={legalData}
@@ -139,7 +143,7 @@ const LegalUpdation = () => {
                       ${
                         loading
                           ? "bg-[#b9fd5c]/50 text-white/60 cursor-not-allowed"
-                          : "bg-[#b9fd5c] text-white hover:bg-[#ff8533] hover:shadow-lg hover:shadow-[#b9fd5c]/20 active:scale-[0.98]"
+                          : "bg-[#b9fd5c] text-black  hover:shadow-lg hover:shadow-[#b9fd5c]/20 active:scale-[0.98]"
                       }
                     `}
                   >
@@ -190,9 +194,6 @@ export default LegalUpdation;
  */
 const LoadingState = ({ isLoading }) => (
   <div className="flex flex-col items-center justify-center py-20 gap-3">
-   
-    <span className="text-[#8a8d93] text-sm font-light">
-      Loading editor...
-    </span>
+    <span className="text-[#8a8d93] text-sm font-light">Loading editor...</span>
   </div>
 );

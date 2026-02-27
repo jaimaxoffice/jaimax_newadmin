@@ -2,19 +2,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../reusableComponents/Toasts/ToastContext";
-import { Eye, Pencil, MessageSquare } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 import Table from "../../reusableComponents/Tables/Table";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import Modal from "../../reusableComponents/Modals/Modals";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import { useSupportDataQuery, useEditStatusMutation } from "./supportApiSlice";
-import Loader from "../../reusableComponents/Loader/Loader"
-// ─── Constants ──────────────────────────────────────────────
+import Loader from "../../reusableComponents/Loader/Loader";
+
 const STATUS_STYLES = {
   open: "text-[#0ecb6f]",
-  inprogress: " text-yellow-400",
-  closed: " text-red-400",
+  inprogress: "text-yellow-400",
+  closed: "text-red-400",
 };
 
 const STATUS_OPTIONS = [
@@ -29,7 +29,6 @@ const capitalize = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-// ─── Main Component ─────────────────────────────────────────
 const Support = () => {
   const toast = useToast();
   const navigate = useNavigate();
@@ -62,23 +61,11 @@ const Support = () => {
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [refetch]);
 
   // Handlers
   const handlePageChange = (page) => {
     setState((prev) => ({ ...prev, currentPage: page }));
-  };
-
-  let searchTimeout;
-  const handleSearch = (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      setState((prev) => ({
-        ...prev,
-        search: e.target.value,
-        currentPage: 1,
-      }));
-    }, 500);
   };
 
   const openEditModal = (id) => {
@@ -102,9 +89,7 @@ const Support = () => {
         setModals((prev) => ({ ...prev, edit: false }));
         toast.success(
           response?.data?.message || "Status updated successfully",
-          {
-            position: "top-center",
-          },
+          { position: "top-center" }
         );
         refetch();
       }
@@ -127,31 +112,40 @@ const Support = () => {
   );
 
   // Action Buttons
-  const SupportActions = ({ data }) => (
-    <div className="flex items-center gap-15">
+// Action Buttons (Reusable)
+const SupportActions = ({ data, type }) => {
+  if (type === "view") {
+    return (
       <button
         onClick={() => navigate(`/support-chart/${data._id}`)}
         title="View Ticket"
-        className=" cursor-pointer"
+        className="cursor-pointer hover:text-blue-500 transition"
       >
         <Eye size={17} />
       </button>
+    );
+  }
+
+  if (type === "edit") {
+    return (
       <button
         onClick={() => openEditModal(data._id)}
         title="Edit Status"
-        className=" cursor-pointer"
+        className="cursor-pointer hover:text-yellow-500 transition"
       >
         <Pencil size={17} />
       </button>
-    </div>
-  );
+    );
+  }
 
-  // Desktop Table Columns
+  return null;
+};
+  // Columns
   const columns = [
     {
       header: "S.No",
-      render: (_, index, currentPage, perPage) =>
-        currentPage * perPage - (perPage - 1) + index + ".",
+      render: (_, index) =>
+        `${(state.currentPage - 1) * state.perPage + index + 1}.`,
     },
     {
       header: "User ID",
@@ -178,42 +172,47 @@ const Support = () => {
       render: (row) => <StatusBadge status={row.status} />,
     },
     {
-      header: "Action",
-      render: (row) => <SupportActions data={row} />,
-    },
+    header: "View",
+    render: (row) => <SupportActions data={row} type="view" />,
+  },
+  {
+    header: "Edit",
+    render: (row) => <SupportActions data={row} type="edit" />,
+  },
   ];
 
   return (
     <>
       <div className="p-2 sm:p-2 space-y-6 sidebar-scroll">
-        {/* Header */}
-
-        
-
-        {/* Filters */}
-
         {/* Table Section */}
-        <div className="bg-[#282f35]  rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] rounded-lg overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#282f35]">
-            <div className="flex items-center justify-between">
-              <div className="flex w-full">
-                <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-                  <PerPageSelector
-                    value={state.perPage}
-                    options={[10, 20, 40, 60, 80, 100]}
-                    onChange={(value) =>
-                      setState((prev) => ({
-                        ...prev,
-                        perPage: value,
-                        currentPage: 1,
-                      }))
-                    }
-                  />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+              <PerPageSelector
+                options={[10, 20, 40, 60, 80, 100]}
+                onChange={(value) =>
+                  setState((prev) => ({
+                    ...prev,
+                    perPage: value,
+                    currentPage: 1,
+                  }))
+                }
+              />
 
-                  <SearchBar onChange={handleSearch} placeholder="Search..." />
-                </div>
-              </div>
+              <SearchBar
+                onSearch={(e) => {
+                  clearTimeout(window._supportSearchTimeout);
+                  window._supportSearchTimeout = setTimeout(() => {
+                    setState((prev) => ({
+                      ...prev,
+                      search: e.target.value,
+                      currentPage: 1,
+                    }));
+                  }, 1000);
+                }}
+                placeholder="Search by name, email..."
+              />
             </div>
           </div>
 
@@ -247,7 +246,6 @@ const Support = () => {
         size="sm"
       >
         <div className="space-y-5">
-          {/* Status Select */}
           <div>
             <label className="block text-sm font-medium text-[#b9fd5c] mb-2">
               Select Status
@@ -273,7 +271,6 @@ const Support = () => {
             </select>
           </div>
 
-          {/* Status Preview */}
           {editTarget.status && (
             <div className="flex items-center gap-2 p-3 bg-[#111214] border border-[#2a2c2f] rounded-xl">
               <span className="text-[#8a8d93] text-xs">New Status:</span>
@@ -281,7 +278,6 @@ const Support = () => {
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex justify-end gap-3 pt-2">
             <button
               onClick={() => setModals((prev) => ({ ...prev, edit: false }))}
@@ -296,7 +292,7 @@ const Support = () => {
               onClick={handleEditStatus}
               disabled={isEditing || !editTarget.status}
               className="px-5 py-2.5 rounded-3xl text-sm font-semibold text-black
-                bg-[#b9fd5c]  transition-colors cursor-pointer
+                bg-[#b9fd5c] transition-colors cursor-pointer
                 disabled:opacity-50 flex items-center gap-2"
             >
               {isEditing ? (
@@ -314,6 +310,5 @@ const Support = () => {
     </>
   );
 };
-
 
 export default Support;

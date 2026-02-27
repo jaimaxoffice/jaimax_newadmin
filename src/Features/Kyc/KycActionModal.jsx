@@ -48,14 +48,14 @@ const KycActionModal = ({ isOpen, onClose, type, id, onConfirm }) => {
         <div className="flex gap-3 pt-2">
           <button
             onClick={onClose}
-            className="flex-1 bg-[#2a2c2f] hover:bg-[#333] text-white py-3 
-              rounded-xl text-sm font-medium transition-colors cursor-pointer"
+            className="flex-1 bg-[#9dad8f] hover:bg-[#333] text-white py-3 
+              rounded-3xl text-sm font-medium transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className={`flex-1 py-3 rounded-xl text-sm font-semibold 
+            className={`flex-1 py-2 rounded-3xl text-sm font-semibold 
               transition-colors cursor-pointer ${
                 isReject
                   ? "bg-red-500 hover:bg-red-500/90 text-white"
@@ -71,3 +71,5 @@ const KycActionModal = ({ isOpen, onClose, type, id, onConfirm }) => {
 };
 
 export default KycActionModal;
+
+

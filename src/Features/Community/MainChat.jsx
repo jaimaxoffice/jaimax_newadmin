@@ -107,8 +107,10 @@ const GroupChatApp = () => {
 
   const { data: userDetails } = useGetAllUsersCommunityQuery();
 
-  console.log(userDetails, "teye");
-  console.log(userDetails?.finalTotalUsers, "useDETAILS");
+  const socketUrl = import.meta.env.VITE_API_CHAT_URL
+
+  // console.log(userDetails, "teye");
+  // console.log(userDetails?.finalTotalUsers, "useDETAILS");
 
   useEffect(() => {
     if (userDetails) {
@@ -383,10 +385,10 @@ const GroupChatApp = () => {
 
       console.log(
         currentUser.userregisteredDate,
-        "currentUser.userregisteredDate",
+        "currentUser.userregisteredDate",   
       );
 
-      socketRef.current = io("https://scsi-embedded-tags-exactly.trycloudflare.com/", {
+      socketRef.current = io(socketUrl, {
         transports: ["websocket"],
         query: {
           userId: currentUser.id,

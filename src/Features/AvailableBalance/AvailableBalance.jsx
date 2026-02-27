@@ -1,34 +1,307 @@
+// // src/features/availableBalance/AvailableBalance.jsx
+// import React, { useState, useEffect } from "react";
+// import Table from "../../reusableComponents/Tables/Table";
+// import Pagination from "../../reusableComponents/paginations/Pagination";
+// import { useAvailableBalanceQuery } from "./availablebalanceApiSlice";
+// import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+// import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
+// import useTableState from "../../hooks/useTableState";
+// import NotFound from "../../reusableComponents/Tables/NoDataFound";
+
+// const AvailableBalance = () => {
+//   const {
+//     state,
+//     setState,
+//     handlePageChange,
+//   } = useTableState({
+//     initialPerPage: 10,
+//     initialStatus: "",
+//     searchDelay: 1000,
+//   });
+
+//   const [amountFilter, setAmountFilter] = useState({
+//     amountType: "preset",
+//     presetAmount: "",
+//     minAmount: "",
+//     maxAmount: "",
+//   });
+
+//   const amountOptions = [
+//     { value: "", label: "All Amounts" },
+//     { value: "500", label: "₹500" },
+//     { value: "1000", label: "₹1,000" },
+//     { value: "5000", label: "₹5,000" },
+//     { value: "10000", label: "₹10,000" },
+//     { value: "20000", label: "₹20,000" },
+//     { value: "50000", label: "₹50,000" },
+//     { value: "100000", label: "₹1,00,000" },
+//     { value: "custom", label: "Custom Range" },
+//   ];
+
+//   let queryParams = `limit=${state.perPage}&page=${state.currentPage}&search=${state.search}`;
+//   if (amountFilter.minAmount !== "" && amountFilter.maxAmount !== "") {
+//     queryParams += `&minAmount=${amountFilter.minAmount}&maxAmount=${amountFilter.maxAmount}`;
+//   }
+
+//   const {
+//     data: availableBalance,
+//     isLoading,
+//     isError,
+//     refetch,
+//   } = useAvailableBalanceQuery(queryParams);
+
+//   const TableData = availableBalance?.data?.users || [];
+//   const totalItems = availableBalance?.data?.pagination?.total || 0;
+//   const totalPages = Math.ceil(totalItems / state.perPage) || 1;
+
+//   useEffect(() => {
+//     refetch();
+//   }, [refetch]);
+
+//   const handleAmountChange = (e) => {
+//     const value = e.target.value;
+//     if (value === "custom") {
+//       setAmountFilter({
+//         amountType: "custom",
+//         presetAmount: value,
+//         minAmount: "",
+//         maxAmount: "",
+//       });
+//     } else if (value) {
+//       setAmountFilter({
+//         amountType: "preset",
+//         presetAmount: value,
+//         minAmount: "0",
+//         maxAmount: value,
+//       });
+//     } else {
+//       setAmountFilter({
+//         amountType: "preset",
+//         presetAmount: "",
+//         minAmount: "",
+//         maxAmount: "",
+//       });
+//     }
+//     setState((prev) => ({ ...prev, currentPage: 1 }));
+//   };
+
+//   if (isError) {
+//     return (
+//       <div>
+//         <NotFound />
+//       </div>
+//     );
+//   }
+
+//   const formatCurrency = (amount) => {
+//     if (amount === null || amount === undefined) return "₹0";
+//     return new Intl.NumberFormat("en-IN", {
+//       style: "currency",
+//       currency: "INR",
+//       minimumFractionDigits: 0,
+//       maximumFractionDigits: 0,
+//     }).format(amount);
+//   };
+
+//   const columns = [
+//     {
+//       header: "S.No",
+//       render: (_, index) =>
+//         `${(state.currentPage - 1) * state.perPage + index + 1}.`,
+//     },
+//     {
+//       header: "Name",
+//       render: (row) => (
+//         <span className="text-white font-medium">{row?.name || "N/A"}</span>
+//       ),
+//     },
+//     {
+//       header: "Username",
+//       render: (row) => <span className="">{row?.username || "N/A"}</span>,
+//     },
+//     {
+//       header: "Email",
+//       render: (row) => <span className="">{row?.email || "N/A"}</span>,
+//     },
+//     {
+//       header: "Balance (INR)",
+//       render: (row) => <span>{formatCurrency(row?.Inr)}</span>,
+//     },
+//     {
+//       header: "Status",
+//       render: () => (
+//         <span
+//           className="text-[11px] font-semibold px-2 py-0.5 rounded-full
+//                      bg-[#b9fd5c]/10 text-[#b9fd5c]"
+//         >
+//           Active
+//         </span>
+//       ),
+//     },
+//   ];
+
+//   return (
+//     <div>
+//       <div className="p-2 sm:p-2 space-y-6">
+//         {/* Main Table Card */}
+//         <div className="bg-[#282f35] rounded-lg overflow-hidden">
+//           {/* Header */}
+//           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+//             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+//               {/* Left: Amount Filter */}
+//               <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3">
+//                 <div>
+//                   <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+//                     Filter by Amount
+//                   </label>
+//                   <select
+//                     value={amountFilter.presetAmount}
+//                     onChange={handleAmountChange}
+//                     disabled={isLoading}
+//                     className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+//                        py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+//                        transition-colors cursor-pointer disabled:opacity-50 min-w-40"
+//                   >
+//                     {amountOptions.map((option) => (
+//                       <option key={option.value} value={option.value}>
+//                         {option.label}
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </div>
+
+//                 {/* Custom Range Inputs */}
+//                 {amountFilter.amountType === "custom" &&
+//                   amountFilter.presetAmount === "custom" && (
+//                     <div className="flex items-end gap-2">
+//                       <div>
+//                         <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+//                           Min
+//                         </label>
+//                         <input
+//                           type="number"
+//                           placeholder="₹ Min"
+//                           value={amountFilter.minAmount}
+//                           onChange={(e) => {
+//                             setAmountFilter((prev) => ({
+//                               ...prev,
+//                               minAmount: e.target.value,
+//                             }));
+//                             setState((prev) => ({ ...prev, currentPage: 1 }));
+//                           }}
+//                           className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+//                              py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+//                              transition-colors w-28"
+//                         />
+//                       </div>
+//                       <span className="text-[#8a8d93] text-sm pb-2.5">–</span>
+//                       <div>
+//                         <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+//                           Max
+//                         </label>
+//                         <input
+//                           type="number"
+//                           placeholder="₹ Max"
+//                           value={amountFilter.maxAmount}
+//                           onChange={(e) => {
+//                             setAmountFilter((prev) => ({
+//                               ...prev,
+//                               maxAmount: e.target.value,
+//                             }));
+//                             setState((prev) => ({ ...prev, currentPage: 1 }));
+//                           }}
+//                           className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+//                              py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+//                              transition-colors w-28"
+//                         />
+//                       </div>
+//                     </div>
+//                   )}
+//               </div>
+
+//               {/* Right: Per Page + Search */}
+//               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+//                 <PerPageSelector
+//                   options={[10, 20, 40, 60, 80, 100]}
+//                   onChange={(value) =>
+//                     setState((prev) => ({
+//                       ...prev,
+//                       perPage: value,
+//                       currentPage: 1,
+//                     }))
+//                   }
+//                 />
+
+//                 <SearchBar
+//                   onSearch={(e) => {
+//                     clearTimeout(window._searchTimeout);
+//                     window._searchTimeout = setTimeout(() => {
+//                       setState((prev) => ({
+//                         ...prev,
+//                         search: e.target.value,
+//                         currentPage: 1,
+//                       }));
+//                     }, 1000);
+//                   }}
+//                   placeholder="Search..."
+//                 />
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Desktop Table */}
+//           <div className="rounded-lg">
+//             <Table
+//               columns={columns}
+//               data={TableData}
+//               isLoading={isLoading}
+//               currentPage={state.currentPage}
+//               perPage={state.perPage}
+//             />
+//           </div>
+//         </div>
+
+//         {/* Pagination */}
+//         {totalPages > 1 && (
+//           <Pagination
+//             currentPage={state.currentPage}
+//             totalPages={totalPages}
+//             onPageChange={handlePageChange}
+//           />
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AvailableBalance;
+
+
 // src/features/availableBalance/AvailableBalance.jsx
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect } from "react";
 import Table from "../../reusableComponents/Tables/Table";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
-import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useAvailableBalanceQuery } from "./availablebalanceApiSlice";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
-import Loader from "../../reusableComponents/Loader/Loader";
+import useTableState from "../../hooks/useTableState";
+import NotFound from "../../reusableComponents/Tables/NoDataFound";
+
 const AvailableBalance = () => {
-  const [state, setState] = useState({
-    currentPage: 1,
-    perPage: 10,
-    search: "",
+  const { state, setState, handlePageChange } = useTableState({
+    initialPerPage: 10,
+    initialStatus: "",
+    searchDelay: 1000,
+  });
+
+  const [amountFilter, setAmountFilter] = useState({
     amountType: "preset",
     presetAmount: "",
     minAmount: "",
     maxAmount: "",
   });
 
-  const [isSearching, setIsSearching] = useState(false);
-  const searchTimeoutRef = useRef(null);
-  const searchInputRef = useRef(null);
+  const [amountError, setAmountError] = useState("");
 
   const amountOptions = [
     { value: "", label: "All Amounts" },
@@ -42,144 +315,145 @@ const AvailableBalance = () => {
     { value: "custom", label: "Custom Range" },
   ];
 
-  // ─── Build Query Params ─────────────────────────────────────
+  // Strict validation check
+  const getAmountValidation = (min, max) => {
+    if (min === "" || max === "") return { valid: false, error: "" };
 
-  const queryParams = useMemo(() => {
-    let params = `limit=${state.perPage}&page=${state.currentPage}`;
-    if (state.search) params += `&search=${state.search}`;
-    if (state.minAmount !== "" && state.maxAmount !== "") {
-      params += `&minAmount=${state.minAmount}&maxAmount=${state.maxAmount}`;
+    const minVal = Number(min);
+    const maxVal = Number(max);
+
+    if (isNaN(minVal) || isNaN(maxVal)) {
+      return { valid: false, error: "Please enter valid numbers" };
     }
-    return params;
-  }, [
-    state.currentPage,
-    state.perPage,
-    state.search,
-    state.minAmount,
-    state.maxAmount,
-  ]);
+    if (minVal < 0) {
+      return { valid: false, error: "Min amount cannot be negative" };
+    }
+    if (maxVal < 0) {
+      return { valid: false, error: "Max amount cannot be negative" };
+    }
+    if (minVal === maxVal) {
+      return { valid: false, error: "Min and Max cannot be equal" };
+    }
+    if (minVal > maxVal) {
+      return { valid: false, error: "Min amount cannot be greater than Max amount" };
+    }
+    if (maxVal <= 0) {
+      return { valid: false, error: "Max amount must be greater than 0" };
+    }
+
+    return { valid: true, error: "" };
+  };
+
+  const { valid: isAmountRangeValid } = getAmountValidation(
+    amountFilter.minAmount,
+    amountFilter.maxAmount
+  );
+
+  // Build query params — ONLY include amount when fully valid
+  let queryParams = `limit=${state.perPage}&page=${state.currentPage}&search=${state.search}`;
+
+  if (
+    amountFilter.minAmount !== "" &&
+    amountFilter.maxAmount !== "" &&
+    isAmountRangeValid
+  ) {
+    queryParams += `&minAmount=${amountFilter.minAmount}&maxAmount=${amountFilter.maxAmount}`;
+  }
 
   const {
     data: availableBalance,
     isLoading,
-    isFetching,
     isError,
     error,
     refetch,
   } = useAvailableBalanceQuery(queryParams);
 
-  // ─── Data Processing ────────────────────────────────────────
+  // Handle API-level error message
+  const apiErrorMessage =
+    error?.data?.message || error?.error || "";
 
   const TableData = availableBalance?.data?.users || [];
-  const totalUsers = availableBalance?.data?.total || 0;
-  const paginationData = availableBalance?.data?.pagination || {};
-  const totalPages = paginationData?.totalPages || 1;
-
-  // Stats
-  const totalBalance = useMemo(
-    () => TableData.reduce((sum, user) => sum + (user?.Inr || 0), 0),
-    [TableData],
-  );
-  const avgBalance = useMemo(
-    () => (TableData.length > 0 ? totalBalance / TableData.length : 0),
-    [TableData, totalBalance],
-  );
-  const highBalanceCount = useMemo(
-    () => TableData.filter((u) => (u?.Inr || 0) > 10000).length,
-    [TableData],
-  );
-  const activeUsersCount = useMemo(
-    () => TableData.filter((u) => (u?.Inr || 0) > 0).length,
-    [TableData],
-  );
-
-  // ─── Check Active Filters ──────────────────────────────────
-
-  const hasActiveFilters = useMemo(
-    () => state.search || (state.minAmount !== "" && state.maxAmount !== ""),
-    [state.search, state.minAmount, state.maxAmount],
-  );
-
-  // ─── Handlers ────────────────────────────────────────────────
-
-  const handlePageChange = useCallback((page) => {
-    setState((prev) => ({ ...prev, currentPage: page }));
-  }, []);
-
-  const handlePerPageChange = useCallback((e) => {
-    setState((prev) => ({
-      ...prev,
-      perPage: parseInt(e.target.value),
-      currentPage: 1,
-    }));
-  }, []);
-
-  const handleSearch = useCallback((e) => {
-    const value = e.target.value;
-    setIsSearching(true);
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    searchTimeoutRef.current = setTimeout(() => {
-      setState((prev) => ({ ...prev, search: value, currentPage: 1 }));
-      setIsSearching(false);
-    }, 600);
-  }, []);
-
-  const handleAmountChange = useCallback((e) => {
-    const value = e.target.value;
-    if (value === "custom") {
-      setState((prev) => ({
-        ...prev,
-        amountType: "custom",
-        presetAmount: value,
-        minAmount: "",
-        maxAmount: "",
-        currentPage: 1,
-      }));
-    } else if (value) {
-      setState((prev) => ({
-        ...prev,
-        amountType: "preset",
-        presetAmount: value,
-        minAmount: "0",
-        maxAmount: value,
-        currentPage: 1,
-      }));
-    } else {
-      setState((prev) => ({
-        ...prev,
-        amountType: "preset",
-        presetAmount: "",
-        minAmount: "",
-        maxAmount: "",
-        currentPage: 1,
-      }));
-    }
-  }, []);
-
-  const handleClearFilters = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      search: "",
-      amountType: "preset",
-      presetAmount: "",
-      minAmount: "",
-      maxAmount: "",
-      currentPage: 1,
-    }));
-    if (searchInputRef.current) searchInputRef.current.value = "";
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    };
-  }, []);
+  const totalItems = availableBalance?.data?.pagination?.total || 0;
+  const totalPages = Math.ceil(totalItems / state.perPage) || 1;
 
   useEffect(() => {
     refetch();
   }, [refetch]);
 
-  // ─── Helpers ─────────────────────────────────────────────────
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    setAmountError("");
+
+    if (value === "custom") {
+      setAmountFilter({
+        amountType: "custom",
+        presetAmount: value,
+        minAmount: "",
+        maxAmount: "",
+      });
+    } else if (value) {
+      setAmountFilter({
+        amountType: "preset",
+        presetAmount: value,
+        minAmount: "0",
+        maxAmount: value,
+      });
+    } else {
+      setAmountFilter({
+        amountType: "preset",
+        presetAmount: "",
+        minAmount: "",
+        maxAmount: "",
+      });
+    }
+    setState((prev) => ({ ...prev, currentPage: 1 }));
+  };
+
+  const handleMinChange = (e) => {
+    const value = e.target.value;
+
+    // Prevent negative input
+    if (value !== "" && Number(value) < 0) return;
+
+    const newFilter = { ...amountFilter, minAmount: value };
+    setAmountFilter(newFilter);
+
+    const { error } = getAmountValidation(value, newFilter.maxAmount);
+    setAmountError(error);
+
+    // Only reset page if range becomes valid
+    const { valid } = getAmountValidation(value, newFilter.maxAmount);
+    if (valid) {
+      setState((prev) => ({ ...prev, currentPage: 1 }));
+    }
+  };
+
+  const handleMaxChange = (e) => {
+    const value = e.target.value;
+
+    // Prevent negative input
+    if (value !== "" && Number(value) < 0) return;
+
+    const newFilter = { ...amountFilter, maxAmount: value };
+    setAmountFilter(newFilter);
+
+    const { error } = getAmountValidation(newFilter.minAmount, value);
+    setAmountError(error);
+
+    // Only reset page if range becomes valid
+    const { valid } = getAmountValidation(newFilter.minAmount, value);
+    if (valid) {
+      setState((prev) => ({ ...prev, currentPage: 1 }));
+    }
+  };
+
+  if (isError) {
+    return (
+      <div>
+        <NotFound />
+      </div>
+    );
+  }
 
   const formatCurrency = (amount) => {
     if (amount === null || amount === undefined) return "₹0";
@@ -191,85 +465,11 @@ const AvailableBalance = () => {
     }).format(amount);
   };
 
-  const getBalanceColor = (amount) => {
-    if (amount > 50000) return "text-[#0ecb6f]";
-    if (amount > 10000) return "text-blue-400";
-    if (amount > 1000) return "text-yellow-400";
-    if (amount > 0) return "text-[#b9fd5c]";
-    return "text-red-400";
-  };
-
-  // ─── Error State ─────────────────────────────────────────────
-
-  if (isError) {
-    const errorMessage =
-      error?.status === 524
-        ? "The request timed out. This might be due to a large dataset."
-        : error?.status === 500
-          ? "Server error. Please try again later."
-          : error?.data?.message || "Something went wrong. Please try again.";
-
-    return (
-      <div>
-        <div className="p-2 sm:p-2 space-y-6">
-          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
-            <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center text-[#b9fd5c]">
-                    <WalletIcon />
-                  </div>
-                  <h1 className="text-lg font-semibold text-white">
-                    User Available Balance
-                  </h1>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center justify-center py-20 px-4">
-              <h3 className="text-white text-lg font-semibold mb-2">
-                Error Loading Data
-              </h3>
-              <p className="text-[#8a8d93] text-sm text-center max-w-md mb-6">
-                {errorMessage}
-              </p>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => refetch()}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
-                             transition-all duration-200 cursor-pointer disabled:opacity-50"
-                >
-                  Try Again
-                </button>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="px-5 py-2.5 rounded-xl text-sm font-medium
-                             bg-[#111214] border border-[#2a2c2f] text-[#8a8d93]
-                             hover:text-white hover:border-[#3a3c3f]
-                             transition-colors cursor-pointer"
-                >
-                  Reload Page
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Table Columns ──────────────────────────────────────────
-
   const columns = [
     {
       header: "S.No",
-      render: (_, index) => {
-        const pageNum = paginationData?.page || state.currentPage;
-        const limit = paginationData?.limit || state.perPage;
-        return `${(pageNum - 1) * limit + index + 1}.`;
-      },
+      render: (_, index) =>
+        `${(state.currentPage - 1) * state.perPage + index + 1}.`,
     },
     {
       header: "Name",
@@ -305,142 +505,122 @@ const AvailableBalance = () => {
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
-        {hasActiveFilters && (
-          <div className="flex flex-wrap items-center gap-2 px-4 py-3 bg-[#282f35] border border-[#2a2c2f] rounded-xl">
-            <span className="text-[#8a8d93] text-xs">Active Filters:</span>
-
-            {state.minAmount !== "" && state.maxAmount !== "" && (
-              <span
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
-                           bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
-              >
-                Balance: {formatCurrency(Number(state.minAmount))} –{" "}
-                {formatCurrency(Number(state.maxAmount))}
-                <button
-                  onClick={() =>
-                    setState((prev) => ({
-                      ...prev,
-                      presetAmount: "",
-                      amountType: "preset",
-                      minAmount: "",
-                      maxAmount: "",
-                      currentPage: 1,
-                    }))
-                  }
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  close
-                </button>
-              </span>
-            )}
-
-            {state.search && (
-              <span
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
-                           bg-blue-500/10 text-blue-400 border border-blue-500/20"
-              >
-                Search: "{state.search}"
-                <button
-                  onClick={() => {
-                    setState((prev) => ({
-                      ...prev,
-                      search: "",
-                      currentPage: 1,
-                    }));
-                    if (searchInputRef.current)
-                      searchInputRef.current.value = "";
-                  }}
-                  className="hover:text-white transition-colors cursor-pointer"
-                ></button>
-              </span>
-            )}
+        {/* API Error Banner */}
+        {apiErrorMessage && (
+          <div className="px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <span className="text-red-400 text-sm font-medium">
+              ⚠️ {apiErrorMessage}
+            </span>
           </div>
         )}
-        {isFetching && !isLoading && <Loader />}
-        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                  {/* Left: Amount Filter */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3">
-                    <div>
-                      <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
-                        Filter by Amount
-                      </label>
-                      <select
-                        value={state.presetAmount}
-                        onChange={handleAmountChange}
-                        disabled={isLoading}
-                        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                           py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
-                           transition-colors cursor-pointer disabled:opacity-50 min-w-40"
-                      >
-                        {amountOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
 
-                    {/* Custom Range Inputs */}
-                    {state.amountType === "custom" &&
-                      state.presetAmount === "custom" && (
-                        <div className="flex items-end gap-2">
-                          <div>
-                            <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
-                              Min
-                            </label>
-                            <input
-                              type="number"
-                              placeholder="₹ Min"
-                              value={state.minAmount}
-                              onChange={(e) =>
-                                setState((prev) => ({
-                                  ...prev,
-                                  minAmount: e.target.value,
-                                  currentPage: 1,
-                                }))
-                              }
-                              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
-                               transition-colors w-28"
-                            />
-                          </div>
-                          <span className="text-[#8a8d93] text-sm pb-2.5">
-                            –
-                          </span>
-                          <div>
-                            <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
-                              Max
-                            </label>
-                            <input
-                              type="number"
-                              placeholder="₹ Max"
-                              value={state.maxAmount}
-                              onChange={(e) =>
-                                setState((prev) => ({
-                                  ...prev,
-                                  maxAmount: e.target.value,
-                                  currentPage: 1,
-                                }))
-                              }
-                              className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
-                               py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
-                               transition-colors w-28"
-                            />
-                          </div>
-                        </div>
-                      )}
-                  </div>
-
-                  {/* Right: Per Page + Search */}
+        {/* Main Table Card */}
+        <div className="bg-[#282f35] rounded-lg overflow-hidden">
+          {/* Header */}
+          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              {/* Left: Amount Filter */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3">
+                <div>
+                  <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+                    Filter by Amount
+                  </label>
+                  <select
+                    value={amountFilter.presetAmount}
+                    onChange={handleAmountChange}
+                    disabled={isLoading}
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
+                       py-2.5 px-3 text-sm focus:outline-none focus:border-[#b9fd5c]
+                       transition-colors cursor-pointer disabled:opacity-50 min-w-40"
+                  >
+                    {amountOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* Custom Range Inputs */}
+                {amountFilter.amountType === "custom" &&
+                  amountFilter.presetAmount === "custom" && (
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-end gap-2">
+                        <div>
+                          <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+                            Min
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            placeholder="₹ Min"
+                            value={amountFilter.minAmount}
+                            onChange={handleMinChange}
+                            onKeyDown={(e) => {
+                              if (e.key === "-" || e.key === "e") {
+                                e.preventDefault();
+                              }
+                            }}
+                            className={`bg-[#111214] border text-white rounded-xl
+                               py-2.5 px-3 text-sm focus:outline-none
+                               transition-colors w-28 ${
+                                 amountError
+                                   ? "border-red-500 focus:border-red-500"
+                                   : "border-[#2a2c2f] focus:border-[#b9fd5c]"
+                               }`}
+                          />
+                        </div>
+                        <span className="text-[#8a8d93] text-sm pb-2.5">
+                          –
+                        </span>
+                        <div>
+                          <label className="text-[#8a8d93] text-xs font-medium mb-1.5 block">
+                            Max
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            placeholder="₹ Max"
+                            value={amountFilter.maxAmount}
+                            onChange={handleMaxChange}
+                            onKeyDown={(e) => {
+                              if (e.key === "-" || e.key === "e") {
+                                e.preventDefault();
+                              }
+                            }}
+                            className={`bg-[#111214] border text-white rounded-xl
+                               py-2.5 px-3 text-sm focus:outline-none
+                               transition-colors w-28 ${
+                                 amountError
+                                   ? "border-red-500 focus:border-red-500"
+                                   : "border-[#2a2c2f] focus:border-[#b9fd5c]"
+                               }`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Error Message */}
+                      {amountError && (
+                        <span className="text-red-400 text-xs font-medium">
+                          ⚠️ {amountError}
+                        </span>
+                      )}
+
+                      {/* Valid Range Indicator */}
+                      {isAmountRangeValid && !amountError && (
+                        <span className="text-[#b9fd5c] text-xs font-medium">
+                          ✓ Showing:{" "}
+                          {formatCurrency(Number(amountFilter.minAmount))} –{" "}
+                          {formatCurrency(Number(amountFilter.maxAmount))}
+                        </span>
+                      )}
+                    </div>
+                  )}
               </div>
+
+              {/* Right: Per Page + Search */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <PerPageSelector
-                  value={state.perPage}
                   options={[10, 20, 40, 60, 80, 100]}
                   onChange={(value) =>
                     setState((prev) => ({
@@ -452,17 +632,24 @@ const AvailableBalance = () => {
                 />
 
                 <SearchBar
-                  onSearch={handleSearch}
-                  placeholder={
-                    isSearching ? "Searching..." : "Search name, amount..."
-                  }
+                  onSearch={(e) => {
+                    clearTimeout(window._searchTimeout);
+                    window._searchTimeout = setTimeout(() => {
+                      setState((prev) => ({
+                        ...prev,
+                        search: e.target.value,
+                        currentPage: 1,
+                      }));
+                    }, 1000);
+                  }}
+                  placeholder="Search..."
                 />
               </div>
             </div>
           </div>
 
           {/* Desktop Table */}
-          <div className="rounded-lg ">
+          <div className="rounded-lg">
             <Table
               columns={columns}
               data={TableData}
@@ -476,7 +663,7 @@ const AvailableBalance = () => {
         {/* Pagination */}
         {totalPages > 1 && (
           <Pagination
-            currentPage={paginationData?.page || state.currentPage}
+            currentPage={state.currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />

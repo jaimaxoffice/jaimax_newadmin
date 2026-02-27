@@ -1,12 +1,11 @@
-// // src/features/team/TeamInfo.jsx
 // import React, { useState, useMemo } from "react";
 // import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 // import {
 //   Users, UserCheck, UserX, UserPlus, Banknote, Layers,
 //   Search, FileText, RotateCcw, Maximize2, Minimize2,
-//   ArrowUp, ArrowDown, Filter, Download, Eye, Loader,
+//   ArrowUp, ArrowDown, Filter, Download, Eye, 
 // } from "lucide-react";
-
+// import Loader from "../../reusableComponents/Loader/Loader"
 // import StatCard from "../../reusableComponents/StatCards/StatsCard";
 // import MemberDetailModal from "./MemberDetailModal";
 // import LayerAccordion from "./LayerAccordion";
@@ -40,14 +39,38 @@
 //   const [showMemberModal, setShowMemberModal] = useState(false);
 //   const [sortBy, setSortBy] = useState("name");
 //   const [sortOrder, setSortOrder] = useState("asc");
+//   const [searchedName, setSearchedName] = useState("");
 
 //   const [fetchUserInfo, { isLoading, isError, error }] = useLazyUserInvestmentsQuery();
 //   const { isGenerating, downloadPDF, previewPDF } = usePDFGenerator();
 
+//   // Extract name from API response
+//   const extractNameFromResponse = (data) => {
+//     if (data?.name) return data.name;
+//     if (data?.summary?.name) return data.summary.name;
+
+//     const layer1 = data?.layers?.["1"];
+//     if (layer1) {
+//       const firstMember = layer1.active?.[0] || layer1.inactive?.[0];
+//       if (firstMember?.sponsorName) return firstMember.sponsorName;
+//       if (firstMember?.referrerName) return firstMember.referrerName;
+//       if (firstMember?.parentName) return firstMember.parentName;
+//     }
+
+//     return "";
+//   };
+
+//   // Display name (fallback to username if name not found)
+//   const displayName = searchedName || input.username;
+
 //   // Computed Stats
 //   const layerStats = useMemo(() => {
-//     if (!teamData?.layers) return { totalActive: 0, totalInactive: 0, totalInvestment: 0, layerCount: 0 };
-//     let totalActive = 0, totalInactive = 0, totalInvestment = 0, layerCount = 0;
+//     if (!teamData?.layers)
+//       return { totalActive: 0, totalInactive: 0, totalInvestment: 0, layerCount: 0 };
+//     let totalActive = 0,
+//       totalInactive = 0,
+//       totalInvestment = 0,
+//       layerCount = 0;
 
 //     Object.values(teamData.layers).forEach((layer) => {
 //       const a = layer.active?.length || 0;
@@ -55,7 +78,9 @@
 //       if (a > 0 || i > 0) layerCount++;
 //       totalActive += a;
 //       totalInactive += i;
-//       layer.active?.forEach((m) => (totalInvestment += getTotalInvestment(m.investments)));
+//       layer.active?.forEach(
+//         (m) => (totalInvestment += getTotalInvestment(m.investments))
+//       );
 //     });
 
 //     return { totalActive, totalInactive, totalInvestment, layerCount };
@@ -72,13 +97,22 @@
 //     if (!input.username.trim()) return;
 //     try {
 //       const payload = { username: input.username.trim() };
-//       if (input.fromDate) payload.fromDate = convertToApiDateFormat(input.fromDate);
+//       if (input.fromDate)
+//         payload.fromDate = convertToApiDateFormat(input.fromDate);
 //       if (input.toDate) payload.toDate = convertToApiDateFormat(input.toDate);
 //       const result = await fetchUserInfo(payload).unwrap();
+
 //       if (result?.data) {
 //         setTeamData(result.data);
 //         setExpandedLayers(["1"]);
 //         setExpandAll(false);
+
+//         // Extract and store the name from response
+//         const name = extractNameFromResponse(result.data);
+//         setSearchedName(name);
+//         console.log("EXTRACTED NAME →", name);
+//         console.log("FULL RESPONSE →", JSON.stringify(result.data, null, 2));
+
 //         toast.success("Data fetched successfully!");
 //       }
 //     } catch (err) {
@@ -92,11 +126,14 @@
 //     setExpandedLayers([]);
 //     setActiveTab("all");
 //     setExpandAll(false);
+//     setSearchedName("");
 //   };
 
 //   const toggleLayer = (layer) => {
 //     setExpandedLayers((prev) =>
-//       prev.includes(layer) ? prev.filter((l) => l !== layer) : [...prev, layer]
+//       prev.includes(layer)
+//         ? prev.filter((l) => l !== layer)
+//         : [...prev, layer]
 //     );
 //   };
 
@@ -114,31 +151,45 @@
 //     setShowMemberModal(true);
 //   };
 
-//   // PDF
+//   // PDF Options - uses name instead of username
 //   const getPdfOptions = () => ({
 //     title: "Team Investment Report",
-//     subtitle: `Username: ${input.username} • ${new Date().toLocaleDateString()}`,
+//     subtitle: `Name: ${displayName} • ${new Date().toLocaleDateString()}`,
 //     companyName: "Admin Panel",
 //     theme: "dark",
 //   });
 
+//   // Download PDF - uses name instead of username
 //   const handleDownloadPDF = async () => {
 //     if (!input.username.trim()) return;
 //     try {
 //       const payload = { username: input.username.trim() };
-//       if (input.fromDate) payload.fromDate = convertToApiDateFormat(input.fromDate);
+//       if (input.fromDate)
+//         payload.fromDate = convertToApiDateFormat(input.fromDate);
 //       if (input.toDate) payload.toDate = convertToApiDateFormat(input.toDate);
 //       const result = await fetchUserInfo(payload).unwrap();
+
 //       if (result?.data?.layers) {
+//         const name =
+//           extractNameFromResponse(result.data) || input.username.trim();
+
 //         await downloadPDF(
-//           (pdf) => buildTeamInvestmentPDF(pdf, {
-//             layersData: result.data.layers,
-//             username: input.username.trim(),
-//             fromDate: input.fromDate ? convertToApiDateFormat(input.fromDate) : null,
-//             toDate: input.toDate ? convertToApiDateFormat(input.toDate) : null,
-//           }),
-//           getPdfOptions(),
-//           `Team_Investment_${input.username}_${new Date().toISOString().split("T")[0]}.pdf`
+//           (pdf) =>
+//             buildTeamInvestmentPDF(pdf, {
+//               layersData: result.data.layers,
+//               username: name,
+//               fromDate: input.fromDate
+//                 ? convertToApiDateFormat(input.fromDate)
+//                 : null,
+//               toDate: input.toDate
+//                 ? convertToApiDateFormat(input.toDate)
+//                 : null,
+//             }),
+//           {
+//             ...getPdfOptions(),
+//             subtitle: `Name: ${name} • ${new Date().toLocaleDateString()}`,
+//           },
+//           `Team_Investment_${name}_${new Date().toISOString().split("T")[0]}.pdf`
 //         );
 //       }
 //     } catch (err) {
@@ -146,15 +197,21 @@
 //     }
 //   };
 
+//   // Preview PDF - uses name instead of username
 //   const handlePreviewPDF = async () => {
 //     if (!teamData?.layers) return;
 //     await previewPDF(
-//       (pdf) => buildTeamInvestmentPDF(pdf, {
-//         layersData: teamData.layers,
-//         username: input.username.trim(),
-//         fromDate: input.fromDate ? convertToApiDateFormat(input.fromDate) : null,
-//         toDate: input.toDate ? convertToApiDateFormat(input.toDate) : null,
-//       }),
+//       (pdf) =>
+//         buildTeamInvestmentPDF(pdf, {
+//           layersData: teamData.layers,
+//           username: displayName,
+//           fromDate: input.fromDate
+//             ? convertToApiDateFormat(input.fromDate)
+//             : null,
+//           toDate: input.toDate
+//             ? convertToApiDateFormat(input.toDate)
+//             : null,
+//         }),
 //       getPdfOptions()
 //     );
 //   };
@@ -182,7 +239,11 @@
 //                 bg-transparent border border-[#b9fd5c]/30 text-[#b9fd5c]
 //                 hover:bg-[#b9fd5c]/10 transition-colors cursor-pointer"
 //             >
-//               {expandAll ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+//               {expandAll ? (
+//                 <Minimize2 size={14} />
+//               ) : (
+//                 <Maximize2 size={14} />
+//               )}
 //               {expandAll ? "Collapse All" : "Expand All"}
 //             </button>
 //           )}
@@ -200,7 +261,9 @@
 //                 type="text"
 //                 placeholder="e.g., JAIMAX......"
 //                 value={input.username}
-//                 onChange={(e) => setInput({ ...input, username: e.target.value.toUpperCase() })}
+//                 onChange={(e) =>
+//                   setInput({ ...input, username: e.target.value.toUpperCase() })
+//                 }
 //                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
 //                 autoComplete="off"
 //                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
@@ -217,7 +280,9 @@
 //               <input
 //                 type="date"
 //                 value={input.fromDate}
-//                 onChange={(e) => setInput({ ...input, fromDate: e.target.value })}
+//                 onChange={(e) =>
+//                   setInput({ ...input, fromDate: e.target.value })
+//                 }
 //                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
 //                   py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
 //                   focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors
@@ -233,7 +298,9 @@
 //               <input
 //                 type="date"
 //                 value={input.toDate}
-//                 onChange={(e) => setInput({ ...input, toDate: e.target.value })}
+//                 onChange={(e) =>
+//                   setInput({ ...input, toDate: e.target.value })
+//                 }
 //                 className="w-full bg-[#111214] border border-[#2a2c2f] text-white rounded-xl
 //                   py-3 px-4 text-sm focus:outline-none focus:border-[#b9fd5c]
 //                   focus:ring-1 focus:ring-[#b9fd5c]/30 transition-colors
@@ -246,13 +313,13 @@
 //               <button
 //                 onClick={handleSearch}
 //                 disabled={isLoading || !input.username.trim()}
-//                 className="w-full bg-[#b9fd5c]  text-black rounded-3xl
+//                 className="w-full bg-[#b9fd5c] text-black rounded-3xl
 //                   py-3 px-4 text-sm font-semibold transition-colors cursor-pointer
 //                   disabled:opacity-50 disabled:cursor-not-allowed
 //                   flex items-center justify-center gap-2"
 //               >
 //                 {isLoading ? (
-//                   <Loader size={16} className="animate-spin" />
+//                   <Loader />
 //                 ) : (
 //                   <Search size={14} />
 //                 )}
@@ -321,7 +388,8 @@
 //               Search for Team Data
 //             </h3>
 //             <p className="text-white/30 text-sm max-w-md text-center">
-//               Enter a username and optionally select date range to view investment details
+//               Enter a username and optionally select date range to view
+//               investment details
 //             </p>
 //           </div>
 //         )}
@@ -385,15 +453,23 @@
 //                     transition-colors cursor-pointer"
 //                 >
 //                   {SORT_OPTIONS.map((opt) => (
-//                     <option key={opt.value} value={opt.value}>{opt.label}</option>
+//                     <option key={opt.value} value={opt.value}>
+//                       {opt.label}
+//                     </option>
 //                   ))}
 //                 </select>
 //                 <button
-//                   onClick={() => setSortOrder((p) => (p === "asc" ? "desc" : "asc"))}
+//                   onClick={() =>
+//                     setSortOrder((p) => (p === "asc" ? "desc" : "asc"))
+//                   }
 //                   className="bg-[#111214] border border-[#2a2c2f] text-[#b9fd5c] rounded-xl
 //                     p-2 cursor-pointer hover:bg-[#2a2c2f] transition-colors"
 //                 >
-//                   {sortOrder === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+//                   {sortOrder === "asc" ? (
+//                     <ArrowUp size={12} />
+//                   ) : (
+//                     <ArrowDown size={12} />
+//                   )}
 //                 </button>
 //               </div>
 //             </div>
@@ -402,7 +478,9 @@
 //             <div>
 //               <div className="flex items-center gap-2 mb-3">
 //                 <Layers size={16} className="text-[#b9fd5c]" />
-//                 <h3 className="text-white font-semibold text-lg">Team Layers</h3>
+//                 <h3 className="text-white font-semibold text-lg">
+//                   Team Layers
+//                 </h3>
 //                 <span className="text-white/30 text-sm ml-2">
 //                   ({layerStats.layerCount} layers)
 //                 </span>
@@ -442,16 +520,15 @@
 // export default TeamInfo;
 
 
-
 // src/features/team/TeamInfo.jsx
 import React, { useState, useMemo } from "react";
 import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import {
-  Users, UserCheck, UserX, UserPlus, Banknote, Layers,
-  Search, FileText, RotateCcw, Maximize2, Minimize2,
-  ArrowUp, ArrowDown, Filter, Download, Eye, 
+  Users, UserCheck, UserX, Layers,
+  Search, RotateCcw, Maximize2, Minimize2,
+  ArrowUp, ArrowDown, Filter, Download, Eye,
 } from "lucide-react";
-import Loader from "../../reusableComponents/Loader/Loader"
+import Loader from "../../reusableComponents/Loader/Loader";
 import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import MemberDetailModal from "./MemberDetailModal";
 import LayerAccordion from "./LayerAccordion";
@@ -485,29 +562,28 @@ const TeamInfo = () => {
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [searchedName, setSearchedName] = useState("");
+  const [searchedUserName, setSearchedUserName] = useState("");
 
-  const [fetchUserInfo, { isLoading, isError, error }] = useLazyUserInvestmentsQuery();
+  const [fetchTeamInvestments, { isLoading, isError, error }] = useLazyUserInvestmentsQuery();
   const { isGenerating, downloadPDF, previewPDF } = usePDFGenerator();
 
-  // Extract name from API response
-  const extractNameFromResponse = (data) => {
-    if (data?.name) return data.name;
-    if (data?.summary?.name) return data.summary.name;
+  // Display name - use extracted name if available, otherwise username
+  const displayName = searchedUserName || input.username;
 
+  // Extract name from layer 1 data
+  const extractNameFromLayer1 = (data) => {
     const layer1 = data?.layers?.["1"];
     if (layer1) {
-      const firstMember = layer1.active?.[0] || layer1.inactive?.[0];
-      if (firstMember?.sponsorName) return firstMember.sponsorName;
-      if (firstMember?.referrerName) return firstMember.referrerName;
-      if (firstMember?.parentName) return firstMember.parentName;
-    }
+      // Get first active member's name
+      const firstActive = layer1.active?.[0];
+      if (firstActive?.name) return firstActive.name;
 
+      // Fallback to first inactive member's name
+      const firstInactive = layer1.inactive?.[0];
+      if (firstInactive?.name) return firstInactive.name;
+    }
     return "";
   };
-
-  // Display name (fallback to username if name not found)
-  const displayName = searchedName || input.username;
 
   // Computed Stats
   const layerStats = useMemo(() => {
@@ -532,37 +608,35 @@ const TeamInfo = () => {
     return { totalActive, totalInactive, totalInvestment, layerCount };
   }, [teamData]);
 
-  const activePercentage = useMemo(() => {
-    const total = teamData?.summary?.chain?.total || 0;
-    const active = teamData?.summary?.chain?.active || 0;
-    return total ? ((active / total) * 100).toFixed(1) : 0;
-  }, [teamData]);
-
   // Handlers
   const handleSearch = async () => {
     if (!input.username.trim()) return;
+
+    const usernameToSearch = input.username.trim().toUpperCase();
+
     try {
-      const payload = { username: input.username.trim() };
+      const payload = { username: usernameToSearch };
       if (input.fromDate)
         payload.fromDate = convertToApiDateFormat(input.fromDate);
-      if (input.toDate) payload.toDate = convertToApiDateFormat(input.toDate);
-      const result = await fetchUserInfo(payload).unwrap();
+      if (input.toDate)
+        payload.toDate = convertToApiDateFormat(input.toDate);
+
+      const result = await fetchTeamInvestments(payload).unwrap();
 
       if (result?.data) {
         setTeamData(result.data);
         setExpandedLayers(["1"]);
         setExpandAll(false);
 
-        // Extract and store the name from response
-        const name = extractNameFromResponse(result.data);
-        setSearchedName(name);
-        console.log("EXTRACTED NAME →", name);
-        console.log("FULL RESPONSE →", JSON.stringify(result.data, null, 2));
+        // Extract name from layer 1
+        const name = extractNameFromLayer1(result.data);
+        setSearchedUserName(name);
 
         toast.success("Data fetched successfully!");
       }
     } catch (err) {
-      toast.error("Error fetching team data");
+      console.error("Error:", err);
+      toast.error(err?.data?.message || "Error fetching data");
     }
   };
 
@@ -572,7 +646,7 @@ const TeamInfo = () => {
     setExpandedLayers([]);
     setActiveTab("all");
     setExpandAll(false);
-    setSearchedName("");
+    setSearchedUserName("");
   };
 
   const toggleLayer = (layer) => {
@@ -597,7 +671,7 @@ const TeamInfo = () => {
     setShowMemberModal(true);
   };
 
-  // PDF Options - uses name instead of username
+  // PDF Options
   const getPdfOptions = () => ({
     title: "Team Investment Report",
     subtitle: `Name: ${displayName} • ${new Date().toLocaleDateString()}`,
@@ -605,25 +679,32 @@ const TeamInfo = () => {
     theme: "dark",
   });
 
-  // Download PDF - uses name instead of username
+  // Download PDF
   const handleDownloadPDF = async () => {
     if (!input.username.trim()) return;
+
+    const usernameToSearch = input.username.trim().toUpperCase();
+
     try {
-      const payload = { username: input.username.trim() };
+      const payload = { username: usernameToSearch };
       if (input.fromDate)
         payload.fromDate = convertToApiDateFormat(input.fromDate);
-      if (input.toDate) payload.toDate = convertToApiDateFormat(input.toDate);
-      const result = await fetchUserInfo(payload).unwrap();
+      if (input.toDate)
+        payload.toDate = convertToApiDateFormat(input.toDate);
+
+      const result = await fetchTeamInvestments(payload).unwrap();
 
       if (result?.data?.layers) {
-        const name =
-          extractNameFromResponse(result.data) || input.username.trim();
+        // Extract name from layer 1
+        const userName = extractNameFromLayer1(result.data) || usernameToSearch;
+        const fileName = userName.replace(/\s+/g, "_");
 
         await downloadPDF(
           (pdf) =>
             buildTeamInvestmentPDF(pdf, {
               layersData: result.data.layers,
-              username: name,
+              name: userName,
+              username: usernameToSearch,
               fromDate: input.fromDate
                 ? convertToApiDateFormat(input.fromDate)
                 : null,
@@ -633,9 +714,9 @@ const TeamInfo = () => {
             }),
           {
             ...getPdfOptions(),
-            subtitle: `Name: ${name} • ${new Date().toLocaleDateString()}`,
+            subtitle: `Name: ${userName} • ${new Date().toLocaleDateString()}`,
           },
-          `Team_Investment_${name}_${new Date().toISOString().split("T")[0]}.pdf`
+          `Team_Investment_${fileName}_${new Date().toISOString().split("T")[0]}.pdf`
         );
       }
     } catch (err) {
@@ -643,14 +724,15 @@ const TeamInfo = () => {
     }
   };
 
-  // Preview PDF - uses name instead of username
+  // Preview PDF
   const handlePreviewPDF = async () => {
     if (!teamData?.layers) return;
     await previewPDF(
       (pdf) =>
         buildTeamInvestmentPDF(pdf, {
           layersData: teamData.layers,
-          username: displayName,
+          name: displayName,
+          username: input.username.trim(),
           fromDate: input.fromDate
             ? convertToApiDateFormat(input.fromDate)
             : null,
@@ -685,11 +767,7 @@ const TeamInfo = () => {
                 bg-transparent border border-[#b9fd5c]/30 text-[#b9fd5c]
                 hover:bg-[#b9fd5c]/10 transition-colors cursor-pointer"
             >
-              {expandAll ? (
-                <Minimize2 size={14} />
-              ) : (
-                <Maximize2 size={14} />
-              )}
+              {expandAll ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               {expandAll ? "Collapse All" : "Expand All"}
             </button>
           )}
@@ -764,15 +842,26 @@ const TeamInfo = () => {
                   disabled:opacity-50 disabled:cursor-not-allowed
                   flex items-center justify-center gap-2"
               >
-                {isLoading ? (
-                  <Loader />
-                ) : (
-                  <Search size={14} />
-                )}
+                {isLoading ? <Loader /> : <Search size={14} />}
                 Search
               </button>
             </div>
           </div>
+
+          {/* Show searched user info */}
+          {teamData && (
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-white/5">
+              <span className="text-[#8a8d93] text-sm">Searched User:</span>
+              {searchedUserName ? (
+                <>
+                  <span className="text-[#b9fd5c] font-semibold">{searchedUserName}</span>
+                  <span className="text-[#8a8d93] text-sm">({input.username})</span>
+                </>
+              ) : (
+                <span className="text-[#b9fd5c] font-semibold">{input.username}</span>
+              )}
+            </div>
+          )}
 
           {/* Action Buttons */}
           {teamData && (

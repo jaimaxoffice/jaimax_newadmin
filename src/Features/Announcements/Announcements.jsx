@@ -304,7 +304,7 @@ const AnnouncementForm = ({
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
+          className="px-5 py-2.5 rounded-3xl text-sm font-semibold text-white
             bg-transparent border border-[#2a2c2f] hover:bg-[#2a2c2f]
             transition-colors cursor-pointer"
         >
@@ -313,8 +313,8 @@ const AnnouncementForm = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-2.5 rounded-lg text-sm font-semibold text-black
-            bg-[#b9fd5c] hover:bg-[#ff7b1c] transition-colors cursor-pointer
+          className="px-6 py-2.5 rounded-3xl text-sm font-semibold text-black
+            bg-[#b9fd5c]  transition-colors cursor-pointer
             disabled:opacity-50 flex items-center gap-2"
         >
           {isSubmitting ? (
@@ -814,11 +814,11 @@ const AnnouncementList = () => {
       <div className="p-2 sm:p-2 space-y-6">
         {/* Header */}
         <div className="flex w-full">
-          <h1 className="text-lg font-semibold text-white">Announcements</h1>
+        
           <div className="flex flex-wrap items-center gap-3 ml-auto">
             <button
               onClick={openCreateModal}
-              className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
+              className="bg-[#b9fd5c]  text-black rounded-3xl
                 py-2.5 px-4 text-sm font-semibold transition-colors cursor-pointer
                 flex items-center gap-2"
             >
@@ -858,7 +858,7 @@ const AnnouncementList = () => {
             </h3>
             <button
               onClick={openCreateModal}
-              className="bg-[#b9fd5c] hover:bg-[#ff7b1c] text-white rounded-xl
+              className="bg-[#b9fd5c]  text-black rounded-3xl
                 py-2.5 px-5 text-sm font-semibold transition-colors cursor-pointer mt-2"
             >
               Create First Announcement

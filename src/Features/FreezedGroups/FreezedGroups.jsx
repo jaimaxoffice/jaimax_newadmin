@@ -212,7 +212,7 @@ const FrezzedGroupManagement = () => {
     {
       header: "Action",
       render: (row) => (
-        <div className="flex items-center justify-center gap-1.5">
+        <div className="flex items-center justify-center gap-3">
           <button
             onClick={() => openEditModal(row)}
             title="Edit Group"
@@ -260,23 +260,6 @@ const FrezzedGroupManagement = () => {
                 Add New
               </button>
 
-              {/* Right — Filters */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <PerPageSelector
-                  options={[10, 20, 40, 60, 80, 100]}
-                  onChange={(value) =>
-                    setState((prev) => ({
-                      ...prev,
-                      perPage: value,
-                      currentPage: 1,
-                    }))
-                  }
-                />
-                <SearchBar
-                  onSearch={handleSearch}
-                  placeholder="Search name, amount..."
-                />
-              </div>
             </div>
           </div>
 
@@ -476,7 +459,7 @@ const GroupFormModal = ({
         <div className="px-6 py-4 border-t border-[#2a2c2f] flex items-center justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl text-sm font-medium
+            className="px-5 py-2.5 rounded-3xl text-sm font-medium
                        bg-[#111214] border border-[#2a2c2f] text-[#8a8d93]
                        hover:text-white hover:border-[#3a3c3f]
                        transition-colors cursor-pointer"
@@ -584,7 +567,7 @@ const AddUsersModal = ({
           <button
             onClick={onSubmit}
             className="flex items-center gap-2 px-5 py-2.5 rounded-3xl text-sm font-semibold
-                       bg-[#b9fd5c] text-black hover:bg-[#ff8533]
+                       bg-[#b9fd5c] text-black 
                        hover:shadow-lg hover:shadow-[#b9fd5c]/20
                        active:scale-[0.98] transition-all duration-200 cursor-pointer"
           >

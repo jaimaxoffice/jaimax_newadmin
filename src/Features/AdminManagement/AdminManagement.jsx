@@ -123,7 +123,7 @@ const AdminManagement = () => {
 
   // Action Buttons
   const AdminActions = ({ user }) => (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-5">
       <button
         onClick={() => handleViewUser(user._id)}
         title="View User"

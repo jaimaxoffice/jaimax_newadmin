@@ -1,13 +1,13 @@
+// src/features/wealthPlan/WealthLogs3O.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import Table from "../../../reusableComponents/Tables/Table";
 import Pagination from "../../../reusableComponents/paginations/Pagination";
-import MobileCard from "../../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../../reusableComponents/MobileCards/MobileCardList";
 import Badge from "../../../reusableComponents/Badges/Badge";
 import { useGuarantededWealthPlanLogs3OMutation } from "../wealthPlanApiSlice";
 import { formatDateWithAmPm } from "../../../utils/dateUtils";
 import SearchBar from "../../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../../reusableComponents/Filter/PerPageSelector";
+
 const Wealthlogs3O = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -34,15 +34,6 @@ const Wealthlogs3O = () => {
   const tableData = data?.data?.logs || [];
   const totalRecords = data?.data?.totalLogs || 0;
 
-  // Search
-  let searchTimeout;
-  const handleSearch = (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      setState((prev) => ({ ...prev, search: e.target.value, currentPage: 1 }));
-    }, 1000);
-  };
-
   const handlePageChange = (page) => {
     setState((prev) => ({ ...prev, currentPage: page }));
   };
@@ -57,8 +48,8 @@ const Wealthlogs3O = () => {
   const columns = [
     {
       header: "S.No",
-      render: (_, index, currentPage, perPage) =>
-        currentPage * perPage - (perPage - 1) + index + ".",
+      render: (_, index) =>
+        `${(state.currentPage - 1) * state.perPage + index + 1}.`,
     },
     {
       header: "Name",
@@ -104,34 +95,39 @@ const Wealthlogs3O = () => {
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
-        {/* Filters Row */}
-
         {/* Table Card */}
-        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-            <div
-              className="flex flex-col sm:flex-row items-start sm:items-center 
-              justify-between gap-4"
-            >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <h1 className="text-lg font-semibold text-white">
-                Guaranteed Wealth Plan Logs 3.O
+                
               </h1>
-              <div className="flex w-full">
-                <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-                  <PerPageSelector
-                    value={state.perPage}
-                    options={[10,20,40,60,80,100]}
-                    onChange={(value) =>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <PerPageSelector
+                  options={[10, 20, 40, 60, 80, 100]}
+                  onChange={(value) =>
+                    setState((prev) => ({
+                      ...prev,
+                      perPage: value,
+                      currentPage: 1,
+                    }))
+                  }
+                />
+
+                <SearchBar
+                  onSearch={(e) => {
+                    clearTimeout(window._wealthLogs3OSearchTimeout);
+                    window._wealthLogs3OSearchTimeout = setTimeout(() => {
                       setState((prev) => ({
                         ...prev,
-                        perPage: value,
+                        search: e.target.value,
                         currentPage: 1,
-                      }))
-                    }
-                  />
-
-                  <SearchBar onChange={handleSearch} placeholder="Search..." />
-                </div>
+                      }));
+                    }, 1000);
+                  }}
+                  placeholder="Search by order ID..."
+                />
               </div>
             </div>
           </div>

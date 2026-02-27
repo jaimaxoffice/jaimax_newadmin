@@ -7,7 +7,7 @@ const Badge = ({ type = "default", children }) => {
     danger: "bg-red-500/10 text-red-400",
     warning: "bg-yellow-500/10 text-yellow-400",
     info: "bg-blue-500/10 text-blue-400",
-    default: "bg-[#2a2c2f] text-[#8a8d93]",
+    default: "bg-[#3d3d3d] text-[#ffff]",
   };
 
   return (

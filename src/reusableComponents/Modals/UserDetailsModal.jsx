@@ -41,13 +41,13 @@ const UserDetailsModal = ({ isOpen, onClose, user, formatDate }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 sidebar-scroll"
       onClick={onClose}
     >
       <div
         className="bg-gradient-to-b from-[#1e2328] to-[#181b1f] border border-[#2a2c2f] 
                    rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl
-                   animate-in fade-in zoom-in-95 duration-200"
+                   animate-in fade-in zoom-in-95 duration-200 sidebar-scroll"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with Gradient */}
@@ -64,11 +64,11 @@ const UserDetailsModal = ({ isOpen, onClose, user, formatDate }) => {
           </button>
 
           {/* User Avatar & Basic Info */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 sidebar-scroll">
             <div
               className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#b9fd5c] to-[#8bc34a] 
                          flex items-center justify-center text-[#111214] font-bold text-xl
-                         shadow-lg shadow-[#b9fd5c]/20"
+                         shadow-lg shadow-[#b9fd5c]/20 serialHeading"
             >
               {getInitials(user?.name)}
             </div>
@@ -93,7 +93,7 @@ const UserDetailsModal = ({ isOpen, onClose, user, formatDate }) => {
         </div>
 
         {/* Body */}
-        <div className="p-6 overflow-y-auto max-h-[60vh] space-y-6">
+        <div className="p-6 overflow-y-auto max-h-[60vh] space-y-6 sidebar-scroll">
           {user ? (
             <>
               {/* Token Balance Card */}
@@ -223,7 +223,7 @@ const UserDetailsModal = ({ isOpen, onClose, user, formatDate }) => {
           <div className="flex items-center justify-end gap-3">
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold
+              className="px-6 py-2.5 rounded-3xl text-sm font-semibold
                          bg-[#b9fd5c] text-[#111214]
                          hover:bg-[#a8ec4b]
                          transition-colors cursor-pointer"

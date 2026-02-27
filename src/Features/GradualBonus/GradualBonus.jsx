@@ -1,22 +1,24 @@
-// src/features/gradualLayerBonusLogs/GradualLayerBonusLogs.jsx
 import React, { useState, useEffect, useRef } from "react";
 import Table from "../../reusableComponents/Tables/Table";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
-import StatCard from "../../reusableComponents/StatCards/StatsCard";
 import Pagination from "../../reusableComponents/paginations/Pagination";
 import { useGetGradualLayerBonusLogsQuery } from "./gradualBonusApiSlice";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import { formatDateWithAmPm } from "../../utils/dateUtils";
+import NOtfound from "../../reusableComponents/Tables/NoDataFound";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
+import useTableState from "../../hooks/useTableState";
 const GradualLayerBonusLogs = () => {
-  const [state, setState] = useState({
-    currentPage: 1,
-    perPage: 10,
-    search: "",
+  const {
+    state,
+    setState,
+    selectedStatus,
+    handlePageChange,
+    handleStatusChange,
+  } = useTableState({
+    initialPerPage: 10,
+    initialStatus: "",
+    searchDelay: 1000,
   });
-
-  const [isSearching, setIsSearching] = useState(false);
-  const searchTimeoutRef = useRef(null);
 
   const queryParams = `limit=${state.perPage}&page=${state.currentPage}&search=${state.search}`;
 
@@ -33,158 +35,13 @@ const GradualLayerBonusLogs = () => {
     bonusLogs?.data?.pagination?.total || bonusLogs?.data?.total || 0;
   const totalPages = Math.ceil(totalItems / state.perPage) || 1;
 
-  const allData = bonusLogs?.data?.records || [];
-  const totalAmount =
-    bonusLogs?.data?.totalAmount ||
-    allData.reduce((sum, item) => sum + (item.amount || 0), 0);
-  const totalUsers =
-    bonusLogs?.data?.totalUsers ||
-    new Set(allData.map((item) => item.userId)).size;
-  const totalTransactions = bonusLogs?.data?.totalTransactions || totalItems;
-  const averageAmountPerDay =
-    bonusLogs?.data?.averageAmountPerDay ||
-    allData.reduce((sum, item) => sum + (item.amountPerDay || 0), 0) /
-      (allData.length || 1);
-
-  // ─── Handlers ────────────────────────────────────────────────
-
-  const handlePageChange = (page) =>
-    setState((prev) => ({ ...prev, currentPage: page }));
-
-  const handlePerPageChange = (e) =>
-    setState((prev) => ({
-      ...prev,
-      perPage: parseInt(e.target.value),
-      currentPage: 1,
-    }));
-
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    if (value !== state.search) setIsSearching(true);
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    searchTimeoutRef.current = setTimeout(() => {
-      setState((prev) => ({ ...prev, search: value, currentPage: 1 }));
-      setIsSearching(false);
-    }, 600);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  // ─── Helpers ─────────────────────────────────────────────────
-
-  const formatDateWithAmPm = (isoString) => {
-    if (!isoString) return "N/A";
-    const date = new Date(isoString);
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    let hours = date.getUTCHours();
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-    const amAndPm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${day}-${month}-${year} ${hours}:${minutes} ${amAndPm}`;
-  };
-
-  const formatCurrency = (amount) => {
-    if (amount === null || amount === undefined) return "₹0";
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  // ─── Error State ─────────────────────────────────────────────
-
   if (isError) {
-    const errorMessage =
-      error?.status === 524
-        ? "The request timed out. This might be due to a large dataset."
-        : error?.status === 500
-        ? "Server error. Please try again later."
-        : error?.data?.message || "Something went wrong. Please try again.";
-
     return (
       <div>
-        <div className="p-2 sm:p-2 space-y-6">
-          {/* Header */}
-          <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-            <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center text-[#b9fd5c]">
-                    <LayersIcon />
-                  </div>
-                  <h1 className="text-lg font-semibold text-white">
-                    Gradual Layer Income Logs
-                  </h1>
-                </div>
-                <button
-                  onClick={() => refetch()}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
-                             transition-all duration-200 cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshIcon className={isLoading ? "animate-spin" : ""} />
-                  Refresh
-                </button>
-              </div>
-            </div>
-
-            {/* Error Content */}
-            <div className="flex flex-col items-center justify-center py-20 px-4">
-              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-                <AlertIcon />
-              </div>
-              <h3 className="text-white text-lg font-semibold mb-2">
-                Error Loading Data
-              </h3>
-              <p className="text-[#8a8d93] text-sm text-center max-w-md mb-6">
-                {errorMessage}
-              </p>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => refetch()}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                             bg-[#b9fd5c] text-white hover:bg-[#ff8533]
-                             transition-all duration-200 cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshIcon
-                    className={isLoading ? "animate-spin" : ""}
-                  />
-                  Try Again
-                </button>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="px-5 py-2.5 rounded-xl text-sm font-medium
-                             bg-[#111214] border border-[#2a2c2f] text-[#8a8d93]
-                             hover:text-white hover:border-[#3a3c3f]
-                             transition-colors cursor-pointer"
-                >
-                  Reload Page
-                </button>
-              </div>
-            </div>
-          </div>
-
-         
-        </div>
+        <NOtfound />
       </div>
     );
   }
-
-  // ─── Table Columns ──────────────────────────────────────────
 
   const columns = [
     {
@@ -200,9 +57,7 @@ const GradualLayerBonusLogs = () => {
     },
     {
       header: "Total Amount",
-      render: (row) => (
-        <span className=" ">{row?.amount}</span>
-      ),
+      render: (row) => <span className=" ">{row?.amount}</span>,
     },
     {
       header: "Amount/Day",
@@ -212,20 +67,14 @@ const GradualLayerBonusLogs = () => {
       header: "Duration",
       render: (row) => (
         <span className="text-xs">
-          <span className="">
-            {row?.disbursedDays || 0}
-          </span>
+          <span className="">{row?.disbursedDays || 0}</span>
           <span className="">/{row?.totalDays || 0} days</span>
         </span>
       ),
     },
     {
       header: "Transaction ID",
-      render: (row) => (
-        <span className="">
-          {row?.transactionId || "N/A"}
-        </span>
-      ),
+      render: (row) => <span className="">{row?.transactionId || "N/A"}</span>,
     },
     {
       header: "Created Date",
@@ -235,13 +84,7 @@ const GradualLayerBonusLogs = () => {
     },
     {
       header: "Position",
-      render: (row) => (
-        <span
-          className=""
-        >
-          {row?.position || "N/A"}
-        </span>
-      ),
+      render: (row) => <span className="">{row?.position || "N/A"}</span>,
     },
     {
       header: "Helped User",
@@ -251,11 +94,7 @@ const GradualLayerBonusLogs = () => {
     },
     {
       header: "Percentage",
-      render: (row) => (
-        <span className=" ">
-          {row?.elegiblePercentag}%
-        </span>
-      ),
+      render: (row) => <span className=" ">{row?.elegiblePercentag}%</span>,
     },
   ];
 
@@ -264,47 +103,52 @@ const GradualLayerBonusLogs = () => {
       <div className="p-2 sm:p-2 space-y-6">
         {/* Top Controls */}
 
-
         {/* Main Table Card */}
-<div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
-  {/* Header */}
-  <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
-    {/* Title */}
-   
-    {/* Filters */}
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
-<PerPageSelector
-  options={[10,20,40,60,80,100]}
-  onChange={(value) =>
-    setState((prev) => ({
-      ...prev,
-      perPage: value,
-      currentPage: 1,
-    }))
-  }
-/>
+        <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg  overflow-hidden">
+          {/* Header */}
+          <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
+            {/* Title */}
 
-      {/* Search */}
-      <SearchBar
-        onSearch={handleSearch}
-        placeholder={isSearching ? "Searching..." : "Search name, amount..."}
-      />
-    </div>
-  </div>
+            {/* Filters */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+              <PerPageSelector
+                options={[10, 20, 40, 60, 80, 100]}
+                onChange={(value) =>
+                  setState((prev) => ({
+                    ...prev,
+                    perPage: value,
+                    currentPage: 1,
+                  }))
+                }
+              />
 
-  {/* Desktop Table */}
-  <div className="">
-    <Table
-      columns={columns}
-      data={TableData}
-      isLoading={isLoading}
-      currentPage={state.currentPage}
-      perPage={state.perPage}
-    />
-  </div>
+              <SearchBar
+                onSearch={(e) => {
+                  clearTimeout(window._searchTimeout);
+                  window._searchTimeout = setTimeout(() => {
+                    setState((prev) => ({
+                      ...prev,
+                      search: e.target.value,
+                      currentPage: 1,
+                    }));
+                  }, 1000);
+                }}
+                placeholder="Search..."
+              />
+            </div>
+          </div>
 
-
-</div>
+          {/* Desktop Table */}
+          <div className="">
+            <Table
+              columns={columns}
+              data={TableData}
+              isLoading={isLoading}
+              currentPage={state.currentPage}
+              perPage={state.perPage}
+            />
+          </div>
+        </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
@@ -320,79 +164,3 @@ const GradualLayerBonusLogs = () => {
 };
 
 export default GradualLayerBonusLogs;
-
-// ─── SVG Icons ───────────────────────────────────────────────────
-
-const LayersIcon = ({ className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polygon points="12 2 2 7 12 12 22 7 12 2" />
-    <polyline points="2 17 12 22 22 17" />
-    <polyline points="2 12 12 17 22 12" />
-  </svg>
-);
-
-const SearchIcon = ({ className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-const RefreshIcon = ({ className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polyline points="23 4 23 10 17 10" />
-    <polyline points="1 20 1 14 7 14" />
-    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-  </svg>
-);
-
-const AlertIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#ef4444"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-    <line x1="12" y1="9" x2="12" y2="13" />
-    <line x1="12" y1="17" x2="12.01" y2="17" />
-  </svg>
-);

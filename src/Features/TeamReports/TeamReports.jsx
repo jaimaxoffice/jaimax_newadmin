@@ -1,3 +1,4 @@
+// src/features/team/TeamInfoPdfDownloader.jsx
 import React, { useState } from "react";
 import { useToast } from "../../reusableComponents/Toasts/ToastContext";
 import {
@@ -20,16 +21,36 @@ import { buildTeamPDF } from "./TeamPDF";
 // Reusable Components
 import Button from "../../reusableComponents/Buttons/Button";
 import Table from "../../reusableComponents/Tables/Table";
-import StatPreviewCard from "../../reusableComponents/StatCards/StatsCard"
+import StatPreviewCard from "../../reusableComponents/StatCards/StatsCard";
+
 const TeamInfoPdfDownloader = () => {
   const toast = useToast();
   const [username, setUsername] = useState("");
   const [fetchedData, setFetchedData] = useState(null);
   const [stats, setStats] = useState(null);
+  const [searchedUserName, setSearchedUserName] = useState("");
 
   const [fetchUserInfo, { isLoading: isFetching, isError }] =
     useLazyUserCompleteInfoQuery();
   const { isGenerating, downloadPDF, previewPDF } = usePDFGenerator();
+
+  // Display name - use extracted name if available, otherwise username
+  const displayName = searchedUserName || username;
+
+  // Extract name from layer 1 data
+  const extractNameFromLayer1 = (data) => {
+    const layer1 = data?.["1"];
+    if (layer1) {
+      // Get first active member's name
+      const firstActive = layer1.active?.[0];
+      if (firstActive?.name) return firstActive.name;
+
+      // Fallback to first inactive member's name
+      const firstInactive = layer1.inactive?.[0];
+      if (firstInactive?.name) return firstInactive.name;
+    }
+    return "";
+  };
 
   // Calculate stats from layers data
   const calculateStats = (layersData) => {
@@ -66,6 +87,11 @@ const TeamInfoPdfDownloader = () => {
       if (result?.data) {
         setFetchedData(result.data);
         setStats(calculateStats(result.data));
+
+        // Extract name from layer 1
+        const name = extractNameFromLayer1(result.data);
+        setSearchedUserName(name);
+
         toast.success("Data fetched successfully!");
       } else {
         toast.error("No data found for this username");
@@ -79,7 +105,7 @@ const TeamInfoPdfDownloader = () => {
   // PDF options
   const getPdfOptions = () => ({
     title: "Team Complete Information Report",
-    subtitle: `Username: ${name} • Generated: ${new Date().toLocaleDateString()}`,
+    subtitle: `Name: ${displayName} • Generated: ${new Date().toLocaleDateString()}`,
     companyName: "Admin Panel",
     theme: "dark",
   });
@@ -93,14 +119,24 @@ const TeamInfoPdfDownloader = () => {
           setFetchedData(result.data);
           setStats(calculateStats(result.data));
 
+          // Extract name from layer 1
+          const name = extractNameFromLayer1(result.data) || username.trim();
+          setSearchedUserName(name);
+
+          const fileName = name.replace(/\s+/g, "_");
+
           await downloadPDF(
             (pdf) =>
               buildTeamPDF(pdf, {
                 layersData: result.data,
+                name: name,
                 username: username.trim(),
               }),
-            getPdfOptions(),
-            `Team_Report_${username}_${new Date().toISOString().split("T")[0]}.pdf`
+            {
+              ...getPdfOptions(),
+              subtitle: `Name: ${name} • Generated: ${new Date().toLocaleDateString()}`,
+            },
+            `Team_Report_${fileName}_${new Date().toISOString().split("T")[0]}.pdf`
           );
         }
       } catch (error) {
@@ -109,14 +145,21 @@ const TeamInfoPdfDownloader = () => {
       return;
     }
 
+    const userName = searchedUserName || username.trim();
+    const fileName = userName.replace(/\s+/g, "_");
+
     await downloadPDF(
       (pdf) =>
         buildTeamPDF(pdf, {
           layersData: fetchedData,
+          name: userName,
           username: username.trim(),
         }),
-      getPdfOptions(),
-      `Team_Report_${username}_${new Date().toISOString().split("T")[0]}.pdf`
+      {
+        ...getPdfOptions(),
+        subtitle: `Name: ${userName} • Generated: ${new Date().toLocaleDateString()}`,
+      },
+      `Team_Report_${fileName}_${new Date().toISOString().split("T")[0]}.pdf`
     );
   };
 
@@ -131,6 +174,7 @@ const TeamInfoPdfDownloader = () => {
       (pdf) =>
         buildTeamPDF(pdf, {
           layersData: fetchedData,
+          name: displayName,
           username: username.trim(),
         }),
       getPdfOptions()
@@ -147,43 +191,10 @@ const TeamInfoPdfDownloader = () => {
     setUsername("");
     setFetchedData(null);
     setStats(null);
+    setSearchedUserName("");
   };
 
   const isProcessing = isFetching || isGenerating;
-
-  // Table columns for layer summary
-  const layerTableColumns = [
-    {
-      header: "Layer",
-      accessor: "layer",
-      render: (row) => (
-        <span className="text-white font-medium">Layer {row.layer}</span>
-      ),
-    },
-    {
-      header: "Active",
-      accessor: "active",
-      render: (row) => (
-        <span className="text-[#0ecb6f] font-semibold">{row.active}</span>
-      ),
-    },
-    {
-      header: "Inactive",
-      accessor: "inactive",
-      render: (row) => (
-        <span className="text-red-400 font-semibold">{row.inactive}</span>
-      ),
-    },
-    {
-      header: "Total",
-      accessor: "total",
-      render: (row) => (
-        <span className={`font-bold ${row.isTotal ? "text-[#b9fd5c]" : "text-white"}`}>
-          {row.total}
-        </span>
-      ),
-    },
-  ];
 
   // Transform fetched data for table
   const getTableData = () => {
@@ -262,19 +273,6 @@ const TeamInfoPdfDownloader = () => {
 
   return (
     <div className="p-2 sm:p-2 space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#b9fd5c]/10 flex items-center justify-center">
-          <FileText size={20} className="text-[#b9fd5c]" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold text-white">Download Team Report</h1>
-          <p className="text-[#8a8d93] text-sm">
-            Generate detailed team information PDF
-          </p>
-        </div>
-      </div>
-
       {/* Input Section */}
       <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl p-5 space-y-5">
         <h3 className="text-xs font-semibold text-[#b9fd5c] uppercase tracking-widest">
@@ -288,7 +286,6 @@ const TeamInfoPdfDownloader = () => {
               Username <span className="text-red-400">*</span>
             </label>
             <div className="flex gap-3">
-              {/* Custom Input (since SearchBar has specific behavior) */}
               <div className="relative flex-1">
                 <Search
                   size={15}
@@ -300,10 +297,11 @@ const TeamInfoPdfDownloader = () => {
                   type="text"
                   value={username}
                   onChange={(e) => {
-                    setUsername(e.target.value);
+                    setUsername(e.target.value.toUpperCase());
                     if (fetchedData) {
                       setFetchedData(null);
                       setStats(null);
+                      setSearchedUserName("");
                     }
                   }}
                   onKeyDown={handleKeyDown}
@@ -312,7 +310,7 @@ const TeamInfoPdfDownloader = () => {
                   className="w-full bg-[#111214] text-white text-sm placeholder-[#555] 
                     py-2.5 pl-9 pr-4 rounded-lg border outline-none transition-all duration-200
                     border-[#2a2c2f] hover:border-[#3a3c3f] focus:border-[#b9fd5c] 
-                    focus:ring-1 focus:ring-[#b9fd5c]/30 "
+                    focus:ring-1 focus:ring-[#b9fd5c]/30"
                 />
               </div>
 
@@ -327,6 +325,21 @@ const TeamInfoPdfDownloader = () => {
               </Button>
             </div>
           </div>
+
+          {/* Show searched user info */}
+          {fetchedData && (
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-white/5">
+              <span className="text-[#8a8d93] text-sm">Searched User:</span>
+              {searchedUserName ? (
+                <>
+                  <span className="text-[#b9fd5c] font-semibold">{searchedUserName}</span>
+                  <span className="text-[#8a8d93] text-sm">({username})</span>
+                </>
+              ) : (
+                <span className="text-[#b9fd5c] font-semibold">{username}</span>
+              )}
+            </div>
+          )}
 
           {/* Error */}
           {isError && (
@@ -344,7 +357,8 @@ const TeamInfoPdfDownloader = () => {
       {stats && fetchedData && (
         <>
           {/* Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
             <StatPreviewCard
               icon={Layers}
               title="Total Layers"
@@ -375,7 +389,7 @@ const TeamInfoPdfDownloader = () => {
             />
           </div>
 
-          {/* Layer Summary Preview - Using Reusable Table */}
+          {/* Layer Summary Preview */}
           <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
             <div className="p-4 border-b border-[#2a2c2f]">
               <h3 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -406,12 +420,21 @@ const TeamInfoPdfDownloader = () => {
                 </h3>
                 <p className="text-[#8a8d93] text-sm">
                   Download or preview the team report for{" "}
-                  <span className="text-[#b9fd5c] font-semibold">{username}</span> •{" "}
+                  <span className="text-[#b9fd5c] font-semibold">{displayName}</span> •{" "}
                   {stats.totalUsers} users across {stats.totalLayers} layers
                 </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
+                {/* Reset Button */}
+                <Button
+                  onClick={handleReset}
+                  variant="ghost"
+                  icon={RotateCcw}
+                  size="sm"
+                >
+                  Reset
+                </Button>
 
                 {/* Preview Button */}
                 <Button
@@ -469,4 +492,3 @@ const TeamInfoPdfDownloader = () => {
 };
 
 export default TeamInfoPdfDownloader;
-

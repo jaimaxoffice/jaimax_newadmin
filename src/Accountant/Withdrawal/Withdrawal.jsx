@@ -274,7 +274,7 @@ const WithDraw = () => {
 
       const res = await fetch(`${API_BASE}/accounts/withdrawals/export?${q}`, {
         headers: {
-          Authorization: `Bearer ${Cookies.get("token") || ""}`,
+          Authorization: `Bearer ${Cookies.get("adminToken") || ""}`,
         },
       });
       if (!res.ok) {
@@ -470,7 +470,8 @@ const WithDraw = () => {
         {/* ── Summary Cards (✅ StatCard - SAME as before) ── */}
 
 
-<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+<div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
   <StatCard
     icon={<Clock />}
     value={pagination?.pending ?? 0}

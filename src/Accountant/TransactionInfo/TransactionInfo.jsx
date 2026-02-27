@@ -220,11 +220,7 @@ const TxInfo = () => {
                   <Row label="Payment Mode">{tx.paymentMode || "N/A"}</Row>
                   <Row label="Currency">{tx.currency || "N/A"}</Row>
                   <Row label="UTR / Ref">{tx.utrRef || "N/A"}</Row>
-                  <Row label="Transaction Fee">
-                    {tx.transactionFee != null
-                      ? fmtAmount(tx.transactionFee, tx.userId?.countryCode)
-                      : "N/A"}
-                  </Row>
+                  
                   <Row label="Reason">{tx.reason || "N/A"}</Row>
                 </div>
               </div>

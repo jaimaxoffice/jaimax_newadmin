@@ -223,34 +223,12 @@ const IcoManagement = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-lg font-semibold text-white">
-                  ICO Management
+                
                 </h1>
-                {exchangeRate > 0 && (
-                  <p className="text-xs text-[#555] mt-1">
-                    Exchange Rate: 1 USD = ₹{exchangeRate}
-                  </p>
-                )}
+                
               </div>
 
-              <div className="flex w-full">
-                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto ml-auto">
-                  <PerPageSelector
-                    options={[10,20,40,60,80,100]}
-                    onChange={(value) =>
-                      setState((prev) => ({
-                        ...prev,
-                        perPage: value,
-                        currentPage: 1,
-                      }))
-                    }
-                  />
-
-                  <SearchBar
-                    onSearch={handleSearch}
-                    placeholder="Search username..."
-                  />
-                </div>
-              </div>
+              
             </div>
           </div>
 

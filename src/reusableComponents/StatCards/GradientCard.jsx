@@ -105,12 +105,12 @@ function StatCard({ icon: Icon, value, title, variant = "lime", trend, trendValu
         </div>
 
         {/* Title */}
-        <p className="text-[8px] sm:text-xs font-medium uppercase tracking-wider text-gray-400 mb-1">
+        <p className="text-[6px] sm:text-xs font-medium uppercase tracking-wider text-gray-400 mb-1">
           {title}
         </p>
 
         {/* Value */}
-        <p className={`text-xl sm:text-2xl md:text-xl font-bold leading-none ${v.valueColor}`}>
+        <p className={`text-sm sm:text-xl md:text-xl font-bold leading-none ${v.valueColor}`}>
           {typeof value === "number" ? value.toLocaleString() : value}
         </p>
 

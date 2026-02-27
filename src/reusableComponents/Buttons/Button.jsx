@@ -24,10 +24,10 @@ const Button = ({
 const variants = {
   primary: "bg-[#b9fd5c] text-black hover:bg-[#a8ec4b] rounded-3xl",
   primaryOrange: "bg-[#b9fd5c] text-black  rounded-3xl", // New
-  secondary: "bg-[#2a2c2f] text-white hover:bg-[#333] border border-transparent rounded-xl",
+  secondary: "bg-[#2a2c2f] text-white hover:bg-[#333] border border-transparent rounded-3xl",
   outline: "bg-transparent border border-[#b9fd5c] text-[#b9fd5c] hover:bg-[#b9fd5c]/10 rounded-xl",
   outlineGray: "bg-[#b9fd5c] border border-[#2a2c2f] text-black hover:bg-[#2a2c2f] rounded-3xl", // New
-  ghost: "bg-black/65 backdrop-blur-sm border border-[#b9fd5c] text-[#b9fd5c] hover:bg-black/80 rounded-full",
+  ghost: "bg-black/65 backdrop-blur-sm border border-[#b9fd5c] text-[#b9fd5c] hover:bg-black/80 rounded-3xl",
   icon: "bg-transparent border-transparent p-0 hover:bg-transparent",
   approve: "w-8 h-8 rounded-lg bg-[#b9fd5c]/10 text-[#b9fd5c] hover:bg-[#b9fd5c]/20 p-0",
   hold: "w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 p-0",

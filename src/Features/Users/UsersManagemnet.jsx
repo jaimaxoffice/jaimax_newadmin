@@ -256,7 +256,7 @@ const UserManagement = () => {
             }
           }}
           disabled={row.isBlock}
-          className="text-[#b9fd5c] hover:text-[#b9fd5c]/15 text-xs font-medium bg-black px-3 py-1.5 rounded-lg transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          className="text-[#b9fd5c] hover:text-white text-xs font-medium bg-black px-3 py-1.5 rounded-lg transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <Send size={15} />
         </button>

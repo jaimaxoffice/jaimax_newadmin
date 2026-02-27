@@ -9,20 +9,12 @@ import SearchBar from "../../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../../reusableComponents/Filter/PerPageSelector";
 import StatCards from "../../../reusableComponents/StatCards/StatsCard";
 import {
-  Users,
-  UserCheck,
   Banknote,
   Coins,
-  // Alternative options
   LayoutGrid,
   Activity,
-  Wallet,
-  CircleDollarSign,
-  TrendingUp,
-  ArrowDownToLine,
-  HandCoins,
-  PiggyBank,
 } from "lucide-react";
+
 const WealthLogs3O = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -47,32 +39,23 @@ const WealthLogs3O = () => {
   const tableData = data?.data?.data || [];
   const totalRecords = data?.data?.total || 0;
 
-  let searchTimeout;
-  const handleSearch = (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      setState((prev) => ({ ...prev, search: e.target.value, currentPage: 1 }));
-    }, 1000);
-  };
-
   const handlePageChange = (page) => {
     setState((prev) => ({ ...prev, currentPage: page }));
-  };
-
-  const getDay = (reason) => {
-    const match = reason?.match(/day\s*\d+/i);
-    return match ? match[0] : "—";
   };
 
   const columns = [
     {
       header: "S.No",
-      render: (_, index, currentPage, perPage) =>
-        currentPage * perPage - (perPage - 1) + index + ".",
+      render: (_, index) =>
+        `${(state.currentPage - 1) * state.perPage + index + 1}.`,
     },
     {
       header: "User ID",
       render: (row) => <span className="">{row?.user?._id}</span>,
+    },
+    {
+      header: "Order ID",
+      render: (row) => <span className="">{row?._id}</span>,
     },
     {
       header: "Name",
@@ -83,7 +66,7 @@ const WealthLogs3O = () => {
       render: (row) => <span className="">{row?.user?.email}</span>,
     },
     {
-      header: "Amount",
+      header: "Amount(₹)",
       render: (row) => <span className="font-medium">₹{row?.amount}</span>,
     },
     {
@@ -91,7 +74,7 @@ const WealthLogs3O = () => {
       accessor: "jaimax",
     },
     {
-      header: "Wealth Plan",
+      header: "Wealth Plan Status",
       render: (row) => (
         <Badge type={row?.isGuaranteedWealthOpted_3 ? "success" : "danger"}>
           {row?.isGuaranteedWealthOpted_3 ? "Yes" : "No"}
@@ -99,7 +82,7 @@ const WealthLogs3O = () => {
       ),
     },
     {
-      header: "Daily Amount",
+      header: "Everyday Amount",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.guaranteedAmountToBeDisburse_3 || "—"}
@@ -107,7 +90,7 @@ const WealthLogs3O = () => {
       ),
     },
     {
-      header: "Daily Tokens",
+      header: "Everyday Tokens Collected",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.guaranteedTokensToBeCollect_3 || "—"}
@@ -115,7 +98,7 @@ const WealthLogs3O = () => {
       ),
     },
     {
-      header: "Total Disbursed",
+      header: "Total Amount Disbursed",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.totalAmountDisbursedForWealthPlan_3 || "—"}
@@ -123,7 +106,7 @@ const WealthLogs3O = () => {
       ),
     },
     {
-      header: "Coins Collected",
+      header: "Total Coins Collected",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.totalCoinsCollectedFormUser_3 || "—"}
@@ -131,7 +114,7 @@ const WealthLogs3O = () => {
       ),
     },
     {
-      header: "Days",
+      header: "Total Days Collected",
       render: (row) => (
         <span className="text-yellow-400">
           {row?.wealthPalnDisbursedDays_3 || "—"}
@@ -139,7 +122,7 @@ const WealthLogs3O = () => {
       ),
     },
     {
-      header: "Completed",
+      header: "Wealth plan Completed",
       render: (row) => (
         <Badge type={row?.wealthPlanCompleted_3 ? "success" : "danger"}>
           {row?.wealthPlanCompleted_3 ? "Yes" : "No"}
@@ -158,53 +141,61 @@ const WealthLogs3O = () => {
 
   return (
     <div className="p-2 sm:p-2 space-y-6">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCards 
-          title="Total Plans" 
-          value={data?.data?.total || 0} 
-          icon={LayoutGrid} 
-          variant="default" 
+      <div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+        <StatCards
+          title="Total Plans"
+          value={data?.data?.total || 0}
+          icon={LayoutGrid}
+          variant="default"
         />
-        <StatCards 
-          title="Active Plans" 
-          value={data?.data?.activeGuaranteedWealthCount || 0} 
-          icon={Activity} 
-          variant="completed" 
+        <StatCards
+          title="Active Plans"
+          value={data?.data?.activeGuaranteedWealthCount || 0}
+          icon={Activity}
+          variant="completed"
         />
-        <StatCards 
-          title="Amount To Disburse" 
-          value={data?.data?.totalGuaranteedAmountToBeDisbursed || 0} 
-          icon={Banknote} 
-          variant="warning" 
+        <StatCards
+          title="Amount To Disburse"
+          value={data?.data?.totalGuaranteedAmountToBeDisbursed || 0}
+          icon={Banknote}
+          variant="warning"
         />
-        <StatCards 
-          title="Tokens To Collect" 
-          value={data?.data?.totalGuaranteedTokensToBeCollected || 0} 
-          icon={Coins} 
-          variant="info" 
+        <StatCards
+          title="Tokens To Collect"
+          value={data?.data?.totalGuaranteedTokensToBeCollected || 0}
+          icon={Coins}
+          variant="info"
         />
       </div>
-      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            
-            <div className="flex w-full">
-              <div className="flex items-center gap-3 w-full sm:w-auto ml-auto">
-                <PerPageSelector
-                  value={state.perPage}
-                  options={[20, 40, 60, 80, 100]}
-                  onChange={(value) =>
-                    setState((prev) => ({
-                      ...prev,
-                      perPage: value,
-                      currentPage: 1,
-                    }))
-                  }
-                />
 
-                <SearchBar onChange={handleSearch} placeholder="Search..." />
-              </div>
-            </div>
+      <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
+        <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+            <PerPageSelector
+              options={[10, 20, 40, 60, 80, 100]}
+              onChange={(value) =>
+                setState((prev) => ({
+                  ...prev,
+                  perPage: value,
+                  currentPage: 1,
+                }))
+              }
+            />
+
+            <SearchBar
+              onSearch={(e) => {
+                clearTimeout(window._wealth3OSearchTimeout);
+                window._wealth3OSearchTimeout = setTimeout(() => {
+                  setState((prev) => ({
+                    ...prev,
+                    search: e.target.value,
+                    currentPage: 1,
+                  }));
+                }, 1000);
+              }}
+              placeholder="Search by userId...."
+            />
           </div>
         </div>
 

@@ -249,25 +249,12 @@ function ZoomMeeting() {
             </div>
           </div>
 
-          {/* Type Filter */}
-          {/* <select
-            value={selectedType}
-            onChange={(e) => {
-              setSelectedType(e.target.value);
-              setCurrentPage(1);
-            }}
-            className={inputClass + " w-auto"}
-          >
-            <option value="all">All Videos</option>
-            <option value="zoom meet">Zoom Meetings</option>
-            <option value="youtube">YouTube Videos</option>
-            <option value="google meet">Google Meet</option>
-          </select> */}
         </div>
 
         {/* Stats */}
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
           <StatCard
             title="Total Meetings"
             value={pagination?.totalCount || 0}
@@ -322,7 +309,7 @@ function ZoomMeeting() {
             <div className="bg-[#1e293b]  rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-11 h-11 rounded-full bg-[#b9fd5c] flex items-center justify-center">
-                  <Plus size={22} className="text-white" />
+                  <Plus size={22} className="text-black" />
                 </div>
                 <div>
                   <h2 className="text-white font-semibold">
@@ -447,7 +434,7 @@ function ZoomMeeting() {
                         type="submit"
                         disabled={isSubmitting || creatingMeeting}
                         className="flex-1 flex items-center justify-center gap-2 bg-[#b9fd5c] 
-                          text-white font-medium py-2.5 rounded-lg transition-all duration-200 
+                          text-black font-medium py-2.5 rounded-3xl transition-all duration-200 
                           disabled:opacity-50 cursor-pointer"
                       >
                         {isSubmitting || creatingMeeting ? (
@@ -466,7 +453,7 @@ function ZoomMeeting() {
                         type="button"
                         onClick={() => resetForm()}
                         disabled={isSubmitting || creatingMeeting}
-                        className="px-4 py-2.5 bg-gray-600 hover:bg-gray-500 text-white rounded-lg 
+                        className="px-4 py-2.5 bg-gray-600 hover:bg-gray-500 text-white rounded-3xl
                           transition-colors duration-200 disabled:opacity-50 cursor-pointer"
                       >
                         Clear

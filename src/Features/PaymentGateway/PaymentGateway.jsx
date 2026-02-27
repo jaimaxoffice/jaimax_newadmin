@@ -251,7 +251,7 @@ const PaymentGatewayManagement = () => {
   ];
 
   return (
-    <div className=" sm:p-3 space-y-6 min-h-screen bg-[#0f172a] p-10 rounded-2xl">
+    <div className=" sm:p-1 space-y-6 min-h-screen bg-[#0f172a] p-3 rounded-2xl">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
@@ -271,7 +271,8 @@ const PaymentGatewayManagement = () => {
       {loadingStats ? (
         <div></div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid gap-4 w-full 
+                  grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
           <StatCard
             title="Total Gateways"
             value={gatewayStats?.data?.totalGateways}
