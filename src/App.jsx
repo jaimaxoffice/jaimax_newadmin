@@ -22,7 +22,7 @@ import NotVerifiedUser from "./Features/NotVerified/NotVerified";
 
 // Financial
 import Wallet from "./Features/Wallet/Wallet";
-import Withdrawal from "./Features/Withdrawal/Withdrawal";
+import Withdrawal from "./Features/Withdrawal/WithdrawalSlabs";
 import UsdtWithdrawal from "./Features/UsdtBonus/UsdtWithdrawal";
 import AvailableBalance from "./Features/AvailableBalance/AvailableBalance";
 
@@ -170,6 +170,7 @@ const ROLE2_ROUTES = [
   { path: "/zoom-meetings", element: <ZoomMeeting />, permission: "ZOOM MEETING" },
   { path: "/blogs", element: <Blog />, permission: "BLOGS" },
   { path: "/support", element: <Support />, permission: "SUPPORT" },
+   {path: "/support-chart/:id",element:<SupportChart/>, permission: "SUPPORT"},
   { path: "/legal", element: <Security />, permission: "LEGAL UPDATION" },
   { path: "/freezed-groups", element: <FreezedGroups />, permission: "FREEZED GROUPS" },
   { path: "/not-verified-users", element: <NotVerifiedUser />, permission: "NOT VERIFIED USERS" },

@@ -34,6 +34,7 @@
     "socket.io-client": "^4.8.3",
     "tailwindcss": "^4.1.18",
     "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0",
     "yup": "^1.7.1"
   },
   "devDependencies": {
