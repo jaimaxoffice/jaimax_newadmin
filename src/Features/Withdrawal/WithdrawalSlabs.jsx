@@ -2,16 +2,13 @@ import React, { useState } from 'react';
 import { useWithdrawalSlabsQuery } from './withdrawalApiSlice';
 import XLSX from 'xlsx-js-style';
 import { saveAs } from 'file-saver';
+import Table from '../../reusableComponents/Tables/Table'; // Adjust path as needed
 
 const WithdrawalDownload = () => {
   const [selectedSlab, setSelectedSlab] = useState(1);
   
   const { data: response, isLoading, error, refetch } = useWithdrawalSlabsQuery(selectedSlab);
   const withdrawalData = response?.data || [];
-
-  const handleSlabChange = (slab) => {
-    setSelectedSlab(slab);
-  };
 
   // Filter HDFC and Other Bank accounts
   const filterAccounts = () => {
@@ -21,7 +18,6 @@ const WithdrawalDownload = () => {
     withdrawalData.forEach((item) => {
       const bankName = (item.kycInfo?.bank_name || '').toLowerCase().trim();
       
-      // Check if bank is HDFC
       if (bankName.includes('hdfc')) {
         hdfcAccounts.push(item);
       } else {
@@ -34,12 +30,73 @@ const WithdrawalDownload = () => {
 
   const { hdfcAccounts, otherBankAccounts } = filterAccounts();
 
-  // Create worksheet with data
-  const createWorksheet = (data, bankType) => {
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+  // Table columns configuration
+  const columns = [
+    {
+      header: 'S.No',
+      accessor: 'sno',
+      width: '60px',
+      render: (row, rowIndex, currentPage, perPage) => {
+        return ((currentPage - 1) * perPage) + rowIndex + 1;
+      }
+    },
+    {
+      header: 'Name',
+      accessor: 'name',
+      minWidth: '180px',
+      render: (row) => row.userId?.name || 'N/A'
+    },
+    {
+      header: 'Bank Name',
+      accessor: 'bank_name',
+      minWidth: '150px',
+      render: (row) => row.kycInfo?.bank_name || 'N/A'
+    },
+    {
+      header: 'IFSC Code',
+      accessor: 'ifsc_code',
+      minWidth: '120px',
+      render: (row) => row.kycInfo?.ifsc_code || 'N/A'
+    },
+    {
+      header: 'Account Number',
+      accessor: 'bank_account',
+      minWidth: '150px',
+      render: (row) => row.kycInfo?.bank_account || 'N/A'
+    },
+    {
+      header: 'Amount (₹)',
+      accessor: 'amount',
+      minWidth: '120px',
+      render: (row) => {
+        const amount = parseFloat(row.amount?.$numberDecimal || row.amount) || 0;
+        const adminCharges = parseFloat(row.admin_inr_charges?.$numberDecimal || row.admin_inr_charges) || 0;
+        const netAmount = amount - adminCharges;
+        return (
+          <span className="text-green-400 font-bold">
+            ₹{netAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+          </span>
+        );
+      }
+    },
+    {
+      header: 'Bank Type',
+      accessor: 'bank_type',
+      minWidth: '100px',
+      render: (row) => {
+        const bankName = (row.kycInfo?.bank_name || '').toLowerCase();
+        const isHDFC = bankName.includes('hdfc');
+        return (
+          <span className={`px-2 py-1 rounded text-xs font-bold ${isHDFC ? 'bg-orange-500 text-white' : 'bg-green-500 text-white'}`}>
+            {isHDFC ? 'HDFC' : 'Other'}
+          </span>
+        );
+      }
+    }
+  ];
 
-    // Define styles
+  // Create worksheet helper
+  const createWorksheet = (data, bankType) => {
     const headerStyle = {
       font: { bold: true, sz: 12, color: { rgb: '000000' } },
       alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
@@ -116,10 +173,8 @@ const WithdrawalDownload = () => {
       },
     };
 
-    // Build sheet data
     const sheetData = [];
 
-    // Header text based on bank type
     const headerText = bankType === 'HDFC' 
       ? 'Please find the attached sheet below for Amount transfer OF HDFC BANK'
       : 'Please find the attached sheet below for Amount transfer OF OTHER BANK';
@@ -165,17 +220,12 @@ const WithdrawalDownload = () => {
       const netAmount = amount - adminCharges;
       totalAmount += netAmount;
 
-      const userName = item.userId?.name || item.userId?.fullName || 'N/A';
-      const bankName = item.kycInfo?.bank_name || 'N/A';
-      const ifscCode = item.kycInfo?.ifsc_code || 'N/A';
-      const accountNumber = item.kycInfo?.bank_account || 'N/A';
-
       sheetData.push([
         { v: index + 1, s: dataCellStyle },
-        { v: userName, s: dataCellStyleLeft },
-        { v: bankName, s: dataCellStyle },
-        { v: ifscCode, s: dataCellStyle },
-        { v: accountNumber, s: dataCellStyle },
+        { v: item.userId?.name || 'N/A', s: dataCellStyleLeft },
+        { v: item.kycInfo?.bank_name || 'N/A', s: dataCellStyle },
+        { v: item.kycInfo?.ifsc_code || 'N/A', s: dataCellStyle },
+        { v: item.kycInfo?.bank_account || 'N/A', s: dataCellStyle },
         { v: netAmount.toFixed(2), s: dataCellStyle },
       ]);
     });
@@ -190,10 +240,8 @@ const WithdrawalDownload = () => {
       { v: totalAmount.toFixed(2), s: totalValueStyle },
     ]);
 
-    // Create worksheet
     const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
 
-    // Column widths for A4
     worksheet['!cols'] = [
       { wch: 5 },
       { wch: 28 },
@@ -203,26 +251,18 @@ const WithdrawalDownload = () => {
       { wch: 12 },
     ];
 
-    // Row heights
-    const rowHeights = [
-      { hpt: 20 },
-      { hpt: 22 },
-      { hpt: 10 },
-      { hpt: 25 },
-    ];
+    const rowHeights = [{ hpt: 20 }, { hpt: 22 }, { hpt: 10 }, { hpt: 25 }];
     for (let i = 0; i < data.length; i++) {
       rowHeights.push({ hpt: 18 });
     }
     rowHeights.push({ hpt: 22 });
     worksheet['!rows'] = rowHeights;
 
-    // Merge cells
     worksheet['!merges'] = [
       { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } },
       { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } },
     ];
 
-    // Page setup for A4
     worksheet['!pageSetup'] = {
       paperSize: 9,
       orientation: 'landscape',
@@ -244,8 +284,8 @@ const WithdrawalDownload = () => {
     return { worksheet, totalAmount };
   };
 
-  // Download Excel with both sheets (HDFC & Other Bank)
-  const downloadExcelBothSheets = () => {
+  // Download Excel with both sheets
+  const downloadExcel = () => {
     if (!withdrawalData || !withdrawalData.length) {
       alert('No data available to download');
       return;
@@ -256,19 +296,16 @@ const WithdrawalDownload = () => {
 
     const workbook = XLSX.utils.book_new();
 
-    // Create Other Bank sheet
     if (otherBankAccounts.length > 0) {
       const { worksheet: otherBankSheet } = createWorksheet(otherBankAccounts, 'OTHER');
       XLSX.utils.book_append_sheet(workbook, otherBankSheet, 'Other Bank');
     }
 
-    // Create HDFC sheet
     if (hdfcAccounts.length > 0) {
       const { worksheet: hdfcSheet } = createWorksheet(hdfcAccounts, 'HDFC');
       XLSX.utils.book_append_sheet(workbook, hdfcSheet, 'HDFC Bank');
     }
 
-    // If no data in either
     if (otherBankAccounts.length === 0 && hdfcAccounts.length === 0) {
       alert('No data available to download');
       return;
@@ -282,578 +319,139 @@ const WithdrawalDownload = () => {
     saveAs(blob, fileName);
   };
 
-  // Download only HDFC accounts
-  const downloadHDFCOnly = () => {
-    if (!hdfcAccounts || hdfcAccounts.length === 0) {
-      alert('No HDFC accounts available to download');
-      return;
-    }
-
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
-
-    const workbook = XLSX.utils.book_new();
-    const { worksheet } = createWorksheet(hdfcAccounts, 'HDFC');
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'HDFC Bank');
-
-    const fileName = `withdrawal_HDFC_slab${selectedSlab}_${formattedDate}.xlsx`;
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(blob, fileName);
-  };
-
-  // Download only Other Bank accounts
-  const downloadOtherBankOnly = () => {
-    if (!otherBankAccounts || otherBankAccounts.length === 0) {
-      alert('No Other Bank accounts available to download');
-      return;
-    }
-
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
-
-    const workbook = XLSX.utils.book_new();
-    const { worksheet } = createWorksheet(otherBankAccounts, 'OTHER');
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Other Bank');
-
-    const fileName = `withdrawal_OtherBank_slab${selectedSlab}_${formattedDate}.xlsx`;
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(blob, fileName);
-  };
-
-  const getSlabDescription = (slab) => {
-    switch (slab) {
-      case 1:
-        return '₹0 - ₹5,000';
-      case 2:
-        return '₹5,001 - ₹50,000';
-      case 3:
-        return '₹50,001+';
-      default:
-        return '';
-    }
-  };
-
+  // Calculate totals
   const calculateTotals = (data) => {
-    let total = 0;
-    data.forEach((item) => {
+    return data.reduce((total, item) => {
       const amount = parseFloat(item.amount?.$numberDecimal || item.amount) || 0;
       const adminCharges = parseFloat(item.admin_inr_charges?.$numberDecimal || item.admin_inr_charges) || 0;
-      total += (amount - adminCharges);
-    });
-    return total;
+      return total + (amount - adminCharges);
+    }, 0);
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1400px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
-      {/* Header */}
-      <div style={{ 
-        backgroundColor: '#1a237e', 
-        color: 'white', 
-        padding: '25px', 
-        borderRadius: '10px 10px 0 0',
-        border: '4px solid #000',
-        borderBottom: 'none'
-      }}>
-        <h2 style={{ margin: 0, fontWeight: 'bold', fontSize: '28px' }}>💰 Withdrawal Management</h2>
-        <p style={{ margin: '8px 0 0 0', fontWeight: 'bold', fontSize: '16px' }}>Download withdrawal data by slab (HDFC & Other Banks separated)</p>
-      </div>
-
-      {/* Slab Selection Section */}
-      <div style={{
-        backgroundColor: '#f5f5f5',
-        padding: '30px',
-        border: '4px solid #000',
-        borderTop: 'none',
-        marginBottom: '20px'
-      }}>
-        <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#000', fontWeight: 'bold', fontSize: '22px' }}>
-          Select Withdrawal Slab
-        </h3>
-
-        {/* Slab Buttons */}
-        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '25px' }}>
-          {[1, 2, 3].map((slab) => (
-            <button
-              key={slab}
-              onClick={() => handleSlabChange(slab)}
-              style={{
-                padding: '18px 35px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                border: selectedSlab === slab ? '4px solid #1a237e' : '4px solid #000',
-                borderRadius: '12px',
-                backgroundColor: selectedSlab === slab ? '#1a237e' : 'white',
-                color: selectedSlab === slab ? 'white' : '#000',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                minWidth: '180px',
-                boxShadow: selectedSlab === slab ? '0 6px 20px rgba(26, 35, 126, 0.4)' : '0 4px 10px rgba(0,0,0,0.2)',
+    <div className="p-4">
+      {/* Header with Slab Input */}
+      <div className="bg-gradient-to-r from-[#acacaf] to-[#878789] rounded-lg p-6 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+           
+            <p className="text-black mt-1">Download withdrawal data (HDFC & Other Banks separated)</p>
+          </div>
+          
+          {/* Single Input for Slab */}
+          <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <label className="text-white font-bold text-lg">Select Slab:</label>
+            <input
+              type="number"
+              min="1"
+              max="3"
+              value={selectedSlab}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (value >= 1 && value <= 3) {
+                  setSelectedSlab(value);
+                }
               }}
-            >
-              <div style={{ fontWeight: 'bold', fontSize: '20px' }}>Slab {slab}</div>
-              <div style={{ fontSize: '14px', fontWeight: 'bold', marginTop: '8px' }}>
-                {getSlabDescription(slab)}
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Input Field Section */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '20px',
-          padding: '20px',
-          backgroundColor: 'white',
-          borderRadius: '10px',
-          border: '4px solid #000',
-          flexWrap: 'wrap'
-        }}>
-          <label style={{ fontWeight: 'bold', color: '#000', fontSize: '16px' }}>
-            Or Enter Slab Number:
-          </label>
-          <input
-            type="number"
-            min="1"
-            max="3"
-            value={selectedSlab}
-            onChange={(e) => {
-              const value = parseInt(e.target.value);
-              if (value >= 1 && value <= 3) {
-                setSelectedSlab(value);
-              }
-            }}
-            style={{
-              padding: '12px 18px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              border: '4px solid #1a237e',
-              borderRadius: '8px',
-              width: '80px',
-              textAlign: 'center',
-            }}
-          />
-          <select
-            value={selectedSlab}
-            onChange={(e) => setSelectedSlab(parseInt(e.target.value))}
-            style={{
-              padding: '12px 18px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              border: '4px solid #1a237e',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              backgroundColor: 'white',
-            }}
-          >
-            <option value={1}>Slab 1 - ₹0 to ₹5,000</option>
-            <option value={2}>Slab 2 - ₹5,001 to ₹50,000</option>
-            <option value={3}>Slab 3 - ₹50,001+</option>
-          </select>
+              className="w-20 px-4 py-3 text-xl font-bold text-center border-4 border-[#b9fd5c] rounded-lg bg-[#282f35] text-white focus:outline-none focus:border-[#d4ff7a]"
+            />
+            <span className="text-[#b9fd5c] font-bold">
+              {selectedSlab === 1 && '₹0 - ₹5,000'}
+              {selectedSlab === 2 && '₹5,001 - ₹50,000'}
+              {selectedSlab === 3 && '₹50,001+'}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Status Cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '20px',
-        marginBottom: '25px'
-      }}>
-        {/* Total Records Card */}
-        <div style={{
-          backgroundColor: '#e3f2fd',
-          padding: '20px',
-          borderRadius: '12px',
-          border: '4px solid #1976d2'
-        }}>
-          <h4 style={{ margin: 0, color: '#1976d2', fontWeight: 'bold', fontSize: '16px' }}>Total Records</h4>
-          <p style={{ margin: '10px 0 0 0', fontSize: '26px', fontWeight: 'bold', color: '#000' }}>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-[#282f35] border-2 border-blue-500 rounded-lg p-4">
+          <h4 className="text-blue-400 font-bold text-sm">Total Records</h4>
+          <p className="text-3xl font-bold text-white mt-2">
             {isLoading ? '...' : withdrawalData.length}
           </p>
-          <p style={{ margin: '5px 0 0 0', color: '#000', fontWeight: 'bold', fontSize: '12px' }}>
-            Slab {selectedSlab} | {getSlabDescription(selectedSlab)}
-          </p>
+          <p className="text-gray-400 text-sm mt-1">Slab {selectedSlab}</p>
         </div>
 
-        {/* HDFC Accounts Card */}
-        <div style={{
-          backgroundColor: '#fff8e1',
-          padding: '20px',
-          borderRadius: '12px',
-          border: '4px solid #ff9800'
-        }}>
-          <h4 style={{ margin: 0, color: '#e65100', fontWeight: 'bold', fontSize: '16px' }}>🏦 HDFC Bank</h4>
-          <p style={{ margin: '10px 0 0 0', fontSize: '26px', fontWeight: 'bold', color: '#000' }}>
-            {isLoading ? '...' : hdfcAccounts.length} Records
+        <div className="bg-[#282f35] border-2 border-orange-500 rounded-lg p-4">
+          <h4 className="text-orange-400 font-bold text-sm">🏦 HDFC Bank</h4>
+          <p className="text-3xl font-bold text-white mt-2">
+            {isLoading ? '...' : hdfcAccounts.length}
           </p>
-          <p style={{ margin: '5px 0 0 0', color: '#2e7d32', fontWeight: 'bold', fontSize: '14px' }}>
+          <p className="text-green-400 text-sm mt-1 font-bold">
             ₹{isLoading ? '...' : calculateTotals(hdfcAccounts).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </p>
         </div>
 
-        {/* Other Bank Accounts Card */}
-        <div style={{
-          backgroundColor: '#e8f5e9',
-          padding: '20px',
-          borderRadius: '12px',
-          border: '4px solid #4caf50'
-        }}>
-          <h4 style={{ margin: 0, color: '#2e7d32', fontWeight: 'bold', fontSize: '16px' }}>🏛️ Other Banks</h4>
-          <p style={{ margin: '10px 0 0 0', fontSize: '26px', fontWeight: 'bold', color: '#000' }}>
-            {isLoading ? '...' : otherBankAccounts.length} Records
+        <div className="bg-[#282f35] border-2 border-green-500 rounded-lg p-4">
+          <h4 className="text-green-400 font-bold text-sm">🏛️ Other Banks</h4>
+          <p className="text-3xl font-bold text-white mt-2">
+            {isLoading ? '...' : otherBankAccounts.length}
           </p>
-          <p style={{ margin: '5px 0 0 0', color: '#2e7d32', fontWeight: 'bold', fontSize: '14px' }}>
+          <p className="text-green-400 text-sm mt-1 font-bold">
             ₹{isLoading ? '...' : calculateTotals(otherBankAccounts).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </p>
         </div>
 
-        {/* Grand Total Card */}
-        <div style={{
-          backgroundColor: '#fce4ec',
-          padding: '20px',
-          borderRadius: '12px',
-          border: '4px solid #e91e63'
-        }}>
-          <h4 style={{ margin: 0, color: '#c2185b', fontWeight: 'bold', fontSize: '16px' }}>💰 Grand Total</h4>
-          <p style={{ margin: '10px 0 0 0', fontSize: '22px', fontWeight: 'bold', color: '#000' }}>
+        <div className="bg-[#282f35] border-2 border-pink-500 rounded-lg p-4">
+          <h4 className="text-pink-400 font-bold text-sm">💰 Grand Total</h4>
+          <p className="text-2xl font-bold text-white mt-2">
             ₹{isLoading ? '...' : calculateTotals(withdrawalData).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </p>
         </div>
       </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div style={{
-          textAlign: 'center',
-          padding: '60px',
-          backgroundColor: '#f5f5f5',
-          borderRadius: '12px',
-          border: '4px solid #000'
-        }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            border: '6px solid #f3f3f3',
-            borderTop: '6px solid #1a237e',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 25px'
-          }}></div>
-          <p style={{ fontWeight: 'bold', fontSize: '18px' }}>Loading withdrawal data for Slab {selectedSlab}...</p>
-          <style>
-            {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}
-          </style>
-        </div>
-      )}
-
       {/* Error State */}
       {error && (
-        <div style={{
-          backgroundColor: '#ffebee',
-          padding: '25px',
-          borderRadius: '12px',
-          border: '4px solid #f44336',
-          color: '#c62828',
-          marginBottom: '25px'
-        }}>
-          <strong style={{ fontSize: '18px' }}>Error:</strong> 
-          <span style={{ fontWeight: 'bold', marginLeft: '10px' }}>{error.message || 'Failed to load data'}</span>
+        <div className="bg-red-900/50 border-2 border-red-500 rounded-lg p-4 mb-6 flex items-center justify-between">
+          <span className="text-red-300 font-bold">Error: {error.message || 'Failed to load data'}</span>
           <button
             onClick={refetch}
-            style={{
-              marginLeft: '20px',
-              padding: '10px 25px',
-              backgroundColor: '#f44336',
-              color: 'white',
-              border: '3px solid #000',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '14px'
-            }}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold"
           >
             Retry
           </button>
         </div>
       )}
 
-      {/* Data Tables */}
-      {!isLoading && !error && (
-        <>
-          {/* HDFC Bank Table */}
-          {hdfcAccounts.length > 0 && (
-            <div style={{ marginBottom: '30px' }}>
-              <h3 style={{ 
-                backgroundColor: '#ff9800', 
-                color: 'white', 
-                padding: '15px 20px', 
-                margin: 0,
-                borderRadius: '10px 10px 0 0',
-                border: '4px solid #000',
-                borderBottom: 'none',
-                fontWeight: 'bold',
-                fontSize: '20px'
-              }}>
-                🏦 HDFC BANK Accounts ({hdfcAccounts.length})
-              </h3>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ 
-                  width: '100%', 
-                  borderCollapse: 'collapse',
-                  backgroundColor: 'white',
-                  border: '4px solid #000'
-                }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#ff9800', color: 'white' }}>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000', width: '50px' }}>S.No</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Name</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Bank Name</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>IFSC Code</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Account Number</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Amount (Rs.)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {hdfcAccounts.map((item, index) => {
-                      const amount = parseFloat(item.amount?.$numberDecimal || item.amount) || 0;
-                      const adminCharges = parseFloat(item.admin_inr_charges?.$numberDecimal || item.admin_inr_charges) || 0;
-                      const netAmount = amount - adminCharges;
-                      
-                      return (
-                        <tr key={item._id} style={{ backgroundColor: index % 2 === 0 ? '#fff8e1' : 'white' }}>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{index + 1}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'left', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.userId?.name || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.kycInfo?.bank_name || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.kycInfo?.ifsc_code || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.kycInfo?.bank_account || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px', color: '#2e7d32' }}>
-                            ₹{netAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                  <tfoot>
-                    <tr style={{ backgroundColor: '#ffe0b2' }}>
-                      <td colSpan="5" style={{ padding: '12px', textAlign: 'right', border: '2px solid #000', fontWeight: 'bold', fontSize: '16px' }}>
-                        HDFC Total:
-                      </td>
-                      <td style={{ padding: '12px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '16px', color: '#e65100', backgroundColor: '#ffff00' }}>
-                        ₹{calculateTotals(hdfcAccounts).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-          )}
+      {/* Table */}
+      <div className="bg-[#1e2329] rounded-lg border-2 border-[#343638] mb-6">
+        <Table
+          columns={columns}
+          data={withdrawalData}
+          isLoading={isLoading}
+          currentPage={1}
+          perPage={50}
+          noDataTitle="No Withdrawal Data"
+          noDataMessage={`No withdrawal records found for Slab ${selectedSlab}`}
+          noDataIcon="inbox"
+          noDataAction={true}
+          noDataActionLabel="Refresh"
+          onNoDataAction={refetch}
+        />
+      </div>
 
-          {/* Other Bank Table */}
-          {otherBankAccounts.length > 0 && (
-            <div style={{ marginBottom: '30px' }}>
-              <h3 style={{ 
-                backgroundColor: '#4caf50', 
-                color: 'white', 
-                padding: '15px 20px', 
-                margin: 0,
-                borderRadius: '10px 10px 0 0',
-                border: '4px solid #000',
-                borderBottom: 'none',
-                fontWeight: 'bold',
-                fontSize: '20px'
-              }}>
-                🏛️ OTHER BANK Accounts ({otherBankAccounts.length})
-              </h3>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ 
-                  width: '100%', 
-                  borderCollapse: 'collapse',
-                  backgroundColor: 'white',
-                  border: '4px solid #000'
-                }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#4caf50', color: 'white' }}>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000', width: '50px' }}>S.No</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Name</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Bank Name</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>IFSC Code</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Account Number</th>
-                      <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid #000' }}>Amount (Rs.)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {otherBankAccounts.map((item, index) => {
-                      const amount = parseFloat(item.amount?.$numberDecimal || item.amount) || 0;
-                      const adminCharges = parseFloat(item.admin_inr_charges?.$numberDecimal || item.admin_inr_charges) || 0;
-                      const netAmount = amount - adminCharges;
-                      
-                      return (
-                        <tr key={item._id} style={{ backgroundColor: index % 2 === 0 ? '#e8f5e9' : 'white' }}>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{index + 1}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'left', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.userId?.name || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.kycInfo?.bank_name || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.kycInfo?.ifsc_code || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px' }}>{item.kycInfo?.bank_account || 'N/A'}</td>
-                          <td style={{ padding: '10px 8px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '13px', color: '#2e7d32' }}>
-                            ₹{netAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                  <tfoot>
-                    <tr style={{ backgroundColor: '#c8e6c9' }}>
-                      <td colSpan="5" style={{ padding: '12px', textAlign: 'right', border: '2px solid #000', fontWeight: 'bold', fontSize: '16px' }}>
-                        Other Bank Total:
-                      </td>
-                      <td style={{ padding: '12px', textAlign: 'center', border: '2px solid #000', fontWeight: 'bold', fontSize: '16px', color: '#2e7d32', backgroundColor: '#ffff00' }}>
-                        ₹{calculateTotals(otherBankAccounts).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* No Data Message */}
-          {withdrawalData.length === 0 && (
-            <div style={{
-              padding: '50px',
-              textAlign: 'center',
-              backgroundColor: '#f5f5f5',
-              borderRadius: '12px',
-              border: '4px solid #000'
-            }}>
-              <p style={{ fontWeight: 'bold', fontSize: '18px', color: '#666' }}>
-                No withdrawal data found for Slab {selectedSlab}
-              </p>
-            </div>
-          )}
-
-          {/* Download Buttons */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '15px', 
-            justifyContent: 'center', 
-            flexWrap: 'wrap',
-            marginTop: '20px'
-          }}>
-            {/* Download Both Sheets */}
-            <button
-              onClick={downloadExcelBothSheets}
-              disabled={withdrawalData.length === 0}
-              style={{
-                backgroundColor: withdrawalData.length === 0 ? '#ccc' : '#1a237e',
-                color: 'white',
-                padding: '16px 30px',
-                border: '4px solid #000',
-                borderRadius: '10px',
-                cursor: withdrawalData.length === 0 ? 'not-allowed' : 'pointer',
-                fontSize: '15px',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                boxShadow: '0 4px 15px rgba(26, 35, 126, 0.3)',
-              }}
-            >
-              📥 Download All (Both Sheets)
-            </button>
-
-            {/* Download HDFC Only */}
-            <button
-              onClick={downloadHDFCOnly}
-              disabled={hdfcAccounts.length === 0}
-              style={{
-                backgroundColor: hdfcAccounts.length === 0 ? '#ccc' : '#ff9800',
-                color: 'white',
-                padding: '16px 30px',
-                border: '4px solid #000',
-                borderRadius: '10px',
-                cursor: hdfcAccounts.length === 0 ? 'not-allowed' : 'pointer',
-                fontSize: '15px',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                boxShadow: '0 4px 15px rgba(255, 152, 0, 0.3)',
-              }}
-            >
-              🏦 Download HDFC Only ({hdfcAccounts.length})
-            </button>
-
-            {/* Download Other Bank Only */}
-            <button
-              onClick={downloadOtherBankOnly}
-              disabled={otherBankAccounts.length === 0}
-              style={{
-                backgroundColor: otherBankAccounts.length === 0 ? '#ccc' : '#4caf50',
-                color: 'white',
-                padding: '16px 30px',
-                border: '4px solid #000',
-                borderRadius: '10px',
-                cursor: otherBankAccounts.length === 0 ? 'not-allowed' : 'pointer',
-                fontSize: '15px',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)',
-              }}
-            >
-              🏛️ Download Other Banks ({otherBankAccounts.length})
-            </button>
-
-            {/* Refresh Button */}
-            <button
-              onClick={refetch}
-              style={{
-                backgroundColor: '#2196F3',
-                color: 'white',
-                padding: '16px 30px',
-                border: '4px solid #000',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                fontSize: '15px',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                boxShadow: '0 4px 15px rgba(33, 150, 243, 0.3)',
-              }}
-            >
-              🔄 Refresh
-            </button>
-          </div>
-
-          {/* Info Box */}
-          <div style={{
-            marginTop: '25px',
-            padding: '20px',
-            backgroundColor: '#e3f2fd',
-            borderRadius: '10px',
-            border: '3px solid #1976d2'
-          }}>
-            <h4 style={{ margin: '0 0 10px 0', color: '#1976d2', fontWeight: 'bold' }}>📋 Download Options:</h4>
-            <ul style={{ margin: 0, paddingLeft: '20px', fontWeight: 'bold', color: '#333' }}>
-              <li><strong>Download All:</strong> Excel with 2 sheets - "HDFC Bank" & "Other Bank"</li>
-              <li><strong>Download HDFC Only:</strong> Excel with only HDFC bank accounts</li>
-              <li><strong>Download Other Banks:</strong> Excel with all non-HDFC bank accounts</li>
-            </ul>
-            <p style={{ margin: '15px 0 0 0', fontWeight: 'bold', color: '#1976d2', fontSize: '14px' }}>
-              💡 Tip: Open downloaded Excel → File → Print → "Fit Sheet on One Page" for A4 printing
-            </p>
-          </div>
-        </>
+      {/* Download Button */}
+      {!isLoading && withdrawalData.length > 0 && (
+        <div className="flex justify-center">
+          <button
+            onClick={downloadExcel}
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300 border-4 border-green-400"
+          >
+            📥 Download Excel
+            <span className="bg-white/20 px-3 py-1 rounded text-sm">
+              HDFC: {hdfcAccounts.length} | Other: {otherBankAccounts.length}
+            </span>
+          </button>
+        </div>
       )}
+
+      {/* Info */}
+      <div className="mt-6 bg-[#282f35] border-2 border-blue-500 rounded-lg p-4">
+        <p className="text-blue-400 font-bold text-sm">
+          💡 Excel will contain 2 sheets: "HDFC Bank" & "Other Bank" - Optimized for A4 printing
+        </p>
+      </div>
     </div>
   );
 };
