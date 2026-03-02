@@ -667,6 +667,7 @@ const ADMIN_SECTIONS = [
       { label: "Buy-History", icon: ShoppingBag, path: "/buy-history" },
       { label: "KYC Management", icon: ShieldCheck, path: "/kyc-management" },
       { label: "Withdrawal Bonus", icon: ArrowDownToLine, path: "/withdrawal-bonus" },
+    
       { label: "USDT withdrawal", icon: CircleDollarSign, path: "/usdt-withdrawal" },
     ],
   },
@@ -698,6 +699,7 @@ const ADMIN_SECTIONS = [
     items: [
       { label: "Team-Reports", icon: BarChart3, path: "/team-reports" },
       { label: "Team-Investments", icon: TrendingUp, path: "/team-investments" },
+      { label: "Withdrawal Report", icon: ArrowDownToLine, path: "/withdrawal-report" },
       { label: "Reports", icon: ClipboardList, path: "/reports" },
       { label: "Business Analytics", icon: PieChart, path: "/businessanalytics" },
     ],

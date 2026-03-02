@@ -22,7 +22,8 @@ import NotVerifiedUser from "./Features/NotVerified/NotVerified";
 
 // Financial
 import Wallet from "./Features/Wallet/Wallet";
-import Withdrawal from "./Features/Withdrawal/WithdrawalSlabs";
+import Withdrawal from "./Features/Withdrawal/Withdrawal";
+import WithdrawalReport from "./Features/Withdrawal/WithdrawalSlabs";
 import UsdtWithdrawal from "./Features/UsdtBonus/UsdtWithdrawal";
 import AvailableBalance from "./Features/AvailableBalance/AvailableBalance";
 
@@ -135,6 +136,7 @@ const ADMIN_ROUTES = [
   { path: "/social-media", element: <SocialMedia /> },
   { path: "/user-summary", element: <UserSummary /> },
   { path: "/jaimax-community", element: <MainChat /> },
+  { path: "/withdrawal-report", element: <WithdrawalReport /> },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
