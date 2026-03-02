@@ -1023,10 +1023,14 @@ const Dashboard = () => {
   const userDataObj = userData ? JSON.parse(userData) : null;
   console.log("UserData from localStorage:", userDataObj);
 
-  const activeRound = d.ico?.rounds?.find(r => r.status === 2) || d.ico?.rounds?.find(r => r.status === 1);
-  const totalRounds = d.ico?.rounds?.length || 0;
-  const completedRounds = d.ico?.rounds?.filter(r => r.status === 2).length || 0;
-
+  // const activeRound = d.ico?.rounds?.find(r => r.status === 2) || d.ico?.rounds?.find(r => r.status === 1);
+  // console.log(activeRound,"hello")
+  // const totalRounds = d.ico?.rounds?.length || 0;
+  // const completedRounds = d.ico?.rounds?.filter(r => r.status === 2).length || 0;
+const activeRound = d.ico?.rounds?.find(r => r.status === 1);
+console.log(activeRound,"hello")
+const totalRounds = d.ico?.rounds?.length || 0;
+const completedRounds = d.ico?.rounds?.filter(r => r.status === 1).length || 0;
   return (
     <div className="min-h-screen text-white mb-5 sm:mb-15">
       <div className="max-w-450 mx-auto p-3 sm:p-5 mt-2 lg:p-6">

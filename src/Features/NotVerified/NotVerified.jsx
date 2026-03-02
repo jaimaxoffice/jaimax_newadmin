@@ -305,84 +305,180 @@ const NotVerifiedUsers = () => {
       </div>
 
       {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        onClose={handleCloseModal}
-        onConfirm={handleDeleteConfirm}
-        title="Delete User"
-        subtitle="Are you sure you want to delete this user?"
-        confirmText="Delete User"
-        cancelText="Cancel"
-        loadingText="Deleting..."
-        warningText="This action cannot be undone! The user and all associated data will be permanently removed."
-        accentColor="from-red-500 via-red-400 to-orange-500"
-        confirmBtnClass="bg-red-500 text-white hover:bg-red-600"
-        // icon={<TrashLargeIcon />}
-        iconBg="bg-red-500/10"
-      >
-        {/* User Info Inside Modal */}
-        {selectedUser && (
-          <div className="p-4 bg-[#111214] border border-[#2a2c2f] rounded-xl space-y-3">
-            <div className="flex items-center gap-3 pb-3 border-b border-[#2a2c2f]">
-              <div
-                className="w-10 h-10 rounded-full bg-red-500/10 flex items-center
-                           justify-center text-red-400 font-semibold text-sm shrink-0"
-              >
-                {(selectedUser?.name?.charAt(0) || "?").toUpperCase()}
-              </div>
-              <div className="min-w-0">
-                <p className="text-white text-sm font-medium truncate">
-                  {selectedUser.name || "N/A"}
-                </p>
-                <p className="text-[#8a8d93] text-xs truncate">
-                  {selectedUser.email}
-                </p>
-              </div>
-            </div>
+{/* Delete Confirmation Modal */}
+{showDeleteModal && (
+  <div
+    className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+    onClick={handleCloseModal}
+  >
+    {/* Backdrop */}
+    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[#8a8d93] text-xs">User ID</span>
-                <span className="text-[#b9fd5c] text-xs font-mono font-semibold">
-                  {selectedUser._id?.slice(-12) || "N/A"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#8a8d93] text-xs">Status</span>
-                <span
-                  className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                    selectedUser.isActive
-                      ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
-                      : "bg-red-500/10 text-red-400"
-                  }`}
-                >
-                  {selectedUser.isActive ? "Active" : "Inactive"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#8a8d93] text-xs">Tokens</span>
-                <span
-                  className={`text-xs font-semibold ${
-                    selectedUser.tokens > 1000
-                      ? "text-[#0ecb6f]"
-                      : selectedUser.tokens > 0
-                        ? "text-yellow-400"
-                        : "text-red-400"
-                  }`}
-                >
-                  {selectedUser.tokens || 0}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#8a8d93] text-xs">Registered</span>
-                <span className="text-white text-xs">
-                  {formatDate(selectedUser.createdAt)}
-                </span>
-              </div>
+    {/* Modal Content */}
+    <div
+      className="relative w-full max-w-md bg-[#1a1d21] border border-[#2a2c2f]
+                  rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl 
+                  animate-slideUp sm:animate-fadeIn
+                  max-h-[90vh] overflow-y-auto"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Drag Handle - Mobile only */}
+      <div className="flex sm:hidden justify-center pt-3 pb-1">
+        <div className="w-10 h-1 bg-gray-500/50 rounded-full" />
+      </div>
+
+      {/* Top Accent Line */}
+      <div className="hidden sm:block h-1 bg-gradient-to-r from-red-500 via-red-400 to-orange-500" />
+
+      {/* Close Button */}
+      <button
+        onClick={handleCloseModal}
+        className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 
+                   flex items-center justify-center rounded-full
+                   bg-[#111214] text-gray-400 hover:text-white 
+                   transition-colors cursor-pointer z-10"
+      >
+        <X size={16} />
+      </button>
+
+      {/* Icon & Title */}
+      <div className="flex flex-col items-center pt-6 sm:pt-8 pb-3 sm:pb-4 px-4 sm:px-6">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-500/10 
+                        flex items-center justify-center mb-3 sm:mb-4">
+          <Trash2 size={28} className="text-red-500" />
+        </div>
+        <h2 className="text-white text-base sm:text-lg font-semibold mb-1">
+          Delete User
+        </h2>
+        <p className="text-[#8a8d93] text-xs sm:text-sm text-center">
+          Are you sure you want to delete this user?
+        </p>
+      </div>
+
+      {/* User Info */}
+      {selectedUser && (
+        <div className="mx-4 sm:mx-6 mb-3 sm:mb-4 p-4 bg-[#111214] border border-[#2a2c2f] rounded-xl space-y-3">
+          <div className="flex items-center gap-3 pb-3 border-b border-[#2a2c2f]">
+            <div
+              className="w-10 h-10 rounded-full bg-red-500/10 flex items-center
+                         justify-center text-red-400 font-semibold text-sm shrink-0"
+            >
+              {(selectedUser?.name?.charAt(0) || "?").toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="text-white text-sm font-medium truncate">
+                {selectedUser.name || "N/A"}
+              </p>
+              <p className="text-[#8a8d93] text-xs truncate">
+                {selectedUser.email}
+              </p>
             </div>
           </div>
-        )}
-      </ConfirmModal>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[#8a8d93] text-xs">User ID</span>
+              <span className="text-[#b9fd5c] text-xs font-mono font-semibold">
+                {selectedUser._id?.slice(-12) || "N/A"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[#8a8d93] text-xs">Status</span>
+              <span
+                className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                  selectedUser.isActive
+                    ? "bg-[#0ecb6f]/10 text-[#0ecb6f]"
+                    : "bg-red-500/10 text-red-400"
+                }`}
+              >
+                {selectedUser.isActive ? "Active" : "Inactive"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[#8a8d93] text-xs">Tokens</span>
+              <span
+                className={`text-xs font-semibold ${
+                  selectedUser.tokens > 1000
+                    ? "text-[#0ecb6f]"
+                    : selectedUser.tokens > 0
+                      ? "text-yellow-400"
+                      : "text-red-400"
+                }`}
+              >
+                {selectedUser.tokens || 0}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[#8a8d93] text-xs">Registered</span>
+              <span className="text-white text-xs">
+                {formatDate(selectedUser.createdAt)}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Warning */}
+      <div className="mx-4 sm:mx-6 mb-4 sm:mb-6 flex items-start gap-2.5 p-3 bg-yellow-500/5 border border-yellow-500/10 rounded-xl">
+        <div className="shrink-0 mt-0.5">
+          <AlertTriangle size={16} className="text-yellow-500" />
+        </div>
+        <p className="text-yellow-400/80 text-[11px] sm:text-xs leading-relaxed">
+          This action cannot be undone! The user and all associated data will be permanently removed.
+        </p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="px-4 sm:px-6 pb-6 flex flex-col-reverse sm:flex-row items-center gap-3">
+        <button
+          onClick={handleCloseModal}
+          disabled={isDeleting}
+          className="w-full sm:flex-1 px-4 py-3 sm:py-2.5 rounded-xl text-sm font-medium
+                     bg-[#111214] border border-[#2a2c2f] text-[#8a8d93]
+                     hover:text-white hover:border-[#3a3c3f]
+                     transition-colors cursor-pointer disabled:opacity-50
+                     disabled:cursor-not-allowed"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleDeleteConfirm}
+          disabled={isDeleting}
+          className="w-full sm:flex-1 flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5
+                     rounded-xl text-sm font-semibold bg-red-500 text-white
+                     hover:bg-red-600 transition-all duration-200 cursor-pointer
+                     disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {isDeleting ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              <span>Deleting...</span>
+            </>
+          ) : (
+            <>
+              <Trash2 size={16} />
+              <span>Delete User</span>
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Animation Styles - Add once in your component or global CSS */}
+<style>{`
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+  .animate-slideUp { animation: slideUp 0.3s ease-out; }
+`}</style>
     </div>
   );
 };

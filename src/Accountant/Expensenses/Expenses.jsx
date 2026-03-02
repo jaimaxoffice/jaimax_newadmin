@@ -316,7 +316,7 @@ const InternalExpenses = () => {
         `${API_BASE}/internalexpenes/export?${q.toString()}`,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get("token") || ""}`,
+            Authorization: `Bearer ${Cookies.get("adminToken") || ""}`,
           },
         },
       );

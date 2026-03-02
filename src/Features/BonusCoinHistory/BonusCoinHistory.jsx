@@ -6,7 +6,7 @@ import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import useTableState from "../../hooks/useTableState";
 import NotFound from "../../reusableComponents/Tables/NoDataFound.jsx";
-import {formatDateWithAmPm} from "../../utils/dateUtils.js"
+import { formatDateWithAmPm } from "../../utils/dateUtils.js";
 const BonusHistory = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -62,19 +62,13 @@ const BonusHistory = () => {
     refetch();
   }, [refetch]);
 
-
-
-
   if (isError) {
-
     return (
       <div>
         <NotFound />
       </div>
     );
   }
-
-
 
   const columns = [
     {
@@ -125,12 +119,20 @@ const BonusHistory = () => {
   return (
     <div>
       <div className="p-2 sm:p-2 space-y-6">
-
         <div className="bg-[#282f35]  rounded-lg  overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f] space-y-4">
             {/* Filters - Right */}
+
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-end">
+              <div className=" items-left gap-2 rounded-xl py-1.5">
+                <span className="text-sm text-[#8a8d93] font-medium">
+                  Total Bonus Coins :
+                </span>
+                <span className="text-lg font-semibold text-white">
+                  {Number(bonusHistory?.data?.totalBonusCoins).toFixed(3)}
+                </span>
+              </div>
               <PerPageSelector
                 options={[10, 20, 40, 60, 80, 100]}
                 onChange={(value) =>
@@ -177,4 +179,3 @@ const BonusHistory = () => {
 };
 
 export default BonusHistory;
-

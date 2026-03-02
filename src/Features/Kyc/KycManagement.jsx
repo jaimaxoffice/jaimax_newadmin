@@ -145,13 +145,16 @@ const statusConfig = {
     { header: "Bank Name", accessor: "bank_name" },
     { header: "Bank Account", accessor: "bank_account" },
     {
-      header: "Address",
-      render: (row) => (
-        <span className="block max-w-48 truncate" title={row.address}>
-          {row.address || "N/A"}
-        </span>
-      ),
-    },
+  header: "Address",
+  render: (row) => (
+    <span
+      className="truncate text-left block"
+      title={row.address}
+    >
+      {row.address || "N/A"}
+    </span>
+  ),
+},
     { header: "IFSC Code", accessor: "ifsc_code" },
     { header: "Mobile Number", accessor: "mobile_number" },
     {
