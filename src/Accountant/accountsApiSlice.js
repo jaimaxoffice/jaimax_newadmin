@@ -2,7 +2,6 @@ import { apiSlice } from "../api/jaimaxApiSlice";
 
 export const accountsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    // Query to get transaction info
     getTxInfo: builder.query({
       query: (txId) => ({
         url: `/accounts/txinfo`,
@@ -10,8 +9,6 @@ export const accountsApiSlice = apiSlice.injectEndpoints({
         body: { transactionId: txId },
       }),
     }),
-
-    // ✅ Export transactions - returns blob for download
     exportTransactions: builder.query({
       query: ({ format, transactionType, search, fromDate, toDate, sort }) => {
         const params = new URLSearchParams();
@@ -25,12 +22,11 @@ export const accountsApiSlice = apiSlice.injectEndpoints({
         return {
           url: `/accounts/transactions/export?${params.toString()}`,
           method: "GET",
-          responseHandler: (response) => response.blob(), // ✅ Handle blob response
+          responseHandler: (response) => response.blob(), 
         };
       },
     }),
 
-    // Export wallet transactions
     exportWallet: builder.query({
       query: (queryParams) => ({
         url: `/wallet/transactions-admin?${queryParams}`,
@@ -39,7 +35,6 @@ export const accountsApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    // Export withdrawals
     exportWithdrawals: builder.query({
       query: (queryParams) => ({
         url: `/accounts/withdrawals/export?${queryParams}`,
@@ -48,7 +43,6 @@ export const accountsApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    // ✅ Mutation to update UTR
     updateUTR: builder.mutation({
       query: ({ id, txId, utrNo }) => ({
         url: `/wallet/update-utr`,
@@ -60,14 +54,12 @@ export const accountsApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-  // Regular hooks
   useGetTxInfoQuery,
   useExportTransactionsQuery,
   useExportWalletQuery,
   useExportWithdrawalsQuery,
   useUpdateUTRMutation,
 
-  // Lazy hooks (for manual triggering)
   useLazyGetTxInfoQuery,
   useLazyExportTransactionsQuery,
   useLazyExportWalletQuery,

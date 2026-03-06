@@ -239,7 +239,7 @@ export const chatApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetAllUsersCommunityQuery,
-    useLazyGetUsersQuery, // ✅ Lazy query for manual fetching
+    useLazyGetUsersQuery, 
     useGetChatFilesQuery,
     useGetChatHistoryQuery,
     useGetGroupsQuery,

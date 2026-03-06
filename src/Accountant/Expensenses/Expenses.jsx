@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Eye, ChevronDown ,IndianRupee,File } from "lucide-react";
+import { Eye, ChevronDown, IndianRupee, File as FileIcon } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
@@ -549,7 +549,7 @@ const InternalExpenses = () => {
                 // bgClass="bg-[#4c4320]"
               />
               <StatCard
-                icon={File}
+                icon={FileIcon }
                 value={totalCount || 0}
                 title="Total Bills"
                 variant="blue"

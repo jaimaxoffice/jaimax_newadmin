@@ -27,7 +27,7 @@ class PDFGenerator {
       opts.format || "a4",
     );
     this.theme = T;
-    this.title = opts.title || "Report";
+    this.title = opts.title || "";
     this.subtitle = opts.subtitle || "";
     this.company = opts.companyName || "";
     this.showFooter = opts.footer !== false;

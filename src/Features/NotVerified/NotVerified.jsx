@@ -14,6 +14,7 @@ import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import Loader from "../../reusableComponents/Loader/Loader";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import { formatDate } from "../../utils/dateUtils";
+import {X,Trash2 ,AlertTriangle } from "lucide-react"
 const NotVerifiedUsers = () => {
   const [state, setState] = useState({
     currentPage: 1,
@@ -451,7 +452,7 @@ const NotVerifiedUsers = () => {
         >
           {isDeleting ? (
             <>
-              <Loader2 size={16} className="animate-spin" />
+              <Loader  />
               <span>Deleting...</span>
             </>
           ) : (

@@ -15,7 +15,7 @@ const Loader = () => {
       >
         {/* CSS Loader only */}
         <div
-          className="drop-shadow-[0_0_12px_rgba(235,102,15,0.45)]"
+          className=""
           style={{
             width: "55px",
             aspectRatio: "1",

@@ -33,7 +33,7 @@ const ChatWindow = ({
     message,
     setMessage,
     onSendMessage,
-    isInputDisabled,      // ✅ ADD THIS
+    isInputDisabled,
     setIsInputDisabled,
     isLoadingMessages,
     isInitialMessagesLoad,
@@ -150,7 +150,8 @@ const ChatWindow = ({
     const allMessages = messages;
 
 
-    console.log(allMessages, "allmessages")
+
+
     const hasMoreOldMessagesRef = useRef(hasMoreOldMessages);
     const isLoadingOlderRef = useRef(isLoadingOlder);
 
@@ -174,7 +175,6 @@ const ChatWindow = ({
 
 
 
-    // After the isComponentLoading state declaration
     useEffect(() => {
         if (!isComponentLoading && messages?.length > 0) {
             requestAnimationFrame(() => {
@@ -184,7 +184,7 @@ const ChatWindow = ({
                 });
             });
         }
-    }, [isComponentLoading]); // only fires when spinner disappears
+    }, [isComponentLoading]);
 
 
     const getFileUrl = (msg) => {
@@ -228,7 +228,6 @@ const ChatWindow = ({
         { id: 'files', icon: File, label: 'Files' },
         { id: 'links', icon: LinkIcon, label: 'Links' }
     ];
-    // Track which messages have been observed for read receipts
     const [observedMessages, setObservedMessages] = useState(new Set());
     const observerRef = useRef(null);
 
@@ -244,7 +243,7 @@ const ChatWindow = ({
                 setCountdown((prev) => {
                     if (prev <= 1) {
                         clearInterval(timer);
-                        setIsInputDisabled(false); // re-enable input
+                        setIsInputDisabled(false);
                         return 0;
                     }
                     return prev - 1;
@@ -266,14 +265,15 @@ const ChatWindow = ({
         token = parsed?.data?.token || "";
         userRole = parsed.data.role;
         username = parsed?.data?.username || "";
+
     }
 
 
 
 
-    // Add this helper function near the top of your component
+
     const canSendMessages = (role) => {
-        return role === 0 || role === 2 || role === 3;
+        return role === 0 || role === 2;
     };
 
     const isRoleDisabled = !canSendMessages(userRole);
@@ -292,7 +292,6 @@ const ChatWindow = ({
 
 
     useEffect(() => {
-        // Simulate component load - wait for essential data
         const timer = setTimeout(() => {
             if (selectedGroup && messages !== undefined) {
                 setIsComponentLoading(false);
@@ -302,7 +301,6 @@ const ChatWindow = ({
         return () => clearTimeout(timer);
     }, [selectedGroup, messages]);
 
-    // Reset loading when group changes
     useEffect(() => {
         setIsComponentLoading(true);
     }, [selectedGroup?.id]);
@@ -321,7 +319,6 @@ const ChatWindow = ({
 
     const downloadFileToDesktop = async (fileUrl, fileName) => {
         try {
-            // Fetch the file
             const response = await fetch(fileUrl, {
                 mode: 'cors',
             });
@@ -330,27 +327,22 @@ const ChatWindow = ({
 
             const blob = await response.blob();
 
-            // Create blob URL
             const blobUrl = window.URL.createObjectURL(blob);
 
-            // Create temporary link
             const link = document.createElement('a');
             link.style.display = 'none';
             link.href = blobUrl;
             link.download = fileName || 'download';
 
-            // Append to body, click, and remove
             document.body.appendChild(link);
             link.click();
 
-            // Cleanup
             setTimeout(() => {
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(blobUrl);
             }, 100);
 
         } catch (err) {
-            // Fallback: try direct download
             const link = document.createElement('a');
             link.href = fileUrl;
             link.download = fileName || 'download';
@@ -397,7 +389,6 @@ const ChatWindow = ({
         };
     }, [activeGroupTab, isLoadingUsers, userPage, totalPages, loadNextPage, loadPrevPage]);
 
-    // Close header menu on outside click
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (showHeaderMenu) {
@@ -416,7 +407,6 @@ const ChatWindow = ({
 
 
 
-    // Check if user has seen welcome message
     useEffect(() => {
         if (selectedGroup && currentUser) {
             const welcomeKey = `jaimx_welcome_${currentUser.id}_${selectedGroup.id}`;
@@ -428,7 +418,6 @@ const ChatWindow = ({
         }
     }, [selectedGroup?.id, currentUser?.id]);
 
-    // Reset welcome message when group changes
     useEffect(() => {
         if (selectedGroup) {
             const welcomeKey = `jaimx_welcome_${currentUser.id}_${selectedGroup.id}`;
@@ -456,7 +445,6 @@ const ChatWindow = ({
             timestamp: Date.now()
         };
 
-        // Call the parent function to handle report
         if (reportMessage) {
             reportMessage(reportData);
         }
@@ -496,11 +484,9 @@ const ChatWindow = ({
     useEffect(() => {
         const messagesArea = messagesAreaRef.current;
         if (!messagesArea) {
-            console.log("❌ messagesAreaRef still NULL");
             return;
         }
 
-        console.log("✅ Scroll listener attached");
         let scrollTimeout;
 
         const handleScroll = () => {
@@ -516,7 +502,6 @@ const ChatWindow = ({
 
             scrollTimeout = setTimeout(() => {
                 if (distanceFromTop < 200 && hasMoreOldMessagesRef.current && !isLoadingOlderRef.current) {
-                    console.log("✅ Calling loadOlderMessages");
                     loadOlderMessages();
                 }
                 if (distanceFromBottom < 200 && hasMoreNewMessages && !isLoadingNewer && !isAtBottomRef.current) {
@@ -533,8 +518,8 @@ const ChatWindow = ({
         };
 
     }, [
-        isComponentLoading,        // ✅ THIS is the fix — re-runs when spinner disappears
-        isInitialMessagesLoad,     // ✅ also re-run when messages finish loading
+        isComponentLoading,
+        isInitialMessagesLoad,
         loadOlderMessages,
         loadNewerMessages,
         hasMoreNewMessages,
@@ -591,17 +576,14 @@ const ChatWindow = ({
         if (!messagesArea) return;
 
         if (isLoadingOlder && !scrollPositionRef.current) {
-            // Only store if we don't already have one
             const visibleMessages = messagesArea.querySelectorAll('[data-msg-id]');
 
             if (visibleMessages.length > 0) {
-                // Find the first message that's currently visible in viewport
                 const containerRect = messagesArea.getBoundingClientRect();
 
                 for (let msg of visibleMessages) {
                     const rect = msg.getBoundingClientRect();
 
-                    // Check if message is visible (top is within viewport)
                     if (rect.top >= containerRect.top && rect.top <= containerRect.bottom) {
                         const msgId = msg.getAttribute('data-msg-id');
                         scrollPositionRef.current = msgId;
@@ -617,11 +599,8 @@ const ChatWindow = ({
         const messagesArea = messagesAreaRef.current;
         if (!messagesArea) return;
 
-        // Only restore when loading finishes AND we have a stored position
         if (!isLoadingOlder && scrollPositionRef.current && isRestoringScrollRef.current) {
-            // console.log("🔄 Attempting to restore scroll to message:", scrollPositionRef.current);
 
-            // Use multiple animation frames to ensure DOM is fully rendered
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     const targetElement = document.getElementById(`msg-${scrollPositionRef.current}`);
@@ -632,7 +611,6 @@ const ChatWindow = ({
                         console.log(" Target message not found in DOM");
                     }
 
-                    // Clear the stored position and flag
                     scrollPositionRef.current = null;
                     isRestoringScrollRef.current = false;
                 });
@@ -647,7 +625,6 @@ const ChatWindow = ({
             return;
         }
 
-        // Cleanup previous observer
         if (observerRef.current) {
             observerRef.current.disconnect();
         }
@@ -691,7 +668,6 @@ const ChatWindow = ({
                     return newSet;
                 });
 
-                // Call local handler (optional - for local UI updates)
                 if (onMarkAsRead) {
                     onMarkAsRead({
                         msgId,
@@ -722,7 +698,6 @@ const ChatWindow = ({
         }, observerOptions);
 
 
-        // Observe message elements
         const setupObserver = () => {
             const messageElements =
                 messagesAreaRef.current?.querySelectorAll("[data-msg-id]");
@@ -780,7 +755,6 @@ const ChatWindow = ({
         }
 
         if (isInitialLoad) {
-            // Only scroll if the overlay is gone (messagesEndRef exists)
             if (!isInitialMessagesLoad && !isLoadingMessages) {
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
@@ -946,7 +920,6 @@ const ChatWindow = ({
 
 
 
-    // Setup Intersection Observer for read receipts
     useEffect(() => {
         if (!selectedGroup || !messagesAreaRef.current) return;
 
@@ -1000,7 +973,6 @@ const ChatWindow = ({
 
         let textToCopy = messageText;
 
-        // Handle encrypted object
         if (typeof messageText === 'object' && messageText !== null) {
             if (messageText.cipherText && groupKey) {
                 try {
@@ -1012,11 +984,9 @@ const ChatWindow = ({
                 textToCopy = "[Unable to copy]";
             }
         }
-        // Handle already decrypted string
         else if (typeof messageText === 'string') {
             textToCopy = messageText;
         }
-        // Handle any other type
         else {
             textToCopy = String(messageText || '');
         }
@@ -1032,19 +1002,15 @@ const ChatWindow = ({
 
     const saveToDesktop = (fileUrl, fileName) => {
         try {
-            // Create a temporary anchor element
             const link = document.createElement('a');
             link.href = fileUrl;
-            link.download = fileName || 'download'; // Set the filename
-            link.target = '_blank'; // Open in new tab as fallback
+            link.download = fileName || 'download';
+            link.target = '_blank';
 
-            // Append to body (required for Firefox)
             document.body.appendChild(link);
 
-            // Trigger the download
             link.click();
 
-            // Clean up
             document.body.removeChild(link);
 
         } catch (err) {
@@ -1052,7 +1018,6 @@ const ChatWindow = ({
         }
     };
 
-    // Fallback download method
     const fallbackDownload = (fileUrl, fileName) => {
         try {
             const link = document.createElement('a');
@@ -1060,7 +1025,6 @@ const ChatWindow = ({
             link.download = fileName;
             link.target = '_blank';
 
-            // Append to body, click, and remove
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1070,7 +1034,6 @@ const ChatWindow = ({
         }
     };
 
-    // Show read receipts for a message
     const showMessageReadReceipts = (msg) => {
         setSelectedMessageForReceipts(msg);
         setShowReadReceipts(true);
@@ -1079,7 +1042,6 @@ const ChatWindow = ({
         handleReadReceipt(msg);
     };
 
-    // close menu on outside click
     useEffect(() => {
         const onWindowClick = (ev) => {
             setEffectiveOpenMenuId(null);
@@ -1107,11 +1069,11 @@ const ChatWindow = ({
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
     }, []);
-
+    console.log(typingUsers, "typingUsers")
     const getTypingText = () => {
         if (!typingUsers || typingUsers.length === 0) return null;
-        if (typingUsers.length === 1) return `${typingUsers[0].userName} is typing`;
-        if (typingUsers.length === 2) return `${typingUsers[0].userName} and ${typingUsers[1].userName} are typing...`;
+        if (typingUsers.length === 1) return `${typingUsers[0].userId} is typing`;
+        if (typingUsers.length === 2) return `${typingUsers[0].userId} and ${typingUsers[1].userId} are typing...`;
         return `${typingUsers.length} people are typing...`;
     };
 
@@ -1128,7 +1090,7 @@ const ChatWindow = ({
                     <div ref={containerRef} className="flex-1 flex flex-col relative h-full sidebar-scroll">
 
                         {selectedGroup && (
-                            <div ref={headerRef} className="bg-[#085056] p-2 sm:p-4 flex items-center justify-between border-b border-[#2a3942] sidebar-scroll">
+                            <div ref={headerRef} className="bg-[#b9fd5c] p-2 sm:p-4 flex items-center justify-between border-b border-[#2a3942] sidebar-scroll">
                                 <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 sidebar-scroll">
 
 
@@ -1144,7 +1106,7 @@ const ChatWindow = ({
                                         </div>
 
                                         <div className="min-w-0 flex-1">
-                                            <h2 className="font-semibold truncate">{selectedGroup?.name}</h2>
+                                            <h2 className="font-semibold  text-black truncate">{selectedGroup?.name}</h2>
                                             {typingUsers?.length > 0 ? (
                                                 <div className="flex items-center gap-1">
                                                     <p className="text-xs text-white truncate animate-pulse">
@@ -1157,7 +1119,7 @@ const ChatWindow = ({
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <p className="text-xs text-gray-400 truncate">{totalUsers ?? 0} members</p>
+                                                <p className="text-xs text-black truncate">{totalUsers ?? 0} members</p>
                                             )}
                                         </div>
                                     </div>
@@ -1169,14 +1131,14 @@ const ChatWindow = ({
                                             e.stopPropagation();
                                             setShowHeaderMenu(prev => !prev);
                                         }}
-                                        className="p-2 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0"
+                                        className="p-2  rounded-lg transition-colors flex-shrink-0"
                                     >
-                                        <BsThreeDotsVertical className='w-6 h-6' />
+                                        <BsThreeDotsVertical className='w-6 h-6 text-black' />
                                     </button>
 
 
                                     {showHeaderMenu && (
-                                        <div className="absolute right-0 top-full mt-2 w-48 bg-[#202c33] rounded-lg shadow-xl border border-[#2a3942] overflow-hidden z-50">
+                                        <div className="absolute right-0 top-full mt-2 w-48 bg-[#000000] rounded-lg shadow-xl border border-[#2a3942] overflow-hidden z-50">
 
                                             <button
                                                 onClick={() => {
@@ -1214,7 +1176,7 @@ const ChatWindow = ({
                         {selectedGroup && !showMembers && !showFilesPanel && (
                             <div
                                 ref={messagesAreaRef}
-                                className="flex-1 overflow-y-auto p-2 sm:p-4 bg-[#0b141a] relative z-10 sidebar-scroll"
+                                className="flex-1 overflow-y-auto p-2 sm:p-4 bg-[#000000] relative z-10 sidebar-scroll"
                                 style={{
                                     overflowAnchor: 'none'
                                 }}
@@ -1287,7 +1249,9 @@ const ChatWindow = ({
                                                             }
 
                                                             const isCurrentUser = msg.fromUserId?.toString() === currentUser?.id?.toString();
-                                                            const containerBg = isCurrentUser ? "bg-[#005c4b] text-white" : "bg-[#202c33] text-gray-200";
+                                                            const containerBg = isCurrentUser
+                                                                ? "bg-[#b9fd5c] text-black"
+                                                                : "bg-[#202c33] text-gray-200";
                                                             const readStatus = getMessageReadStatus(msg);
 
                                                             let messageText = msg.msgBody?.message;
@@ -1309,7 +1273,6 @@ const ChatWindow = ({
                                                             }
 
                                                             else if (typeof messageText === 'string') {
-                                                                console.log("📝 Message is already a string");
                                                                 decryptedText = messageText;
                                                             }
 
@@ -1335,7 +1298,7 @@ const ChatWindow = ({
                                                                     data-from-user-id={msg.fromUserId}
                                                                     className={`mb-4 flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
                                                                 >
-                                                                    <div className={`relative max-w-[75%] sm:max-w-[60%] rounded-tl-2xl rounded-br-2xl rounded-bl-2xl bg-[#1d8e85] p-3 text-white p-2 sm:p-3 shadow-md ${containerBg}`}>
+                                                                    <div className={`relative max-w-[75%] sm:max-w-[60%] rounded-tl-2xl rounded-br-2xl rounded-bl-2xl p-3  p-2 sm:p-3 shadow-md ${containerBg}`}>
                                                                         {!isCurrentUser && (
                                                                             <div className="text-xs text-[#00a884] mb-1 font-semibold">
                                                                                 {msg.fromUserId}
@@ -1348,7 +1311,7 @@ const ChatWindow = ({
                                                                                 onClick={() => scrollToMessage(msg.replyTo.msgId)}
                                                                             >
                                                                                 <div className="text-xs text-[#00a884] font-semibold mb-1">
-                                                                                    {msg.replyTo.senderName || 'User'}
+                                                                                    {msg.fromUserId || 'User'}
                                                                                 </div>
                                                                                 <div className="text-xs text-gray-400 truncate">
                                                                                     {(() => {
@@ -1387,12 +1350,6 @@ const ChatWindow = ({
                                                                                         }}
                                                                                     />
 
-                                                                                    <div className="absolute top-2 right-2 bg-[#397378] backdrop-blur-sm px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                                        <span className="text-white text-xs font-bold flex items-center gap-1">
-                                                                                            <Eye className="w-3 h-3" />
-                                                                                            View
-                                                                                        </span>
-                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         )}
@@ -1435,7 +1392,7 @@ const ChatWindow = ({
                                                                                     </div>
 
                                                                                     {!msg.msgBody.media.is_uploading && (
-                                                                                        <div className="relative z-10 p-2 rounded-lg bg-black opacity-0 group-hover:opacity-100 transition-all group-hover:scale-110 shadow-lg shadow-orange-500/30">
+                                                                                        <div className="relative z-10 p-2 rounded-lg bg-black opacity-0 group-hover:opacity-100 transition-all group-hover:scale-110 shadow-lg ">
                                                                                             <Download className="w-4 h-4 text-white" />
                                                                                         </div>
                                                                                     )}
@@ -1689,11 +1646,11 @@ const ChatWindow = ({
                                 >
                                     <div className="p-4 border-b border-[#2a3942]">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                                                <Trash2 className="w-5 h-5 text-red-400" />
+                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                                <Trash2 className="w-5 h-5 text-[#202c33]" />
                                             </div>
                                             <div>
-                                                <h3 className="text-lg font-semibold text-white">Clear Chat?</h3>
+                                                <h3 className="text-lg font-semibold text-white">Clear Chat</h3>
                                                 <p className="text-xs text-gray-400">
                                                     {selectedGroup?.name}
                                                 </p>
@@ -1703,13 +1660,13 @@ const ChatWindow = ({
 
                                     <div className="p-4">
                                         <div className="mb-4">
-                                            <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 flex items-start gap-2">
-                                                <AlertTriangle className="w-4 h-4 text-orange-400 flex-shrink-0 mt-0.5" />
+                                            <div className=" rounded-lg p-3 flex items-start gap-2">
+                                                <AlertTriangle className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
                                                 <div>
-                                                    <p className="text-xs font-semibold text-orange-400 mb-1">
+                                                    <p className="text-xs font-semibold text-white mb-1">
                                                         This action cannot be undone
                                                     </p>
-                                                    <p className="text-xs text-orange-300/80">
+                                                    <p className="text-xs text-white">
                                                         All messages, media, and files will be permanently deleted from your view.
                                                     </p>
                                                 </div>
@@ -1726,7 +1683,7 @@ const ChatWindow = ({
 
                                             <button
                                                 onClick={onClearChat}
-                                                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                                className="flex-1 bg-[#b9fd5c] text-black py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                                 Clear Chat
@@ -1847,16 +1804,16 @@ const ChatWindow = ({
 
                         {showFileTypeModal && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-                                <div className="w-full max-w-sm rounded-2xl bg-[#085358] border border-[#1e7f85] p-6">
+                                <div className="w-full max-w-sm rounded-2xl bg-[#b9fd5c] border border-[#1e7f85] p-6">
                                     <div className="flex items-center justify-between mb-5">
-                                        <h3 className="text-lg font-semibold text-white">
+                                        <h3 className="text-lg font-semibold text-black">
                                             Select file type
                                         </h3>
                                         <button
                                             onClick={() => setShowFileTypeModal(false)}
                                             className="p-2 rounded-full hover:bg-white/10 transition"
                                         >
-                                            <X className="w-5 h-5 text-white/80" />
+                                            <X className="w-5 h-5 text-black" />
                                         </button>
                                     </div>
 
@@ -1868,10 +1825,10 @@ const ChatWindow = ({
                                                 fileInputRef?.current?.click();
                                                 setShowFileTypeModal(false);
                                             }}
-                                            className="group w-full flex items-center gap-4 rounded-xl bg-[#0b646a] hover:bg-[#0f7278] p-4 transition active:scale-[0.97]"
+                                            className="group w-full flex items-center gap-4 rounded-xl bg-[#000000] p-4 transition active:scale-[0.97]"
                                         >
-                                            <div className="w-12 h-12 rounded-full bg-cyan-400/20 flex items-center justify-center">
-                                                <ImageIcon className="w-6 h-6 text-cyan-300" />
+                                            <div className="w-12 h-12 rounded-full bg-[#b9fd5c] flex items-center justify-center">
+                                                <ImageIcon className="w-6 h-6 text-gray-500" />
                                             </div>
                                             <div className="flex-1 text-left">
                                                 <div className="text-base font-medium text-white">
@@ -1893,10 +1850,10 @@ const ChatWindow = ({
                                                 fileInputRef?.current?.click();
                                                 setShowFileTypeModal(false);
                                             }}
-                                            className="group w-full flex items-center gap-4 rounded-xl bg-[#0b646a] hover:bg-[#0f7278] p-4 transition active:scale-[0.97]"
+                                            className="group w-full flex items-center gap-4 rounded-xl bg-[#000000] p-4 transition active:scale-[0.97]"
                                         >
-                                            <div className="w-12 h-12 rounded-full bg-sky-400/20 flex items-center justify-center">
-                                                <File className="w-6 h-6 text-sky-300" />
+                                            <div className="w-12 h-12 rounded-full bg-[#b9fd5c] flex items-center justify-center">
+                                                <File className="w-6 h-6  text-gray-500" />
                                             </div>
                                             <div className="flex-1 text-left">
                                                 <div className="text-base font-medium text-white">
@@ -1912,26 +1869,9 @@ const ChatWindow = ({
                             </div>
                         )}
 
-
-
                         {selectedGroup && effectiveOpenMenuId && (
                             <div
-                                className="position-absolute bg-dark border rounded shadow"
-                                style={{
-                                    width: "180px",
-                                    top: menuPosition.top,
-                                    left: menuPosition.left,
-                                    zIndex: 1055,
-                                    borderColor: "#444"
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                            </div>
-                        )}
-
-                        {selectedGroup && effectiveOpenMenuId && (
-                            <div
-                                className="absolute z-50 w-44 bg-[#202c33] rounded-lg shadow-lg border border-gray-700 overflow-hidden"
+                                className="absolute z-50 w-52 bg-[#2a3942] rounded-xl shadow-2xl border border-[#3b4a54] overflow-hidden"
                                 style={{
                                     top: menuPosition.top,
                                     left: menuPosition.left,
@@ -1939,7 +1879,7 @@ const ChatWindow = ({
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <button
-                                    className="flex items-center gap-2 px-3 py-2 hover:bg-[#0b141a] w-full text-left text-sm"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-[#3b4a54] w-full text-left text-sm text-white transition-colors"
                                     onClick={() => {
                                         const msg = messages?.find(m => (m.msgId || m.id) === effectiveOpenMenuId);
                                         if (msg) {
@@ -1948,25 +1888,26 @@ const ChatWindow = ({
                                         }
                                     }}
                                 >
-                                    <CornerUpLeft className="w-4 h-4" /> Reply
+                                    <CornerUpLeft className="w-4 h-4 text-[#00a884]" />
+                                    <span>Reply</span>
                                 </button>
 
                                 {messages?.find(m => (m.msgId || m.id) === effectiveOpenMenuId)?.msgBody?.message && (
                                     <button
-                                        className="flex items-center gap-2 px-3 py-2 hover:bg-[#0b141a] w-full text-left text-sm"
+                                        className="flex items-center gap-3 px-4 py-3 hover:bg-[#3b4a54] w-full text-left text-sm text-white transition-colors border-t border-[#3b4a54]"
                                         onClick={() => handleCopyMessage(
                                             messages.find(m => (m.msgId || m.id) === effectiveOpenMenuId).msgBody.message,
                                             effectiveOpenMenuId
                                         )}
                                     >
-                                        <Clipboard className="w-4 h-4" />
-                                        {copiedMessageId === effectiveOpenMenuId ? "Copied" : "Copy"}
+                                        <Clipboard className="w-4 h-4 text-blue-400" />
+                                        <span>{copiedMessageId === effectiveOpenMenuId ? "Copied ✓" : "Copy"}</span>
                                     </button>
                                 )}
 
                                 {messages?.find(m => (m.msgId || m.id) === effectiveOpenMenuId)?.status === "failed" && (
                                     <button
-                                        className="flex items-center gap-2 px-3 py-2 hover:bg-[#0b141a] w-full text-left text-sm text-orange-400"
+                                        className="flex items-center gap-3 px-4 py-3 hover:bg-[#3b4a54] w-full text-left text-sm text-orange-400 transition-colors border-t border-[#3b4a54]"
                                         onClick={() => {
                                             const msg = messages.find(m => (m.msgId || m.id) === effectiveOpenMenuId);
                                             if (msg) {
@@ -1975,12 +1916,13 @@ const ChatWindow = ({
                                             }
                                         }}
                                     >
-                                        <CornerUpRight className="w-4 h-4" /> Retry
+                                        <CornerUpRight className="w-4 h-4" />
+                                        <span>Retry</span>
                                     </button>
                                 )}
 
                                 <button
-                                    className="flex items-center gap-2 px-3 py-2 hover:bg-[#0b141a] w-full text-left text-sm"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-[#3b4a54] w-full text-left text-sm text-red-400 transition-colors border-t border-[#3b4a54]"
                                     onClick={() => {
                                         const msg = messages.find(m => (m.msgId || m.id) === effectiveOpenMenuId);
                                         if (msg) {
@@ -1990,36 +1932,20 @@ const ChatWindow = ({
                                         }
                                     }}
                                 >
-                                    <Trash2 className="w-4 h-4" /> Delete for Me
+                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                    <span>Delete for Me</span>
                                 </button>
 
-                                {(() => {
-                                    const msg = messages?.find(m => (m.msgId || m.id) === effectiveOpenMenuId);
-                                    const isOtherPersonMessage = msg?.fromUserId?.toString() !== currentUser?.id?.toString();
-
-                                    if (isOtherPersonMessage) {
-                                        return (
-                                            <button
-                                                className="flex items-center gap-2 px-3 py-2 hover:bg-[#0b141a] w-full text-left text-sm text-orange-400"
-                                                onClick={() => {
-                                                    if (msg) handleReportMessage(msg);
-                                                }}
-                                            >
-                                                <AlertTriangle className="w-4 h-4" /> Report
-                                            </button>
-                                        );
-                                    }
-                                    return null;
-                                })()}
 
                                 {(() => {
-                                    const msg = messages?.find(m => (m.msgId || m.id) === effectiveOpenMenuId);
+                                    const msg = messages?.find((m) => (m.msgId || m.id) === effectiveOpenMenuId);
                                     const isMyMessage = msg?.fromUserId?.toString() === currentUser?.id?.toString();
+                                    const isAdmin = userRole === 2 || userRole === 0;
 
-                                    if (isMyMessage) {
+                                    if (isMyMessage || isAdmin) {
                                         return (
                                             <button
-                                                className="flex items-center gap-2 px-3 py-2 hover:bg-red-600 text-red-400 hover:text-white w-full text-left text-sm"
+                                                className="flex items-center gap-3 px-4 py-3 hover:bg-[#3b4a54] w-full text-left text-sm text-red-400 transition-colors border-t border-[#3b4a54]"
                                                 onClick={() => {
                                                     if (msg) {
                                                         const idToDelete = msg._id?.toString() || msg.msgId || msg.id;
@@ -2028,7 +1954,8 @@ const ChatWindow = ({
                                                     }
                                                 }}
                                             >
-                                                <Trash2 className="w-4 h-4" /> Delete for Everyone
+                                                <Trash2 className="w-4 h-4 text-red-400" />
+                                                <span>Delete for Everyone</span>
                                             </button>
                                         );
                                     }
@@ -2036,6 +1963,7 @@ const ChatWindow = ({
                                 })()}
                             </div>
                         )}
+
 
                         {showReportModal && reportingMessage && (
                             <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-2">
@@ -2230,22 +2158,22 @@ const ChatWindow = ({
 
                         {showFilePreview && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-                                <div className="w-full max-w-sm rounded-2xl bg-[#085358] border border-[#1e7f85] p-6">
+                                <div className="w-full max-w-sm rounded-2xl bg-[#b9fd5c] border border-[#1e7f85] p-6">
 
                                     <div className="flex items-center justify-between mb-5">
-                                        <h3 className="text-lg font-semibold text-white">
+                                        <h3 className="text-lg font-semibold text-black">
                                             Send File
                                         </h3>
                                         <button
                                             onClick={cancelFileUpload}
                                             className="p-2 rounded-full hover:bg-white/10 transition"
                                         >
-                                            <X className="w-5 h-5 text-white/80" />
+                                            <X className="w-5 h-5 text-black" />
                                         </button>
                                     </div>
 
                                     {selectedFile?.type?.startsWith("image/") && filePreview ? (
-                                        <div className="w-full rounded-xl overflow-hidden mb-4 bg-[#0b646a] p-3">
+                                        <div className="w-full rounded-xl overflow-hidden mb-4 bg-[#000000] p-3">
                                             <img
                                                 src={filePreview}
                                                 alt="Preview"
@@ -2253,9 +2181,9 @@ const ChatWindow = ({
                                             />
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-4 p-4 bg-[#0b646a] rounded-xl w-full mb-4">
-                                            <div className="w-12 h-12 rounded-full bg-sky-400/20 flex items-center justify-center flex-shrink-0">
-                                                <File className="w-6 h-6 text-sky-300" />
+                                        <div className="flex items-center gap-4 p-4 bg-[#000000] rounded-xl w-full mb-4">
+                                            <div className="w-12 h-12 rounded-full bg-[#b9fd5c] flex items-center justify-center flex-shrink-0">
+                                                <File className="w-6 h-6 text-gray-500" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="font-medium text-base text-white truncate">
@@ -2289,7 +2217,7 @@ const ChatWindow = ({
                                     <button
                                         onClick={sendFileMessage}
                                         disabled={uploadingFile}
-                                        className="w-full bg-[#0b646a] hover:bg-[#0f7278] disabled:bg-[#0b646a]/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium text-base transition active:scale-[0.97]"
+                                        className="w-full bg-[#000000] disabled:bg-[#0b646a]/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium text-base transition active:scale-[0.97]"
                                     >
                                         {uploadingFile ? 'Uploading...' : 'Upload File'}
                                     </button>
@@ -2347,13 +2275,13 @@ const ChatWindow = ({
                         )}
 
                         {selectedGroup && !showMembers && !showFilesPanel && (
-                            <div className="bg-[#202c33] p-2 sm:p-3 border-t border-[#2a3942] z-20">
+                            <div className="bg-[#202c33] p-2 sm:p-3 border-t border-[#ffffff] z-20">
 
                                 {isInputDisabled && (
-                                    <div className="mb-2 rounded-xl px-4 py-2.5 flex items-center gap-3 border border-teal-500/30 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-800/80 backdrop-blur-sm shadow-lg shadow-teal-900/10">
+                                    <div className="mb-2 rounded-xl px-4 py-2.5 flex items-center gap-3 border border-teal-500/30 bg-[#000000] ">
 
-                                        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-teal-500/10 border border-teal-500/30 flex items-center justify-center">
-                                            <AlertTriangle className="w-3.5 h-3.5 text-teal-400" />
+                                        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#000000] border border-teal-500/30 flex items-center justify-center">
+                                            <AlertTriangle className="w-3.5 h-3.5 text-white" />
                                         </div>
 
                                         <div className="flex-1">
@@ -2372,7 +2300,7 @@ const ChatWindow = ({
                                             <span
                                                 className="text-sm font-bold font-mono tracking-widest"
                                                 style={{
-                                                    color: "#2dd4bf",
+                                                    color: "#b9fd5c",
                                                     textShadow: "0 0 8px #14b8a6, 0 0 20px #0d9488",
                                                 }}
                                             >
@@ -2432,7 +2360,6 @@ const ChatWindow = ({
                                         className={`flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-[#2a3942] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#085358] placeholder-gray-400 text-sm sm:text-base transition-opacity ${(isInputDisabled) ? 'opacity-50 cursor-not-allowed' : ''
                                             }`}
                                     />
-
                                     {message?.trim() && (
                                         <button
                                             onClick={(e) => {
@@ -2442,12 +2369,12 @@ const ChatWindow = ({
                                                 }
                                             }}
                                             disabled={isInputDisabled}
-                                            className={`p-2 sm:p-3 rounded-full transition-colors flex-shrink-0 ${(isInputDisabled)
-                                                ? 'bg-gray-600 opacity-50 cursor-not-allowed'
-                                                : 'bg-[#00a884] hover:bg-[#008069]'
+                                            className={`p-2 sm:p-3 rounded-full transition-colors flex-shrink-0 ${isInputDisabled
+                                                    ? "bg-gray-600 opacity-50 cursor-not-allowed"
+                                                    : "bg-[#b9fd5c]"
                                                 }`}
                                         >
-                                            <Send className="w-5 h-5" />
+                                            <Send className="w-5 h-5 text-black" />
                                         </button>
                                     )}
                                 </div>
@@ -2864,5 +2791,4 @@ const ChatWindow = ({
 };
 
 export default ChatWindow;
-
 

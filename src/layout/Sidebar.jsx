@@ -654,6 +654,7 @@ import {
   MessageCircleMore,
   Headset,
   LogOut,
+  GalleryVerticalEnd 
 } from "lucide-react";
 
 // ─── ADMIN (role === 0) ───
@@ -662,9 +663,9 @@ const ADMIN_SECTIONS = [
     label: "DASHBOARDS",
     items: [
       { label: "Dashboard", icon: LayoutDashboard, path: "/" },
-      { label: "Users Management", icon: Users, path: "/user-management" },
+      { label: "User Management", icon: Users, path: "/user-management" },
       { label: "Wallet Management", icon: Wallet, path: "/wallet-management" },
-      { label: "Buy-History", icon: ShoppingBag, path: "/buy-history" },
+      { label: "Buy-History", icon: GalleryVerticalEnd, path: "/buy-history" },
       { label: "KYC Management", icon: ShieldCheck, path: "/kyc-management" },
       { label: "Withdrawal Bonus", icon: ArrowDownToLine, path: "/withdrawal-bonus" },
     
@@ -848,7 +849,7 @@ function NavItem({ item, open, activePath, navigate, searchQuery = "" }) {
           className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${
             active
               ? "bg-[#b9fd5c] text-black shadow-lg shadow-[#b9fd5c]/25"
-              : "text-white group-hover:bg-[#ffff] group-hover:text-[#b9fd5c]"
+              : "text-white group-hover:bg-[#ffff] group-hover:text-[#000000]"
           }`}
         >
           <IconComponent
@@ -1095,7 +1096,7 @@ function SidebarContent({
             </p>
             <button
               onClick={() => setSearchQuery("")}
-              className="mt-2 text-[10px] text-[#b9fd5c] hover:text-[#b9fd5c]/80 transition-colors underline underline-offset-2 cursor-pointer"
+              className="mt-2 text-[10px] text-[#000000] hover:text-black transition-colors underline underline-offset-2 cursor-pointer"
             >
               Clear search
             </button>
@@ -1222,7 +1223,7 @@ export default function Sidebar({ open, setOpen, onLogoutClick }) {
       <aside
         className={`hidden lg:flex h-screen flex-col bg-[#0a0a0a] text-white
           border-r border-[#1a1a1a] transition-all duration-300 p-0
-          ${open ? "w-60" : "w-14"}`}
+          ${open ? "w-60" : "w-18"}`}
       >
         <SidebarContent open={open} setOpen={setOpen} {...sharedProps} />
       </aside>

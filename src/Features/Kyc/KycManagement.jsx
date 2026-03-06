@@ -176,6 +176,7 @@ const statusConfig = {
       ),
     },
     { header: "UPI ID", render: (row) => row.upi_id || "N/A" },
+    { header: "Upadated By", render: (row) => row.updatedByName || "N/A" },
     { header: "Action", render: (row) => <ActionButtons data={row} /> },
   ];
 
