@@ -1069,7 +1069,7 @@ const ChatWindow = ({
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
     }, []);
-    console.log(typingUsers, "typingUsers")
+    // console.log(typingUsers, "typingUsers")
     const getTypingText = () => {
         if (!typingUsers || typingUsers.length === 0) return null;
         if (typingUsers.length === 1) return `${typingUsers[0].userId} is typing`;
