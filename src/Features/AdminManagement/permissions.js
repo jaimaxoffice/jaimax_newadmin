@@ -27,6 +27,7 @@ export const allPermissions = [
   "ICO MANAGEMENT",
   "LEGAL UPDATION",
   "DELETE ACCOUNTS",
+  "JAIMAX COMMUNITY",
 ];
 
 export const formatPermissionName = (permission) => {

@@ -987,9 +987,9 @@ function GetBusinessDetails() {
                   <div className="overflow-x-auto rounded-xl ">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-gradient-to-r from-[#b9fd5c] to-[#f07d2c]">
+                        <tr className="bg-gradient-to-r from-[#b9fd5c] to-[#b9fd5c]">
                           {["S.No", "Date", "Amount", "JAIMAX Tokens", "Status"].map((h) => (
-                            <th key={h} className="text-white text-sm font-semibold uppercase tracking-wider px-4 py-3 text-center">
+                            <th key={h} className="text-black text-sm font-semibold uppercase tracking-wider px-4 py-3 text-center">
                               {h}
                             </th>
                           ))}
@@ -1065,7 +1065,7 @@ function GetBusinessDetails() {
                               } hover:bg-[#3a3a3a] transition-colors border-l-2 border-r-2 border-transparent hover:border-[#b9fd5c]`}
                             >
                               <td className="px-4 py-3 text-center">
-                                <span className="bg-[#b9fd5c] text-white text-xs font-bold px-2.5 py-1 rounded-md">
+                                <span className="bg-[#b9fd5c] text-black text-xs font-bold px-2.5 py-1 rounded-md">
                                   {index + 1}
                                 </span>
                               </td>
@@ -1104,7 +1104,7 @@ function GetBusinessDetails() {
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#303f50] shrink-0">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-5 py-2.5 bg-[#2e2e2e] hover:bg-[#3a3a3a] text-white rounded-lg 
+                className="px-5 py-2.5 bg-[#2e2e2e] hover:bg-[#3a3a3a] text-white rounded-3xl 
                   border border-[#3a3a3a] transition-colors cursor-pointer"
               >
                 Close
@@ -1112,7 +1112,7 @@ function GetBusinessDetails() {
               {modalType === "orders" && currentUserData?.walletTransactions?.length > 0 && (
                 <button
                   onClick={() => setModalType("walletTransactions")}
-                  className="px-5 py-2.5 bg-[#b9fd5c] text-white rounded-lg transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#b9fd5c] text-black rounded-3xl transition-colors cursor-pointer"
                 >
                   View Wallet Transactions
                 </button>

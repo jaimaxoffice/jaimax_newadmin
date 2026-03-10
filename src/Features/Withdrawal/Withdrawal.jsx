@@ -11,7 +11,7 @@ import {
   useGetWithdrawListQuery,
   useWithdrawApprovalMutation,
 } from "./withdrawalApiSlice";
-import { formatDateWithAmPm, formatCurrency } from "../../utils/dateUtils";
+import { formatDateWithAmPm, formatCurrency,formatDate } from "../../utils/dateUtils";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import { Eye,Clock, CheckCircle2,XCircle} from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
@@ -281,12 +281,20 @@ const Withdrawal = () => {
         <span className="text-xs">{formatDateWithAmPm(row?.created_at)}</span>
       ),
     },
+    // {
+    //   header: "Approval Date",
+    //   render: (row) => (
+    //     <span className="text-xs">{formatDate(row?.updated_at)}</span>
+    //   ),
+    // },
     {
-      header: "Updated Date",
-      render: (row) => (
-        <span className="text-xs">{formatDateWithAmPm(row?.updated_at)}</span>
-      ),
-    },
+  header: "Approved Date",
+  render: (row) => (
+    <span className="text-xs">
+      {row?.status === 1 ? formatDateWithAmPm(row?.updated_at) : "N/A"}
+    </span>
+  ),
+},
     {
       header: "Status",
       render: (row) => (

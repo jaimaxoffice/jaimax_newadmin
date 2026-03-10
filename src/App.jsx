@@ -144,6 +144,7 @@ const ROLE2_ROUTES = [
   { path: "/", element: <Dashboard />, permission: "DASHBOARD" },
   { path: "/wallet-management", element: <Wallet />, permission: "WALLET MANAGEMENT" },
   { path: "/user-management", element: <NoAccess /> },
+    { path: "/withdrawal-report", element: <NoAccess /> },
   { path: "/kyc-management", element: <Kyc />, permission: "KYC MANAGEMENT" },
   { path: "/withdrawal-bonus", element: <Withdrawal />, permission: "WITHDRAW MANAGEMENT" },
   { path: "/usdt-withdrawal", element: <UsdtWithdrawal />, permission: "WITHDRAW MANAGEMENT" },
@@ -181,7 +182,7 @@ const ROLE2_ROUTES = [
   { path: "/delete-accounts", element: <DeletedUsersTable />, permission: "DELETE ACCOUNTS" },
   { path: "/settings", element: <Settings />, permission: "SETTING" },
   { path: "/logout", element: <Logout /> },
-  { path: "/jaimax-community", element: <MainChat /> },
+  { path: "/jaimax-community", element: <MainChat />,permission: "JAIMAX COMMUNITY" },
   { path: "/businessanalytics", element: <BusinessAnalytics />,permission: "BUSINESS ANALYTICS" },
   { path: "/reports", element: <Report />, permission: "REPORTS" },
 ];

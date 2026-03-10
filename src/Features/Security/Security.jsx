@@ -16,12 +16,12 @@ const LegalUpdation = () => {
   // Determine TinyMCE API Key
   const getTinyMceApiKey = () => {
     const origin = window.location.origin;
-    if (origin.includes("5173") || origin.includes("5174")) {
+    if (origin.includes("5173") || origin.includes("5174") || origin.includes("localhost")) {
       return import.meta.env.TINY_MCE_EDITOR_API_KEY;
     } else if (origin === "https://admin.jaimax.com") {
       return import.meta.env.TINY_MCE_EDITOR_API_KEY_PROD;
     }
-    return import.meta.TINY_MCE_EDITOR_API_KEY;
+    return import.meta.env.TINY_MCE_EDITOR_API_KEY_PROD;
   };
 
   const tinyMceApiKey = getTinyMceApiKey();
