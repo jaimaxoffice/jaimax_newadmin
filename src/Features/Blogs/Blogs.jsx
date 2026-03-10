@@ -1817,11 +1817,11 @@ const BlogEditor = () => {
   let tinyMceApiKey = "";
   const origin = window.location.origin;
   if (origin && (origin.includes("5173") || origin.includes("5174"))) {
-    tinyMceApiKey = import.meta.env.TINY_MCE_EDITOR_API_KEY;
+    tinyMceApiKey = import.meta.env.VITE_TINY_MCE_EDITOR_API_KEY;
   } else if (origin === "https://admin.jaimax.com") {
-    tinyMceApiKey = import.meta.env.TINY_MCE_EDITOR_API_KEY_PROD;
+    tinyMceApiKey = import.meta.env.VITE_TINY_MCE_EDITOR_API_KEY_PROD;
   } else {
-    tinyMceApiKey = import.meta.env.TINY_MCE_EDITOR_API_KEY;
+    tinyMceApiKey = import.meta.env.VITE_TINY_MCE_EDITOR_API_KEY;
   }
 
   // ─── Effects ────────────────────────────────────────────────

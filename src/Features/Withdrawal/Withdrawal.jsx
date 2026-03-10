@@ -50,7 +50,7 @@ const Withdrawal = () => {
     isLoading,
     refetch,
   } = useGetWithdrawListQuery(queryParams);
-
+// console.log(getWithdrawList,"helo")
   const [withdrawApprovalAmount] = useWithdrawApprovalMutation();
   const transactions = getWithdrawList?.data?.withdrawRequests || [];
   const totalRecords = getWithdrawList?.data?.pagination?.total || 0;
@@ -70,9 +70,9 @@ const Withdrawal = () => {
   }, [refresh, refetch]);
 
   // Counts
-  const totalPending = allRequests.filter((r) => r.status === 0).length;
-  const totalApproved = allRequests.filter((r) => r.status === 1).length;
-  const totalRejected = allRequests.filter((r) => r.status === 2).length;
+  const totalPending = getWithdrawList?.data?.pagination?.pending;
+  const totalApproved = getWithdrawList?.data?.pagination?.approved;
+  const totalRejected = getWithdrawList?.data?.pagination?.rejected;
 
   // Handlers
   const handlePageChange = (page) => {
@@ -162,7 +162,8 @@ const Withdrawal = () => {
         data.bankDetails?.bank_name || "N/A"
       }\nAccount No: ${
         data.bankDetails?.bank_account || "N/A"
-      }\nIFSC Code: ${data.bankDetails?.ifsc_code || "N/A"}`,
+      }\nIFSC Code: ${data.bankDetails?.ifsc_code || "N/A"}
+      UPI Number: ${data.bankDetails?.upi_id || "N/A"}`,
     });
     setModals((prev) => ({ ...prev, detail: true }));
   };
@@ -276,7 +277,7 @@ const Withdrawal = () => {
       ),
     },
     {
-      header: "Created Date",
+      header: "Requested Date",
       render: (row) => (
         <span className="text-xs">{formatDateWithAmPm(row?.created_at)}</span>
       ),

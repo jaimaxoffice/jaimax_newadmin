@@ -39,7 +39,7 @@ const ModalContent = ({
         </div>
         <div className="text-center mt-6">
           <Button
-            variant="secondary"
+            variant="primary"
             size="md"
             onClick={() =>
               setModals((prev) => ({ ...prev, [modalKey]: false }))
@@ -189,7 +189,7 @@ const UserManagement = () => {
       header: "Mobile Number",
       render: (row) => `+${row.countryCode} ${row.phone}`,
     },
-    { header: "Referral Code", accessor: "username" },
+    { header: "User Name", accessor: "username" },
     {
       header: "Available Balance",
       render: (row) => getCurrency(row.countryCode, row.Inr),
@@ -212,7 +212,7 @@ const UserManagement = () => {
       render: (row) => (
         <span
           className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-            row.isActive ? " text-[#0ecb6f]" : " text-red-400"
+            row.isActive ? " text-[#b9fd5c]" : " text-red-400"
           }`}
         >
           {row.isActive ? "Active" : "Inactive"}
@@ -226,7 +226,7 @@ const UserManagement = () => {
           onClick={() => handleUserView(row._id, "viewUser")}
           variant="icon"
           size="sm"
-          className="text-white hover:text-[#0ecb6f]/80"
+          className="text-white hover:text-[#b9fd5c]/80"
         >
           <Eye size={18} />
         </Button>
