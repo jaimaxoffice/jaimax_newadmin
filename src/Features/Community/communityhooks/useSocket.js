@@ -1124,13 +1124,13 @@ const useSocket = ({
         prev.map((msg) =>
           msg.msgId === msgId || msg._id?.toString() === msgId
             ? {
-                ...msg,
-                metaData: {
-                  ...msg.metaData,
-                  readBy: readBy || [],
-                  isRead: !!readBy?.length,
-                },
-              }
+              ...msg,
+              metaData: {
+                ...msg.metaData,
+                readBy: readBy || [],
+                isRead: !!readBy?.length,
+              },
+            }
             : msg,
         ),
       );
@@ -1143,13 +1143,13 @@ const useSocket = ({
           const id = msg.msgId || msg._id?.toString() || msg.id;
           return id === msgId
             ? {
-                ...msg,
-                deletedForEveryone: true,
-                msgBody: {
-                  ...msg.msgBody,
-                  message: "This message was deleted",
-                },
-              }
+              ...msg,
+              deletedForEveryone: true,
+              msgBody: {
+                ...msg.msgBody,
+                message: "This message was deleted",
+              },
+            }
             : msg;
         }),
       );
@@ -1161,7 +1161,7 @@ const useSocket = ({
     socket.on("delete_for_everyone", ({ msgId, userId }) => {
       if (userId !== currentUser.id) markDeletedForEveryone(msgId);
     });
-    socket.on("delete_error", () => {});
+    socket.on("delete_error", () => { });
 
     // ── file events ───────────────────────────────────────────────────────
     socket.on("file_upload_progress", ({ correlationId, progress }) => {
@@ -1201,7 +1201,7 @@ const useSocket = ({
         setMessages((prev) =>
           prev.map((msg) =>
             msg.msgId === savedMessage.tempId ||
-            msg.correlationId === savedMessage.correlationId
+              msg.correlationId === savedMessage.correlationId
               ? msgObj
               : msg,
           ),
@@ -1223,15 +1223,15 @@ const useSocket = ({
         prev.map((msg) =>
           msg.msgId === tempId || msg.correlationId === correlationId
             ? {
-                ...msg,
-                status: "failed",
-                msgStatus: "failed",
-                msgBody: {
-                  ...msg.msgBody,
-                  media: { ...msg.msgBody.media, is_uploading: false },
-                },
-                error,
-              }
+              ...msg,
+              status: "failed",
+              msgStatus: "failed",
+              msgBody: {
+                ...msg.msgBody,
+                media: { ...msg.msgBody.media, is_uploading: false },
+              },
+              error,
+            }
             : msg,
         ),
       );
@@ -1350,7 +1350,7 @@ const useSocket = ({
     // ── clear_chat ────────────────────────────────────────────────────────
     socket.on("clear_chat_success", ({ chatId, userId }) => {
       if (selectedGroup?.chatId === chatId && userId === currentUser.id) {
-        setMessages([]);
+        // setMessages([]);
         setHasMoreOldMessages(false);
         setHasMoreNewMessages(false);
         setOldestMessageTimestamp(null);

@@ -49,11 +49,11 @@ const MessageInput = ({
                         <p className="text-xs font-medium text-gray-200 tracking-wide">Message rate limit exceeded</p>
                         <p className="text-[10px] text-gray-500 mt-0.5">Input will re-enable automatically</p>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-black/50 border border-teal-500/30 rounded-lg px-3 py-1.5">
+                    {/* <div className="flex items-center gap-1.5 bg-black/50 border border-teal-500/30 rounded-lg px-3 py-1.5">
                         <span className="text-sm font-bold font-mono tracking-widest" style={{ color: "#b9fd5c", textShadow: "0 0 8px #14b8a6" }}>
                             0:{countdown.toString().padStart(2, "0")}
                         </span>
-                    </div>
+                    </div> */}
                 </div>
             )}
 

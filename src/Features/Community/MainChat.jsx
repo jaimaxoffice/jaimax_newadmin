@@ -1383,7 +1383,7 @@ const GroupChatApp = () => {
   // ─── Clear chat ────────────────────────────────────────────────────────
   const handleClearChat = useCallback(() => {
     if (!selectedGroupRef.current?.chatId) return;
-    setMessages([]);
+    // setMessages([]);
     if (socketRef.current?.connected) {
       socketRef.current.emit("clear_chat", { chatId: selectedGroupRef.current.chatId, userId: currentUser.id });
     }
