@@ -1,13 +1,12 @@
-
 function base64ToUint8Array(base64) {
   try {
-    if (!base64 || typeof base64 !== 'string') {
+    if (!base64 || typeof base64 !== "string") {
       return null;
     }
 
-    base64 = base64.trim().replace(/-/g, '+').replace(/_/g, '/');
+    base64 = base64.trim().replace(/-/g, "+").replace(/_/g, "/");
     while (base64.length % 4 !== 0) {
-      base64 += '=';
+      base64 += "=";
     }
 
     const binary = atob(base64);
@@ -22,9 +21,6 @@ function base64ToUint8Array(base64) {
   }
 }
 
-/**
- * Get AES key from base64 secret
- */
 async function getAESKey(secretBase64) {
   const keyBytes = base64ToUint8Array(secretBase64);
   if (!keyBytes || keyBytes.length !== 32) {
@@ -36,16 +32,10 @@ async function getAESKey(secretBase64) {
     keyBytes,
     { name: "AES-GCM" },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
 }
 
-/**
- * ENCRYPT MESSAGE
- * @param {string} message - Plain text to encrypt
- * @param {string} secretBase64 - Base64 encoded 32-byte key
- * @returns {Promise<{cipherText: string, iv: string, authTag: string}>}
- */
 export async function encryptMessage(message, secretBase64) {
   if (!message) throw new Error("Message is required");
   if (!secretBase64) throw new Error("Secret key is required");
@@ -56,7 +46,7 @@ export async function encryptMessage(message, secretBase64) {
   const encryptedBuffer = await window.crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     key,
-    new TextEncoder().encode(message)
+    new TextEncoder().encode(message),
   );
 
   const fullBytes = new Uint8Array(encryptedBuffer);
@@ -66,16 +56,10 @@ export async function encryptMessage(message, secretBase64) {
   return {
     cipherText: btoa(String.fromCharCode(...cipherTextBytes)),
     iv: btoa(String.fromCharCode(...iv)),
-    authTag: btoa(String.fromCharCode(...authTagBytes))
+    authTag: btoa(String.fromCharCode(...authTagBytes)),
   };
 }
 
-/**
- * DECRYPT MESSAGE
- * @param {Object} payload - {cipherText, iv, authTag}
- * @param {string} secretBase64 - Base64 encoded 32-byte key
- * @returns {Promise<string>} Decrypted message
- */
 export async function decryptMessage(payload, secretBase64) {
   if (!payload?.cipherText || !payload?.iv || !payload?.authTag) {
     console.error("Invalid payload - missing fields");
@@ -103,7 +87,7 @@ export async function decryptMessage(payload, secretBase64) {
     const decryptedBuffer = await window.crypto.subtle.decrypt(
       { name: "AES-GCM", iv },
       key,
-      encryptedBuffer
+      encryptedBuffer,
     );
 
     return new TextDecoder().decode(decryptedBuffer);

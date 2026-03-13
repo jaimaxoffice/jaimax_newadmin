@@ -26,7 +26,6 @@
 // //   );
 // // }
 
-
 // import { useState, useMemo } from "react";
 // import { Outlet, useLocation, useNavigate } from "react-router-dom";
 // import Sidebar from "./Sidebar";
@@ -57,19 +56,19 @@
 //         activePath={location.pathname}
 //         navigate={navigate}
 //       />
-      
+
 //       <main className="flex-1 overflow-y-auto transition-all duration-300 bg-[#000000] flex flex-col sidebar-scroll">
 //         {/* Top Header Section */}
 //         <header className="sticky top-0 z-20 bg-[#000000]/80 backdrop-blur-md border-b border-[#2a2c2f] px-6 py-4 flex items-center justify-between">
 //             {/* Mobile Sidebar Toggle (Optional - usually needed if sidebar hides on mobile) */}
 //             <div className="flex items-center gap-4">
-//                 <button 
+//                 <button
 //                   onClick={() => setSidebarOpen(!sidebarOpen)}
 //                   className="lg:hidden text-white hover:text-[#b9fd5c] transition-colors"
 //                 >
 //                   <Menu size={24} />
 //                 </button>
-                
+
 //                 {/* THE REQUESTED TITLE */}
 //                 <h1 className="text-2xl text-[#b9fd5c]  font-semibold tracking-wide">
 //                     {pageTitle}
@@ -88,8 +87,6 @@
 //   );
 // }
 
-
-
 import { useState, useMemo, useCallback } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -106,7 +103,7 @@ export default function AppLayout() {
   // Get user data
   const stored = useMemo(
     () => JSON.parse(Cookies.get("adminUserData") || "{}"),
-    []
+    [],
   );
   const userData = stored?.data || stored;
   const { name = "User", email = "" } = userData || {};
@@ -164,20 +161,21 @@ export default function AppLayout() {
 
       <main className="flex-1 overflow-y-auto transition-all duration-300 bg-[#000000] flex flex-col sidebar-scroll">
         {/* Top Header Section */}
-        <header className="sticky top-0 z-20 bg-[#000000]/80 backdrop-blur-md border-b border-[#2a2c2f] px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden text-white hover:text-[#b9fd5c] transition-colors"
-            >
-              <Menu size={24} />
-            </button>
-
-            <h1 className="text-2xl text-[#b9fd5c] font-semibold serialHeading">
-              {pageTitle}
-            </h1>
-          </div>
-        </header>
+        {location.pathname !== "/jaimax-community" && (
+          <header className="sticky top-0 z-20 bg-[#000000]/80 backdrop-blur-md border-b border-[#2a2c2f] px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden text-white hover:text-[#b9fd5c] transition-colors"
+              >
+                <Menu size={24} />
+              </button>
+              <h1 className="text-2xl text-[#b9fd5c] font-semibold serialHeading">
+                {pageTitle}
+              </h1>
+            </div>
+          </header>
+        )}
 
         {/* Page Content */}
         <div className="flex-1">

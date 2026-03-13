@@ -47,7 +47,7 @@
 //   HandCoins,
 //   UserPen ,
 //   MessageCircleMore ,
-//   Headset 
+//   Headset
 // } from "lucide-react";
 
 // // ─── ADMIN (role === 0) ───
@@ -78,7 +78,7 @@
 //       { label: "All Transactions", icon: History, path: "/all-wallet-transactions" },
 //       { label: "PG Transactions", icon: ScanLine, path: "/pg-transactions" },
 //       { label: "Payment-Gateways", icon: CreditCard, path: "/payment-gateway" },
-      
+
 //     ],
 //   },
 //   {
@@ -604,7 +604,6 @@
 //   );
 // }
 
-
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -654,7 +653,7 @@ import {
   MessageCircleMore,
   Headset,
   LogOut,
-  GalleryVerticalEnd 
+  GalleryVerticalEnd,
 } from "lucide-react";
 
 // ─── ADMIN (role === 0) ───
@@ -667,9 +666,17 @@ const ADMIN_SECTIONS = [
       { label: "Wallet Management", icon: Wallet, path: "/wallet-management" },
       { label: "Buy-History", icon: GalleryVerticalEnd, path: "/buy-history" },
       { label: "KYC Management", icon: ShieldCheck, path: "/kyc-management" },
-      { label: "Withdrawal Bonus", icon: ArrowDownToLine, path: "/withdrawal-bonus" },
-    
-      { label: "USDT withdrawal", icon: CircleDollarSign, path: "/usdt-withdrawal" },
+      {
+        label: "Withdrawal Bonus",
+        icon: ArrowDownToLine,
+        path: "/withdrawal-bonus",
+      },
+
+      {
+        label: "USDT withdrawal",
+        icon: CircleDollarSign,
+        path: "/usdt-withdrawal",
+      },
     ],
   },
   {
@@ -683,7 +690,11 @@ const ADMIN_SECTIONS = [
   {
     label: "TRANSACTIONS",
     items: [
-      { label: "All Transactions", icon: History, path: "/all-wallet-transactions" },
+      {
+        label: "All Transactions",
+        icon: History,
+        path: "/all-wallet-transactions",
+      },
       { label: "PG Transactions", icon: ScanLine, path: "/pg-transactions" },
       { label: "Payment-Gateways", icon: CreditCard, path: "/payment-gateway" },
     ],
@@ -692,17 +703,33 @@ const ADMIN_SECTIONS = [
     label: "MANUALS",
     items: [
       { label: "Manual-KYC", icon: FileCheck, path: "/manual-kyc" },
-      { label: "Manual Transactions", icon: FileText, path: "/manual-accounts" },
+      {
+        label: "Manual Transactions",
+        icon: FileText,
+        path: "/manual-accounts",
+      },
     ],
   },
   {
     label: "REPORTS",
     items: [
       { label: "Team-Reports", icon: BarChart3, path: "/team-reports" },
-      { label: "Team-Investments", icon: TrendingUp, path: "/team-investments" },
-      { label: "Withdrawal Report", icon: ArrowDownToLine, path: "/withdrawal-report" },
+      {
+        label: "Team-Investments",
+        icon: TrendingUp,
+        path: "/team-investments",
+      },
+      {
+        label: "Withdrawal Report",
+        icon: ArrowDownToLine,
+        path: "/withdrawal-report",
+      },
       { label: "Reports", icon: ClipboardList, path: "/reports" },
-      { label: "Business Analytics", icon: PieChart, path: "/businessanalytics" },
+      {
+        label: "Business Analytics",
+        icon: PieChart,
+        path: "/businessanalytics",
+      },
     ],
   },
   {
@@ -710,18 +737,34 @@ const ADMIN_SECTIONS = [
     items: [
       { label: "Gradual Bonus", icon: Clock, path: "/gradual-bonus" },
       { label: "Bonus Coin History", icon: Coins, path: "/bonus-coin-history" },
-      { label: "Available-Balance", icon: BadgeDollarSign, path: "/available-balance" },
+      {
+        label: "Available-Balance",
+        icon: BadgeDollarSign,
+        path: "/available-balance",
+      },
     ],
   },
   {
     label: "WEALTHPLANS",
     items: [
       { label: "Wealth Plan order-1", icon: Package, path: "/wealth-plan-1" },
-      { label: "Wealth Plan log 1", icon: ScrollText, path: "/wealth-plan-log-1" },
+      {
+        label: "Wealth Plan log 1",
+        icon: ScrollText,
+        path: "/wealth-plan-log-1",
+      },
       { label: "Wealth Plan order-2", icon: Package, path: "/wealth-plan-2" },
-      { label: "Wealth Plan log 2", icon: ScrollText, path: "/wealth-plan-log-2" },
+      {
+        label: "Wealth Plan log 2",
+        icon: ScrollText,
+        path: "/wealth-plan-log-2",
+      },
       { label: "Wealth Plan order-3", icon: Package, path: "/wealth-plan-3" },
-      { label: "Wealth Plan log 3", icon: ScrollText, path: "/wealth-plan-log-3" },
+      {
+        label: "Wealth Plan log 3",
+        icon: ScrollText,
+        path: "/wealth-plan-log-3",
+      },
     ],
   },
   {
@@ -732,7 +775,11 @@ const ADMIN_SECTIONS = [
       { label: "zoom-meetings", icon: Video, path: "/zoom-meetings" },
       { label: "Blogs", icon: BookOpenCheck, path: "/blogs" },
       { label: "SocialMedia", icon: Share2, path: "/social-media" },
-      { label: "Jaimax Community", icon: MessageCircleMore, path: "/jaimax-community" },
+      {
+        label: "Jaimax Community",
+        icon: MessageCircleMore,
+        path: "/jaimax-community",
+      },
     ],
   },
   {
@@ -777,7 +824,7 @@ function getSectionsByRole(role, permissions) {
       return ADMIN_SECTIONS.map((section) => ({
         ...section,
         items: section.items.filter(
-          (item) => !item.permission || permissions?.includes(item.permission)
+          (item) => !item.permission || permissions?.includes(item.permission),
         ),
       })).filter((section) => section.items.length > 0);
     case 3:
@@ -803,7 +850,10 @@ function getRoleLabel(role) {
 // ─── Highlight Text ─────────────────────────────────────────
 function HighlightText({ text, query }) {
   if (!query.trim()) return <span>{text}</span>;
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+  const regex = new RegExp(
+    `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+    "gi",
+  );
   const parts = text.split(regex);
   return (
     <span>
@@ -814,7 +864,7 @@ function HighlightText({ text, query }) {
           </span>
         ) : (
           <span key={i}>{part}</span>
-        )
+        ),
       )}
     </span>
   );
@@ -924,7 +974,7 @@ function MobileHeader({ onMenuToggle, userName, role }) {
 
   return (
     <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#0a0a0a] border-b border-[#1a1a1a]">
-      <div className="flex items-center justify-between px-3 h-12">
+      <div className="flex items-center justify-between px-3 h-20">
         <div className="flex items-center gap-2">
           <button
             onClick={onMenuToggle}
@@ -983,12 +1033,12 @@ function SidebarContent({
     (e) => {
       if (e.key === "Escape") setSearchQuery("");
     },
-    [setSearchQuery]
+    [setSearchQuery],
   );
 
   const totalResults = useMemo(
     () => filteredSections.reduce((acc, s) => acc + s.items.length, 0),
-    [filteredSections]
+    [filteredSections],
   );
 
   return (
@@ -1079,7 +1129,8 @@ function SidebarContent({
         {expanded && searchQuery.trim() && !hasNoResults && (
           <div className="px-2 mb-1.5">
             <p className="text-[10px] text-[#b9fd5c]">
-              Found {totalResults} result{totalResults !== 1 ? "s" : ""} for &quot;
+              Found {totalResults} result{totalResults !== 1 ? "s" : ""} for
+              &quot;
               {searchQuery}&quot;
             </p>
           </div>
@@ -1090,7 +1141,9 @@ function SidebarContent({
             <div className="w-10 h-10 rounded-full bg-[#111111] flex items-center justify-center mb-2">
               <Search size={16} className="text-gray-600" />
             </div>
-            <p className="text-gray-400 text-xs font-medium mb-0.5">No results found</p>
+            <p className="text-gray-400 text-xs font-medium mb-0.5">
+              No results found
+            </p>
             <p className="text-black text-[10px] text-center">
               No menu items match &quot;{searchQuery}&quot;
             </p>
@@ -1136,13 +1189,16 @@ export default function Sidebar({ open, setOpen, onLogoutClick }) {
   const location = useLocation();
   const activePath = location.pathname;
 
-  const stored = useMemo(() => JSON.parse(Cookies.get("adminUserData") || "{}"), []);
+  const stored = useMemo(
+    () => JSON.parse(Cookies.get("adminUserData") || "{}"),
+    [],
+  );
   const userData = stored?.data || stored;
   const { role, permissions = [], name = "User" } = userData || {};
 
   const roleSections = useMemo(
     () => getSectionsByRole(role, permissions),
-    [role, permissions]
+    [role, permissions],
   );
 
   const filteredSections = useMemo(() => {
@@ -1154,7 +1210,7 @@ export default function Sidebar({ open, setOpen, onLogoutClick }) {
         items: section.items.filter(
           (item) =>
             item.label.toLowerCase().includes(query) ||
-            item.path.toLowerCase().includes(query)
+            item.path.toLowerCase().includes(query),
         ),
       }))
       .filter((section) => section.items.length > 0);
@@ -1179,7 +1235,7 @@ export default function Sidebar({ open, setOpen, onLogoutClick }) {
       setSearchQuery("");
       setMobileOpen(false);
     },
-    [navigate]
+    [navigate],
   );
 
   // Handle logout click - close mobile sidebar and trigger modal
@@ -1217,7 +1273,12 @@ export default function Sidebar({ open, setOpen, onLogoutClick }) {
           border-r border-[#1a1a1a] w-56 transition-transform duration-300
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <SidebarContent isMobile open={true} setOpen={setOpen} {...sharedProps} />
+        <SidebarContent
+          isMobile
+          open={true}
+          setOpen={setOpen}
+          {...sharedProps}
+        />
       </aside>
 
       <aside
