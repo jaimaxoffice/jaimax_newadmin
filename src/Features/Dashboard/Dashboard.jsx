@@ -1021,14 +1021,14 @@ const Dashboard = () => {
   const userData = Cookies.get("adminUserData");
   // return userDataObj ? JSON.parse(userData) : null;
   const userDataObj = userData ? JSON.parse(userData) : null;
-  console.log("UserData from localStorage:", userDataObj);
+  // console.log("UserData from localStorage:", userDataObj);
 
   // const activeRound = d.ico?.rounds?.find(r => r.status === 2) || d.ico?.rounds?.find(r => r.status === 1);
   // console.log(activeRound,"hello")
   // const totalRounds = d.ico?.rounds?.length || 0;
   // const completedRounds = d.ico?.rounds?.filter(r => r.status === 2).length || 0;
 const activeRound = d.ico?.rounds?.find(r => r.status === 1);
-console.log(activeRound,"hello")
+// console.log(activeRound,"hello")
 const totalRounds = d.ico?.rounds?.length || 0;
 const completedRounds = d.ico?.rounds?.filter(r => r.status === 1).length || 0;
   return (

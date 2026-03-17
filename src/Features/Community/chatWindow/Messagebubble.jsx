@@ -1,4 +1,6 @@
-// import React, { useState } from "react";
+
+
+// import React, { useState, useMemo } from "react";
 // import {
 //   File,
 //   Download,
@@ -6,6 +8,7 @@
 //   ChevronDown,
 //   AlertTriangle,
 //   X,
+//   Star,
 // } from "lucide-react";
 // import { decryptMessage } from "../socket/encryptmsg";
 // import MessageText, { safeReplyText } from "./MessageText";
@@ -23,43 +26,706 @@
 //   formatFileSize,
 //   renderMessageWithLinks,
 //   getMessageReadStatus,
+//   isEdited,
+//   isForwarded,
+//   starred,
+//   pinned,
+//   reactions,
+//   readStatus,
+//   onReact,
+//   onRemoveReaction,
 // }) => {
 //   const id = msg._id?.toString() || msg.id?.toString();
 //   const [activeGif, setActiveGif] = useState(null);
-//   // Filter deleted-for-me messages
+
+//   // Filter deleted-for-me
 //   if (msg.deletedFor && Array.isArray(msg.deletedFor)) {
 //     const isDeletedForMe = msg.deletedFor.some(
-//       (uid) => uid?.toString() === currentUser?.id?.toString(),
+//       (uid) => uid?.toString() === currentUser?.id?.toString()
 //     );
 //     if (isDeletedForMe) return null;
 //   }
 
 //   const isCurrentUser =
 //     msg.fromUserId?.toString() === currentUser?.id?.toString();
-//   const containerBg = isCurrentUser
-//     ? "bg-[#b9fd5c] text-black"
-//     : "bg-[#202c33] text-gray-200";
-//   const readStatus = getMessageReadStatus(msg);
 
-//   // ── Safe message text resolution ─────────────────────────────────────────
-//   let messageText = msg.msgBody?.message;
-//   let decryptedText = "";
+//   // ═══════════════════════════════════════════════════════
+//   //  Helper: Check if value is encrypted object
+//   // ═══════════════════════════════════════════════════════
+//   const isEncryptedObject = (value) => {
+//     if (!value || typeof value !== "object") return false;
+//     return !!(
+//       value.cipherText ||
+//       value.ciphertext ||
+//       value.encrypted ||
+//       (value.iv && value.authTag)
+//     );
+//   };
 
-//   if (typeof messageText === "object" && messageText !== null) {
-//     if (messageText.cipherText && groupKey) {
-//       try {
-//         decryptedText = decryptMessage(messageText, groupKey);
-//       } catch {
-//         decryptedText = "[Encrypted message]";
-//       }
-//     } else {
-//       decryptedText = msg.msgStatus === "pending" ? "sending..." : "[Message]";
+//   // ═══════════════════════════════════════════════════════
+//   //  Helper: Safe string - never show [object Object]
+//   // ═══════════════════════════════════════════════════════
+//   const safeString = (value) => {
+//     if (value === null || value === undefined) return "";
+//     if (typeof value === "string") return value;
+//     if (typeof value === "object") {
+//       if (isEncryptedObject(value)) return "";
+//       if (value.text) return String(value.text);
+//       if (value.body) return String(value.body);
+//       if (value.content) return String(value.content);
+//       return "";
 //     }
-//   } else if (typeof messageText === "string") {
-//     decryptedText = messageText;
-//   } else {
-//     decryptedText = String(messageText || "");
+//     return String(value);
+//   };
+
+//   // ═══════════════════════════════════════════════════════
+//   //  ✅ FIX: Silent decryption - NEVER show decrypt text
+//   // ═══════════════════════════════════════════════════════
+//   const resolveMessageText = (msg, groupKey) => {
+//     const messageText = msg.msgBody?.message;
+
+//     if (messageText === null || messageText === undefined) return "";
+
+//     if (typeof messageText === "string") return messageText;
+
+//     if (typeof messageText === "object") {
+//       if (isEncryptedObject(messageText) && groupKey) {
+//         try {
+//           const decrypted = decryptMessage(messageText, groupKey);
+//           if (typeof decrypted === "string" && decrypted.length > 0) {
+//             return decrypted;
+//           }
+//         } catch (err) {
+//           console.warn("Decryption failed:", msg._id);
+//         }
+//       }
+//       if (messageText.text) return String(messageText.text);
+//       if (messageText.body) return String(messageText.body);
+//       return "";
+//     }
+
+//     return String(messageText || "");
+//   };
+
+//   const decryptedText = useMemo(
+//     () => resolveMessageText(msg, groupKey),
+//     [msg._id, msg.msgBody?.message, groupKey]
+//   );
+
+//   // ═══════════════════════════════════════════════════════
+//   //  File helpers
+//   // ═══════════════════════════════════════════════════════
+//   const getFileUrl = (m) =>
+//     m.msgBody?.media?.tempPreview ||
+//     m.msgBody?.media?.file_url ||
+//     m.fileUrl ||
+//     m.msgBody?.media?.fileUrl ||
+//     null;
+
+//   const getFileType = (m) => {
+//     const type = m.msgBody?.media?.file_type || m.msgBody?.media?.fileType;
+//     if (type) return type;
+//     const fileName = m.msgBody?.media?.fileName || "";
+//     if (/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(fileName))
+//       return "image/jpeg";
+//     if (/\.(mp4|mov|avi|webm)$/i.test(fileName)) return "video/mp4";
+//     if (/\.(pdf)$/i.test(fileName)) return "application/pdf";
+//     if (/\.(gif)$/i.test(fileName)) return "image/gif";
+//     return null;
+//   };
+
+//   const getFileName = (m) => {
+//     if (m.msgBody?.media?.fileName) return m.msgBody.media.fileName;
+//     const msgText = m.msgBody?.message;
+//     if (typeof msgText === "string" && msgText.length > 0) return msgText;
+//     return "File";
+//   };
+
+//   const getFileSize = (m) =>
+//     m.msgBody?.media?.file_size || m.msgBody?.media?.fileSize || null;
+
+//   const currentReactions = reactions || msg.reactions || [];
+//   const isFile = !!getFileUrl(msg);
+//   const isPending = msg.msgStatus === "pending";
+
+//   // ═══════════════════════════════════════════════════════
+//   //  ✅ KEY FIX: Don't render empty messages AT ALL
+//   //  No dots, no animation, just skip entirely
+//   // ═══════════════════════════════════════════════════════
+//   const hasContent =
+//     msg.deletedForEveryone ||  // deleted messages show "This message was deleted"
+//     isFile ||                   // file messages have media
+//     (decryptedText && decryptedText.trim().length > 0); // text messages have text
+
+//   // If no content to show → don't render this bubble
+//   if (!hasContent) {
+//     return null;
 //   }
+
+//   // ═══════════════════════════════════════════════════════
+//   //  Reply helpers
+//   // ═══════════════════════════════════════════════════════
+//   const getReplyText = (replyTo) => {
+//     if (!replyTo) return "Message";
+
+//     if (
+//       replyTo.message_type === "file" ||
+//       replyTo.msgBody?.message_type === "file"
+//     ) {
+//       return `📎 ${
+//         replyTo.msgBody?.media?.fileName || replyTo.message || "Media"
+//       }`;
+//     }
+
+//     const replyContent = replyTo.message || replyTo.msgBody?.message;
+
+//     if (typeof replyContent === "object" && isEncryptedObject(replyContent)) {
+//       if (groupKey) {
+//         try {
+//           const decrypted = decryptMessage(replyContent, groupKey);
+//           if (typeof decrypted === "string" && decrypted.length > 0) {
+//             return decrypted.slice(0, 100);
+//           }
+//         } catch {
+//           return "Message";
+//         }
+//       }
+//       return "Message";
+//     }
+
+//     if (typeof replyContent === "string" && replyContent.length > 0) {
+//       return replyContent.slice(0, 100);
+//     }
+
+//     try {
+//       const safe = safeReplyText(replyContent, groupKey);
+//       if (typeof safe === "string" && safe.length > 0) {
+//         return safe.slice(0, 90);
+//       }
+//     } catch {}
+
+//     return "Message";
+//   };
+
+//   const getReplySenderName = (replyTo) => {
+//     if (!replyTo) return "Unknown";
+//     return safeString(
+//       replyTo.fromUserId ||
+//       "Unknown"
+//     );
+//   };
+
+//   return (
+//     <div
+//       id={`msg-${id}`}
+//       data-msg-id={id}
+//       data-from-user-id={msg.fromUserId}
+//       className={`mb-2 flex group ${
+//         isCurrentUser ? "justify-end" : "justify-start"
+//       }`}
+//     >
+//       {/* {console.log("Rendering message:", msg)} */}
+//       <div className="relative max-w-[72%] sm:max-w-[60%] min-w-0">
+//         {/* Forwarded indicator */}
+//         {(isForwarded || msg.isForwarded) && !msg.deletedForEveryone && (
+//           <div className="flex items-center gap-1 px-2 pt-1 text-[11px] text-gray-400 italic">
+//             <svg className="w-3 h-3" viewBox="0 0 16 16" fill="currentColor">
+//               <path d="M9.5 2L14 6.5 9.5 11V8C5 8 2.5 10 1 13c0-5 3-8 8.5-8V2z" />
+//             </svg>
+//             Forwarded
+//           </div>
+//         )}
+
+//         {/* Main bubble */}
+//         <div
+//           className={`
+//             relative rounded-2xl
+//             ${isCurrentUser ? "rounded-tr-sm" : "rounded-tl-sm"}
+//             p-2 sm:p-3 shadow-md
+//             ${
+//               msg.deletedForEveryone
+//                 ? "bg-[#1d2b33] italic"
+//                 : isPending
+//                   ? isCurrentUser
+//                     ? "bg-[#005c4b]/70 text-white"
+//                     : "bg-[#202c33]/70 text-gray-300"
+//                   : isCurrentUser
+//                     ? "bg-[#005c4b] text-white"
+//                     : "bg-[#202c33] text-gray-200"
+//             }
+//           `}
+//           style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
+//         >
+//           {/* Sender name */}
+//           {!isCurrentUser && !msg.deletedForEveryone && (
+//             <p className="text-[12px] font-semibold text-[#00a884] mb-0.5 truncate">
+//               {safeString(
+//                 msg.fromUserId ||
+//                 "Unknown"
+//               )}
+//             </p>
+//           )}
+
+//           {/* Star indicator */}
+//           {starred && !msg.deletedForEveryone && (
+//             <Star className="absolute top-2 right-2 w-3 h-3 text-yellow-400 fill-yellow-400" />
+//           )}
+
+//           {/* Reply preview */}
+//           {msg.replyTo && !msg.deletedForEveryone && (
+//             <div
+//               className={`mb-2 p-2 rounded-lg border-l-4 cursor-pointer transition-colors ${
+//                 isCurrentUser
+//                   ? "bg-[#004a3e] border-[#06cf9c] hover:bg-[#005a4e]"
+//                   : "bg-[#1a2730] border-[#00a884] hover:bg-[#1f2d38]"
+//               }`}
+//               onClick={() =>
+//                 scrollToMessage(
+//                   msg.replyTo.msgId ||
+//                   msg.replyTo._id?.toString() ||
+//                   msg.replyTo.id?.toString()
+//                 )
+//               }
+//             >
+//               <p className="text-[11px] font-semibold text-[#06cf9c] mb-0.5 truncate">
+//                 {getReplySenderName(msg.replyTo)}
+//               </p>
+//               <p className="text-[11px] text-gray-400 line-clamp-2">
+//                 {getReplyText(msg.replyTo)}
+//               </p>
+//             </div>
+//           )}
+
+//           {/* Deleted message */}
+//           {msg.deletedForEveryone ? (
+//             <p className="text-sm text-gray-500 italic flex items-center gap-1.5 py-1">
+//               <svg
+//                 className="w-4 h-4 flex-shrink-0"
+//                 fill="none"
+//                 stroke="currentColor"
+//                 viewBox="0 0 24 24"
+//               >
+//                 <path
+//                   strokeLinecap="round"
+//                   strokeLinejoin="round"
+//                   strokeWidth={2}
+//                   d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+//                 />
+//               </svg>
+//               This message was deleted
+//             </p>
+//           ) : (
+//             <>
+//               {/* Image media */}
+//               {isFile &&
+//                 (getFileType(msg)?.startsWith("image/") ||
+//                   msg.msgBody?.media?.message_type === "image" ||
+//                   msg.messageType === "image") && (
+//                   <div
+//                     className="relative group/img"
+//                     style={{ maxWidth: "260px" }}
+//                   >
+//                     <div className="relative rounded-lg overflow-hidden">
+//                       <img
+//                         src={getFileUrl(msg)}
+//                         alt={getFileName(msg)}
+//                         className={`rounded-lg w-full h-auto transition-all ${
+//                           msg.msgBody?.media?.is_uploading
+//                             ? "opacity-60 cursor-wait"
+//                             : "cursor-pointer hover:opacity-90"
+//                         }`}
+//                         style={{
+//                           maxHeight:
+//                             getFileType(msg) === "image/gif"
+//                               ? "none"
+//                               : "300px",
+//                           objectFit: "cover",
+//                         }}
+//                         onClick={() => {
+//                           if (
+//                             !msg.msgBody?.media?.is_uploading &&
+//                             getFileUrl(msg)
+//                           ) {
+//                             if (/\.gif$/i.test(getFileName(msg))) {
+//                               setActiveGif(getFileUrl(msg));
+//                             } else if (
+//                               !getFileUrl(msg).startsWith("blob:")
+//                             ) {
+//                               window.open(getFileUrl(msg), "_blank");
+//                             }
+//                           }
+//                         }}
+//                       />
+//                       {msg.msgBody?.media?.is_uploading && (
+//                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+//                           <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+//                         </div>
+//                       )}
+//                     </div>
+//                   </div>
+//                 )}
+
+//               {/* Non-image file */}
+//               {isFile && !getFileType(msg)?.startsWith("image/") && (
+//                 <div className="max-w-xs">
+//                   <div
+//                     className={`group/file relative flex items-center gap-3 p-3 rounded-xl 
+//                       bg-gradient-to-br from-[#1a2332] to-[#0f1419] border border-white/5 
+//                       transition-all ${
+//                         msg.msgBody?.media?.is_uploading
+//                           ? "opacity-60"
+//                           : "hover:scale-[1.01] cursor-pointer hover:border-white/10"
+//                       }`}
+//                     onClick={() => {
+//                       if (
+//                         !msg.msgBody?.media?.is_uploading &&
+//                         getFileUrl(msg)
+//                       )
+//                         window.open(getFileUrl(msg), "_blank");
+//                     }}
+//                   >
+//                     <div className="relative w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 border border-white/20 bg-white/5">
+//                       <File className="w-6 h-6 text-white" />
+//                     </div>
+//                     <div className="flex-1 min-w-0">
+//                       <p className="font-semibold text-sm truncate text-white flex items-center gap-2">
+//                         {getFileName(msg)}
+//                         <ArrowUpRight className="w-3 h-3 text-white opacity-0 group-hover/file:opacity-100 transition-opacity" />
+//                       </p>
+//                       <p className="text-xs text-gray-400 mt-1">
+//                         {getFileSize(msg)
+//                           ? formatFileSize(getFileSize(msg))
+//                           : "Unknown size"}
+//                       </p>
+//                     </div>
+//                     {!msg.msgBody?.media?.is_uploading && (
+//                       <div className="p-2 rounded-lg bg-white/5 opacity-0 group-hover/file:opacity-100 transition-all">
+//                         <Download className="w-4 h-4 text-white" />
+//                       </div>
+//                     )}
+//                   </div>
+//                 </div>
+//               )}
+
+//               {/* ✅ Message text - only when there's actual text */}
+//               {decryptedText && !isFile && (
+//                 <MessageText
+//                   text={decryptedText}
+//                   isCurrentUser={isCurrentUser}
+//                   isReported={
+//                     msg.isreported?.count >= 3 && msg.isreported?.isHidden
+//                   }
+//                   renderMessageWithLinks={renderMessageWithLinks}
+//                 />
+//               )}
+
+//               {/* File caption */}
+//               {isFile &&
+//                 decryptedText &&
+//                 decryptedText !== getFileName(msg) && (
+//                   <p className="text-sm mt-1.5 leading-relaxed">
+//                     {renderMessageWithLinks
+//                       ? renderMessageWithLinks(decryptedText)
+//                       : decryptedText}
+//                   </p>
+//                 )}
+
+//               {/* ✅ REMOVED: No more bouncing dots animation */}
+//               {/* ✅ REMOVED: No more "Sending..." text */}
+//               {/* ✅ REMOVED: No more "🔒 Decrypting..." text */}
+//               {/* The message simply won't render until it has content */}
+//             </>
+//           )}
+
+//           {/* Reported warning */}
+//           {msg.isreported?.count >= 3 && msg.isreported?.isHidden && (
+//             <div className="mt-2 p-2 bg-red-500/15 border border-red-500/30 rounded-lg flex items-start gap-2">
+//               <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+//               <div>
+//                 <p className="text-xs font-semibold text-red-400">
+//                   Reported {msg.isreported.count} times
+//                 </p>
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Timestamp + Edited + Ticks */}
+//           {!msg.deletedForEveryone && (
+//             <div className="flex items-center justify-end gap-1 mt-1">
+//               {(isEdited || msg.isEdited) && (
+//                 <span className="text-[10px] text-gray-400 italic">
+//                   edited
+//                 </span>
+//               )}
+//               <span
+//                 className={`text-[10px] ${
+//                   isCurrentUser ? "text-white/60" : "text-gray-500"
+//                 }`}
+//               >
+//                 {formatTime(msg.timestamp)}
+//               </span>
+//               {isCurrentUser && <ReadStatusTicks status={readStatus} />}
+//               <button
+//                 className={`ml-0.5 p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+//                   isCurrentUser
+//                     ? "hover:bg-white/10 text-white/60"
+//                     : "hover:bg-white/10 text-gray-400"
+//                 }`}
+//                 onClick={(e) => toggleMenu(id, e, isCurrentUser)}
+//               >
+//                 <ChevronDown className="w-4 h-4" />
+//               </button>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Reactions */}
+//         {currentReactions.length > 0 && !msg.deletedForEveryone && (
+//           <div
+//             className={`flex flex-wrap gap-1 mt-1 ${
+//               isCurrentUser ? "justify-end" : "justify-start"
+//             }`}
+//           >
+//             {Object.entries(
+//               currentReactions.reduce((acc, r) => {
+//                 acc[r.emoji] = (acc[r.emoji] || 0) + 1;
+//                 return acc;
+//               }, {})
+//             ).map(([emoji, count]) => {
+//               const myReaction = currentReactions.find(
+//                 (r) =>
+//                   r.emoji === emoji &&
+//                   r.userId === currentUser?.id?.toString()
+//               );
+//               return (
+//                 <button
+//                   key={emoji}
+//                   onClick={() =>
+//                     myReaction
+//                       ? onRemoveReaction?.(id)
+//                       : onReact?.(id, emoji)
+//                   }
+//                   className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${
+//                     myReaction
+//                       ? "bg-[#005c4b] border border-[#00a884]"
+//                       : "bg-[#202c33] border border-[#2a3942] hover:bg-[#2a3942]"
+//                   }`}
+//                 >
+//                   <span>{emoji}</span>
+//                   <span className="text-[10px] text-gray-400">{count}</span>
+//                 </button>
+//               );
+//             })}
+//           </div>
+//         )}
+
+//         {/* Hover actions */}
+//         {!msg.deletedForEveryone && (
+//           <div
+//             className={`absolute top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ${
+//               isCurrentUser ? "-left-14" : "-right-14"
+//             }`}
+//           >
+//             <button
+//               onClick={(e) => onReact?.(id, e)}
+//               className="p-1 rounded-full bg-[#202c33] hover:bg-[#2a3942] text-gray-400 shadow-md"
+//               title="React"
+//             >
+//               😀
+//             </button>
+//             <button
+//               onClick={(e) => toggleMenu(id, e, isCurrentUser)}
+//               className="p-1 rounded-full bg-[#202c33] hover:bg-[#2a3942] shadow-md"
+//             >
+//               <ChevronDown className="w-4 h-4 text-gray-400" />
+//             </button>
+//           </div>
+//         )}
+
+//         {/* GIF modal */}
+//         {activeGif && (
+//           <div
+//             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90"
+//             onClick={() => setActiveGif(null)}
+//           >
+//             <div
+//               className="relative max-w-[90vw] max-h-[90vh]"
+//               onClick={(e) => e.stopPropagation()}
+//             >
+//               <button
+//                 onClick={() => setActiveGif(null)}
+//                 className="absolute -top-10 right-0 text-white hover:text-gray-300"
+//               >
+//                 <X className="w-6 h-6" />
+//               </button>
+//               <img
+//                 src={activeGif}
+//                 alt="GIF"
+//                 className="max-w-full max-h-[85vh] rounded-lg object-contain"
+//               />
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// const ReadStatusTicks = ({ status }) => {
+//   if (!status) return null;
+
+//   switch (status) {
+//     case "sending":
+//       return (
+//         <svg className="w-4 h-3 text-white/40" viewBox="0 0 16 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+//         </svg>
+//       );
+//     case "sent":
+//       return (
+//         <svg className="w-4 h-3 text-white/60" viewBox="0 0 16 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//         </svg>
+//       );
+//     case "delivered":
+//     case "delivered_all":
+//       return (
+//         <svg className="w-5 h-3 text-white/60" viewBox="0 0 20 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//           <path d="M15 1L8 8.5 5.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//         </svg>
+//       );
+//     case "read_some":
+//     case "read_all":
+//       return (
+//         <svg className="w-5 h-3 text-[#53bdeb]" viewBox="0 0 20 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//           <path d="M15 1L8 8.5 5.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//         </svg>
+//       );
+//     case "failed":
+//       return (
+//         <svg className="w-4 h-3 text-red-500" viewBox="0 0 16 16" fill="currentColor">
+//           <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 10.5a.75.75 0 110 1.5.75.75 0 010-1.5zM8 4a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 018 4z" />
+//         </svg>
+//       );
+//     default:
+//       return null;
+//   }
+// };
+
+// export default MessageBubble;
+
+
+
+// import React, { useState, useMemo } from "react";
+// import {
+//   File,
+//   Download,
+//   ArrowUpRight,
+//   ChevronDown,
+//   AlertTriangle,
+//   X,
+//   Star,
+//   Pin,        // ← ADD THIS
+// } from "lucide-react";
+// import { decryptMessage } from "../socket/encryptmsg";
+// import MessageText, { safeReplyText } from "./MessageText";
+
+// const MessageBubble = ({
+//   msg,
+//   currentUser,
+//   members,
+//   groupKey,
+//   effectiveOpenMenuId,
+//   copiedMessageId,
+//   toggleMenu,
+//   scrollToMessage,
+//   formatTime,
+//   formatFileSize,
+//   renderMessageWithLinks,
+//   getMessageReadStatus,
+//   isEdited,
+//   isForwarded,
+//   starred,
+//   pinned,
+//   reactions,
+//   readStatus,
+//   onReact,
+//   onRemoveReaction,
+// }) => {
+//   const id = msg._id?.toString() || msg.id?.toString();
+//   const [activeGif, setActiveGif] = useState(null);
+
+//   // ✅ Resolve pinned from both prop and message object
+//   const isPinned = pinned || msg.isPinned;
+
+//   // Filter deleted-for-me
+//   if (msg.deletedFor && Array.isArray(msg.deletedFor)) {
+//     const isDeletedForMe = msg.deletedFor.some(
+//       (uid) => uid?.toString() === currentUser?.id?.toString()
+//     );
+//     if (isDeletedForMe) return null;
+//   }
+
+//   const isCurrentUser =
+//     msg.fromUserId?.toString() === currentUser?.id?.toString();
+
+//   const isEncryptedObject = (value) => {
+//     if (!value || typeof value !== "object") return false;
+//     return !!(
+//       value.cipherText ||
+//       value.ciphertext ||
+//       value.encrypted ||
+//       (value.iv && value.authTag)
+//     );
+//   };
+
+//   const safeString = (value) => {
+//     if (value === null || value === undefined) return "";
+//     if (typeof value === "string") return value;
+//     if (typeof value === "object") {
+//       if (isEncryptedObject(value)) return "";
+//       if (value.text) return String(value.text);
+//       if (value.body) return String(value.body);
+//       if (value.content) return String(value.content);
+//       return "";
+//     }
+//     return String(value);
+//   };
+
+//   const resolveMessageText = (msg, groupKey) => {
+//     const messageText = msg.msgBody?.message;
+//     if (messageText === null || messageText === undefined) return "";
+//     if (typeof messageText === "string") return messageText;
+//     if (typeof messageText === "object") {
+//       if (isEncryptedObject(messageText) && groupKey) {
+//         try {
+//           const decrypted = decryptMessage(messageText, groupKey);
+//           if (typeof decrypted === "string" && decrypted.length > 0) {
+//             return decrypted;
+//           }
+//         } catch (err) {
+//           console.warn("Decryption failed:", msg._id);
+//         }
+//       }
+//       if (messageText.text) return String(messageText.text);
+//       if (messageText.body) return String(messageText.body);
+//       return "";
+//     }
+//     return String(messageText || "");
+//   };
+
+//   const decryptedText = useMemo(
+//     () => resolveMessageText(msg, groupKey),
+//     [msg._id, msg.msgBody?.message, groupKey]
+//   );
 
 //   const getFileUrl = (m) =>
 //     m.msgBody?.media?.tempPreview ||
@@ -80,196 +746,414 @@
 //     return null;
 //   };
 
-//   const getFileName = (m) =>
-//     m.msgBody?.media?.fileName || m.msgBody?.message || "File";
+//   const getFileName = (m) => {
+//     if (m.msgBody?.media?.fileName) return m.msgBody.media.fileName;
+//     const msgText = m.msgBody?.message;
+//     if (typeof msgText === "string" && msgText.length > 0) return msgText;
+//     return "File";
+//   };
 
 //   const getFileSize = (m) =>
 //     m.msgBody?.media?.file_size || m.msgBody?.media?.fileSize || null;
 
+//   const currentReactions = reactions || msg.reactions || [];
+//   const isFile = !!getFileUrl(msg);
+//   const isPending = msg.msgStatus === "pending";
+
+//   const hasContent =
+//     msg.deletedForEveryone ||
+//     isFile ||
+//     (decryptedText && decryptedText.trim().length > 0);
+
+//   if (!hasContent) return null;
+
+//   const getReplyText = (replyTo) => {
+//     if (!replyTo) return "Message";
+//     if (
+//       replyTo.message_type === "file" ||
+//       replyTo.msgBody?.message_type === "file"
+//     ) {
+//       return `📎 ${
+//         replyTo.msgBody?.media?.fileName || replyTo.message || "Media"
+//       }`;
+//     }
+//     const replyContent = replyTo.message || replyTo.msgBody?.message;
+//     if (typeof replyContent === "object" && isEncryptedObject(replyContent)) {
+//       if (groupKey) {
+//         try {
+//           const decrypted = decryptMessage(replyContent, groupKey);
+//           if (typeof decrypted === "string" && decrypted.length > 0) {
+//             return decrypted.slice(0, 100);
+//           }
+//         } catch {
+//           return "Message";
+//         }
+//       }
+//       return "Message";
+//     }
+//     if (typeof replyContent === "string" && replyContent.length > 0) {
+//       return replyContent.slice(0, 100);
+//     }
+//     try {
+//       const safe = safeReplyText(replyContent, groupKey);
+//       if (typeof safe === "string" && safe.length > 0) {
+//         return safe.slice(0, 90);
+//       }
+//     } catch {}
+//     return "Message";
+//   };
+
+//   const getReplySenderName = (replyTo) => {
+//     if (!replyTo) return "Unknown";
+//     return safeString(replyTo.fromUserId || "Unknown");
+//   };
+
 //   return (
 //     <div
-//       key={`${id}-${msg.timestamp}`}
 //       id={`msg-${id}`}
 //       data-msg-id={id}
 //       data-from-user-id={msg.fromUserId}
-//       className={`mb-3 flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
+//       className={`mb-2 flex group ${
+//         isCurrentUser ? "justify-end" : "justify-start"
+//       }`}
 //     >
-//       <div
-//         className={`
-//           relative
-//           max-w-[72%] sm:max-w-[60%]
-//           min-w-0
-//           rounded-tl-2xl rounded-br-2xl rounded-bl-2xl
-//           p-2 sm:p-3
-//           shadow-md
-//           ${containerBg}
-//         `}
-//         style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
-//       >
-//         {/* Sender name */}
-//         {!isCurrentUser && (
-//           <div className="text-xs text-[#00a884] mb-1 font-semibold truncate">
-//             {msg.fromUserId}
-//           </div>
-//         )}
+//       <div className="relative max-w-[72%] sm:max-w-[60%] min-w-0">
 
-//         {/* Reply preview */}
-//         {msg.replyTo && (
+//         {/* ═══════════════════════════════════════════════════ */}
+//         {/*  ✅ PIN BANNER — shows above the bubble            */}
+//         {/* ═══════════════════════════════════════════════════ */}
+//         {isPinned && !msg.deletedForEveryone && (
 //           <div
-//             className="mb-2 p-2 bg-black/20 rounded-lg border-l-4 border-[#00a884] cursor-pointer hover:bg-black/30"
-//             style={{ maxWidth: "100%", overflow: "hidden" }}
-//             onClick={() => scrollToMessage(msg.replyTo._id?.toString())}
+//             className={`flex items-center gap-1 px-2 py-0.5 mb-0.5 text-[11px] text-amber-400/80 ${
+//               isCurrentUser ? "justify-end" : "justify-start"
+//             }`}
 //           >
-//             <div className="text-xs text-[#00a884] font-semibold mb-0.5 truncate">
-//               {msg.replyTo.senderId || msg.fromUserId || "User"}
-//             </div>
+//             <Pin className="w-3 h-3 rotate-45" />
+//             <span className="font-medium">
+//               Pinned{msg.pinnedByName ? ` by ${msg.fromUserId}` : ""}
+//             </span>
+//           </div>
+//         )}
+
+//         {/* Forwarded indicator */}
+//         {(isForwarded || msg.isForwarded) && !msg.deletedForEveryone && (
+//           <div className="flex items-center gap-1 px-2 pt-1 text-[11px] text-gray-400 italic">
+//             <svg className="w-3 h-3" viewBox="0 0 16 16" fill="currentColor">
+//               <path d="M9.5 2L14 6.5 9.5 11V8C5 8 2.5 10 1 13c0-5 3-8 8.5-8V2z" />
+//             </svg>
+//             Forwarded
+//           </div>
+//         )}
+
+//         {/* Main bubble */}
+//         <div
+//           className={`
+//             relative rounded-2xl
+//             ${isCurrentUser ? "rounded-tr-sm" : "rounded-tl-sm"}
+//             p-2 sm:p-3 shadow-md
+//             ${
+//               msg.deletedForEveryone
+//                 ? "bg-[#1d2b33] italic"
+//                 : isPending
+//                   ? isCurrentUser
+//                     ? "bg-[#005c4b]/70 text-white"
+//                     : "bg-[#202c33]/70 text-gray-300"
+//                   : isCurrentUser
+//                     ? "bg-[#005c4b] text-white"
+//                     : "bg-[#202c33] text-gray-200"
+//             }
+//             ${isPinned && !msg.deletedForEveryone
+//               ? "ring-1 ring-amber-500/30"
+//               : ""
+//             }
+//           `}
+//           style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
+//         >
+//           {/* Sender name */}
+//           {!isCurrentUser && !msg.deletedForEveryone && (
+//             <p className="text-[12px] font-semibold text-[#00a884] mb-0.5 truncate">
+//               {safeString(msg.fromUserId || "Unknown")}
+//             </p>
+//           )}
+
+         
+
+//           {/* Reply preview */}
+//           {msg.replyTo && !msg.deletedForEveryone && (
 //             <div
-//               className="text-xs text-black line-clamp-2"
-//               style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
+//               className={`mb-2 p-2 rounded-lg border-l-4 cursor-pointer transition-colors ${
+//                 isCurrentUser
+//                   ? "bg-[#004a3e] border-[#06cf9c] hover:bg-[#005a4e]"
+//                   : "bg-[#1a2730] border-[#00a884] hover:bg-[#1f2d38]"
+//               }`}
+//               onClick={() =>
+//                 scrollToMessage(
+//                   msg.replyTo.msgId ||
+//                   msg.replyTo._id?.toString() ||
+//                   msg.replyTo.id?.toString()
+//                 )
+//               }
 //             >
-//               {msg.replyTo.msgBody?.media?.file_url ? (
-//                 <MediaIcon media={msg.replyTo.msgBody.media} />
-//               ) : typeof msg.replyTo.message === "string" ? (
-//                 msg.replyTo.message.slice(0, 100)
-//               ) : (
-//                 safeReplyText(msg.replyTo.message, groupKey)?.slice(0, 90)
-//               )}
-//             </div>
-//           </div>
-//         )}
-
-//         {/* Image media */}
-//         {!msg.deletedForEveryone &&
-//           getFileUrl(msg) &&
-//           (getFileType(msg)?.startsWith("image/") ||
-//             msg.msgBody?.media?.message_type === "image" ||
-//             msg.messageType === "image") && (
-//             <div className="relative group" style={{ maxWidth: "260px" }}>
-//               <div className="relative rounded-lg overflow-hidden">
-//                 <img
-//                   src={getFileUrl(msg)}
-//                   alt={getFileName(msg)}
-//                   className={`rounded-lg w-full h-auto transition-all ${
-//                     msg.msgBody?.media?.is_uploading
-//                       ? "opacity-60 cursor-wait"
-//                       : "cursor-pointer hover:opacity-90"
-//                   }`}
-//                   style={{
-//                     maxHeight:
-//                       getFileType(msg) === "image/gif" ? "none" : "300px",
-//                     objectFit: "cover",
-//                   }}
-//                   onClick={() => {
-//                     if (!msg.msgBody?.media?.is_uploading && getFileUrl(msg)) {
-//                       if (/\.gif$/i.test(getFileName(msg))) {
-//                         setActiveGif(getFileUrl(msg));
-//                       } else if (!getFileUrl(msg).startsWith("blob:")) {
-//                         window.open(getFileUrl(msg), "_blank");
-//                       }
-//                     }
-//                   }}
-//                 />
-//                 {msg.msgBody?.media?.is_uploading && (
-//                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
-//                     <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-//                   </div>
-//                 )}
-//               </div>
+//               <p className="text-[11px] font-semibold text-[#06cf9c] mb-0.5 truncate">
+//                 {getReplySenderName(msg.replyTo)}
+//               </p>
+//               <p className="text-[11px] text-gray-400 line-clamp-2">
+//                 {getReplyText(msg.replyTo)}
+//               </p>
 //             </div>
 //           )}
 
-//         {/* Non-image file media */}
-//         {!msg.deletedForEveryone &&
-//           getFileUrl(msg) &&
-//           !getFileType(msg)?.startsWith("image/") && (
-//             <div className="max-w-xs">
-//               <div
-//                 className={`group relative flex items-center gap-3 p-3 rounded-xl bg-gradient-to-br from-[#1a2332] to-[#0f1419] border transition-all ${
-//                   msg.msgBody?.media?.is_uploading
-//                     ? "opacity-60"
-//                     : "hover:scale-[1.02] cursor-pointer"
-//                 }`}
-//                 onClick={() => {
-//                   if (!msg.msgBody?.media?.is_uploading && getFileUrl(msg))
-//                     window.open(getFileUrl(msg), "_blank");
-//                 }}
+//           {/* Deleted message */}
+//           {msg.deletedForEveryone ? (
+//             <p className="text-sm text-gray-500 italic flex items-center gap-1.5 py-1">
+//               <svg
+//                 className="w-4 h-4 flex-shrink-0"
+//                 fill="none"
+//                 stroke="currentColor"
+//                 viewBox="0 0 24 24"
 //               >
-//                 <div className="relative w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 border border-white">
-//                   <File className="w-6 h-6 text-white" />
-//                 </div>
-//                 <div className="flex-1 min-w-0 relative z-10">
-//                   <p className="font-semibold text-sm truncate text-white flex items-center gap-2">
-//                     {getFileName(msg)}
-//                     <ArrowUpRight className="w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-//                   </p>
-//                   <div className="flex items-center gap-2 mt-1">
-//                     <p className="text-xs text-gray-400">
-//                       {getFileSize(msg)
-//                         ? formatFileSize(getFileSize(msg))
-//                         : "Unknown size"}
-//                     </p>
-//                   </div>
-//                 </div>
-//                 {!msg.msgBody?.media?.is_uploading && (
-//                   <div className="relative z-10 p-2 rounded-lg bg-black opacity-0 group-hover:opacity-100 transition-all">
-//                     <Download className="w-4 h-4 text-white" />
+//                 <path
+//                   strokeLinecap="round"
+//                   strokeLinejoin="round"
+//                   strokeWidth={2}
+//                   d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+//                 />
+//               </svg>
+//               This message was deleted
+//             </p>
+//           ) : (
+//             <>
+//               {/* Image media */}
+//               {isFile &&
+//                 (getFileType(msg)?.startsWith("image/") ||
+//                   msg.msgBody?.media?.message_type === "image" ||
+//                   msg.messageType === "image") && (
+//                   <div
+//                     className="relative group/img"
+//                     style={{ maxWidth: "260px" }}
+//                   >
+//                     <div className="relative rounded-lg overflow-hidden">
+//                       <img
+//                         src={getFileUrl(msg)}
+//                         alt={getFileName(msg)}
+//                         className={`rounded-lg w-full h-auto transition-all ${
+//                           msg.msgBody?.media?.is_uploading
+//                             ? "opacity-60 cursor-wait"
+//                             : "cursor-pointer hover:opacity-90"
+//                         }`}
+//                         style={{
+//                           maxHeight:
+//                             getFileType(msg) === "image/gif"
+//                               ? "none"
+//                               : "300px",
+//                           objectFit: "cover",
+//                         }}
+//                         onClick={() => {
+//                           if (
+//                             !msg.msgBody?.media?.is_uploading &&
+//                             getFileUrl(msg)
+//                           ) {
+//                             if (/\.gif$/i.test(getFileName(msg))) {
+//                               setActiveGif(getFileUrl(msg));
+//                             } else if (
+//                               !getFileUrl(msg).startsWith("blob:")
+//                             ) {
+//                               window.open(getFileUrl(msg), "_blank");
+//                             }
+//                           }
+//                         }}
+//                       />
+//                       {msg.msgBody?.media?.is_uploading && (
+//                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+//                           <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+//                         </div>
+//                       )}
+//                     </div>
 //                   </div>
 //                 )}
+
+//               {/* Non-image file */}
+//               {isFile && !getFileType(msg)?.startsWith("image/") && (
+//                 <div className="max-w-xs">
+//                   <div
+//                     className={`group/file relative flex items-center gap-3 p-3 rounded-xl 
+//                       bg-gradient-to-br from-[#1a2332] to-[#0f1419] border border-white/5 
+//                       transition-all ${
+//                         msg.msgBody?.media?.is_uploading
+//                           ? "opacity-60"
+//                           : "hover:scale-[1.01] cursor-pointer hover:border-white/10"
+//                       }`}
+//                     onClick={() => {
+//                       if (
+//                         !msg.msgBody?.media?.is_uploading &&
+//                         getFileUrl(msg)
+//                       )
+//                         window.open(getFileUrl(msg), "_blank");
+//                     }}
+//                   >
+//                     <div className="relative w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 border border-white/20 bg-white/5">
+//                       <File className="w-6 h-6 text-white" />
+//                     </div>
+//                     <div className="flex-1 min-w-0">
+//                       <p className="font-semibold text-sm truncate text-white flex items-center gap-2">
+//                         {getFileName(msg)}
+//                         <ArrowUpRight className="w-3 h-3 text-white opacity-0 group-hover/file:opacity-100 transition-opacity" />
+//                       </p>
+//                       <p className="text-xs text-gray-400 mt-1">
+//                         {getFileSize(msg)
+//                           ? formatFileSize(getFileSize(msg))
+//                           : "Unknown size"}
+//                       </p>
+//                     </div>
+//                     {!msg.msgBody?.media?.is_uploading && (
+//                       <div className="p-2 rounded-lg bg-white/5 opacity-0 group-hover/file:opacity-100 transition-all">
+//                         <Download className="w-4 h-4 text-white" />
+//                       </div>
+//                     )}
+//                   </div>
+//                 </div>
+//               )}
+
+//               {/* Message text */}
+//               {decryptedText && !isFile && (
+//                 <MessageText
+//                   text={decryptedText}
+//                   isCurrentUser={isCurrentUser}
+//                   isReported={
+//                     msg.isreported?.count >= 3 && msg.isreported?.isHidden
+//                   }
+//                   renderMessageWithLinks={renderMessageWithLinks}
+//                 />
+//               )}
+
+//               {/* File caption */}
+//               {isFile &&
+//                 decryptedText &&
+//                 decryptedText !== getFileName(msg) && (
+//                   <p className="text-sm mt-1.5 leading-relaxed">
+//                     {renderMessageWithLinks
+//                       ? renderMessageWithLinks(decryptedText)
+//                       : decryptedText}
+//                   </p>
+//                 )}
+//             </>
+//           )}
+
+//           {/* Reported warning */}
+//           {msg.isreported?.count >= 3 && msg.isreported?.isHidden && (
+//             <div className="mt-2 p-2 bg-red-500/15 border border-red-500/30 rounded-lg flex items-start gap-2">
+//               <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+//               <div>
+//                 <p className="text-xs font-semibold text-red-400">
+//                   Reported {msg.isreported.count} times
+//                 </p>
 //               </div>
 //             </div>
 //           )}
 
-//         {/* Message text */}
-//         {msg.deletedForEveryone ? (
-//           <div className="text-sm italic text-gray-400">
-//             This message was deleted
-//           </div>
-//         ) : (
-//           <>
-//             {!getFileUrl(msg) && (
-//               <MessageText
-//                 text={decryptedText}
-//                 isCurrentUser={isCurrentUser}
-//                 isReported={
-//                   msg.isreported?.count >= 3 && msg.isreported?.isHidden
-//                 }
-//                 renderMessageWithLinks={renderMessageWithLinks}
-//               />
-//             )}
-//           </>
-//         )}
-
-//         {/* Reported warning */}
-//         {msg.isreported?.count >= 3 && msg.isreported?.isHidden && (
-//           <div className="mb-2 p-2 bg-red-500/20 border border-red-500/50 rounded-md flex items-start gap-2">
-//             <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-//             <div className="flex-1 min-w-0">
-//               <p className="text-xs font-semibold text-red-400 mb-1">
-//                 Reported {msg.isreported.count} times
-//               </p>
-//               <p className="text-xs text-red-300/80">
-//                 Multiple users flagged this content
-//               </p>
-//             </div>
-//           </div>
-//         )}
-
-//         {/* Timestamp + menu toggle */}
-//         <div className="flex items-center justify-end gap-1 mt-1 text-xs text-gray-400">
-//           <span className="text-black text-[10px]">
-//             {formatTime(msg.timestamp)}
-//           </span>
+//           {/* ═══════════════════════════════════════════════ */}
+//           {/*  Timestamp + Edited + Pin icon + Ticks         */}
+//           {/* ═══════════════════════════════════════════════ */}
 //           {!msg.deletedForEveryone && (
-//             <button
-//               className="ml-1 p-1 text-white hover:bg-white/20 rounded-full"
-//               onClick={(e) => toggleMenu(id, e, isCurrentUser)}
-//             >
-//               <ChevronDown className="w-4 h-4" />
-//             </button>
+//             <div className="flex items-center justify-end gap-1 mt-1">
+//               {/* Pinned inline icon (small, next to time) */}
+//               {isPinned && (
+//                 <Pin
+//                   className="w-3 h-3 text-amber-400/60 rotate-45"
+//                   title="Pinned"
+//                 />
+//               )}
+//               {(isEdited || msg.isEdited) && (
+//                 <span className="text-[10px] text-gray-400 italic">
+//                   edited
+//                 </span>
+//               )}
+//               <span
+//                 className={`text-[10px] ${
+//                   isCurrentUser ? "text-white/60" : "text-gray-500"
+//                 }`}
+//               >
+//                 {formatTime(msg.timestamp)}
+//               </span>
+//               {isCurrentUser && <ReadStatusTicks status={readStatus} />}
+//               <button
+//                 className={`ml-0.5 p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+//                   isCurrentUser
+//                     ? "hover:bg-white/10 text-white/60"
+//                     : "hover:bg-white/10 text-gray-400"
+//                 }`}
+//                 onClick={(e) => toggleMenu(id, e, isCurrentUser)}
+//               >
+//                 <ChevronDown className="w-4 h-4" />
+//               </button>
+//             </div>
 //           )}
 //         </div>
 
-//         {/* GIF fullscreen modal */}
+//         {/* Reactions */}
+//         {currentReactions.length > 0 && !msg.deletedForEveryone && (
+//           <div
+//             className={`flex flex-wrap gap-1 mt-1 ${
+//               isCurrentUser ? "justify-end" : "justify-start"
+//             }`}
+//           >
+//             {Object.entries(
+//               currentReactions.reduce((acc, r) => {
+//                 acc[r.emoji] = (acc[r.emoji] || 0) + 1;
+//                 return acc;
+//               }, {})
+//             ).map(([emoji, count]) => {
+//               const myReaction = currentReactions.find(
+//                 (r) =>
+//                   r.emoji === emoji &&
+//                   r.userId === currentUser?.id?.toString()
+//               );
+//               return (
+//                 <button
+//                   key={emoji}
+//                   onClick={() =>
+//                     myReaction
+//                       ? onRemoveReaction?.(id)
+//                       : onReact?.(id, emoji)
+//                   }
+//                   className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${
+//                     myReaction
+//                       ? "bg-[#005c4b] border border-[#00a884]"
+//                       : "bg-[#202c33] border border-[#2a3942] hover:bg-[#2a3942]"
+//                   }`}
+//                 >
+//                   <span>{emoji}</span>
+//                   <span className="text-[10px] text-gray-400">{count}</span>
+//                 </button>
+//               );
+//             })}
+//           </div>
+//         )}
+
+//         {/* Hover actions */}
+//         {!msg.deletedForEveryone && (
+//           <div
+//             className={`absolute top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ${
+//               isCurrentUser ? "-left-14" : "-right-14"
+//             }`}
+//           >
+//             <button
+//               onClick={(e) => onReact?.(id, e)}
+//               className="p-1 rounded-full bg-[#202c33] hover:bg-[#2a3942] text-gray-400 shadow-md"
+//               title="React"
+//             >
+//               😀
+//             </button>
+//             <button
+//               onClick={(e) => toggleMenu(id, e, isCurrentUser)}
+//               className="p-1 rounded-full bg-[#202c33] hover:bg-[#2a3942] shadow-md"
+//             >
+//               <ChevronDown className="w-4 h-4 text-gray-400" />
+//             </button>
+//           </div>
+//         )}
+
+//         {/* GIF modal */}
 //         {activeGif && (
 //           <div
 //             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90"
@@ -281,7 +1165,7 @@
 //             >
 //               <button
 //                 onClick={() => setActiveGif(null)}
-//                 className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
+//                 className="absolute -top-10 right-0 text-white hover:text-gray-300"
 //               >
 //                 <X className="w-6 h-6" />
 //               </button>
@@ -290,9 +1174,6 @@
 //                 alt="GIF"
 //                 className="max-w-full max-h-[85vh] rounded-lg object-contain"
 //               />
-//               <div className="absolute bottom-3 left-3 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded">
-//                 GIF
-//               </div>
 //             </div>
 //           </div>
 //         )}
@@ -301,90 +1182,73 @@
 //   );
 // };
 
+// const ReadStatusTicks = ({ status }) => {
+//   if (!status) return null;
+
+//   switch (status) {
+//     case "sending":
+//       return (
+//         <svg className="w-4 h-3 text-white/40" viewBox="0 0 16 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+//         </svg>
+//       );
+//     case "sent":
+//       return (
+//         <svg className="w-4 h-3 text-white/60" viewBox="0 0 16 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//         </svg>
+//       );
+//     case "delivered":
+//     case "delivered_all":
+//       return (
+//         <svg className="w-5 h-3 text-white/60" viewBox="0 0 20 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//           <path d="M15 1L8 8.5 5.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//         </svg>
+//       );
+//     case "read_some":
+//     case "read_all":
+//       return (
+//         <svg className="w-5 h-3 text-[#53bdeb]" viewBox="0 0 20 11">
+//           <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//           <path d="M15 1L8 8.5 5.5 6" fill="none" stroke="currentColor"
+//             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//         </svg>
+//       );
+//     case "failed":
+//       return (
+//         <svg className="w-4 h-3 text-red-500" viewBox="0 0 16 16" fill="currentColor">
+//           <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 10.5a.75.75 0 110 1.5.75.75 0 010-1.5zM8 4a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 018 4z" />
+//         </svg>
+//       );
+//     default:
+//       return null;
+//   }
+// };
+
 // export default MessageBubble;
-import React, { useState } from "react";
-import { decryptMessage } from "../socket/encryptmsg";
-import MessageText, { safeReplyText } from "./MessageText";
+
+
+
+import React, { useState, useMemo } from "react";
 import {
-  Image,
-  FileText,
-  Music,
-  Video,
   File,
-  Sheet,
-  Presentation,
-  Archive,
-  X,
-  AlertTriangle,
   Download,
   ArrowUpRight,
   ChevronDown,
+  AlertTriangle,
+  X,
+  Star,
+  Pin,
 } from "lucide-react";
+import { decryptMessage } from "../socket/encryptmsg";
+import MessageText, { safeReplyText } from "./MessageText";
 
-// ─── Media type icon for reply preview ───────────────────────────────────────
-const MediaIcon = ({ media }) => {
-  const fileName = media?.fileName || "";
-  const fileType = media?.file_type || "";
-
-  if (
-    fileType.startsWith("image/") ||
-    /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(fileName)
-  )
-    return (
-      <>
-        <Image className="w-3 h-3 inline mr-1" /> Photo
-      </>
-    );
-  if (fileType.includes("pdf") || /\.pdf$/i.test(fileName))
-    return (
-      <>
-        <FileText className="w-3 h-3 inline mr-1" /> PDF
-      </>
-    );
-  if (fileType.includes("audio") || /\.(mp3|wav|ogg|m4a)$/i.test(fileName))
-    return (
-      <>
-        <Music className="w-3 h-3 inline mr-1" /> Audio
-      </>
-    );
-  if (fileType.includes("video") || /\.(mp4|mov|avi|webm)$/i.test(fileName))
-    return (
-      <>
-        <Video className="w-3 h-3 inline mr-1" /> Video
-      </>
-    );
-  if (fileType.includes("word") || /\.(doc|docx)$/i.test(fileName))
-    return (
-      <>
-        <FileText className="w-3 h-3 inline mr-1" /> Document
-      </>
-    );
-  if (fileType.includes("sheet") || /\.(xls|xlsx)$/i.test(fileName))
-    return (
-      <>
-        <Sheet className="w-3 h-3 inline mr-1" /> Spreadsheet
-      </>
-    );
-  if (fileType.includes("presentation") || /\.(ppt|pptx)$/i.test(fileName))
-    return (
-      <>
-        <Presentation className="w-3 h-3 inline mr-1" /> Presentation
-      </>
-    );
-  if (/\.(zip|rar)$/i.test(fileName))
-    return (
-      <>
-        <Archive className="w-3 h-3 inline mr-1" /> Archive
-      </>
-    );
-  return (
-    <>
-      <File className="w-3 h-3 inline mr-1" /> File
-    </>
-  );
-};
-
-// ─── Component ────────────────────────────────────────────────────────────────
 const MessageBubble = ({
   msg,
   currentUser,
@@ -398,45 +1262,126 @@ const MessageBubble = ({
   formatFileSize,
   renderMessageWithLinks,
   getMessageReadStatus,
+  isEdited,
+  isForwarded,
+  starred,
+  pinned,
+  reactions,
+  readStatus,
+  onReact,
+  onRemoveReaction,
 }) => {
   const id = msg._id?.toString() || msg.id?.toString();
   const [activeGif, setActiveGif] = useState(null);
 
-  // ── Filter deleted-for-me ─────────────────────────────────────────────────
   if (msg.deletedFor && Array.isArray(msg.deletedFor)) {
     const isDeletedForMe = msg.deletedFor.some(
-      (uid) => uid?.toString() === currentUser?.id?.toString(),
+      (uid) => uid?.toString() === currentUser?.id?.toString()
     );
     if (isDeletedForMe) return null;
   }
 
   const isCurrentUser =
     msg.fromUserId?.toString() === currentUser?.id?.toString();
-  const containerBg = isCurrentUser
-    ? "bg-[#b9fd5c] text-black"
-    : "bg-[#202c33] text-gray-200";
 
-  // ── Decrypt message text ──────────────────────────────────────────────────
-  let messageText = msg.msgBody?.message;
-  let decryptedText = "";
+  // ✅ Resolve pinned from both prop AND message object
+  const isPinned = pinned || msg.isPinned;
 
-  if (typeof messageText === "object" && messageText !== null) {
-    if (messageText.cipherText && groupKey) {
-      try {
-        decryptedText = decryptMessage(messageText, groupKey);
-      } catch {
-        decryptedText = "[Encrypted message]";
-      }
-    } else {
-      decryptedText = msg.msgStatus === "pending" ? "sending..." : "[Message]";
+  // ═══════════════════════════════════════════════════════
+  //  Pin time formatter — "2 min ago", "3h ago", "Jun 15"
+  // ═══════════════════════════════════════════════════════
+  const formatPinTime = (pinnedAt) => {
+    if (!pinnedAt) return "";
+    const now = new Date();
+    const pinDate = new Date(pinnedAt);
+    const diffMs = now - pinDate;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    if (diffSec < 60) return "just now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffHour < 24) return `${diffHour}h ago`;
+    if (diffDay < 7) return `${diffDay}d ago`;
+
+    return pinDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  // ═══════════════════════════════════════════════════════
+  //  Get pinner display name
+  // ═══════════════════════════════════════════════════════
+  const getPinnerName = () => {
+    // console.log("Determining pinner name for message:", msg);
+    const name = msg.pinnedBy || msg.pinnedByName;
+    if (!name) return "";
+
+    // Check if the current user pinned it
+    if (
+      msg.pinnedBy === currentUser?.id?.toString() ||
+      msg.pinnedByName === currentUser?.name
+    ) {
+      return "You";
     }
-  } else if (typeof messageText === "string") {
-    decryptedText = messageText;
-  } else {
-    decryptedText = String(messageText || "");
-  }
 
-  // ── Media helpers ─────────────────────────────────────────────────────────
+    // Truncate long names
+    if (name.length > 20) return name.slice(0, 18) + "…";
+    return name;
+  };
+
+  // ─── existing helpers ─────────────────────────────────
+  const isEncryptedObject = (value) => {
+    if (!value || typeof value !== "object") return false;
+    return !!(
+      value.cipherText ||
+      value.ciphertext ||
+      value.encrypted ||
+      (value.iv && value.authTag)
+    );
+  };
+
+  const safeString = (value) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string") return value;
+    if (typeof value === "object") {
+      if (isEncryptedObject(value)) return "";
+      if (value.text) return String(value.text);
+      if (value.body) return String(value.body);
+      if (value.content) return String(value.content);
+      return "";
+    }
+    return String(value);
+  };
+
+  const resolveMessageText = (msg, groupKey) => {
+    const messageText = msg.msgBody?.message;
+    if (messageText === null || messageText === undefined) return "";
+    if (typeof messageText === "string") return messageText;
+    if (typeof messageText === "object") {
+      if (isEncryptedObject(messageText) && groupKey) {
+        try {
+          const decrypted = decryptMessage(messageText, groupKey);
+          if (typeof decrypted === "string" && decrypted.length > 0)
+            return decrypted;
+        } catch (err) {
+          console.warn("Decryption failed:", msg._id);
+        }
+      }
+      if (messageText.text) return String(messageText.text);
+      if (messageText.body) return String(messageText.body);
+      return "";
+    }
+    return String(messageText || "");
+  };
+
+  const decryptedText = useMemo(
+    () => resolveMessageText(msg, groupKey),
+    [msg._id, msg.msgBody?.message, groupKey]
+  );
+
   const getFileUrl = (m) =>
     m.msgBody?.media?.tempPreview ||
     m.msgBody?.media?.file_url ||
@@ -456,287 +1401,466 @@ const MessageBubble = ({
     return null;
   };
 
-  const getFileName = (m) =>
-    m.msgBody?.media?.fileName || m.msgBody?.message || "File";
+  const getFileName = (m) => {
+    if (m.msgBody?.media?.fileName) return m.msgBody.media.fileName;
+    const msgText = m.msgBody?.message;
+    if (typeof msgText === "string" && msgText.length > 0) return msgText;
+    return "File";
+  };
 
   const getFileSize = (m) =>
     m.msgBody?.media?.file_size || m.msgBody?.media?.fileSize || null;
 
-  // // ── Reply scroll — highlight target message ───────────────────────────────
-  // const handleReplyClick = () => {
-  //   // Server may use any of these field names for the original message id
-  //   const targetId = (
-  //     msg.replyTo._id ||
-  //     msg.replyTo.msgId ||
-  //     msg.replyTo.id ||
-  //     msg.replyTo.messageId
-  //   )?.toString();
-  //   console.log("replyTo._id:", targetId);
-  //   console.log("msg.replyTo full:", JSON.stringify(msg.replyTo));
-  //   console.log(
-  //     "All msg ids:",
-  //     [...document.querySelectorAll("[data-msg-id]")].map(
-  //       (e) => e.dataset.msgId,
-  //     ),
-  //   );
+  const currentReactions = reactions || msg.reactions || [];
+  const isFile = !!getFileUrl(msg);
+  const isPending = msg.msgStatus === "pending";
 
-  //   if (!targetId) return;
+  const hasContent =
+    msg.deletedForEveryone ||
+    isFile ||
+    (decryptedText && decryptedText.trim().length > 0);
 
-  //   const highlight = (el) => {
-  //     el.scrollIntoView({ behavior: "smooth", block: "center" });
-  //     el.classList.add("ring-2", "ring-[#00a884]");
-  //     setTimeout(() => el.classList.remove("ring-2", "ring-[#00a884]"), 1500);
-  //   };
+  if (!hasContent) return null;
 
-  //   // 1. Exact id match
-  //   let el = document.getElementById(`msg-${targetId}`);
-  //   if (el) return highlight(el);
-
-  //   // 2. data-msg-id exact match
-  //   el = document.querySelector(`[data-msg-id="${targetId}"]`);
-  //   if (el) return highlight(el);
-
-  //   // 3. Strip leading uppercase prefix (e.g. JAIMAX) and retry
-  //   const stripped = targetId.replace(/^[A-Z]+/, "");
-  //   el =
-  //     document.getElementById(`msg-${stripped}`) ||
-  //     document.querySelector(`[data-msg-id="${stripped}"]`) ||
-  //     document.querySelector(`[data-msg-id$="${stripped}"]`);
-  //   if (el) return highlight(el);
-  // };
-
-  const handleReplyClick = () => {
-    const targetId = (
-      msg.replyTo._id ||
-      msg.replyTo.msgId ||
-      msg.replyTo.id
-    )?.toString();
-
-    const highlight = (el) => {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-      el.style.transition = "background-color 0.3s ease";
-      el.style.backgroundColor = "rgba(0, 168, 132, 0.25)";
-      setTimeout(() => {
-        el.style.backgroundColor = "transparent";
-      }, 1500);
-    };
-    // 1. Try by ID if available
-    if (targetId) {
-      const el =
-        document.getElementById(`msg-${targetId}`) ||
-        document.querySelector(`[data-msg-id="${targetId}"]`);
-      if (el) return highlight(el);
+  const getReplyText = (replyTo) => {
+    if (!replyTo) return "Message";
+    if (
+      replyTo.message_type === "file" ||
+      replyTo.msgBody?.message_type === "file"
+    ) {
+      return `📎 ${
+        replyTo.msgBody?.media?.fileName || replyTo.message || "Media"
+      }`;
     }
-
-    // 2. Fallback: match by senderId + message text
-    const replyText =
-      typeof msg.replyTo.message === "string"
-        ? msg.replyTo.message.trim()
-        : null;
-    const replySender = msg.replyTo.senderId;
-
-    if (replyText || replySender) {
-      const allMsgs = document.querySelectorAll("[data-msg-id]");
-      for (const el of allMsgs) {
-        const elSender = el.dataset.fromUserId;
-        const elText = el
-          .querySelector("[data-msg-text]")
-          ?.dataset.msgText?.trim();
-        if (
-          elSender === replySender &&
-          (!replyText || elText?.includes(replyText))
-        ) {
-          return highlight(el);
+    const replyContent = replyTo.message || replyTo.msgBody?.message;
+    if (typeof replyContent === "object" && isEncryptedObject(replyContent)) {
+      if (groupKey) {
+        try {
+          const decrypted = decryptMessage(replyContent, groupKey);
+          if (typeof decrypted === "string" && decrypted.length > 0)
+            return decrypted.slice(0, 100);
+        } catch {
+          return "Message";
         }
       }
+      return "Message";
     }
+    if (typeof replyContent === "string" && replyContent.length > 0)
+      return replyContent.slice(0, 100);
+    try {
+      const safe = safeReplyText(replyContent, groupKey);
+      if (typeof safe === "string" && safe.length > 0)
+        return safe.slice(0, 90);
+    } catch {}
+    return "Message";
+  };
+
+  const getReplySenderName = (replyTo) => {
+    if (!replyTo) return "Unknown";
+    return safeString(replyTo.fromUserId || "Unknown");
   };
 
   return (
     <div
-      key={`${id}-${msg.timestamp}`}
       id={`msg-${id}`}
       data-msg-id={id}
       data-from-user-id={msg.fromUserId}
-      data-msg-text={decryptedText}
-      className={`mb-3 flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
+      className={`mb-2 flex group ${
+        isCurrentUser ? "justify-end" : "justify-start"
+      }`}
     >
-      <div
-        className={`
-          relative
-          max-w-[72%] sm:max-w-[60%]
-          min-w-0
-          rounded-tl-2xl rounded-br-2xl rounded-bl-2xl
-          p-2 sm:p-3
-          shadow-md
-          ${containerBg}
-        `}
-        style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
-      >
-        {/* Sender name */}
-        {!isCurrentUser && (
-          <div className="text-xs text-[#00a884] mb-1 font-semibold truncate">
-            {msg.fromUserId}
-          </div>
-        )}
+      <div className="relative max-w-[72%] sm:max-w-[60%] min-w-0">
 
-        {/* Reply preview */}
-        {msg.replyTo && (
+        {/* ═══════════════════════════════════════════════ */}
+        {/*  ✅ PIN BANNER — who pinned + when             */}
+        {/* ═══════════════════════════════════════════════ */}
+        {isPinned && !msg.deletedForEveryone && (
           <div
-            className="mb-2 p-2 bg-black/20 rounded-lg border-l-4 border-[#00a884] cursor-pointer hover:bg-black/30"
-            style={{ maxWidth: "100%", overflow: "hidden" }}
-            onClick={handleReplyClick}
+            className={`flex items-center gap-1.5 px-2.5 py-1 mb-0.5 rounded-t-lg ${
+              isCurrentUser ? "justify-end" : "justify-start"
+            }`}
           >
-            <div className="text-xs text-[#00a884] font-semibold mb-0.5 truncate">
-              {msg.replyTo.senderName || msg.replyTo.senderId || "User"}
-            </div>
-            <div
-              className="text-xs text-gray-400 line-clamp-2"
-              style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
-            >
-              {msg.replyTo.msgBody?.media?.file_url ? (
-                <MediaIcon media={msg.replyTo.msgBody.media} />
-              ) : typeof msg.replyTo.message === "string" ? (
-                msg.replyTo.message.slice(0, 100)
-              ) : (
-                safeReplyText(msg.replyTo.message, groupKey)?.slice(0, 100)
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Image media */}
-        {!msg.deletedForEveryone &&
-          getFileUrl(msg) &&
-          (getFileType(msg)?.startsWith("image/") ||
-            msg.msgBody?.media?.message_type === "image" ||
-            msg.messageType === "image") && (
-            <div className="relative group" style={{ maxWidth: "260px" }}>
-              <div className="relative rounded-lg overflow-hidden">
-                <img
-                  src={getFileUrl(msg)}
-                  alt={getFileName(msg)}
-                  className={`rounded-lg w-full h-auto transition-all ${
-                    msg.msgBody?.media?.is_uploading
-                      ? "opacity-60 cursor-wait"
-                      : "cursor-pointer hover:opacity-90"
-                  }`}
-                  style={{
-                    maxHeight:
-                      getFileType(msg) === "image/gif" ? "none" : "300px",
-                    objectFit: "cover",
-                  }}
-                  onClick={() => {
-                    if (!msg.msgBody?.media?.is_uploading && getFileUrl(msg)) {
-                      if (/\.gif$/i.test(getFileName(msg))) {
-                        setActiveGif(getFileUrl(msg));
-                      } else if (!getFileUrl(msg).startsWith("blob:")) {
-                        window.open(getFileUrl(msg), "_blank");
-                      }
-                    }
-                  }}
-                />
-                {msg.msgBody?.media?.is_uploading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
-                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-        {/* Non-image file media */}
-        {!msg.deletedForEveryone &&
-          getFileUrl(msg) &&
-          !getFileType(msg)?.startsWith("image/") && (
-            <div className="max-w-xs">
-              <div
-                className={`group relative flex items-center gap-3 p-3 rounded-xl bg-gradient-to-br from-[#1a2332] to-[#0f1419] border transition-all ${
-                  msg.msgBody?.media?.is_uploading
-                    ? "opacity-60"
-                    : "hover:scale-[1.02] cursor-pointer"
-                }`}
-                onClick={() => {
-                  if (!msg.msgBody?.media?.is_uploading && getFileUrl(msg))
-                    window.open(getFileUrl(msg), "_blank");
-                }}
-              >
-                <div className="relative w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 border border-white">
-                  <File className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1 min-w-0 relative z-10">
-                  <p className="font-semibold text-sm truncate text-white flex items-center gap-2">
-                    {getFileName(msg)}
-                    <ArrowUpRight className="w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-gray-400">
-                      {getFileSize(msg)
-                        ? formatFileSize(getFileSize(msg))
-                        : "Unknown size"}
-                    </p>
-                  </div>
-                </div>
-                {!msg.msgBody?.media?.is_uploading && (
-                  <div className="relative z-10 p-2 rounded-lg bg-black opacity-0 group-hover:opacity-100 transition-all">
-                    <Download className="w-4 h-4 text-white" />
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-        {/* Message text */}
-        {msg.deletedForEveryone ? (
-          <div className="text-sm italic text-gray-400">
-            This message was deleted
-          </div>
-        ) : (
-          <>
-            {!getFileUrl(msg) && (
-              <MessageText
-                text={decryptedText}
-                isCurrentUser={isCurrentUser}
-                isReported={
-                  msg.isreported?.count >= 3 && msg.isreported?.isHidden
-                }
-                renderMessageWithLinks={renderMessageWithLinks}
-              />
+            <Pin className="w-3 h-3 text-amber-400/80 rotate-45 flex-shrink-0" />
+            <span className="text-[11px] text-amber-400/80 font-medium truncate">
+              {getPinnerName()
+                ? `Pinned by ${getPinnerName()}`
+                : "Pinned"}
+            </span>
+            {msg.pinnedAt && (
+              <>
+                <span className="text-[10px] text-amber-400/40">·</span>
+                <span className="text-[10px] text-amber-400/50 flex-shrink-0">
+                  {formatPinTime(msg.pinnedAt)}
+                </span>
+              </>
             )}
-          </>
-        )}
-
-        {/* Reported warning */}
-        {msg.isreported?.count >= 3 && msg.isreported?.isHidden && (
-          <div className="mb-2 p-2 bg-red-500/20 border border-red-500/50 rounded-md flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-red-400 mb-1">
-                Reported {msg.isreported.count} times
-              </p>
-              <p className="text-xs text-red-300/80">
-                Multiple users flagged this content
-              </p>
-            </div>
           </div>
         )}
 
-        {/* Timestamp + menu */}
-        <div className="flex items-center justify-end gap-1 mt-1 text-xs text-gray-400">
-          <span className="text-black text-[10px]">
-            {formatTime(msg.timestamp)}
-          </span>
-          {!msg.deletedForEveryone && (
-            <button
-              className="ml-1 p-1 text-white hover:bg-white/20 rounded-full"
-              onClick={(e) => toggleMenu(id, e, isCurrentUser)}
+        {/* Forwarded indicator */}
+        {(isForwarded || msg.isForwarded) && !msg.deletedForEveryone && (
+          <div className="flex items-center gap-1 px-2 pt-1 text-[11px] text-gray-400 italic">
+            <svg className="w-3 h-3" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M9.5 2L14 6.5 9.5 11V8C5 8 2.5 10 1 13c0-5 3-8 8.5-8V2z" />
+            </svg>
+            Forwarded
+          </div>
+        )}
+
+        {/* Main bubble */}
+        <div
+          className={`
+            relative rounded-2xl
+            ${isCurrentUser ? "rounded-tr-sm" : "rounded-tl-sm"}
+            ${isPinned && !msg.deletedForEveryone ? "rounded-t-lg" : ""}
+            p-2 sm:p-3 shadow-md
+            ${
+              msg.deletedForEveryone
+                ? "bg-[#1d2b33] italic"
+                : isPending
+                  ? isCurrentUser
+                    ? "bg-[#005c4b]/70 text-white"
+                    : "bg-[#202c33]/70 text-gray-300"
+                  : isCurrentUser
+                    ? "bg-[#005c4b] text-white"
+                    : "bg-[#202c33] text-gray-200"
+            }
+            ${isPinned && !msg.deletedForEveryone
+              ? "ring-1 ring-amber-500/25 shadow-amber-500/5"
+              : ""
+            }
+          `}
+          style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
+        >
+          {/* Sender name */}
+          {!isCurrentUser && !msg.deletedForEveryone && (
+            <p className="text-[12px] font-semibold text-[#00a884] mb-0.5 truncate">
+              {safeString(msg.fromUserId || "Unknown")}
+            </p>
+          )}
+
+          {/* ═══════════════════════════════════════════════ */}
+          {/*  CORNER ICONS: Pin + Star (top-right)          */}
+          {/* ═══════════════════════════════════════════════ */}
+          {(starred || isPinned) && !msg.deletedForEveryone && (
+            <div className="absolute top-2 right-2 flex items-center gap-1">
+              {isPinned && (
+                <div className="group/pin relative">
+                  {/* <Pin
+                    className="w-3.5 h-3.5 text-amber-400 fill-amber-400/30 rotate-45 cursor-pointer"
+                  /> */}
+                  {/* Tooltip on hover — shows full info */}
+                  <div className="absolute bottom-full right-0 mb-1 hidden group-hover/pin:block z-50">
+                    <div className="bg-[#1a2730] border border-white/10 rounded-lg px-2.5 py-1.5 shadow-xl whitespace-nowrap">
+                      <p className="text-[11px] text-amber-400 font-medium">
+                        📌 Pinned
+                        {getPinnerName() ? ` by ${getPinnerName()}` : ""}
+                      </p>
+                      {msg.pinnedAt && (
+                        <p className="text-[10px] text-gray-400 mt-0.5">
+                          {new Date(msg.pinnedAt).toLocaleString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {/* {starred && (
+                <Star
+                  className="w-3 h-3 text-yellow-400 fill-yellow-400"
+                  title="Starred"
+                />
+              )} */}
+            </div>
+          )}
+
+          {/* Reply preview */}
+          {msg.replyTo && !msg.deletedForEveryone && (
+            <div
+              className={`mb-2 p-2 rounded-lg border-l-4 cursor-pointer transition-colors ${
+                isCurrentUser
+                  ? "bg-[#004a3e] border-[#06cf9c] hover:bg-[#005a4e]"
+                  : "bg-[#1a2730] border-[#00a884] hover:bg-[#1f2d38]"
+              }`}
+              onClick={() =>
+                scrollToMessage(
+                  msg.replyTo.msgId ||
+                  msg.replyTo._id?.toString() ||
+                  msg.replyTo.id?.toString()
+                )
+              }
             >
-              <ChevronDown className="w-4 h-4" />
-            </button>
+              <p className="text-[11px] font-semibold text-[#06cf9c] mb-0.5 truncate">
+                {getReplySenderName(msg.replyTo)}
+              </p>
+              <p className="text-[11px] text-gray-400 line-clamp-2">
+                {getReplyText(msg.replyTo)}
+              </p>
+            </div>
+          )}
+
+          {/* Deleted message */}
+          {msg.deletedForEveryone ? (
+            <p className="text-sm text-gray-500 italic flex items-center gap-1.5 py-1">
+              <svg
+                className="w-4 h-4 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                />
+              </svg>
+              This message was deleted
+            </p>
+          ) : (
+            <>
+              {/* Image media */}
+              {isFile &&
+                (getFileType(msg)?.startsWith("image/") ||
+                  msg.msgBody?.media?.message_type === "image" ||
+                  msg.messageType === "image") && (
+                  <div
+                    className="relative group/img"
+                    style={{ maxWidth: "260px" }}
+                  >
+                    <div className="relative rounded-lg overflow-hidden">
+                      <img
+                        src={getFileUrl(msg)}
+                        alt={getFileName(msg)}
+                        className={`rounded-lg w-full h-auto transition-all ${
+                          msg.msgBody?.media?.is_uploading
+                            ? "opacity-60 cursor-wait"
+                            : "cursor-pointer hover:opacity-90"
+                        }`}
+                        style={{
+                          maxHeight:
+                            getFileType(msg) === "image/gif"
+                              ? "none"
+                              : "300px",
+                          objectFit: "cover",
+                        }}
+                        onClick={() => {
+                          if (
+                            !msg.msgBody?.media?.is_uploading &&
+                            getFileUrl(msg)
+                          ) {
+                            if (/\.gif$/i.test(getFileName(msg))) {
+                              setActiveGif(getFileUrl(msg));
+                            } else if (
+                              !getFileUrl(msg).startsWith("blob:")
+                            ) {
+                              window.open(getFileUrl(msg), "_blank");
+                            }
+                          }
+                        }}
+                      />
+                      {msg.msgBody?.media?.is_uploading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+                          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              {/* Non-image file */}
+              {isFile && !getFileType(msg)?.startsWith("image/") && (
+                <div className="max-w-xs">
+                  <div
+                    className={`group/file relative flex items-center gap-3 p-3 rounded-xl 
+                      bg-gradient-to-br from-[#1a2332] to-[#0f1419] border border-white/5 
+                      transition-all ${
+                        msg.msgBody?.media?.is_uploading
+                          ? "opacity-60"
+                          : "hover:scale-[1.01] cursor-pointer hover:border-white/10"
+                      }`}
+                    onClick={() => {
+                      if (
+                        !msg.msgBody?.media?.is_uploading &&
+                        getFileUrl(msg)
+                      )
+                        window.open(getFileUrl(msg), "_blank");
+                    }}
+                  >
+                    <div className="relative w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 border border-white/20 bg-white/5">
+                      <File className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm truncate text-white flex items-center gap-2">
+                        {getFileName(msg)}
+                        <ArrowUpRight className="w-3 h-3 text-white opacity-0 group-hover/file:opacity-100 transition-opacity" />
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {getFileSize(msg)
+                          ? formatFileSize(getFileSize(msg))
+                          : "Unknown size"}
+                      </p>
+                    </div>
+                    {!msg.msgBody?.media?.is_uploading && (
+                      <div className="p-2 rounded-lg bg-white/5 opacity-0 group-hover/file:opacity-100 transition-all">
+                        <Download className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Message text */}
+              {decryptedText && !isFile && (
+                <MessageText
+                  text={decryptedText}
+                  isCurrentUser={isCurrentUser}
+                  isReported={
+                    msg.isreported?.count >= 3 && msg.isreported?.isHidden
+                  }
+                  renderMessageWithLinks={renderMessageWithLinks}
+                />
+              )}
+
+              {/* File caption */}
+              {isFile &&
+                decryptedText &&
+                decryptedText !== getFileName(msg) && (
+                  <p className="text-sm mt-1.5 leading-relaxed">
+                    {renderMessageWithLinks
+                      ? renderMessageWithLinks(decryptedText)
+                      : decryptedText}
+                  </p>
+                )}
+            </>
+          )}
+
+          {/* Reported warning */}
+          {msg.isreported?.count >= 3 && msg.isreported?.isHidden && (
+            <div className="mt-2 p-2 bg-red-500/15 border border-red-500/30 rounded-lg flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-red-400">
+                  Reported {msg.isreported.count} times
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════ */}
+          {/*  TIMESTAMP ROW: pin icon + edited + time + ✓✓  */}
+          {/* ═══════════════════════════════════════════════ */}
+          {!msg.deletedForEveryone && (
+            <div className="flex items-center justify-end gap-1 mt-1">
+              {isPinned && (
+                <Pin
+                  className="w-2.5 h-2.5 text-amber-400/50 rotate-45"
+                  title={`Pinned${
+                    getPinnerName() ? ` by ${getPinnerName()}` : ""
+                  }${
+                    msg.pinnedAt
+                      ? ` · ${formatPinTime(msg.pinnedAt)}`
+                      : ""
+                  }`}
+                />
+              )}
+              {(isEdited || msg.isEdited) && (
+                <span className="text-[10px] text-gray-400 italic">
+                  edited
+                </span>
+              )}
+              <span
+                className={`text-[10px] ${
+                  isCurrentUser ? "text-white/60" : "text-gray-500"
+                }`}
+              >
+                {formatTime(msg.timestamp)}
+              </span>
+              {isCurrentUser && <ReadStatusTicks status={readStatus} />}
+              <button
+                className={`ml-0.5 p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+                  isCurrentUser
+                    ? "hover:bg-white/10 text-white/60"
+                    : "hover:bg-white/10 text-gray-400"
+                }`}
+                onClick={(e) => toggleMenu(id, e, isCurrentUser)}
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
           )}
         </div>
 
-        {/* GIF fullscreen modal */}
+        {/* Reactions */}
+        {currentReactions.length > 0 && !msg.deletedForEveryone && (
+          <div
+            className={`flex flex-wrap gap-1 mt-1 ${
+              isCurrentUser ? "justify-end" : "justify-start"
+            }`}
+          >
+            {Object.entries(
+              currentReactions.reduce((acc, r) => {
+                acc[r.emoji] = (acc[r.emoji] || 0) + 1;
+                return acc;
+              }, {})
+            ).map(([emoji, count]) => {
+              const myReaction = currentReactions.find(
+                (r) =>
+                  r.emoji === emoji &&
+                  r.userId === currentUser?.id?.toString()
+              );
+              return (
+                <button
+                  key={emoji}
+                  onClick={() =>
+                    myReaction
+                      ? onRemoveReaction?.(id)
+                      : onReact?.(id, emoji)
+                  }
+                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${
+                    myReaction
+                      ? "bg-[#005c4b] border border-[#00a884]"
+                      : "bg-[#202c33] border border-[#2a3942] hover:bg-[#2a3942]"
+                  }`}
+                >
+                  <span>{emoji}</span>
+                  <span className="text-[10px] text-gray-400">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Hover actions */}
+        {!msg.deletedForEveryone && (
+          <div
+            className={`absolute top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ${
+              isCurrentUser ? "-left-14" : "-right-14"
+            }`}
+          >
+            <button
+              onClick={(e) => onReact?.(id, e)}
+              className="p-1 rounded-full bg-[#202c33] hover:bg-[#2a3942] text-gray-400 shadow-md"
+              title="React"
+            >
+              😀
+            </button>
+            <button
+              onClick={(e) => toggleMenu(id, e, isCurrentUser)}
+              className="p-1 rounded-full bg-[#202c33] hover:bg-[#2a3942] shadow-md"
+            >
+              <ChevronDown className="w-4 h-4 text-gray-400" />
+            </button>
+          </div>
+        )}
+
+        {/* GIF modal */}
         {activeGif && (
           <div
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90"
@@ -748,7 +1872,7 @@ const MessageBubble = ({
             >
               <button
                 onClick={() => setActiveGif(null)}
-                className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
+                className="absolute -top-10 right-0 text-white hover:text-gray-300"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -757,15 +1881,60 @@ const MessageBubble = ({
                 alt="GIF"
                 className="max-w-full max-h-[85vh] rounded-lg object-contain"
               />
-              <div className="absolute bottom-3 left-3 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded">
-                GIF
-              </div>
             </div>
           </div>
         )}
       </div>
     </div>
   );
+};
+
+const ReadStatusTicks = ({ status }) => {
+  if (!status) return null;
+  switch (status) {
+    case "sending":
+      return (
+        <svg className="w-4 h-3 text-white/40" viewBox="0 0 16 11">
+          <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+        </svg>
+      );
+    case "sent":
+      return (
+        <svg className="w-4 h-3 text-white/60" viewBox="0 0 16 11">
+          <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "delivered":
+    case "delivered_all":
+      return (
+        <svg className="w-5 h-3 text-white/60" viewBox="0 0 20 11">
+          <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M15 1L8 8.5 5.5 6" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "read_some":
+    case "read_all":
+      return (
+        <svg className="w-5 h-3 text-[#53bdeb]" viewBox="0 0 20 11">
+          <path d="M11 1L4 8.5 1.5 6" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M15 1L8 8.5 5.5 6" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "failed":
+      return (
+        <svg className="w-4 h-3 text-red-500" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 10.5a.75.75 0 110 1.5.75.75 0 010-1.5zM8 4a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 018 4z" />
+        </svg>
+      );
+    default:
+      return null;
+  }
 };
 
 export default MessageBubble;

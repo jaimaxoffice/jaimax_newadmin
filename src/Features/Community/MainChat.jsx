@@ -48,15 +48,6 @@ const ALLOWED_DOC_TYPES = new Set([
   "application/x-rar-compressed",
 ]);
 
-// const buildReplyTo = (msg) =>
-//   msg
-//     ? {
-//         _id: msg._id,
-//         message: msg.msgBody?.message,
-//         senderName: msg.publisherName || msg.senderName,
-//         senderId: msg.fromUserId,
-//       }
-//     : null;
 
 const buildReplyTo = (msg) =>
   msg
@@ -64,8 +55,8 @@ const buildReplyTo = (msg) =>
         _id: msg._id?.toString(),
         msgId: msg.msgId?.toString() || msg._id?.toString(),
         message: msg.msgBody?.message,
-        senderName: msg.publisherName || msg.senderName || msg.fromUserId,
-        senderId: msg.fromUserId,
+        senderName: msg.publisherName || msg.senderId ,
+        senderId: msg.senderId,
       }
     : null;
 const buildTempMessage = ({
@@ -89,7 +80,7 @@ const buildTempMessage = ({
   createdAt: new Date().toISOString(),
   fromUserId: currentUser.id,
   publisherName: currentUser.name,
-  senderName: currentUser.name,
+  senderName: currentUser.senderId,
   senderId: currentUser.id,
   receiverId: "",
   replyTo: buildReplyTo(replyToMessage),
@@ -143,12 +134,15 @@ const parseCurrentUser = () => {
       data.registered_date ||
       data.createdAt ||
       data.created_at ||
+      data.role ||
       undefined;
+      
     return {
       _id: data?._id || "",
       id: data.username || data.userId || data.user_id || data.id || "",
-      name: data.name || data.userName || data.user_name || "",
+      name: data.name || data.userId || data.user_name || "",
       userregisteredDate: registeredDate,
+      role: data.role || "",
     };
   } catch {
     return { id: "", name: "", userregisteredDate: undefined };
@@ -249,7 +243,7 @@ const GroupChatApp = () => {
   const hasAutoSelectedRef = useRef(false);
   const selectedGroupRef = useRef(null);
   const emojiClickInsideRef = useRef(false);
-
+const isTypingRef = useRef(false);
   // Keep selectedGroupRef in sync with state
   useEffect(() => {
     selectedGroupRef.current = selectedGroup;
@@ -305,7 +299,7 @@ const GroupChatApp = () => {
         {
           id: Date.now(),
           chatId: data.chatId,
-          senderName: data.senderName,
+          senderName: data.senderId,
           message: data.message || "New message",
           timestamp: data.timestamp,
         },
@@ -440,20 +434,62 @@ const GroupChatApp = () => {
     prevMessageCountRef.current = currentCount;
   }, [messages]);
 
-  useEffect(() => {
-    if (!selectedGroup?.chatId || !socketRef.current?.connected) return;
-    messages
-      .filter(
-        (msg) => msg.senderId !== currentUser.id && msg.msgStatus !== "read",
-      )
-      .forEach((msg) => {
-        socketRef.current.emit("message_read", {
-          _id: msg._id,
-          chatId: msg.chatId,
-        });
-      });
-  }, [selectedGroup?.chatId, messages, currentUser.id]);
+// ✅ AFTER — batched, debounced, tracks what's already been sent
+const sentReadReceiptsRef = useRef(new Set());
+const readBatchTimeoutRef = useRef(null);
 
+useEffect(() => {
+  if (!selectedGroup?.chatId || !socketRef.current?.connected) return;
+
+  // Clear previous timeout
+  if (readBatchTimeoutRef.current) {
+    clearTimeout(readBatchTimeoutRef.current);
+  }
+
+  // Debounce: wait 500ms after last messages change
+  readBatchTimeoutRef.current = setTimeout(() => {
+    const unreadMsgIds = messages
+      .filter((msg) => {
+        const msgId = msg._id?.toString();
+        if (!msgId) return false;
+        if (msg.fromUserId?.toString() === currentUser.id?.toString())
+          return false;
+        if (msg.senderId === currentUser.id) return false;
+        if (msg.msgStatus === "read") return false;
+        if (sentReadReceiptsRef.current.has(msgId)) return false;
+        // Skip temp/pending messages
+        if (msgId.startsWith("temp_")) return false;
+        return true;
+      })
+      .map((msg) => msg._id.toString());
+
+    if (unreadMsgIds.length === 0) return;
+
+    // Mark all as sent immediately to prevent re-sending
+    unreadMsgIds.forEach((id) => sentReadReceiptsRef.current.add(id));
+
+    // Send ONE batched event instead of N individual ones
+    if (socketRef.current?.connected) {
+      socketRef.current.emit("messages:read_batch", {
+        chatId: selectedGroup.chatId,
+        userId: currentUser.id,
+        msgIds: unreadMsgIds,
+        readAt: Date.now(),
+      });
+    }
+  }, 500);
+
+  return () => {
+    if (readBatchTimeoutRef.current) {
+      clearTimeout(readBatchTimeoutRef.current);
+    }
+  };
+}, [selectedGroup?.chatId, messages, currentUser.id]);
+
+// Reset sent receipts when changing groups
+useEffect(() => {
+  sentReadReceiptsRef.current = new Set();
+}, [selectedGroup?.chatId]);
   useEffect(() => {
     setDisplayedUsers([]);
     setUserPage(1);
@@ -573,23 +609,62 @@ const GroupChatApp = () => {
     });
   }, [isLoadingNewer, hasMoreNewMessages, newestMessageTimestamp, messages]);
 
-  const handleTyping = useCallback(() => {
-    if (isInputDisabled || !socketRef.current || !selectedGroupRef.current)
-      return;
+  // const handleTyping = useCallback(() => {
+  //   if (isInputDisabled || !socketRef.current || !selectedGroupRef.current)
+  //     return;
+  //   socketRef.current.emit("user:typing", {
+  //     chatId: selectedGroupRef.current.chatId,
+  //     userId: currentUser.id,
+  //     userName: currentUser.fromUserId,
+  //   });
+  //   typingTimeoutRef.current && clearTimeout(typingTimeoutRef.current);
+  //   typingTimeoutRef.current = setTimeout(() => {
+  //     socketRef.current?.emit("user:stop-typing", {
+  //       chatId: selectedGroupRef.current?.chatId,
+  //       userId: currentUser.id,
+  //     });
+  //   }, TYPING_TIMEOUT_MS);
+  // }, [currentUser, isInputDisabled]);
+// ✅ Debounced typing — emits ONCE, not per keystroke
+
+
+
+const handleTyping = useCallback(() => {
+  if (!socketRef.current?.connected || !selectedGroupRef.current) return;
+
+  // Only emit "typing" if we haven't already
+  if (!isTypingRef.current) {
+    isTypingRef.current = true;
     socketRef.current.emit("user:typing", {
       chatId: selectedGroupRef.current.chatId,
       userId: currentUser.id,
       userName: currentUser.name,
     });
-    typingTimeoutRef.current && clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => {
-      socketRef.current?.emit("user:stop-typing", {
-        chatId: selectedGroupRef.current?.chatId,
-        userId: currentUser.id,
-      });
-    }, TYPING_TIMEOUT_MS);
-  }, [currentUser, isInputDisabled]);
+  }
 
+  // Reset the stop-typing timer on every keystroke
+  if (typingTimeoutRef.current) {
+    clearTimeout(typingTimeoutRef.current);
+  }
+
+  // After 2 seconds of no typing → emit stop
+  typingTimeoutRef.current = setTimeout(() => {
+    isTypingRef.current = false;
+    socketRef.current?.emit("user:stop-typing", {
+      chatId: selectedGroupRef.current?.chatId,
+      userId: currentUser.id,
+    });
+  }, 2000);
+}, [currentUser, socketRef, selectedGroupRef]);
+
+// Cleanup on unmount
+useEffect(() => {
+  return () => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+  };
+}, []);
   const sendMessage = useCallback(async () => {
     if (isInputDisabled) {
       const el = document.createElement("div");
@@ -1322,6 +1397,7 @@ const GroupChatApp = () => {
           formatTime={formatTime}
           formatDuration={formatDuration}
           formatFileSize={formatFileSize}
+          userRole={currentUser.role}
         />
       )}
     </div>
