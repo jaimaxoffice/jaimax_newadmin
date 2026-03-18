@@ -209,7 +209,7 @@ const GroupInfoPanel = ({
                   {filesPagination?.totalMessages || imageFiles.length} Image
                   {imageFiles.length !== 1 ? "s" : ""}
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2 Current max-h-[60vh] sidebar-scroll scrollbar-hide">
                   {imageFiles.map((url, index) => (
                     <div
                       key={`${url}-${index}`}
@@ -255,7 +255,7 @@ const GroupInfoPanel = ({
                   Document
                   {documentFiles.length !== 1 ? "s" : ""}
                 </h3>
-                <div className="space-y-1.5 sm:space-y-2">
+                <div className="space-y-1.5 sm:space-y-2 max-h-[60vh] sidebar-scroll scrollbar-hide">
                   {documentFiles.map((url, index) => (
                     <div
                       key={`${url}-${index}`}

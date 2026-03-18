@@ -244,6 +244,7 @@ const GroupChatApp = () => {
   const selectedGroupRef = useRef(null);
   const emojiClickInsideRef = useRef(false);
 const isTypingRef = useRef(false);
+const messagesRef = useRef(messages);
   // Keep selectedGroupRef in sync with state
   useEffect(() => {
     selectedGroupRef.current = selectedGroup;
@@ -433,6 +434,9 @@ const isTypingRef = useRef(false);
 
     prevMessageCountRef.current = currentCount;
   }, [messages]);
+  useEffect(() => {
+  messagesRef.current = messages;
+}, [messages]);
 
 // ✅ AFTER — batched, debounced, tracks what's already been sent
 const sentReadReceiptsRef = useRef(new Set());
@@ -448,20 +452,22 @@ useEffect(() => {
 
   // Debounce: wait 500ms after last messages change
   readBatchTimeoutRef.current = setTimeout(() => {
+    // console.log("Checking for unread messages to mark as read...");
+    // console.log("Current messages:", messages);
     const unreadMsgIds = messages
-      .filter((msg) => {
-        const msgId = msg._id?.toString();
-        if (!msgId) return false;
-        if (msg.fromUserId?.toString() === currentUser.id?.toString())
-          return false;
-        if (msg.senderId === currentUser.id) return false;
-        if (msg.msgStatus === "read") return false;
-        if (sentReadReceiptsRef.current.has(msgId)) return false;
-        // Skip temp/pending messages
-        if (msgId.startsWith("temp_")) return false;
-        return true;
-      })
-      .map((msg) => msg._id.toString());
+      // .filter((msg) => {
+      //   const msgId = msg._id?.toString();
+      //   if (!msgId) return false;
+      //   if (msg.fromUserId?.toString() === currentUser.id?.toString())
+      //     return false;
+      //   if (msg.senderId === currentUser.id) return false;
+      //   if (msg.msgStatus === "read") return false;
+      //   if (sentReadReceiptsRef.current.has(msgId)) return false;
+      //   // Skip temp/pending messages
+      //   if (msgId.startsWith("temp_")) return false;
+      //   return true;
+      // })
+      // .map((msg) => msg._id.toString());
 
     if (unreadMsgIds.length === 0) return;
 
@@ -477,7 +483,8 @@ useEffect(() => {
         readAt: Date.now(),
       });
     }
-  }, 500);
+  }, 0);
+  // console.log(messages,"hello")
 
   return () => {
     if (readBatchTimeoutRef.current) {
@@ -555,6 +562,7 @@ useEffect(() => {
     setLoadingFiles(true);
     socketRef.current.emit("get_group_images", {
       chatId: selectedGroupRef.current.chatId,
+      userId :  currentUser.id,
       limit: 6,
       page,
       type,
@@ -678,7 +686,7 @@ useEffect(() => {
     }
     if (!message.trim() || !selectedGroupRef.current || !currentUser.id) return;
 
-    const sanitized = decodeHtmlEntities(sanitizeMessage(message.trim()));
+    const sanitized = decodeHtmlEntities((message.trim()));
     if (!sanitized) return;
 
     const pendingId = makeId("temp");
@@ -1228,7 +1236,7 @@ useEffect(() => {
     setMessages([]);
     processedMessagesRef.current.clear();
   }, []);
-
+// console.log(currentUser,"main chat")
   // ── Render ────────────────────────────────────────────────────────────────
   const showLoader = !socketInitialized || !currentUser.id || isLoadingGroups;
   const showGroupList = !isMobile || !selectedGroup;

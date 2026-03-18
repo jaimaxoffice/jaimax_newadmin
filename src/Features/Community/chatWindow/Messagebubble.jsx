@@ -1280,7 +1280,7 @@ const MessageBubble = ({
     );
     if (isDeletedForMe) return null;
   }
-
+// console.log("Rendering message:", currentUser.role);
   const isCurrentUser =
     msg.fromUserId?.toString() === currentUser?.id?.toString();
 
@@ -1331,6 +1331,7 @@ const MessageBubble = ({
     if (name.length > 20) return name.slice(0, 18) + "…";
     return name;
   };
+
 
   // ─── existing helpers ─────────────────────────────────
   const isEncryptedObject = (value) => {
