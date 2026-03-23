@@ -52,12 +52,12 @@ const ALLOWED_DOC_TYPES = new Set([
 const buildReplyTo = (msg) =>
   msg
     ? {
-        _id: msg._id?.toString(),
-        msgId: msg.msgId?.toString() || msg._id?.toString(),
-        message: msg.msgBody?.message,
-        senderName: msg.publisherName || msg.senderId ,
-        senderId: msg.senderId,
-      }
+      _id: msg._id?.toString(),
+      msgId: msg.msgId?.toString() || msg._id?.toString(),
+      message: msg.msgBody?.message,
+      senderName: msg.publisherName || msg.senderId,
+      senderId: msg.senderId,
+    }
     : null;
 const buildTempMessage = ({
   pendingId,
@@ -136,7 +136,7 @@ const parseCurrentUser = () => {
       data.created_at ||
       data.role ||
       undefined;
-      
+
     return {
       _id: data?._id || "",
       id: data.username || data.userId || data.user_id || data.id || "",
@@ -243,8 +243,8 @@ const GroupChatApp = () => {
   const hasAutoSelectedRef = useRef(false);
   const selectedGroupRef = useRef(null);
   const emojiClickInsideRef = useRef(false);
-const isTypingRef = useRef(false);
-const messagesRef = useRef(messages);
+  const isTypingRef = useRef(false);
+  const messagesRef = useRef(messages);
   // Keep selectedGroupRef in sync with state
   useEffect(() => {
     selectedGroupRef.current = selectedGroup;
@@ -311,7 +311,7 @@ const messagesRef = useRef(messages);
       "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGS57OihUBELTKXh8bllHAU+ktbx0H8tBSh+zPLaizsKFGO56+mhUBAMTKXh8bllHAU+ktbx0H8tBSh+zPLaizsKFGO56+mhUBAMTKXh8bllHAU+ktbx0H8tBSh+",
     );
     audio.volume = 0.3;
-    audio.play().catch(() => {});
+    audio.play().catch(() => { });
   }, []);
 
   const handleGroupSelect = useCallback((group) => {
@@ -435,26 +435,26 @@ const messagesRef = useRef(messages);
     prevMessageCountRef.current = currentCount;
   }, [messages]);
   useEffect(() => {
-  messagesRef.current = messages;
-}, [messages]);
+    messagesRef.current = messages;
+  }, [messages]);
 
-// ✅ AFTER — batched, debounced, tracks what's already been sent
-const sentReadReceiptsRef = useRef(new Set());
-const readBatchTimeoutRef = useRef(null);
+  // ✅ AFTER — batched, debounced, tracks what's already been sent
+  const sentReadReceiptsRef = useRef(new Set());
+  const readBatchTimeoutRef = useRef(null);
 
-useEffect(() => {
-  if (!selectedGroup?.chatId || !socketRef.current?.connected) return;
+  useEffect(() => {
+    if (!selectedGroup?.chatId || !socketRef.current?.connected) return;
 
-  // Clear previous timeout
-  if (readBatchTimeoutRef.current) {
-    clearTimeout(readBatchTimeoutRef.current);
-  }
+    // Clear previous timeout
+    if (readBatchTimeoutRef.current) {
+      clearTimeout(readBatchTimeoutRef.current);
+    }
 
-  // Debounce: wait 500ms after last messages change
-  readBatchTimeoutRef.current = setTimeout(() => {
-    // console.log("Checking for unread messages to mark as read...");
-    // console.log("Current messages:", messages);
-    const unreadMsgIds = messages
+    // Debounce: wait 500ms after last messages change
+    readBatchTimeoutRef.current = setTimeout(() => {
+      // console.log("Checking for unread messages to mark as read...");
+      // console.log("Current messages:", messages);
+      const unreadMsgIds = messages
       // .filter((msg) => {
       //   const msgId = msg._id?.toString();
       //   if (!msgId) return false;
@@ -469,34 +469,34 @@ useEffect(() => {
       // })
       // .map((msg) => msg._id.toString());
 
-    if (unreadMsgIds.length === 0) return;
+      if (unreadMsgIds.length === 0) return;
 
-    // Mark all as sent immediately to prevent re-sending
-    unreadMsgIds.forEach((id) => sentReadReceiptsRef.current.add(id));
+      // Mark all as sent immediately to prevent re-sending
+      unreadMsgIds.forEach((id) => sentReadReceiptsRef.current.add(id));
 
-    // Send ONE batched event instead of N individual ones
-    if (socketRef.current?.connected) {
-      socketRef.current.emit("messages:read_batch", {
-        chatId: selectedGroup.chatId,
-        userId: currentUser.id,
-        msgIds: unreadMsgIds,
-        readAt: Date.now(),
-      });
-    }
-  }, 0);
-  // console.log(messages,"hello")
+      // Send ONE batched event instead of N individual ones
+      if (socketRef.current?.connected) {
+        socketRef.current.emit("messages:read_batch", {
+          chatId: selectedGroup.chatId,
+          userId: currentUser.id,
+          msgIds: unreadMsgIds,
+          readAt: Date.now(),
+        });
+      }
+    }, 0);
+    // console.log(messages,"hello")
 
-  return () => {
-    if (readBatchTimeoutRef.current) {
-      clearTimeout(readBatchTimeoutRef.current);
-    }
-  };
-}, [selectedGroup?.chatId, messages, currentUser.id]);
+    return () => {
+      if (readBatchTimeoutRef.current) {
+        clearTimeout(readBatchTimeoutRef.current);
+      }
+    };
+  }, [selectedGroup?.chatId, messages, currentUser.id]);
 
-// Reset sent receipts when changing groups
-useEffect(() => {
-  sentReadReceiptsRef.current = new Set();
-}, [selectedGroup?.chatId]);
+  // Reset sent receipts when changing groups
+  useEffect(() => {
+    sentReadReceiptsRef.current = new Set();
+  }, [selectedGroup?.chatId]);
   useEffect(() => {
     setDisplayedUsers([]);
     setUserPage(1);
@@ -562,7 +562,7 @@ useEffect(() => {
     setLoadingFiles(true);
     socketRef.current.emit("get_group_images", {
       chatId: selectedGroupRef.current.chatId,
-      userId :  currentUser.id,
+      userId: currentUser.id,
       limit: 6,
       page,
       type,
@@ -633,46 +633,46 @@ useEffect(() => {
   //     });
   //   }, TYPING_TIMEOUT_MS);
   // }, [currentUser, isInputDisabled]);
-// ✅ Debounced typing — emits ONCE, not per keystroke
+  // ✅ Debounced typing — emits ONCE, not per keystroke
 
 
 
-const handleTyping = useCallback(() => {
-  if (!socketRef.current?.connected || !selectedGroupRef.current) return;
+  const handleTyping = useCallback(() => {
+    if (!socketRef.current?.connected || !selectedGroupRef.current) return;
 
-  // Only emit "typing" if we haven't already
-  if (!isTypingRef.current) {
-    isTypingRef.current = true;
-    socketRef.current.emit("user:typing", {
-      chatId: selectedGroupRef.current.chatId,
-      userId: currentUser.id,
-      userName: currentUser.name,
-    });
-  }
+    // Only emit "typing" if we haven't already
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+      socketRef.current.emit("user:typing", {
+        chatId: selectedGroupRef.current.chatId,
+        userId: currentUser.id,
+        userName: currentUser.name,
+      });
+    }
 
-  // Reset the stop-typing timer on every keystroke
-  if (typingTimeoutRef.current) {
-    clearTimeout(typingTimeoutRef.current);
-  }
-
-  // After 2 seconds of no typing → emit stop
-  typingTimeoutRef.current = setTimeout(() => {
-    isTypingRef.current = false;
-    socketRef.current?.emit("user:stop-typing", {
-      chatId: selectedGroupRef.current?.chatId,
-      userId: currentUser.id,
-    });
-  }, 2000);
-}, [currentUser, socketRef, selectedGroupRef]);
-
-// Cleanup on unmount
-useEffect(() => {
-  return () => {
+    // Reset the stop-typing timer on every keystroke
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-  };
-}, []);
+
+    // After 2 seconds of no typing → emit stop
+    typingTimeoutRef.current = setTimeout(() => {
+      isTypingRef.current = false;
+      socketRef.current?.emit("user:stop-typing", {
+        chatId: selectedGroupRef.current?.chatId,
+        userId: currentUser.id,
+      });
+    }, 2000);
+  }, [currentUser, socketRef, selectedGroupRef]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
   const sendMessage = useCallback(async () => {
     if (isInputDisabled) {
       const el = document.createElement("div");
@@ -720,11 +720,11 @@ useEffect(() => {
         prev.map((m) =>
           m._id === pendingId
             ? {
-                ...m,
-                status: "failed",
-                msgStatus: "failed",
-                error: "Connection lost — tap to retry",
-              }
+              ...m,
+              status: "failed",
+              msgStatus: "failed",
+              error: "Connection lost — tap to retry",
+            }
             : m,
         ),
       );
@@ -799,15 +799,15 @@ useEffect(() => {
           prev.map((m) =>
             m._id === pendingId
               ? {
-                  ...m,
-                  status: "failed",
-                  msgStatus: "failed",
-                  msgBody: {
-                    ...m.msgBody,
-                    media: { ...m.msgBody.media, is_uploading: false },
-                  },
-                  error: err.message,
-                }
+                ...m,
+                status: "failed",
+                msgStatus: "failed",
+                msgBody: {
+                  ...m.msgBody,
+                  media: { ...m.msgBody.media, is_uploading: false },
+                },
+                error: err.message,
+              }
               : m,
           ),
         );
@@ -874,15 +874,15 @@ useEffect(() => {
         prev.map((m) =>
           m._id === pendingId
             ? {
-                ...m,
-                status: "failed",
-                msgStatus: "failed",
-                msgBody: {
-                  ...m.msgBody,
-                  media: { ...m.msgBody.media, is_uploading: false },
-                },
-                error: err.message,
-              }
+              ...m,
+              status: "failed",
+              msgStatus: "failed",
+              msgBody: {
+                ...m.msgBody,
+                media: { ...m.msgBody.media, is_uploading: false },
+              },
+              error: err.message,
+            }
             : m,
         ),
       );
@@ -944,15 +944,15 @@ useEffect(() => {
         prev.map((m) =>
           m._id === pendingId
             ? {
-                ...m,
-                status: "failed",
-                msgStatus: "failed",
-                msgBody: {
-                  ...m.msgBody,
-                  media: { ...m.msgBody.media, is_uploading: false },
-                },
-                error: err.message,
-              }
+              ...m,
+              status: "failed",
+              msgStatus: "failed",
+              msgBody: {
+                ...m.msgBody,
+                media: { ...m.msgBody.media, is_uploading: false },
+              },
+              error: err.message,
+            }
             : m,
         ),
       );
@@ -1013,11 +1013,11 @@ useEffect(() => {
           prev.map((m) =>
             m._id === pendingId
               ? {
-                  ...m,
-                  status: "failed",
-                  msgStatus: "failed",
-                  error: "Not connected to server",
-                }
+                ...m,
+                status: "failed",
+                msgStatus: "failed",
+                error: "Not connected to server",
+              }
               : m,
           ),
         );
@@ -1070,13 +1070,13 @@ useEffect(() => {
           const id = msg._id?.toString() || msg.id;
           return id === msgId
             ? {
-                ...msg,
-                deletedForEveryone: true,
-                msgBody: {
-                  ...msg.msgBody,
-                  message: "This message was deleted",
-                },
-              }
+              ...msg,
+              deletedForEveryone: true,
+              msgBody: {
+                ...msg.msgBody,
+                message: "This message was deleted",
+              },
+            }
             : msg;
         }),
       );
@@ -1094,10 +1094,10 @@ useEffect(() => {
             const id = msg._id?.toString() || msg.id;
             return id === msgId
               ? {
-                  ...msg,
-                  deletedForEveryone: false,
-                  msgBody: { ...msg.msgBody, message: target.msgBody?.message },
-                }
+                ...msg,
+                deletedForEveryone: false,
+                msgBody: { ...msg.msgBody, message: target.msgBody?.message },
+              }
               : msg;
           }),
         );
@@ -1236,7 +1236,7 @@ useEffect(() => {
     setMessages([]);
     processedMessagesRef.current.clear();
   }, []);
-// console.log(currentUser,"main chat")
+  // console.log(currentUser,"main chat")
   // ── Render ────────────────────────────────────────────────────────────────
   const showLoader = !socketInitialized || !currentUser.id || isLoadingGroups;
   const showGroupList = !isMobile || !selectedGroup;
@@ -1268,37 +1268,37 @@ useEffect(() => {
           sidebarStyle={
             isMobile
               ? {
-                  width: "100%",
-                  height: "100%",
-                  display: showGroupList ? "flex" : "none",
-                  flexDirection: "column",
-                  flexShrink: 0,
-                }
+                width: "100%",
+                height: "100%",
+                display: showGroupList ? "flex" : "none",
+                flexDirection: "column",
+                flexShrink: 0,
+              }
               : {
-                  width: "38%",
-                  minWidth: 280,
-                  flexShrink: 0,
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  borderRight: "1px solid #1a1a1a",
-                }
+                width: "38%",
+                minWidth: 280,
+                flexShrink: 0,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderRight: "1px solid #1a1a1a",
+              }
           }
           chatPaneStyle={
             isMobile
               ? {
-                  width: "100%",
-                  height: "100%",
-                  display: showChatPane ? "flex" : "none",
-                  flexDirection: "column",
-                }
+                width: "100%",
+                height: "100%",
+                display: showChatPane ? "flex" : "none",
+                flexDirection: "column",
+              }
               : {
-                  flex: 1,
-                  minWidth: 0,
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }
+                flex: 1,
+                minWidth: 0,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }
           }
           selectedGroup={selectedGroup}
           onBackToGroups={handleBackToGroups}

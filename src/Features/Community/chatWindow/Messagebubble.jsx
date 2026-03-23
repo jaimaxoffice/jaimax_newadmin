@@ -876,7 +876,7 @@
 //             </p>
 //           )}
 
-         
+
 
 //           {/* Reply preview */}
 //           {msg.replyTo && !msg.deletedForEveryone && (
@@ -1252,6 +1252,7 @@ import MessageText, { safeReplyText } from "./MessageText";
 const MessageBubble = ({
   msg,
   currentUser,
+  onImageLoad,
   members,
   groupKey,
   effectiveOpenMenuId,
@@ -1280,7 +1281,7 @@ const MessageBubble = ({
     );
     if (isDeletedForMe) return null;
   }
-// console.log("Rendering message:", currentUser.role);
+  // console.log("Rendering message:", currentUser.role);
   const isCurrentUser =
     msg.fromUserId?.toString() === currentUser?.id?.toString();
 
@@ -1429,9 +1430,8 @@ const MessageBubble = ({
       replyTo.message_type === "file" ||
       replyTo.msgBody?.message_type === "file"
     ) {
-      return `📎 ${
-        replyTo.msgBody?.media?.fileName || replyTo.message || "Media"
-      }`;
+      return `📎 ${replyTo.msgBody?.media?.fileName || replyTo.message || "Media"
+        }`;
     }
     const replyContent = replyTo.message || replyTo.msgBody?.message;
     if (typeof replyContent === "object" && isEncryptedObject(replyContent)) {
@@ -1452,7 +1452,7 @@ const MessageBubble = ({
       const safe = safeReplyText(replyContent, groupKey);
       if (typeof safe === "string" && safe.length > 0)
         return safe.slice(0, 90);
-    } catch {}
+    } catch { }
     return "Message";
   };
 
@@ -1466,9 +1466,8 @@ const MessageBubble = ({
       id={`msg-${id}`}
       data-msg-id={id}
       data-from-user-id={msg.fromUserId}
-      className={`mb-2 flex group ${
-        isCurrentUser ? "justify-end" : "justify-start"
-      }`}
+      className={`mb-2 flex group ${isCurrentUser ? "justify-end" : "justify-start"
+        }`}
     >
       <div className="relative max-w-[72%] sm:max-w-[60%] min-w-0">
 
@@ -1477,9 +1476,8 @@ const MessageBubble = ({
         {/* ═══════════════════════════════════════════════ */}
         {isPinned && !msg.deletedForEveryone && (
           <div
-            className={`flex items-center gap-1.5 px-2.5 py-1 mb-0.5 rounded-t-lg ${
-              isCurrentUser ? "justify-end" : "justify-start"
-            }`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 mb-0.5 rounded-t-lg ${isCurrentUser ? "justify-end" : "justify-start"
+              }`}
           >
             <Pin className="w-3 h-3 text-amber-400/80 rotate-45 flex-shrink-0" />
             <span className="text-[11px] text-amber-400/80 font-medium truncate">
@@ -1515,16 +1513,15 @@ const MessageBubble = ({
             ${isCurrentUser ? "rounded-tr-sm" : "rounded-tl-sm"}
             ${isPinned && !msg.deletedForEveryone ? "rounded-t-lg" : ""}
             p-2 sm:p-3 shadow-md
-            ${
-              msg.deletedForEveryone
-                ? "bg-[#1d2b33] italic"
-                : isPending
-                  ? isCurrentUser
-                    ? "bg-[#005c4b]/70 text-white"
-                    : "bg-[#202c33]/70 text-gray-300"
-                  : isCurrentUser
-                    ? "bg-[#005c4b] text-white"
-                    : "bg-[#202c33] text-gray-200"
+            ${msg.deletedForEveryone
+              ? "bg-[#1d2b33] italic"
+              : isPending
+                ? isCurrentUser
+                  ? "bg-[#005c4b]/70 text-white"
+                  : "bg-[#202c33]/70 text-gray-300"
+                : isCurrentUser
+                  ? "bg-[#005c4b] text-white"
+                  : "bg-[#202c33] text-gray-200"
             }
             ${isPinned && !msg.deletedForEveryone
               ? "ring-1 ring-amber-500/25 shadow-amber-500/5"
@@ -1584,11 +1581,10 @@ const MessageBubble = ({
           {/* Reply preview */}
           {msg.replyTo && !msg.deletedForEveryone && (
             <div
-              className={`mb-2 p-2 rounded-lg border-l-4 cursor-pointer transition-colors ${
-                isCurrentUser
-                  ? "bg-[#004a3e] border-[#06cf9c] hover:bg-[#005a4e]"
-                  : "bg-[#1a2730] border-[#00a884] hover:bg-[#1f2d38]"
-              }`}
+              className={`mb-2 p-2 rounded-lg border-l-4 cursor-pointer transition-colors ${isCurrentUser
+                ? "bg-[#004a3e] border-[#06cf9c] hover:bg-[#005a4e]"
+                : "bg-[#1a2730] border-[#00a884] hover:bg-[#1f2d38]"
+                }`}
               onClick={() =>
                 scrollToMessage(
                   msg.replyTo.msgId ||
@@ -1639,11 +1635,11 @@ const MessageBubble = ({
                       <img
                         src={getFileUrl(msg)}
                         alt={getFileName(msg)}
-                        className={`rounded-lg w-full h-auto transition-all ${
-                          msg.msgBody?.media?.is_uploading
-                            ? "opacity-60 cursor-wait"
-                            : "cursor-pointer hover:opacity-90"
-                        }`}
+                       onLoad={onImageLoad} 
+                        className={`rounded-lg w-full h-auto transition-all ${msg.msgBody?.media?.is_uploading
+                          ? "opacity-60 cursor-wait"
+                          : "cursor-pointer hover:opacity-90"
+                          }`}
                         style={{
                           maxHeight:
                             getFileType(msg) === "image/gif"
@@ -1681,10 +1677,9 @@ const MessageBubble = ({
                   <div
                     className={`group/file relative flex items-center gap-3 p-3 rounded-xl 
                       bg-gradient-to-br from-[#1a2332] to-[#0f1419] border border-white/5 
-                      transition-all ${
-                        msg.msgBody?.media?.is_uploading
-                          ? "opacity-60"
-                          : "hover:scale-[1.01] cursor-pointer hover:border-white/10"
+                      transition-all ${msg.msgBody?.media?.is_uploading
+                        ? "opacity-60"
+                        : "hover:scale-[1.01] cursor-pointer hover:border-white/10"
                       }`}
                     onClick={() => {
                       if (
@@ -1762,13 +1757,11 @@ const MessageBubble = ({
               {isPinned && (
                 <Pin
                   className="w-2.5 h-2.5 text-amber-400/50 rotate-45"
-                  title={`Pinned${
-                    getPinnerName() ? ` by ${getPinnerName()}` : ""
-                  }${
-                    msg.pinnedAt
+                  title={`Pinned${getPinnerName() ? ` by ${getPinnerName()}` : ""
+                    }${msg.pinnedAt
                       ? ` · ${formatPinTime(msg.pinnedAt)}`
                       : ""
-                  }`}
+                    }`}
                 />
               )}
               {(isEdited || msg.isEdited) && (
@@ -1777,19 +1770,17 @@ const MessageBubble = ({
                 </span>
               )}
               <span
-                className={`text-[10px] ${
-                  isCurrentUser ? "text-white/60" : "text-gray-500"
-                }`}
+                className={`text-[10px] ${isCurrentUser ? "text-white/60" : "text-gray-500"
+                  }`}
               >
                 {formatTime(msg.timestamp)}
               </span>
               {isCurrentUser && <ReadStatusTicks status={readStatus} />}
               <button
-                className={`ml-0.5 p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
-                  isCurrentUser
-                    ? "hover:bg-white/10 text-white/60"
-                    : "hover:bg-white/10 text-gray-400"
-                }`}
+                className={`ml-0.5 p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${isCurrentUser
+                  ? "hover:bg-white/10 text-white/60"
+                  : "hover:bg-white/10 text-gray-400"
+                  }`}
                 onClick={(e) => toggleMenu(id, e, isCurrentUser)}
               >
                 <ChevronDown className="w-4 h-4" />
@@ -1801,9 +1792,8 @@ const MessageBubble = ({
         {/* Reactions */}
         {currentReactions.length > 0 && !msg.deletedForEveryone && (
           <div
-            className={`flex flex-wrap gap-1 mt-1 ${
-              isCurrentUser ? "justify-end" : "justify-start"
-            }`}
+            className={`flex flex-wrap gap-1 mt-1 ${isCurrentUser ? "justify-end" : "justify-start"
+              }`}
           >
             {Object.entries(
               currentReactions.reduce((acc, r) => {
@@ -1824,11 +1814,10 @@ const MessageBubble = ({
                       ? onRemoveReaction?.(id)
                       : onReact?.(id, emoji)
                   }
-                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${
-                    myReaction
-                      ? "bg-[#005c4b] border border-[#00a884]"
-                      : "bg-[#202c33] border border-[#2a3942] hover:bg-[#2a3942]"
-                  }`}
+                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${myReaction
+                    ? "bg-[#005c4b] border border-[#00a884]"
+                    : "bg-[#202c33] border border-[#2a3942] hover:bg-[#2a3942]"
+                    }`}
                 >
                   <span>{emoji}</span>
                   <span className="text-[10px] text-gray-400">{count}</span>
@@ -1841,9 +1830,8 @@ const MessageBubble = ({
         {/* Hover actions */}
         {!msg.deletedForEveryone && (
           <div
-            className={`absolute top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ${
-              isCurrentUser ? "-left-14" : "-right-14"
-            }`}
+            className={`absolute top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ${isCurrentUser ? "-left-14" : "-right-14"
+              }`}
           >
             <button
               onClick={(e) => onReact?.(id, e)}

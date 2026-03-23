@@ -910,10 +910,13 @@ const ChatWindow = ({
     const isMyMessage =
       lastMessage?.fromUserId?.toString() === currentUser?.id?.toString();
     if (isMyMessage || isAtBottomRef.current) {
-      requestAnimationFrame(() =>
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-      );
-      setNewMessagesCount(0);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 100); // 100ms lets the image render and expand
+        });
+      });
     } else {
       setNewMessagesCount((prev) => prev + 1);
     }
@@ -1603,6 +1606,11 @@ const ChatWindow = ({
                                   renderMessageWithLinks={
                                     renderMessageWithLinks
                                   }
+                                  onImageLoad={() => {
+                                    if (isAtBottomRef.current) {
+                                      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                                    }
+                                  }}
                                   getMessageReadStatus={getMessageReadStatus}
                                   isEdited={msg.isEdited || false}
                                   isForwarded={msg.isForwarded || false}
