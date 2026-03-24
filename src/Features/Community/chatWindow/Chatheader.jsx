@@ -1,5 +1,7 @@
+
+
 import React, { useState, useEffect } from "react";
-import { FolderOpen, Trash2 } from "lucide-react";
+import { FolderOpen, Trash2, ShieldBan, ArrowLeft } from "lucide-react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
 const ChatHeader = ({
@@ -11,6 +13,12 @@ const ChatHeader = ({
   setActiveGroupTab,
   setShowClearChatModal,
   headerRef,
+  isEffectiveAdmin,
+  blockedUsers = [],
+  onShowBlockedUsers,
+  onBackToGroups,
+  isMobile,
+  onShowStarred,
 }) => {
   const [showHeaderMenu, setShowHeaderMenu] = useState(false);
 
@@ -35,9 +43,19 @@ const ChatHeader = ({
   return (
     <div
       ref={headerRef}
-      className="sticky top-0 z-30 bg-[#b9fd5c] p-2 sm:p-4 flex items-center justify-between border-b border-[#2a3942] flex-shrink-0 w-full"
+      className="sticky top-0 z-30 bg-[#b9fd5c] p-2 sm:p-4 flex items-center justify-between border-b border-[#2a3942] flex-shrink-0 w-full z-50"
     >
       <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+        {/* Back button on mobile */}
+        {isMobile && onBackToGroups && (
+          <button
+            onClick={onBackToGroups}
+            className="p-1.5 rounded-lg transition-colors flex-shrink-0"
+          >
+            <ArrowLeft className="w-5 h-5 text-black" />
+          </button>
+        )}
+
         <div
           onClick={() => {
             setShowMembers(true);
@@ -95,16 +113,33 @@ const ChatHeader = ({
         >
           <BsThreeDotsVertical className="w-6 h-6 text-black" />
         </button>
+
         {showHeaderMenu && (
-          <div className="absolute right-0 top-full mt-2 w-48 bg-[#000000] rounded-lg shadow-xl border border-[#2a3942] overflow-hidden z-50">
-            {/* <button
-                            onClick={() => { setShowFilesPanel(true); setShowMembers(false); setActiveGroupTab('overview'); setShowHeaderMenu(false); }}
-                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#0b141a] text-left transition-colors"
-                        >
-                            <FolderOpen className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm">Shared Files</span>
-                        </button> */}
-            <div className="border-t border-[#2a3942]">
+          <div className="absolute right-0 top-full mt-2 w-52 bg-[#000000] rounded-lg shadow-xl border border-[#2a3942] overflow-hidden z-50">
+
+            {/* Blocked Users — admin only */}
+            {/* {isEffectiveAdmin && (
+              <button
+                onClick={() => {
+                  onShowBlockedUsers?.();
+                  setShowHeaderMenu(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#0b141a] text-left transition-colors"
+              >
+                <ShieldBan className="w-4 h-4 text-red-400 flex-shrink-0" />
+                <span className="text-sm text-white flex items-center gap-2">
+                  Blocked Users
+                  {blockedUsers.length > 0 && (
+                    <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                      {blockedUsers.length}
+                    </span>
+                  )}
+                </span>
+              </button>
+            )} */}
+
+            {/* Clear Chat */}
+            <div className={isEffectiveAdmin ? "border-t border-[#2a3942]" : ""}>
               <button
                 onClick={() => {
                   setShowClearChatModal(true);
@@ -112,8 +147,8 @@ const ChatHeader = ({
                 }}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-600/10 text-left transition-colors"
               >
-                <Trash2 className="w-4 h-4" />
-                <span className="text-sm">Clear Chat</span>
+                <Trash2 className="w-4 h-4 text-red-400" />
+                <span className="text-sm text-white">Clear Chat</span>
               </button>
             </div>
           </div>

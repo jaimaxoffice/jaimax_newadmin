@@ -1,3 +1,5 @@
+
+
 import {
   decryptMessages,
   filterDeleted,
@@ -63,13 +65,16 @@ export const registerSocketHandlers = (socket, handlers) => {
     showNotification,
     handleGroupSelect,
     hasAutoSelectedRef,
-    setPinnedMessages,   
-    setEditingMessage,   
-    setLastSeenInfo,    
+    setPinnedMessages,
+    setEditingMessage,
+    setLastSeenInfo,
+    setBlockedUsers,
+    setIsBlocked,    // ← ADD
+    setIsAdmin,
   } = handlers;
 
   const safeSetter = (setter) => {
-    return typeof setter === "function" ? setter : () => {};
+    return typeof setter === "function" ? setter : () => { };
   };
 
   socket.on("connect", () => {
@@ -87,11 +92,11 @@ export const registerSocketHandlers = (socket, handlers) => {
         prev.map((m) =>
           m.msgStatus === "pending"
             ? {
-                ...m,
-                status: "failed",
-                msgStatus: "failed",
-                error: "Reconnected — please retry",
-              }
+              ...m,
+              status: "failed",
+              msgStatus: "failed",
+              error: "Reconnected — please retry",
+            }
             : m
         )
       );
@@ -129,8 +134,21 @@ export const registerSocketHandlers = (socket, handlers) => {
     );
   });
 
-  socket.on("join_chat_success", ({ chatId, communityCount }) => {
+  // REPLACE the single join_chat_success handler with:
+  socket.on("join_chat_success", ({ chatId, communityCount, isAdmin, isBlocked, blockedUsers }) => {
     setTotalUsers(communityCount ?? 0);
+    if (setBlockedUsers) setBlockedUsers(blockedUsers || []);
+    if (setIsBlocked) setIsBlocked(isBlocked ?? false);
+    if (setIsAdmin) setIsAdmin(isAdmin ?? false);
+    console.log(blockedUsers, "blockedUsers");
+  });
+
+  socket.on("you_are_blocked", ({ chatId }) => {
+    if (setIsBlocked) setIsBlocked(true);
+  });
+
+  socket.on("you_are_unblocked", ({ chatId }) => {
+    if (setIsBlocked) setIsBlocked(false);
   });
 
   socket.on("join_chat_error", ({ error, chatId }) => {
@@ -487,22 +505,49 @@ export const registerSocketHandlers = (socket, handlers) => {
       prev.map((msg) =>
         msg.correlationId === correlationId
           ? {
-              ...msg,
-              status: "failed",
-              msgStatus: "failed",
-              msgBody: {
-                ...msg.msgBody,
-                media: {
-                  ...msg.msgBody?.media,
-                  is_uploading: false,
-                },
+            ...msg,
+            status: "failed",
+            msgStatus: "failed",
+            msgBody: {
+              ...msg.msgBody,
+              media: {
+                ...msg.msgBody?.media,
+                is_uploading: false,
               },
-              error,
-            }
+            },
+            error,
+          }
           : msg
       )
     );
     setUploadProgress(0);
+  });
+
+  socket.on("user_blocked", ({ chatId, userId: blockedUserId, userName, blockedBy, reason }) => {
+    if (setBlockedUsers) {                          // ← was handlers.setBlockedUsers
+      setBlockedUsers((prev) => {
+        if (prev.some(u => u.userId === blockedUserId)) return prev;
+        return [...prev, { userId: blockedUserId, userName, blockedBy, reason, blockedAt: new Date() }];
+      });
+    }
+  });
+
+  socket.on("user_unblocked", ({ chatId, userId: unblockedUserId }) => {
+    if (setBlockedUsers) {                          // ← was handlers.setBlockedUsers
+      setBlockedUsers((prev) => prev.filter(u => u.userId !== unblockedUserId));
+    }
+  });
+
+  socket.on("you_are_blocked", ({ chatId }) => {
+    if (handlers.setIsBlocked) handlers.setIsBlocked(true);  // setIsBlocked not destructured, keep as is
+  });
+
+  socket.on("you_are_unblocked", ({ chatId }) => {
+    if (handlers.setIsBlocked) handlers.setIsBlocked(false); // same
+  });
+
+  socket.on("blocked_users_list", ({ chatId, blockedUsers }) => {
+    if (setBlockedUsers) setBlockedUsers(blockedUsers || []);  // ← was handlers.setBlockedUsers
   });
 
   const applyDeletedForEveryone = (msgId) =>
@@ -511,13 +556,13 @@ export const registerSocketHandlers = (socket, handlers) => {
         const id = msg._id?.toString() || msg.id;
         return id === msgId
           ? {
-              ...msg,
-              deletedForEveryone: true,
-              msgBody: {
-                ...msg.msgBody,
-                message: "This message was deleted",
-              },
-            }
+            ...msg,
+            deletedForEveryone: true,
+            msgBody: {
+              ...msg.msgBody,
+              message: "This message was deleted",
+            },
+          }
           : msg;
       })
     );
@@ -555,37 +600,37 @@ export const registerSocketHandlers = (socket, handlers) => {
     console.error("Delete error:", error);
   });
 
-const handleChatCleared = ({ chatId, userId: clearedByUserId }) => {
-  const clearedBy = clearedByUserId || currentUser.id;
+  const handleChatCleared = ({ chatId, userId: clearedByUserId }) => {
+    const clearedBy = clearedByUserId || currentUser.id;
 
-  // Only clear UI for the user who requested it
-  if (clearedBy !== currentUser.id) return;
+    // Only clear UI for the user who requested it
+    if (clearedBy !== currentUser.id) return;
 
-  if (selectedGroupRef.current?.chatId === chatId) {
-    setMessages([]);
-    setHasMoreOldMessages(false);
-    setHasMoreNewMessages(false);
-    setOldestMessageTimestamp(null);
-    setNewestMessageTimestamp(null);
+    if (selectedGroupRef.current?.chatId === chatId) {
+      setMessages([]);
+      setHasMoreOldMessages(false);
+      setHasMoreNewMessages(false);
+      setOldestMessageTimestamp(null);
+      setNewestMessageTimestamp(null);
 
-    // ── Clear pinned messages immediately ──
-    safeSetter(setPinnedMessages)([]);
+      // ── Clear pinned messages immediately ──
+      safeSetter(setPinnedMessages)([]);
 
-    // ── Re-fetch: server will exclude messages in deletedFor ──
-    socket.emit("get_pinned_messages", {
-      chatId,
-      userId: currentUser.id,
-    });
-  }
+      // ── Re-fetch: server will exclude messages in deletedFor ──
+      socket.emit("get_pinned_messages", {
+        chatId,
+        userId: currentUser.id,
+      });
+    }
 
-  setGroups((prev) =>
-    prev.map((g) =>
-      g.chatId === chatId
-        ? { ...g, lastMessage: "", time: "", unread: 0 }
-        : g
-    )
-  );
-};
+    setGroups((prev) =>
+      prev.map((g) =>
+        g.chatId === chatId
+          ? { ...g, lastMessage: "", time: "", unread: 0 }
+          : g
+      )
+    );
+  };
   socket.on("chat_cleared", handleChatCleared);
 
   socket.on("clear_chat_success", handleChatCleared);
@@ -639,86 +684,86 @@ const handleChatCleared = ({ chatId, userId: clearedByUserId }) => {
     console.error("Reaction error:", error);
   });
 
-socket.on("pinned_messages", ({ chatId, messages: pinnedMsgs }) => {
-  // Filter out messages that are deleted for the current user
-  const filteredPinned = (pinnedMsgs || []).filter((m) => {
-    const deletedFor = m.deletedFor || [];
-    return !deletedFor.includes(currentUser.id);
+  socket.on("pinned_messages", ({ chatId, messages: pinnedMsgs }) => {
+    // Filter out messages that are deleted for the current user
+    const filteredPinned = (pinnedMsgs || []).filter((m) => {
+      const deletedFor = m.deletedFor || [];
+      return !deletedFor.includes(currentUser.id);
+    });
+
+    safeSetter(setPinnedMessages)(filteredPinned);
+
+    // Also mark messages in the main list as pinned
+    if (filteredPinned.length > 0) {
+      const pinnedIds = new Set(
+        filteredPinned.map((m) => m._id?.toString())
+      );
+      setMessages((prev) =>
+        prev.map((msg) => ({
+          ...msg,
+          isPinned: pinnedIds.has(msg._id?.toString()),
+        }))
+      );
+    }
   });
 
-  safeSetter(setPinnedMessages)(filteredPinned);
 
-  // Also mark messages in the main list as pinned
-  if (filteredPinned.length > 0) {
-    const pinnedIds = new Set(
-      filteredPinned.map((m) => m._id?.toString())
-    );
-    setMessages((prev) =>
-      prev.map((msg) => ({
-        ...msg,
-        isPinned: pinnedIds.has(msg._id?.toString()),
-      }))
-    );
-  }
-});
+  socket.on(
+    "message_pinned",
+    ({ msgId, chatId, pinnedBy, pinnedByName, message }) => {
+      // Skip if this message was cleared by the current user
+      const deletedFor = message?.deletedFor || [];
+      if (deletedFor.includes(currentUser.id)) return;
 
+      // Update the message in the list
+      setMessages((prev) =>
+        prev.map((msg) => {
+          const id = msg._id?.toString();
+          if (id !== msgId) return msg;
+          return {
+            ...msg,
+            isPinned: true,
+            pinnedBy,
+            pinnedByName,
+            pinnedAt: new Date(),
+          };
+        })
+      );
 
-socket.on(
-  "message_pinned",
-  ({ msgId, chatId, pinnedBy, pinnedByName, message }) => {
-    // Skip if this message was cleared by the current user
-    const deletedFor = message?.deletedFor || [];
-    if (deletedFor.includes(currentUser.id)) return;
+      // Update pinned messages list
+      safeSetter(setPinnedMessages)((prev) => {
+        if (!Array.isArray(prev)) return [message];
+        if (prev.some((m) => m._id?.toString() === msgId)) return prev;
+        return [message, ...prev].slice(0, 3);
+      });
+    }
+  );
 
-    // Update the message in the list
+  // ─── Message unpinned (no change needed) ───
+  socket.on("message_unpinned", ({ msgId, chatId }) => {
     setMessages((prev) =>
       prev.map((msg) => {
         const id = msg._id?.toString();
         if (id !== msgId) return msg;
         return {
           ...msg,
-          isPinned: true,
-          pinnedBy,
-          pinnedByName,
-          pinnedAt: new Date(),
+          isPinned: false,
+          pinnedBy: null,
+          pinnedByName: null,
+          pinnedAt: null,
         };
       })
     );
 
-    // Update pinned messages list
     safeSetter(setPinnedMessages)((prev) => {
-      if (!Array.isArray(prev)) return [message];
-      if (prev.some((m) => m._id?.toString() === msgId)) return prev;
-      return [message, ...prev].slice(0, 3);
+      if (!Array.isArray(prev)) return [];
+      return prev.filter((m) => m._id?.toString() !== msgId);
     });
-  }
-);
-
-// ─── Message unpinned (no change needed) ───
-socket.on("message_unpinned", ({ msgId, chatId }) => {
-  setMessages((prev) =>
-    prev.map((msg) => {
-      const id = msg._id?.toString();
-      if (id !== msgId) return msg;
-      return {
-        ...msg,
-        isPinned: false,
-        pinnedBy: null,
-        pinnedByName: null,
-        pinnedAt: null,
-      };
-    })
-  );
-
-  safeSetter(setPinnedMessages)((prev) => {
-    if (!Array.isArray(prev)) return [];
-    return prev.filter((m) => m._id?.toString() !== msgId);
   });
-});
 
-socket.on("pin_message_error", ({ error }) => {
-  console.error("Pin message error:", error);
-});
+  socket.on("pin_message_error", ({ error }) => {
+    console.error("Pin message error:", error);
+  });
 
   const handleReadUpdate = ({ msgId, chatId, readBy }) => {
     setMessages((prev) =>
@@ -828,10 +873,10 @@ socket.on("pin_message_error", ({ error }) => {
         prev.map((msg) =>
           msg._id?.toString() === msgId
             ? {
-                ...msg,
-                metaData: { ...msg.metaData, ...metaData },
-                msgStatus,
-              }
+              ...msg,
+              metaData: { ...msg.metaData, ...metaData },
+              msgStatus,
+            }
             : msg
         )
       );
@@ -876,4 +921,4 @@ socket.on("pin_message_error", ({ error }) => {
   socket.on("message_info_error", ({ error }) => {
     console.error("Message info error:", error);
   });
-};
+};  

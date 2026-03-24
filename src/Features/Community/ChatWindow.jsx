@@ -31,7 +31,7 @@ import Loader from "../../ReusableComponents/Loader/loader";
 import loaderImage from "/logo.png";
 import ChatHeader from "./chatWindow/Chatheader";
 import MessageBubble from "./chatWindow/Messagebubble";
-import MessageInput from "./chatWindow/Messageinput";
+import MessageInput, { LiveCamera } from "./chatWindow/Messageinput";
 import GroupInfoPanel from "./chatWindow/Groupinfopanel";
 import SharedFilesPanel from "./chatWindow/Sharedfilespanel";
 import {
@@ -116,6 +116,7 @@ const ChatWindow = ({
   goToPage,
   isLoadingGroups,
   onBackToGroups,
+  blockedUsers,
   currentUser,
   typingUsers,
   onlineUsers,
@@ -197,7 +198,9 @@ const ChatWindow = ({
 }) => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  const [blockedUsers, setBlockedUsers] = useState([]);
+  console.log(blockedUsers, "blockedUsers")
+
+  const [showCamera, setShowCamera] = useState(false);
   // ═══════════════════════════════════════════════════════════
   //  STATE
   // ═══════════════════════════════════════════════════════════
@@ -211,8 +214,10 @@ const ChatWindow = ({
   const [showErrorDetail, setShowErrorDetail] = useState(null);
   const [isComponentLoading, setIsComponentLoading] = useState(true);
   const [activeGroupTab, setActiveGroupTab] = useState("overview");
+  const [pinEvents, setPinEvents] = useState([]);
+  // Add state
+  const [showBlockedPanel, setShowBlockedPanel] = useState(false);
 
-  const isCurrentUserBlocked = blockedUsers.includes(currentUser?.id?.toString());
   const hasMoreOldMessagesRef = useRef(hasMoreOldMessages);
   const isLoadingOlderRef = useRef(isLoadingOlder);
   const hasMoreNewMessagesRef = useRef(hasMoreNewMessages);
@@ -298,14 +303,6 @@ const ChatWindow = ({
 
   const isOverlayOpen =
     showMembers || showFilesPanel || showStarredPanel || showMessageInfo;
-  const handleUserBlocked = useCallback(({ chatId, targetUserId, blockedBy, blockedByName, blockedAt }) => {
-    if (chatId === selectedGroup?.chatId) {
-      setBlockedUsers((prev) => {
-        if (prev.includes(targetUserId)) return prev;
-        return [...prev, targetUserId];
-      });
-    }
-  }, [selectedGroup?.chatId]);
 
   useEffect(() => {
     if (selectedGroup?.chatId && socketRef?.current?.connected) {
@@ -315,21 +312,8 @@ const ChatWindow = ({
       });
     }
     // Reset on chat change
-    setBlockedUsers([]);
   }, [selectedGroup?.chatId, currentUser?.id]);
-  const handleUserUnblocked = useCallback(({ chatId, targetUserId }) => {
-    if (chatId === selectedGroup?.chatId) {
-      setBlockedUsers((prev) => prev.filter((id) => id !== targetUserId));
-    }
-  }, [selectedGroup?.chatId]);
 
-  const handleBlockedUsersList = useCallback(({ chatId, blockedUsers: blocked, amIBlocked: blockedUser, myBlockedAt: blockedAt }) => {
-    if (chatId === selectedGroup?.chatId) {
-      setBlockedUsers(blocked || []);
-      setAmIBlocked(!!blockedUser);    // ← FIXED: correct variable
-      setMyBlockedAt(blockedAt ? new Date(blockedAt) : null);
-    }
-  }, [selectedGroup?.chatId]);
 
   const handleBlockError = useCallback(({ error }) => {
     console.error("Block error:", error);
@@ -392,39 +376,10 @@ const ChatWindow = ({
       setShowForwardModal(false);
       setForwardingMessage(null);
     };
-    const handleYouAreBlocked = ({ chatId: blockedChatId, blockedBy, blockedByName, blockedAt }) => {
-      if (blockedChatId === selectedGroup?.chatId) {
-        setBlockedUsers((prev) => {
-          const myId = currentUser?.id?.toString();
-          if (prev.includes(myId)) return prev;
-          return [...prev, myId];
-        });
-        setAmIBlocked(true);
-        setMyBlockedAt(blockedAt ? new Date(blockedAt) : new Date());
-      }
-    };
 
-    const handleYouAreUnblocked = ({ chatId: unblockedChatId }) => {
-      if (unblockedChatId === selectedGroup?.chatId) {
-        setBlockedUsers((prev) =>
-          prev.filter((id) => id !== currentUser?.id?.toString())
-        );
-      }
-      setAmIBlocked(false);
-      setMyBlockedAt(null);
-    };
 
-    // Also handle send_message_error for blocked feedback
-    const handleSendMessageError = ({ error, blocked, correlationId }) => {
-      if (blocked) {
-        // Force add current user to blocked list
-        setBlockedUsers((prev) => {
-          const myId = currentUser?.id?.toString();
-          if (prev.includes(myId)) return prev;
-          return [...prev, myId];
-        });
-      }
-    };
+
+
 
 
     socket.on("pinned_messages", handlePinnedMessages);
@@ -436,12 +391,9 @@ const ChatWindow = ({
     socket.on("starred_messages", handleStarredMessages);
     socket.on("message_edited", handleMessageEdited);
     socket.on("forward_message_success", handleForwardSuccess);
-    socket.on("user_blocked", handleUserBlocked);
-    socket.on("user_unblocked", handleUserUnblocked);
-    socket.on("blocked_users_list", handleBlockedUsersList);
+
     socket.on("block_user_error", handleBlockError);
-    socket.on("you_are_blocked", handleYouAreBlocked);
-    socket.on("you_are_unblocked", handleYouAreUnblocked);
+
 
     return () => {
       socket.off("pinned_messages", handlePinnedMessages);
@@ -453,12 +405,8 @@ const ChatWindow = ({
       socket.off("starred_messages", handleStarredMessages);
       socket.off("message_edited", handleMessageEdited);
       socket.off("forward_message_success", handleForwardSuccess);
-      socket.off("user_blocked", handleUserBlocked);
-      socket.off("user_unblocked", handleUserUnblocked);
-      socket.off("blocked_users_list", handleBlockedUsersList);
+
       socket.off("block_user_error", handleBlockError);
-      socket.off("you_are_blocked", handleYouAreBlocked);
-      socket.off("you_are_unblocked", handleYouAreUnblocked);
     };
   }, [socketRef, selectedGroup?.chatId]);
 
@@ -684,6 +632,7 @@ const ChatWindow = ({
   useEffect(() => {
     setIsComponentLoading(true);
     setPinnedMessages([]);
+    setPinEvents([]);
     setShowStarredPanel(false);
     setShowMessageInfo(false);
   }, [selectedGroup?.id]);
@@ -910,13 +859,10 @@ const ChatWindow = ({
     const isMyMessage =
       lastMessage?.fromUserId?.toString() === currentUser?.id?.toString();
     if (isMyMessage || isAtBottomRef.current) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-          }, 100); // 100ms lets the image render and expand
-        });
-      });
+      requestAnimationFrame(() =>
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+      );
+      setNewMessagesCount(0);
     } else {
       setNewMessagesCount((prev) => prev + 1);
     }
@@ -1030,66 +976,6 @@ const ChatWindow = ({
     return Date.now() - new Date(msg.timestamp).getTime() < 15 * 60 * 1000;
   };
 
-  // const toggleMenu = (msgId, e, isCurrentUser) => {
-  //   e?.stopPropagation();
-  //   if (effectiveOpenMenuId === msgId) {
-  //     setEffectiveOpenMenuId(null);
-  //     return;
-  //   }
-  //   if (isMobile) {
-  //     setMenuPosition({ top: 0, left: 0 });
-  //     setEffectiveOpenMenuId(msgId);
-  //     return;
-  //   }
-  //   const msgElem = document.getElementById(`msg-${msgId}`);
-  //   const container = containerRef.current;
-  //   const header = headerRef.current;
-  //   if (!msgElem || !container) {
-  //     setMenuPosition({
-  //       top: 80,
-  //       left: Math.max(16, (container?.clientWidth || 300) - 220),
-  //     });
-  //     setEffectiveOpenMenuId(msgId);
-  //     return;
-  //   }
-  //   const msgRect = msgElem.getBoundingClientRect();
-  //   const containerRect = container.getBoundingClientRect();
-  //   const headerRect = header
-  //     ? header.getBoundingClientRect()
-  //     : { bottom: containerRect.top };
-  //   const spaceAbove =
-  //     msgRect.top - containerRect.top - (headerRect.height || 0);
-  //   const spaceBelow = containerRect.bottom - msgRect.bottom;
-  //   const MENU_W = 200,
-  //     MENU_H = 280,
-  //     GAP = 8;
-  //   let left = isCurrentUser
-  //     ? Math.max(
-  //         containerRect.left + 8,
-  //         Math.min(msgRect.right - MENU_W, containerRect.right - 8 - MENU_W)
-  //       )
-  //     : Math.max(
-  //         containerRect.left + 8,
-  //         Math.min(msgRect.left, containerRect.right - 8 - MENU_W)
-  //       );
-  //   let top =
-  //     spaceAbove > MENU_H + GAP
-  //       ? msgRect.top - MENU_H - GAP
-  //       : spaceBelow > MENU_H + GAP
-  //         ? msgRect.bottom + GAP
-  //         : Math.min(
-  //             Math.max(containerRect.top + 8, msgRect.bottom + GAP),
-  //             containerRect.bottom - MENU_H - 8
-  //           );
-  //   setMenuPosition({
-  //     top: Math.round(top - containerRect.top),
-  //     left: Math.round(left - containerRect.left),
-  //   });
-  //   setEffectiveOpenMenuId(msgId);
-  // };
-  // ═══════════════════════════════════════════════════════════
-  //  FIXED toggleMenu function (replace in ChatWindow)
-  // ═══════════════════════════════════════════════════════════
   const toggleMenu = useCallback(
     (msgId, e, isCurrentUser) => {
       e?.stopPropagation();
@@ -1116,33 +1002,31 @@ const ChatWindow = ({
         return;
       }
 
-      const containerRect = container.getBoundingClientRect();
       const msgRect = msgElem.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
 
-      const MENU_W = 220;
-      const MENU_H = 340; // estimated max height
+      const MENU_W = 190;
+      const MENU_H = 340;
       const GAP = 6;
       const EDGE_PADDING = 8;
 
-      // ── Calculate LEFT ──
       let left;
       if (isCurrentUser) {
-        // Right-aligned messages → menu opens to the left
-        left = msgRect.right - containerRect.left - MENU_W;
+        left = msgRect.right - MENU_W;
       } else {
-        // Left-aligned messages → menu opens to the right
-        left = msgRect.left - containerRect.left;
+        // For received messages, start from container left + padding
+        // so menu doesn't bleed outside chat area
+        left = containerRect.left + EDGE_PADDING;
       }
 
-      // Clamp left within container bounds
+      // Clamp within viewport but respect container left boundary
       left = Math.max(
-        EDGE_PADDING,
-        Math.min(left, containerRect.width - MENU_W - EDGE_PADDING)
+        containerRect.left + EDGE_PADDING,
+        Math.min(left, window.innerWidth - MENU_W - EDGE_PADDING)
       );
 
-      // ── Calculate TOP ──
-      const spaceBelow = containerRect.bottom - msgRect.bottom;
-      const spaceAbove = msgRect.top - containerRect.top;
+      const spaceBelow = window.innerHeight - msgRect.bottom;
+      const spaceAbove = msgRect.top;
 
       let top;
 
@@ -1281,7 +1165,7 @@ const ChatWindow = ({
       ) : (
         <div
           ref={containerRef}
-          className="flex-1 flex flex-col relative h-full overflow-hidden bg-[#0b141a] w-full max-w-full"
+          className="flex-1 flex flex-col relative h-full overflow-hidden bg-[#0b141a] w-full max-w-full z-50"
         >
           {/* ─── HEADER ─── */}
           {!isOverlayOpen && (
@@ -1298,95 +1182,21 @@ const ChatWindow = ({
                 headerRef={headerRef}
                 isMobile={isMobile}
                 onBackToGroups={onBackToGroups}
+                isEffectiveAdmin={isEffectiveAdmin}    // ← ADD
+                blockedUsers={blockedUsers}      // ← ADD
+                onShowBlockedUsers={() => {            // ← ADD
+                  socketRef?.current?.emit("get_blocked_users", {
+                    chatId: selectedGroup.chatId,
+                    userId: currentUser.id,
+                  });
+                  setShowBlockedPanel(true);
+                }}
               />
             </div>
           )}
 
           {/* ─── PINNED MESSAGES BAR ─── */}
-          {pinnedMessages.length > 0 && !isOverlayOpen && (
-            <div className="bg-[#1f2c34] border-b border-[#2a3942] px-2 sm:px-4 py-1.5 sm:py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div
-                  className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 cursor-pointer"
-                  onClick={() => {
-                    const pinId = pinnedMessages[currentPinnedIndex]?._id;
-                    if (pinId) scrollToMessage(pinId);
-                    setCurrentPinnedIndex(
-                      (prev) => (prev + 1) % pinnedMessages.length
-                    );
-                  }}
-                >
-                  <Pin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#00a884] flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <span className="text-[#00a884] text-[10px] sm:text-xs font-medium">
-                        Pinned
-                        {pinnedMessages.length > 1 &&
-                          ` (${currentPinnedIndex + 1}/${pinnedMessages.length})`}
-                      </span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-gray-300 truncate">
-                      {typeof pinnedMessages[currentPinnedIndex]?.msgBody
-                        ?.message === "string"
-                        ? pinnedMessages[currentPinnedIndex].msgBody.message
-                        : pinnedMessages[currentPinnedIndex]?.msgBody
-                          ?.message_type === "file"
-                          ? pinnedMessages[currentPinnedIndex]?.msgBody?.media
-                            ?.fileName || "File"
-                          : "Message"}
-                    </p>
-                  </div>
-                </div>
-                {pinnedMessages.length > 1 && (
-                  <button
-                    onClick={() => setShowPinnedExpanded(!showPinnedExpanded)}
-                    className="p-1 hover:bg-[#2a3942] rounded flex-shrink-0"
-                  >
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 transition-transform ${showPinnedExpanded ? "rotate-180" : ""
-                        }`}
-                    />
-                  </button>
-                )}
-              </div>
 
-              {showPinnedExpanded && (
-                <div className="mt-1.5 sm:mt-2 space-y-0.5 sm:space-y-1 border-t border-[#2a3942] pt-1.5 sm:pt-2">
-                  {pinnedMessages.map((pin, idx) => (
-                    <div
-                      key={pin._id}
-                      className="flex items-center justify-between py-1 px-1.5 sm:px-2 hover:bg-[#2a3942] rounded cursor-pointer"
-                      onClick={() => {
-                        scrollToMessage(pin._id);
-                        setCurrentPinnedIndex(idx);
-                        setShowPinnedExpanded(false);
-                      }}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[10px] sm:text-xs text-[#00a884]">
-                          {pin.publisherName}
-                        </span>
-                        <p className="text-[10px] sm:text-xs text-gray-400 truncate">
-                          {typeof pin.msgBody?.message === "string"
-                            ? pin.msgBody.message
-                            : "Media"}
-                        </p>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleUnpinMessage(pin._id);
-                        }}
-                        className="p-0.5 sm:p-1 hover:bg-[#374751] rounded flex-shrink-0 ml-1"
-                      >
-                        <X className="w-3 h-3 text-gray-500" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
           {/* ─── OVERLAY PANELS ─── */}
           {selectedGroup && showMembers && (
@@ -1413,6 +1223,14 @@ const ChatWindow = ({
                 formatFileSize={formatFileSize}
                 downloadFileToDesktop={downloadFileToDesktop}
                 isMobile={isMobile}
+                blockedUsers={blockedUsers || []}           // ← ADD
+                onUnblockUser={(targetUserId, targetUserName) => {    // ← ADD
+                  socketRef?.current?.emit("unblock_user", {
+                    chatId: selectedGroup.chatId,
+                    targetUserId,
+                    targetUserName,
+                  });
+                }}
               />
             </div>
           )}
@@ -1606,11 +1424,6 @@ const ChatWindow = ({
                                   renderMessageWithLinks={
                                     renderMessageWithLinks
                                   }
-                                  onImageLoad={() => {
-                                    if (isAtBottomRef.current) {
-                                      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                                    }
-                                  }}
                                   getMessageReadStatus={getMessageReadStatus}
                                   isEdited={msg.isEdited || false}
                                   isForwarded={msg.isForwarded || false}
@@ -1709,27 +1522,7 @@ const ChatWindow = ({
             </>
           )}
 
-          {/* ─── TYPING INDICATOR ─── */}
-          {typingUsers?.length > 0 && !isOverlayOpen && (
-            <div className="px-2 sm:px-4 py-0.5 sm:py-1 bg-[#0b141a]">
-              <div className="flex items-center gap-1.5 sm:gap-2 text-[#00a884] text-[10px] sm:text-xs">
-                <div className="flex gap-0.5">
-                  {[0, 150, 300].map((delay) => (
-                    <span
-                      key={delay}
-                      className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[#00a884] rounded-full animate-bounce"
-                      style={{ animationDelay: `${delay}ms` }}
-                    />
-                  ))}
-                </div>
-                <span className="truncate">
-                  {typingUsers.length === 1
-                    ? `${typingUsers[0].userId || "Someone"} is typing…`
-                    : `${typingUsers.length} people are typing…`}
-                </span>
-              </div>
-            </div>
-          )}
+
 
           {/* ═══ MODALS ═══ */}
           <ImagePreviewModal
@@ -1909,6 +1702,65 @@ const ChatWindow = ({
             />
           )}
 
+          {showBlockedPanel && (
+            <div className={isMobile ? "absolute inset-0 z-40 bg-[#0b141a]" : ""}>
+              <div className="flex flex-col h-full bg-[#0b141a]">
+                {/* Header */}
+                <div className="flex items-center gap-3 px-4 py-3 border-b border-[#2a3942]">
+                  <button onClick={() => setShowBlockedPanel(false)}
+                    className="p-1.5 hover:bg-[#2a3942] rounded-full">
+                    <ArrowLeft className="w-5 h-5 text-gray-400" />
+                  </button>
+                  <h2 className="text-white font-medium">Blocked Users</h2>
+                  <span className="ml-auto text-xs text-gray-500">
+                    {blockedUsers.length} blocked
+                  </span>
+                </div>
+
+                {/* List */}
+                <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                  {blockedUsers.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                      <ShieldCheck className="w-12 h-12 mb-3 opacity-30" />
+                      <p className="text-sm">No blocked users</p>
+                    </div>
+                  ) : (
+                    blockedUsers.map((user) => (
+                      <div key={user.userId}
+                        className="flex items-center gap-3 p-3 bg-[#1f2c34] rounded-xl border border-[#2a3942]">
+                        <div className="w-10 h-10 rounded-full bg-[#2a3942] flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-semibold text-gray-300">
+                            {(user.userName || user.userId || "?")[0].toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white truncate">
+                            {user.userName || user.userId}
+                          </p>
+                          <p className="text-[11px] text-gray-500 truncate">
+                            Reason: {user.reason || "spam"}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            socketRef?.current?.emit("unblock_user", {
+                              chatId: selectedGroup.chatId,
+                              targetUserId: user.userId,
+                              targetUserName: user.userName,
+                            });
+                          }}
+                          className="px-3 py-1.5 text-xs font-medium text-white bg-[#00a884] hover:bg-[#06cf9c] rounded-lg transition-colors active:scale-95 flex-shrink-0"
+                        >
+                          Unblock
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ─── INPUT BAR ─── */}
           {selectedGroup && !isOverlayOpen && (
             <>
@@ -1945,20 +1797,31 @@ const ChatWindow = ({
                   emojiClickInsideRef={emojiClickInsideRef}
                   rateLimitError={rateLimitError}
                   isMobile={isMobile}
-                  onCameraImageReady={(captureData) => {
-                    setSelectedImages([{
-                      file: captureData.file,
-                      preview: captureData.preview,
-                      name: captureData.fileName,
-                      size: captureData.fileSize,
-                      type: captureData.fileType,
-                    }]);
-                    setImageCaption(captureData.caption || "");
-                    setShowImagePreview(true);
-                  }}
+                  onOpenCamera={() => setShowCamera(true)}
+
                 />
               )}
             </>
+          )}
+
+
+          {showCamera && (
+            <LiveCamera
+              onCapture={(captureData) => {
+                setSelectedImages([{
+                  file: captureData.file,
+                  preview: captureData.preview,
+                  name: captureData.fileName,
+                  size: captureData.fileSize,
+                  type: captureData.fileType,
+                }]);
+                setImageCaption(captureData.caption || "");
+                setShowImagePreview(true);
+                setShowCamera(false);
+              }}
+              onClose={() => setShowCamera(false)}
+              isMobile={isMobile}
+            />
           )}
         </div>
       )}
@@ -2041,14 +1904,18 @@ const EnhancedContextMenu = ({
   handleBlockUser,
   handleUnblockUser,
   blockedUsers = [],
-  amIBlocked = false,       // ← NEW PROP
-  members = [],             // ← NEW PROP for role checking
+  amIBlocked = false,
+  members = [],
+  containerRef,
+  isMobile,
 }) => {
   const menuRef = useRef(null);
   const [animateIn, setAnimateIn] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [adjustedPosition, setAdjustedPosition] = useState({ top: 0, left: 0 });
 
+  // ── Animate in/out ──
   useEffect(() => {
     if (effectiveOpenMenuId) {
       requestAnimationFrame(() => setAnimateIn(true));
@@ -2059,17 +1926,39 @@ const EnhancedContextMenu = ({
     }
   }, [effectiveOpenMenuId]);
 
+  // ── Click outside to close ──
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setEffectiveOpenMenuId(null);
       }
     };
-    if (effectiveOpenMenuId) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+    if (effectiveOpenMenuId) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [effectiveOpenMenuId]);
+  }, [effectiveOpenMenuId, setEffectiveOpenMenuId]);
+
+  // ── Calculate viewport-safe position ──
+  useEffect(() => {
+    if (!effectiveOpenMenuId || isMobile) return;
+    const calculatePosition = () => {
+      const menu = menuRef.current;
+      const menuWidth = menu?.offsetWidth || 220;
+      const menuHeight = menu?.offsetHeight || 340;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const PADDING = 8;
+      let top = menuPosition.top;
+      let left = menuPosition.left;
+      if (left + menuWidth > vw - PADDING) left = vw - menuWidth - PADDING;
+      if (left < PADDING) left = PADDING;
+      if (top + menuHeight > vh - PADDING) top = vh - menuHeight - PADDING;
+      if (top < PADDING) top = PADDING;
+      setAdjustedPosition({ top: Math.round(top), left: Math.round(left) });
+    };
+    requestAnimationFrame(calculatePosition);
+    window.addEventListener("resize", calculatePosition);
+    return () => window.removeEventListener("resize", calculatePosition);
+  }, [effectiveOpenMenuId, menuPosition, isMobile]);
 
   if (!effectiveOpenMenuId) return null;
 
@@ -2078,8 +1967,8 @@ const EnhancedContextMenu = ({
   );
   if (!msg) return null;
 
-  const isCurrentUser =
-    msg.fromUserId?.toString() === currentUser?.id?.toString();
+  // ── Role & permission calculations ──
+  const isCurrentUser = msg.fromUserId?.toString() === currentUser?.id?.toString();
 
   const parseRole = (role) => {
     if (role === null || role === undefined || role === "") return null;
@@ -2098,21 +1987,22 @@ const EnhancedContextMenu = ({
   const canPin = isAdmin || isSubAdmin;
   const canDeleteForEveryone = isCurrentUser || isModeratorOrAbove || isSubAdmin;
 
-  // ── Block permission: Sub-admin CANNOT block admin ──
   const targetMember = members.find(
-    (m) => m.id?.toString() === msg.fromUserId?.toString() ||
+    (m) =>
+      m.id?.toString() === msg.fromUserId?.toString() ||
       m.userId?.toString() === msg.fromUserId?.toString()
   );
-  const targetNumericRole = parseRole(targetMember?.role) ?? parseRole(msg.fromUserRole);
+  const targetNumericRole =
+    parseRole(targetMember?.role) ?? parseRole(msg.fromUserRole);
   const isTargetAdmin = targetNumericRole === 0;
   const isTargetSubAdmin = targetNumericRole === 2;
 
   const canBlock = (() => {
     if (isCurrentUser) return false;
-    if (amIBlocked) return false;                    // Blocked users can't block
+    if (amIBlocked) return false;
     if (!isAdmin && !isSubAdmin) return false;
-    if (isSubAdmin && isTargetAdmin) return false;   // Sub-admin can't block admin
-    if (isSubAdmin && isTargetSubAdmin) return false; // Sub-admin can't block sub-admin
+    if (isSubAdmin && isTargetAdmin) return false;
+    if (isSubAdmin && isTargetSubAdmin) return false;
     return true;
   })();
 
@@ -2125,270 +2015,295 @@ const EnhancedContextMenu = ({
   const isTextMessage = msg.msgBody?.message_type !== "file";
 
   const closeMenu = () => setEffectiveOpenMenuId(null);
-  const quickReactions = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
 
-  // ── Block Confirm Dialog ──
+  const menuContainerClass = isMobile
+    ? `fixed inset-x-0 bottom-0 z-[60] transition-transform duration-250 ease-out
+       ${animateIn ? "translate-y-0" : "translate-y-full"}`
+    : `fixed z-[60] transition-all duration-200 ease-out
+       ${animateIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`;
+
+  const menuContainerStyle = isMobile
+    ? {}
+    : {
+      top: adjustedPosition.top,
+      left: adjustedPosition.left,
+      transformOrigin: "top left",
+      maxHeight: "calc(100vh - 16px)",
+    };
+
+  // ═══════════════════════════════════════════════════════════
+  //  BLOCK CONFIRM DIALOG
+  // ═══════════════════════════════════════════════════════════
   if (showBlockConfirm) {
+    const targetName = msg.publisherName || msg.fromUserId || "this user";
+
     return (
-      <div
-        ref={menuRef}
-        className={`fixed z-[60] transition-all duration-200 ease-out
-          ${animateIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
-        style={{
-          top: menuPosition.top,
-          left: menuPosition.left,
-          transformOrigin: "top left",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="bg-[#1f2c34] rounded-2xl shadow-2xl border border-[#30444f] w-[300px] overflow-hidden backdrop-blur-sm">
-          <div className="flex flex-col items-center pt-5 pb-3 px-5">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${isTargetBlocked ? "bg-green-500/10" : "bg-red-500/10"
-              }`}>
-              {isTargetBlocked ? (
-                <ShieldCheck className="w-6 h-6 text-green-400" />
-              ) : (
-                <ShieldBan className="w-6 h-6 text-red-400" />
-              )}
-            </div>
-            <p className="text-white text-sm font-medium text-center">
-              {isTargetBlocked
-                ? `Unblock ${msg.publisherName || msg.fromUserId || "this user"}?`
-                : `Block ${msg.publisherName || msg.fromUserId || "this user"}?`}
-            </p>
-            <p className="text-gray-500 text-xs text-center mt-1.5 leading-relaxed">
-              {isTargetBlocked
-                ? "This user will be able to send messages again."
-                : "This user will not be able to send messages in this group."}
-            </p>
-          </div>
-          <div className="px-4 pb-4 flex gap-2.5">
-            <button
-              onClick={() => setShowBlockConfirm(false)}
-              className="flex-1 py-2.5 text-sm text-gray-400 bg-[#2a3942] hover:bg-[#35474f] rounded-xl font-medium transition-all active:scale-95"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                if (isTargetBlocked) {
-                  handleUnblockUser(msg.fromUserId?.toString());
-                } else {
-                  handleBlockUser(msg.fromUserId?.toString());
-                }
-                closeMenu();
-              }}
-              className={`flex-1 py-2.5 text-sm text-white rounded-xl font-medium transition-all active:scale-95 ${isTargetBlocked ? "bg-green-600 hover:bg-green-700" : "bg-red-500 hover:bg-red-600"
-                }`}
-            >
-              {isTargetBlocked ? "Unblock" : "Block"}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Delete Confirm Dialog ──
-  if (showDeleteConfirm) {
-    return (
-      <div
-        ref={menuRef}
-        className={`fixed z-[60] transition-all duration-200 ease-out
-          ${animateIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
-        style={{
-          top: menuPosition.top,
-          left: menuPosition.left,
-          transformOrigin: "top left",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="bg-[#1f2c34] rounded-2xl shadow-2xl border border-[#30444f] w-[280px] overflow-hidden backdrop-blur-sm">
-          <div className="flex flex-col items-center pt-5 pb-3 px-5">
-            <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-3">
-              <Trash2 className="w-6 h-6 text-red-400" />
-            </div>
-            <p className="text-white text-sm font-medium text-center">
-              {showDeleteConfirm === "everyone" ? "Delete for everyone?" : "Delete for you?"}
-            </p>
-            <p className="text-gray-500 text-xs text-center mt-1.5 leading-relaxed">
-              {showDeleteConfirm === "everyone"
-                ? isCurrentUser
-                  ? "This message will be removed for all members."
-                  : "You're deleting another member's message for everyone."
-                : "This message will only be removed from your view."}
-            </p>
-          </div>
-          <div className="px-4 pb-4 flex gap-2.5">
-            <button
-              onClick={() => setShowDeleteConfirm(null)}
-              className="flex-1 py-2.5 text-sm text-gray-400 bg-[#2a3942] hover:bg-[#35474f] rounded-xl font-medium transition-all active:scale-95"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                if (showDeleteConfirm === "everyone") {
-                  deleteForEveryone(msgId);
-                } else {
-                  deleteForMe(msgId, currentUser.id);
-                }
-                closeMenu();
-              }}
-              className="flex-1 py-2.5 text-sm text-white bg-red-500 hover:bg-red-600 rounded-xl font-medium transition-all active:scale-95"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Main Menu ──
-  return (
-    <div
-      ref={menuRef}
-      className={`fixed z-[60] transition-all duration-200 ease-out
-        ${animateIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
-      style={{
-        top: menuPosition.top,
-        left: menuPosition.left,
-        transformOrigin: "top left",
-      }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="bg-[#1f2c34] rounded-2xl shadow-2xl border border-[#30444f] w-[220px] overflow-hidden backdrop-blur-sm">
-
-        {/* ── Quick Reactions (hidden if blocked) ── */}
-        {!amIBlocked && (
-          <div className="px-3 pt-3 pb-2 border-b border-[#2a3942]/60">
-            <div className="flex items-center justify-between">
-              {quickReactions.map((emoji) => (
-                <button
-                  key={emoji}
-                  onClick={() => closeMenu()}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#2a3942] text-lg transition-all duration-150 hover:scale-125 active:scale-95"
-                >
-                  {emoji}
-                </button>
-              ))}
-              <button
-                onClick={() => closeMenu()}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#2a3942] transition-all duration-150 hover:scale-110 active:scale-95"
+      <>
+        <div
+          className="fixed inset-0 z-[59] bg-black/40"
+          onClick={() => setShowBlockConfirm(false)}
+        />
+        <div
+          ref={menuRef}
+          className={menuContainerClass}
+          style={menuContainerStyle}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div
+            className={`bg-[#1f2c34] shadow-2xl border border-[#30444f] overflow-hidden backdrop-blur-sm
+              ${isMobile ? "rounded-t-2xl w-full" : "rounded-2xl w-[300px]"}`}
+          >
+            <div className="flex flex-col items-center pt-5 pb-3 px-5">
+              <div
+                className={`w-12 h-12 rounded-full flex items-center justify-center mb-3
+                  ${isTargetBlocked ? "bg-green-500/10" : "bg-red-500/10"}`}
               >
-                <SmilePlus className="w-4 h-4 text-gray-500" />
+                {isTargetBlocked ? (
+                  <ShieldCheck className="w-6 h-6 text-green-400" />
+                ) : (
+                  <ShieldBan className="w-6 h-6 text-red-400" />
+                )}
+              </div>
+              <p className="text-white text-sm font-medium text-center">
+                {isTargetBlocked ? `Unblock ${targetName}?` : `Block ${targetName}?`}
+              </p>
+              <p className="text-gray-500 text-xs text-center mt-1.5 leading-relaxed">
+                {isTargetBlocked
+                  ? "This user will be able to send messages again."
+                  : "This user will not be able to send messages in this group."}
+              </p>
+            </div>
+            <div className="px-4 pb-4 flex gap-2.5">
+              <button
+                onClick={() => setShowBlockConfirm(false)}
+                className="flex-1 py-2.5 text-sm text-gray-400 bg-[#2a3942] hover:bg-[#35474f] rounded-xl font-medium transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  isTargetBlocked
+                    ? handleUnblockUser(msg.fromUserId?.toString())
+                    : handleBlockUser(msg.fromUserId?.toString());
+                  closeMenu();
+                }}
+                className={`flex-1 py-2.5 text-sm text-white rounded-xl font-medium transition-all active:scale-95
+                  ${isTargetBlocked ? "bg-green-600 hover:bg-green-700" : "bg-red-500 hover:bg-red-600"}`}
+              >
+                {isTargetBlocked ? "Unblock" : "Block"}
               </button>
             </div>
           </div>
-        )}
+        </div>
+      </>
+    );
+  }
 
-        <div className="py-1.5">
+  // ═══════════════════════════════════════════════════════════
+  //  DELETE CONFIRM DIALOG
+  // ═══════════════════════════════════════════════════════════
+  if (showDeleteConfirm) {
+    const isForEveryone = showDeleteConfirm === "everyone";
 
-          {/* ── Reply (hidden if blocked) ── */}
-          {!amIBlocked && (
-            <MenuItem
-              icon={<Reply className="w-[18px] h-[18px]" />}
-              label="Reply"
-              onClick={() => { handleReply(msg); closeMenu(); }}
-            />
+    return (
+      <>
+        <div
+          className="fixed inset-0 z-[59] bg-black/40"
+          onClick={() => setShowDeleteConfirm(null)}
+        />
+        <div
+          ref={menuRef}
+          className={menuContainerClass}
+          style={menuContainerStyle}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div
+            className={`bg-[#1f2c34] shadow-2xl border border-[#30444f] overflow-hidden backdrop-blur-sm
+              ${isMobile ? "rounded-t-2xl w-full" : "rounded-2xl w-[280px]"}`}
+          >
+            <div className="flex flex-col items-center pt-5 pb-3 px-5">
+              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-3">
+                <Trash2 className="w-6 h-6 text-red-400" />
+              </div>
+              <p className="text-white text-sm font-medium text-center">
+                {isForEveryone ? "Delete for everyone?" : "Delete for you?"}
+              </p>
+              <p className="text-gray-500 text-xs text-center mt-1.5 leading-relaxed">
+                {isForEveryone
+                  ? isCurrentUser
+                    ? "This message will be removed for all members."
+                    : "You're deleting another member's message for everyone."
+                  : "This message will only be removed from your view."}
+              </p>
+            </div>
+            <div className="px-4 pb-4 flex gap-2.5">
+              <button
+                onClick={() => setShowDeleteConfirm(null)}
+                className="flex-1 py-2.5 text-sm text-gray-400 bg-[#2a3942] hover:bg-[#35474f] rounded-xl font-medium transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  isForEveryone
+                    ? deleteForEveryone(msgId)
+                    : deleteForMe(msgId, currentUser.id);
+                  closeMenu();
+                }}
+                className="flex-1 py-2.5 text-sm text-white bg-red-500 hover:bg-red-600 rounded-xl font-medium transition-all active:scale-95"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  MAIN CONTEXT MENU
+  // ═══════════════════════════════════════════════════════════
+  return (
+    <>
+      {isMobile && (
+        <div
+          className="fixed inset-0 z-[59] bg-black/40"
+          onClick={closeMenu}
+        />
+      )}
+
+      <div
+        ref={menuRef}
+        className={menuContainerClass}
+        style={menuContainerStyle}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className={`bg-[#1f2c34] shadow-2xl border border-[#30444f] overflow-hidden backdrop-blur-sm
+            ${isMobile
+              ? "rounded-t-2xl w-full max-h-[70vh] overflow-y-auto"
+              : "rounded-2xl w-[220px] max-h-[calc(100vh-16px)] overflow-y-auto"
+            }`}
+        >
+          {isMobile && (
+            <div className="flex justify-center pt-2 pb-1">
+              <div className="w-10 h-1 rounded-full bg-gray-600" />
+            </div>
           )}
 
-          {/* ── Copy (hidden if blocked) ── */}
-          {!amIBlocked && isTextMessage && (
-            <MenuItem
-              icon={isCopied
-                ? <Check className="w-[18px] h-[18px] text-green-400" />
-                : <Copy className="w-[18px] h-[18px]" />
-              }
-              label={isCopied ? "Copied!" : "Copy"}
-              success={isCopied}
-              onClick={() => handleCopyMessage(msg.msgBody?.message, effectiveOpenMenuId)}
-            />
-          )}
+          <div className={`py-1.5 ${isMobile ? "pb-6" : ""}`}>
 
-          {/* ── Edit (hidden if blocked) ── */}
-          {!amIBlocked && isCurrentUser && editable && (
-            <MenuItem
-              icon={<Pencil className="w-[18px] h-[18px]" />}
-              label="Edit"
-              onClick={() => { handleEditMessage(msg); closeMenu(); }}
-            />
-          )}
+            {!amIBlocked && (
+              <>
+                <MenuItem
+                  icon={<Reply className="w-[18px] h-[18px]" />}
+                  label="Reply"
+                  onClick={() => { handleReply(msg); closeMenu(); }}
+                  isMobile={isMobile}
+                />
 
-          {/* ── Pin/Unpin (hidden if blocked) ── */}
-          {!amIBlocked && canPin && (
-            <MenuItem
-              icon={pinned
-                ? <PinOff className="w-[18px] h-[18px]" />
-                : <Pin className="w-[18px] h-[18px]" />
-              }
-              label={pinned ? "Unpin" : "Pin"}
-              onClick={() => {
-                pinned ? handleUnpinMessage(msgId) : handlePinMessage(msgId);
-                closeMenu();
-              }}
-            />
-          )}
+                {isTextMessage && (
+                  <MenuItem
+                    icon={
+                      isCopied
+                        ? <Check className="w-[18px] h-[18px]" />
+                        : <Copy className="w-[18px] h-[18px]" />
+                    }
+                    label={isCopied ? "Copied!" : "Copy"}
+                    success={isCopied}
+                    onClick={() => handleCopyMessage(msg.msgBody?.message, effectiveOpenMenuId)}
+                    isMobile={isMobile}
+                  />
+                )}
 
+                {isCurrentUser && editable && (
+                  <MenuItem
+                    icon={<Pencil className="w-[18px] h-[18px]" />}
+                    label="Edit"
+                    onClick={() => { handleEditMessage(msg); closeMenu(); }}
+                    isMobile={isMobile}
+                  />
+                )}
 
-          {/* ── Message Info (hidden if blocked) ── */}
-          {!amIBlocked && isCurrentUser && (
-            <MenuItem
-              icon={<Info className="w-[18px] h-[18px]" />}
-              label="Message info"
-              onClick={() => { handleShowMessageInfo(msg); closeMenu(); }}
-            />
-          )}
+                {canPin && (
+                  <MenuItem
+                    icon={
+                      pinned
+                        ? <PinOff className="w-[18px] h-[18px]" />
+                        : <Pin className="w-[18px] h-[18px]" />
+                    }
+                    label={pinned ? "Unpin" : "Pin"}
+                    onClick={() => {
+                      pinned ? handleUnpinMessage(msgId) : handlePinMessage(msgId);
+                      closeMenu();
+                    }}
+                    isMobile={isMobile}
+                  />
+                )}
 
-          {/* ── Divider ── */}
-          <div className="my-1.5 mx-3 border-t border-[#2a3942]/60" />
+                {isCurrentUser && (
+                  <MenuItem
+                    icon={<Info className="w-[18px] h-[18px]" />}
+                    label="Message info"
+                    onClick={() => { handleShowMessageInfo(msg); closeMenu(); }}
+                    isMobile={isMobile}
+                  />
+                )}
+              </>
+            )}
 
-          {/* ── Block/Unblock (hidden if blocked) ── */}
-          {!amIBlocked && canBlock && (
-            <MenuItem
-              icon={isTargetBlocked
-                ? <ShieldCheck className="w-[18px] h-[18px]" />
-                : <ShieldBan className="w-[18px] h-[18px]" />
-              }
-              label={isTargetBlocked ? "Unblock user" : "Block user"}
-              danger={!isTargetBlocked}
-              success={isTargetBlocked}
-              onClick={() => setShowBlockConfirm(true)}
-            />
-          )}
+            <div className="my-1.5 mx-3 border-t border-[#2a3942]/60" />
 
-          {/* ── Report (hidden if blocked) ── */}
-          {!amIBlocked && !isCurrentUser && (
-            <MenuItem
-              icon={<Flag className="w-[18px] h-[18px]" />}
-              label="Report"
-              onClick={() => { handleReport(msg); closeMenu(); }}
-            />
-          )}
+            {!amIBlocked && canBlock && (
+              <MenuItem
+                icon={
+                  isTargetBlocked
+                    ? <ShieldCheck className="w-[18px] h-[18px]" />
+                    : <ShieldBan className="w-[18px] h-[18px]" />
+                }
+                label={isTargetBlocked ? "Unblock user" : "Block user"}
+                danger={!isTargetBlocked}
+                success={isTargetBlocked}
+                onClick={() => setShowBlockConfirm(true)}
+                isMobile={isMobile}
+              />
+            )}
 
-          {/* ── Delete for me (ALWAYS available) ── */}
-          <MenuItem
-            icon={<Trash2 className="w-[18px] h-[18px]" />}
-            label="Delete for me"
-            danger
-            onClick={() => setShowDeleteConfirm("me")}
-          />
+            {!amIBlocked && !isCurrentUser && (
+              <MenuItem
+                icon={<Flag className="w-[18px] h-[18px]" />}
+                label="Report"
+                onClick={() => { handleReport(msg); closeMenu(); }}
+                isMobile={isMobile}
+              />
+            )}
 
-          {/* ── Delete for everyone (hidden if blocked) ── */}
-          {!amIBlocked && canDeleteForEveryone && (
             <MenuItem
               icon={<Trash2 className="w-[18px] h-[18px]" />}
-              label="Delete for everyone"
+              label="Delete for me"
               danger
-              onClick={() => setShowDeleteConfirm("everyone")}
+              onClick={() => setShowDeleteConfirm("me")}
+              isMobile={isMobile}
             />
-          )}
+
+            {!amIBlocked && canDeleteForEveryone && (
+              <MenuItem
+                icon={<Trash2 className="w-[18px] h-[18px]" />}
+                label="Delete for everyone"
+                danger
+                onClick={() => setShowDeleteConfirm("everyone")}
+                isMobile={isMobile}
+              />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
+
+
 const MenuItem = ({
   icon,
   label,
@@ -2396,39 +2311,38 @@ const MenuItem = ({
   danger = false,
   success = false,
   highlight = false,
+  isMobile = false,
 }) => {
+  const textColor = danger ? "#e53935" : success ? "#22c55e" : highlight ? "#eab308" : "#216267";
+  const bgHover = danger ? "rgba(229,57,53,0.06)" : success ? "rgba(34,197,94,0.06)" : "rgba(33,98,103,0.06)";
+  const iconBg = danger ? "rgba(229,57,53,0.08)" : success ? "rgba(34,197,94,0.08)" : highlight ? "rgba(234,179,8,0.08)" : "rgba(33,98,103,0.08)";
+  const iconColor = danger ? "#e53935" : success ? "#22c55e" : highlight ? "#eab308" : "#13b3a1";
+
   return (
     <button
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick?.();
-      }}
-      className={`w-full flex items-center gap-3 px-4 py-2.5 text-[13px] 
-        font-normal transition-all duration-150 active:scale-[0.98]
-        ${danger
-          ? "text-red-400 hover:bg-red-500/8"
-          : success
-            ? "text-green-400 hover:bg-[#2a3942]"
-            : highlight
-              ? "text-yellow-400 hover:bg-[#2a3942]"
-              : "text-[#d1d7db] hover:bg-[#2a3942]"
-        }`}
+      onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+      className={`w-full flex items-center gap-3 transition-all duration-150 active:scale-[0.98]
+        ${isMobile ? "px-5 py-3.5" : "px-4 py-2.5"}`}
+      style={{ color: textColor, backgroundColor: "transparent" }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = bgHover}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
     >
-      <span
-        className={`flex-shrink-0 ${danger
-          ? "text-red-400/70"
-          : success
-            ? "text-green-400/70"
-            : highlight
-              ? "text-yellow-400/70"
-              : "text-[#8696a0]"
-          }`}
+      <div
+        className="flex-shrink-0 flex items-center justify-center rounded-lg"
+        style={{
+          width: isMobile ? 34 : 26,
+          height: isMobile ? 34 : 26,
+          backgroundColor: iconBg,
+        }}
       >
-        {icon}
+        <span style={{ color: iconColor, display: "flex", alignItems: "center" }}>
+          {icon}
+        </span>
+      </div>
+      <span className="flex-1 text-left" style={{ fontSize: isMobile ? 15 : 13, fontWeight: 500 }}>
+        {label}
       </span>
-      <span className="flex-1 text-left">{label}</span>
     </button>
   );
 };
-
 export default ChatWindow;

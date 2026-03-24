@@ -80,7 +80,7 @@ const MessageInfoPanel = ({ data, loading, members, onClose, formatTime }) => {
             </div>
 
             {/* Delivered to */}
-            <div>
+            {/* <div>
               <div className="flex items-center gap-2 mb-3">
                 <CheckCheck className="w-5 h-5 text-gray-400" />
                 <h4 className="text-gray-400 font-medium text-sm">
@@ -124,7 +124,7 @@ const MessageInfoPanel = ({ data, loading, members, onClose, formatTime }) => {
                   Not delivered yet
                 </p>
               )}
-            </div>
+            </div> */}
 
             {/* Sent info */}
             <div>

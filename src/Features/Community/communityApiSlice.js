@@ -8,7 +8,6 @@ export const chatApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
       transformResponse: (response) => {
-        // console.log("👥 Groups Response:", response);
         return response?.data || [];
       },
       providesTags: (result) =>

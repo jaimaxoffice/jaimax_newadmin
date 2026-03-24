@@ -39,7 +39,11 @@ export const useSocket = ({
   processedMessagesRef,
   hasAutoSelectedRef,
 
- 
+
+  setBlockedUsers,
+  setIsBlocked,
+  setIsAdmin,
+
   handleGroupSelect,
   updateGroupLastMessage,
   showNotification,
@@ -88,6 +92,7 @@ export const useSocket = ({
       SECRET_KEY,
 
       setSocketConnected,
+
       setMessages,
       setOnlineUsers,
       setTypingUsers,
@@ -114,11 +119,17 @@ export const useSocket = ({
       processedMessagesRef,
       rateLimitResetTimer,
 
+
       processIncomingMessage,
       updateGroupLastMessage,
       showNotification,
       handleGroupSelect,
       hasAutoSelectedRef,
+
+      setBlockedUsers,
+      setIsBlocked,
+      setIsAdmin,
+
     });
   }, [
     currentUser,
@@ -153,6 +164,10 @@ export const useSocket = ({
     setIsDeletingMessage,
     setIsInputDisabled,
     setRateLimitError,
+    setBlockedUsers,
+    setIsBlocked,
+    setIsAdmin,
+
   ]);
 
   // ── Initial connect + cleanup ──────────────────────────────────────────

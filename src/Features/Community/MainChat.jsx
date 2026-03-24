@@ -232,6 +232,11 @@ const GroupChatApp = () => {
   const [isDeletingMessage, setIsDeletingMessage] = useState(false);
   const [rateLimitError, setRateLimitError] = useState("");
 
+
+  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [isAdminUser, setIsAdminUser] = useState(false);
+
   // ── Refs ──────────────────────────────────────────────────────────────────
   const messagesEndRef = useRef(null);
   const prevMessageCountRef = useRef(0);
@@ -366,7 +371,6 @@ const GroupChatApp = () => {
     currentUser,
     socketUrl,
     SECRET_KEY,
-
     setSocketConnected,
     setMessages,
     setOnlineUsers,
@@ -390,11 +394,12 @@ const GroupChatApp = () => {
     setIsInputDisabled,
     setRateLimitError,
     setSocketInitialized,
-
     selectedGroupRef,
     processedMessagesRef,
     hasAutoSelectedRef,
-
+    setBlockedUsers,        // ← ADD
+    setIsBlocked,           // ← ADD
+    setIsAdmin: setIsAdminUser,  // ← ADD
     handleGroupSelect,
     updateGroupLastMessage,
     showNotification,
@@ -1246,7 +1251,7 @@ const GroupChatApp = () => {
     <div
       className="flex w-full overflow-hidden bg-[#000000] text-white"
       style={{
-        height: isMobile ? "100dvh" : "100vh",
+        height: isMobile ? "100vh" : "100vh",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
@@ -1406,6 +1411,10 @@ const GroupChatApp = () => {
           formatDuration={formatDuration}
           formatFileSize={formatFileSize}
           userRole={currentUser.role}
+
+          blockedUsers={blockedUsers}          // ← ADD
+          isAdmin={isAdminUser}                // ← ADD
+          isBlocked={isBlocked}
         />
       )}
     </div>
