@@ -2180,7 +2180,7 @@ const EnhancedContextMenu = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className={`bg-[#1f2c34] shadow-2xl border border-[#30444f] overflow-hidden backdrop-blur-sm
+          className={`bg-[#0b141a] shadow-2xl   overflow-hidden backdrop-blur-sm
             ${isMobile
               ? "rounded-t-2xl w-full max-h-[70vh] overflow-y-auto"
               : "rounded-2xl w-[220px] max-h-[calc(100vh-16px)] overflow-y-auto"
@@ -2313,10 +2313,10 @@ const MenuItem = ({
   highlight = false,
   isMobile = false,
 }) => {
-  const textColor = danger ? "#e53935" : success ? "#22c55e" : highlight ? "#eab308" : "#216267";
+  const textColor = danger ? "#e53935" : success ? "#22c55e" : highlight ? "#eab308" : "#ffffff";
   const bgHover = danger ? "rgba(229,57,53,0.06)" : success ? "rgba(34,197,94,0.06)" : "rgba(33,98,103,0.06)";
   const iconBg = danger ? "rgba(229,57,53,0.08)" : success ? "rgba(34,197,94,0.08)" : highlight ? "rgba(234,179,8,0.08)" : "rgba(33,98,103,0.08)";
-  const iconColor = danger ? "#e53935" : success ? "#22c55e" : highlight ? "#eab308" : "#13b3a1";
+  const iconColor = danger ? "#e53935" : success ? "#ffffff" : highlight ? "#eab308" : "#ffffff";
 
   return (
     <button

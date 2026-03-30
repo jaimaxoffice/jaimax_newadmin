@@ -18,15 +18,15 @@ const ConfirmModal = ({
   const colorMap = {
     danger: {
       btn: "bg-red-500 hover:bg-red-600",
-      icon: "🚫",
+      icon: "",
     },
     success: {
       btn: "bg-[#0ecb6f] hover:bg-[#0ba85a]",
-      icon: "✅",
+      icon: "",
     },
     warning: {
       btn: "bg-[#b9fd5c] hover:bg-[#ff7b1c]",
-      icon: "⚠️",
+      icon: "",
     },
   };
 

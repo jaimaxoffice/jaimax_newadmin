@@ -48,7 +48,6 @@ const MessageBubble = ({
   const isCurrentUser =
     msg.fromUserId?.toString() === currentUser?.id?.toString();
 
-  // ✅ Resolve pinned from both prop AND message object
   const isPinned = pinned || msg.isPinned;
 
   // ═══════════════════════════════════════════════════════
@@ -269,9 +268,8 @@ const MessageBubble = ({
     >
       <div className="relative max-w-[72%] sm:max-w-[60%] min-w-0">
 
-        {/* ═══════════════════════════════════════════════ */}
-        {/*  ✅ PIN BANNER — who pinned + when             */}
-        {/* ═══════════════════════════════════════════════ */}
+
+
         {isPinned && !msg.deletedForEveryone && (
           <div
             className={`flex items-center gap-1.5 px-2.5 py-1 mb-0.5 rounded-t-lg ${isCurrentUser ? "justify-end" : "justify-start"
