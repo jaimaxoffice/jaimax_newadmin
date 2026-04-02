@@ -549,7 +549,7 @@ const GroupChatApp = () => {
       chatId: group.groupId,
       name: group.groupName,
       groupImage: group.groupImage,
-      groupDescription: group.groupDescriptoin,
+      groupDescription: group.groupDescription,
       lastMessage: group.lastMessage || "",
       time: group.lastMessageTime || "",
       unread: group.unread || 0,
