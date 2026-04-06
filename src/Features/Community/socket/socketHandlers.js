@@ -7,6 +7,9 @@ import {
   isRateLimitError,
 } from "./socketUtils.js";
 
+
+// ADD at the very top of the file
+import { toast } from "react-toastify";
 const RATE_LIMIT_COOLDOWN_MS = 60_000;
 
 export const refetchChatData = (socket, chatId) => {
@@ -143,12 +146,54 @@ export const registerSocketHandlers = (socket, handlers) => {
     console.log(blockedUsers, "blockedUsers");
   });
 
-  socket.on("you_are_blocked", ({ chatId }) => {
-    if (setIsBlocked) setIsBlocked(true);
+  // socket.on("you_are_blocked", ({ chatId }) => {
+  //   if (setIsBlocked) setIsBlocked(true);
+  // });
+
+  // socket.on("you_are_unblocked", ({ chatId }) => {
+  //   if (setIsBlocked) setIsBlocked(false);
+  // });
+
+
+
+
+  // ── Block/Admin error toasts ─────────────────────────────────────────────
+
+  socket.on("admin_action_error", ({ action, error }) => {
+    const actionLabels = {
+      block: "Block user",
+      unblock: "Unblock user",
+      delete: "Delete message",
+      bulk_delete: "Bulk delete",
+      add_admin: "Add admin",
+      // remove_admin: "Remove admin",
+      get_blocked: "Fetch blocked users",
+    };
+    const label = actionLabels[action] || "Admin action";
+    toast.error(`${label} failed: ${error}`, {
+      position: "top-center",
+      autoClose: 4000,
+      toastId: `admin_error_${action}`, // prevents duplicate toasts
+    });
+  });
+
+  socket.on("you_are_blocked", ({ chatId, reason, blockedBy }) => {
+    toast.error(
+      `You have been blocked from this group.${reason ? ` Reason: ${reason}` : ""}`,
+      {
+        position: "top-center",
+        autoClose: false,          // stays until dismissed
+        toastId: "you_are_blocked",
+      }
+    );
   });
 
   socket.on("you_are_unblocked", ({ chatId }) => {
-    if (setIsBlocked) setIsBlocked(false);
+    toast.dismiss("you_are_blocked");  // remove the blocked toast
+    toast.success("You have been unblocked and can send messages again.", {
+      position: "top-center",
+      autoClose: 4000,
+    });
   });
 
   socket.on("join_chat_error", ({ error, chatId }) => {

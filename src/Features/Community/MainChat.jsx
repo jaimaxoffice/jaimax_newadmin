@@ -1411,6 +1411,7 @@ const GroupChatApp = () => {
           formatDuration={formatDuration}
           formatFileSize={formatFileSize}
           userRole={currentUser.role}
+          groupKey={SECRET_KEY}
 
           blockedUsers={blockedUsers}          // ← ADD
           isAdmin={isAdminUser}                // ← ADD

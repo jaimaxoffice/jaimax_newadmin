@@ -34,6 +34,8 @@ import MessageBubble from "./chatWindow/Messagebubble";
 import MessageInput, { LiveCamera } from "./chatWindow/Messageinput";
 import GroupInfoPanel from "./chatWindow/Groupinfopanel";
 import SharedFilesPanel from "./chatWindow/Sharedfilespanel";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   ClearChatModal,
   ErrorDetailModal,
@@ -215,9 +217,12 @@ const ChatWindow = ({
   const [isComponentLoading, setIsComponentLoading] = useState(true);
   const [activeGroupTab, setActiveGroupTab] = useState("overview");
   const [pinEvents, setPinEvents] = useState([]);
+  const [decryptedPinTexts, setDecryptedPinTexts] = useState({});
   // Add state
   const [showBlockedPanel, setShowBlockedPanel] = useState(false);
 
+
+  console.log(decryptedPinTexts, "decryptedPinTexts123")
   const hasMoreOldMessagesRef = useRef(hasMoreOldMessages);
   const isLoadingOlderRef = useRef(isLoadingOlder);
   const hasMoreNewMessagesRef = useRef(hasMoreNewMessages);
@@ -302,7 +307,7 @@ const ChatWindow = ({
   }
 
   const isOverlayOpen =
-    showMembers || showFilesPanel || showStarredPanel || showMessageInfo;
+    showFilesPanel || showStarredPanel;
 
   useEffect(() => {
     if (selectedGroup?.chatId && socketRef?.current?.connected) {
@@ -328,6 +333,7 @@ const ChatWindow = ({
         blockedByName: currentUser.name,
         blockerRole: currentUser.role,
       });
+      console.log(targetUserId, "targetUserIdwertb")
     },
     [socketRef, selectedGroup, currentUser]
   );
@@ -357,6 +363,8 @@ const ChatWindow = ({
       if (chatId === selectedGroup?.chatId)
         setPinnedMessages((prev) => [pinnedMsg, ...prev].slice(0, 3));
     };
+
+
     const handleMessageUnpinned = ({ chatId, msgId }) => {
       if (chatId === selectedGroup?.chatId)
         setPinnedMessages((prev) => prev.filter((m) => m._id !== msgId));
@@ -409,6 +417,52 @@ const ChatWindow = ({
       socket.off("block_user_error", handleBlockError);
     };
   }, [socketRef, selectedGroup?.chatId]);
+
+  const wrappedDeleteForMe = useCallback((msgId, userId) => {
+    deleteForMe(msgId, userId);
+    setPinnedMessages(p => p.filter(m => m._id !== msgId));
+    setDecryptedPinTexts(prev => { const n = { ...prev }; delete n[msgId]; return n; });
+  }, [deleteForMe]);
+
+  const wrappedDeleteForEveryone = useCallback((msgId) => {
+    deleteForEveryone(msgId);
+    setPinnedMessages(p => p.filter(m => m._id !== msgId));
+    setDecryptedPinTexts(prev => { const n = { ...prev }; delete n[msgId]; return n; });
+  }, [deleteForEveryone]);
+
+  useEffect(() => {
+    if (!pinnedMessages.length || !groupKey) return;
+
+    pinnedMessages.forEach(async (pin) => {
+      const msg = pin.msgBody?.message || pin.message || pin.body;
+
+      console.log("Decrypting pin:", pin._id, "msg:", msg, "groupKey:", !!groupKey);
+
+      if (msg?.cipherText && msg?.iv && msg?.authTag) {
+        try {
+          const result = await Promise.resolve(decryptMessage(msg, groupKey));
+          setDecryptedPinTexts(prev => {
+            if (prev[pin._id]) return prev; // skip if already set
+            return { ...prev, [pin._id]: result || "Message" };
+          });
+        } catch (err) {
+          console.error("Pin decrypt error:", err);
+          setDecryptedPinTexts(prev => ({ ...prev, [pin._id]: "Message" }));
+        }
+      } else if (typeof msg === "string") {
+        setDecryptedPinTexts(prev => {
+          if (prev[pin._id]) return prev;
+          return { ...prev, [pin._id]: msg };
+        });
+      } else {
+        setDecryptedPinTexts(prev => {
+          if (prev[pin._id]) return prev;
+          return { ...prev, [pin._id]: pin.msgBody?.media?.fileName || "Media" };
+        });
+      }
+    });
+  }, [pinnedMessages, groupKey]);  // ← groupKey MUST be here
+
 
   // ═══════════════════════════════════════════════════════════
   //  FEATURE HANDLERS
@@ -1197,42 +1251,102 @@ const ChatWindow = ({
 
           {/* ─── PINNED MESSAGES BAR ─── */}
 
+          {pinnedMessages.length > 0 && !isOverlayOpen && (
+            <div
+              className="px-3 sm:px-4 py-2 border-b border-[#2a3942]"
+              style={{ background: "#1a2730", borderLeft: "3px solid #00a884" }}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div
+                  className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer"
+                  onClick={() => {
+                    const id = pinnedMessages[currentPinnedIndex]?._id;
+                    if (id) scrollToMessage(id);
+                    setCurrentPinnedIndex(p => (p + 1) % pinnedMessages.length);
+                  }}
+                >
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-[#00a884]/20">
+                    <Pin className="w-3.5 h-3.5 text-[#00a884]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-[#00a884]">
+                      Pinned{pinnedMessages.length > 1 && ` · ${currentPinnedIndex + 1}/${pinnedMessages.length}`}
+                    </span>
+                    <p className="text-xs sm:text-sm truncate font-medium text-gray-300">
+                      {decryptedPinTexts[pinnedMessages[currentPinnedIndex]?._id] || "Decrypting…"}
+                    </p>
+                  </div>
+                </div>
+                {pinnedMessages.length > 1 && (
+                  <button onClick={() => setShowPinnedExpanded(v => !v)} className="p-1.5 rounded-lg flex-shrink-0 bg-[#2a3942]">
+                    <ChevronDown className={`w-4 h-4 text-[#00a884] transition-transform ${showPinnedExpanded ? "rotate-180" : ""}`} />
+                  </button>
+                )}
+              </div>
+              {showPinnedExpanded && (
+                <div className="mt-2 space-y-1 pt-2 border-t border-[#2a3942]">
+                  {pinnedMessages.map((pin, i) => (
+                    <div key={pin._id} className="flex items-center justify-between py-1.5 px-2 rounded-lg cursor-pointer hover:bg-[#2a3942] transition-colors"
+                      onClick={() => { scrollToMessage(pin._id); setCurrentPinnedIndex(i); setShowPinnedExpanded(false); }}>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-[10px] font-semibold text-[#00a884]">{pin.publisherName || pin.fromUserId}</span>
+                        <p className="text-xs truncate text-gray-400">
+                          {decryptedPinTexts[pin._id] || "Decrypting…"}
+                        </p>
+                      </div>
+                      <button onClick={e => { e.stopPropagation(); handleUnpinMessage(pin._id); }} className="p-1 rounded-lg ml-2">
+                        <X className="w-3 h-3 text-gray-500" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
 
           {/* ─── OVERLAY PANELS ─── */}
           {selectedGroup && showMembers && (
-            <div
-              className={
-                isMobile ? "absolute inset-0 z-40 bg-[#0b141a]" : ""
-              }
-            >
-              <GroupInfoPanel
-                selectedGroup={selectedGroup}
-                activeGroupTab={activeGroupTab}
-                setActiveGroupTab={setActiveGroupTab}
-                members={members}
-                totalUsers={totalUsers}
-                membersContainerRef={membersContainerRef}
-                accumulatedFiles={Array.isArray(chatFiles) ? chatFiles : []}
-                filesPage={filesPage}
-                setFilesPage={setFilesPage}
-                loadingFiles={loadingFiles}
-                filesPagination={filesPagination}
-                refetchFiles={refetchFiles}
-                setShowMembers={setShowMembers}
-                messagesEndRef={messagesEndRef}
-                formatFileSize={formatFileSize}
-                downloadFileToDesktop={downloadFileToDesktop}
-                isMobile={isMobile}
-                blockedUsers={blockedUsers || []}           // ← ADD
-                onUnblockUser={(targetUserId, targetUserName) => {    // ← ADD
-                  socketRef?.current?.emit("unblock_user", {
-                    chatId: selectedGroup.chatId,
-                    targetUserId,
-                    targetUserName,
-                  });
-                }}
+            <>
+              <div
+                className="absolute inset-0   backdrop-blur-sm"
+                style={{ background: "rgba(11,20,26,0.5)" }}
+                onClick={() => { setShowMembers(false); setActiveGroupTab("overview"); }}
               />
-            </div>
+              <div className="absolute inset-0 z-[60] pointer-events-none flex justify-end">
+                <div className="pointer-events-auto h-full">
+                  <GroupInfoPanel
+                    selectedGroup={selectedGroup}
+                    activeGroupTab={activeGroupTab}
+                    setActiveGroupTab={setActiveGroupTab}
+                    members={members}
+                    totalUsers={totalUsers}
+                    membersContainerRef={membersContainerRef}
+                    accumulatedFiles={Array.isArray(chatFiles) ? chatFiles : []}
+                    filesPage={filesPage}
+                    setFilesPage={setFilesPage}
+                    loadingFiles={loadingFiles}
+                    filesPagination={filesPagination}
+                    refetchFiles={refetchFiles}
+                    setShowMembers={setShowMembers}
+                    messagesEndRef={messagesEndRef}
+                    formatFileSize={formatFileSize}
+                    downloadFileToDesktop={downloadFileToDesktop}
+                    isMobile={isMobile}
+                    blockedUsers={blockedUsers || []}           // ← ADD
+                    onUnblockUser={(targetUserId, targetUserName) => {    // ← ADD
+                      socketRef?.current?.emit("unblock_user", {
+                        chatId: selectedGroup.chatId,
+                        targetUserId,
+                        targetUserName,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+
+            </>
+
           )}
 
           {selectedGroup && showFilesPanel && (
@@ -1278,23 +1392,35 @@ const ChatWindow = ({
           )}
 
           {showMessageInfo && (
-            <div
-              className={
-                isMobile ? "absolute inset-0 z-40 bg-[#0b141a]" : ""
-              }
-            >
-              <MessageInfoPanel
-                data={messageInfoData}
-                loading={messageInfoLoading}
-                members={members}
-                onClose={() => {
+            <>
+              {/* Backdrop with blur - Code 2 style */}
+              <div
+                className="absolute inset-0 z-[25] backdrop-blur-sm"
+                style={{ background: "rgba(10, 10, 10, 0.2)" }}
+                onClick={() => {
                   setShowMessageInfo(false);
                   setMessageInfoData(null);
                 }}
-                formatTime={formatTime}
-                isMobile={isMobile}
               />
-            </div>
+
+              {/* Panel container - flex layout for positioning */}
+              <div className="absolute inset-0 z-[50] pointer-events-none flex justify-end">
+                <div className="pointer-events-auto h-full">
+                  <MessageInfoPanel
+                    data={messageInfoData}
+                    loading={messageInfoLoading}
+                    members={members}
+                    groupKey={groupKey}
+                    onClose={() => {
+                      setShowMessageInfo(false);
+                      setMessageInfoData(null);
+                    }}
+                    formatTime={formatTime}
+                    isMobile={isMobile}
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           {/* ─── MESSAGES AREA ─── */}
@@ -1587,8 +1713,8 @@ const ChatWindow = ({
               handleReply={handleReply}
               handleCopyMessage={handleCopyMessage}
               retryMessage={retryMessage}
-              deleteForMe={deleteForMe}
-              deleteForEveryone={deleteForEveryone}
+              deleteForMe={wrappedDeleteForMe}
+              deleteForEveryone={wrappedDeleteForEveryone}
               setEffectiveOpenMenuId={setEffectiveOpenMenuId}
               handlePinMessage={handlePinMessage}
               handleUnpinMessage={handleUnpinMessage}
@@ -1823,8 +1949,21 @@ const ChatWindow = ({
               isMobile={isMobile}
             />
           )}
-        </div>
+        </div >
       )}
+
+      <ToastContainer
+        position="top-center"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        style={{ zIndex: 99999 }}
+      />
 
       <style>{`
         .highlight-message {
@@ -2018,9 +2157,9 @@ const EnhancedContextMenu = ({
 
   const menuContainerClass = isMobile
     ? `fixed inset-x-0 bottom-0 z-[60] transition-transform duration-250 ease-out
-       ${animateIn ? "translate-y-0" : "translate-y-full"}`
+          ${animateIn ? "translate-y-0" : "translate-y-full"}`
     : `fixed z-[60] transition-all duration-200 ease-out
-       ${animateIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`;
+          ${animateIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`;
 
   const menuContainerStyle = isMobile
     ? {}

@@ -43,7 +43,7 @@ const ChatHeader = ({
   return (
     <div
       ref={headerRef}
-      className="sticky top-0 z-30 bg-[#b9fd5c] p-2 sm:p-4 flex items-center justify-between border-b border-[#2a3942] flex-shrink-0 w-full z-50"
+      className="sticky top-0 z-10 bg-[#b9fd5c] p-2 sm:p-4 flex items-center justify-between border-b border-[#2a3942] flex-shrink-0 w-full z-50"
     >
       <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
         {/* Back button on mobile */}
