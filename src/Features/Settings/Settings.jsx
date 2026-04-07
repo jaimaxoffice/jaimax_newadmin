@@ -34,15 +34,40 @@ const Setting = () => {
     usd_to_inr_price: "",
     network_fee_token: "",
     user_community_count: "",
+    activeWithdrawlMethod: "",
+    isWithDarwalsAllowdToRequest: "",
   });
 
   const [update, { isLoading: isUpdating }] = useEditSettingsMutation();
 
   const handleOnChange = (e) => {
     let { name, value } = e.target;
-    // Allow numbers and decimals only
-    value = value.replace(/[^0-9.]/g, ""); 
-    setSettings((prev) => ({ ...prev, [name]: value }));
+
+    const numericFields = [
+      "min_withdrawal_inr",
+      "max_withdrawal_inr",
+      "withdrawal_commission_inr",
+      "buy_min_price_jaimax_inr",
+      "buy_max_price_jaimax_inr",
+      "min_withdrawal_usd",
+      "max_withdrawal_usd",
+      "withdrawal_commission_usd",
+      "buy_min_price_jaimax_usd",
+      "buy_max_price_jaimax_usd",
+      "referral_percentage",
+      "usd_to_inr_price",
+      "network_fee_token",
+      "user_community_count",
+    ];
+
+    if (numericFields.includes(name)) {
+      value = value.replace(/[^0-9.]/g, "");
+    }
+
+    setSettings((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleFormSubmit = async (e) => {
@@ -109,10 +134,12 @@ const Setting = () => {
       <div className="bg-[#282f35] border border-[#2a2c2f] rounded-2xl overflow-hidden">
         <form onSubmit={handleFormSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
-            
-            {/* INR Section */}
             <div className="space-y-4">
-              <SectionHeader title="INR Settings" subtitle="All values in INR" />
+              <SectionHeader
+                title="INR Settings"
+                subtitle="All values in INR"
+              />
+
               <div className="grid gap-4">
                 {inrFields.map((field) => (
                   <InputField
@@ -125,12 +152,38 @@ const Setting = () => {
                     type="text"
                   />
                 ))}
+
+                {/* Active Withdrawal Method */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">
+                    Active Withdrawal Method
+                  </label>
+
+                  <select
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-lg px-3 py-2"
+                    name="activeWithdrawlMethod"
+                    value={settings.activeWithdrawlMethod || ""}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        activeWithdrawlMethod: e.target.value,
+                      }))
+                    }
+                  >
+                    <option value="">Select Method</option>
+                    <option value="INR">INR</option>
+                    <option value="USDT">USDT</option>
+                  </select>
+                </div>
               </div>
             </div>
-
             {/* USD Section */}
             <div className="space-y-4">
-              <SectionHeader title="USD Settings" subtitle="All values in USD" />
+              <SectionHeader
+                title="USD Settings"
+                subtitle="All values in USD"
+              />
+
               <div className="grid gap-4">
                 {usdFields.map((field) => (
                   <InputField
@@ -143,6 +196,31 @@ const Setting = () => {
                     type="text"
                   />
                 ))}
+
+                {/* Allow Withdrawals */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">
+                    Allow Withdrawal Requests
+                  </label>
+
+                  <select
+                    className="bg-[#111214] border border-[#2a2c2f] text-white rounded-lg px-3 py-2"
+                    name="isWithDarwalsAllowdToRequest"
+                    value={
+                      settings.isWithDarwalsAllowdToRequest?.toString() || ""
+                    }
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        isWithDarwalsAllowdToRequest: e.target.value === "true",
+                      }))
+                    }
+                  >
+                    <option value="">Select Option</option>
+                    <option value="true">Accpet</option>
+                    <option value="false">Hold</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -173,7 +251,7 @@ export default Setting;
 const SectionHeader = ({ title, subtitle }) => (
   <div className="pb-2 border-b border-[#2a2c2f] mb-2">
     <h3 className="text-white font-medium text-lg flex items-center gap-2">
-      <span className="w-1.5 h-1.5 rounded-full bg-[#b9fd5c]"></span>
+      {/* <span className="w-1.5 h-1.5 rounded-full bg-[#b9fd5c]"></span> */}
       {title}
     </h3>
     <p className="text-[#8a8d93] text-xs ml-3.5 mt-0.5">{subtitle}</p>
