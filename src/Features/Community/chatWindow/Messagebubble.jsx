@@ -184,7 +184,7 @@ const MessageBubble = ({
     if (typeof messageText === "number") return "";
     if (typeof messageText === "string") {
       const t = messageText.trim();
-      if (!t || t.length < 2) return "";
+      // if (!t || t.length < 2) return "";
       return t;
     }
     if (typeof messageText === "object") {
