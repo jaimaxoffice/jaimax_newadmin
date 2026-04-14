@@ -73,3 +73,8 @@ export const sortMembers = (members, sortBy, sortOrder) => {
     return sortOrder === "asc" ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
   });
 };
+const formatDateTimeSimple = (dateString) => {
+  if (!dateString) return 'N/A';
+  return dateString.replace('T', ' ').split('.')[0];
+};
+export {formatDateTimeSimple}

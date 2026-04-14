@@ -28,6 +28,7 @@ export const allPermissions = [
   "LEGAL UPDATION",
   "DELETE ACCOUNTS",
   "JAIMAX COMMUNITY",
+  "MINING",
 ];
 
 export const formatPermissionName = (permission) => {

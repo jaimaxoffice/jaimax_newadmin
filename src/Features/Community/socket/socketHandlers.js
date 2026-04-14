@@ -143,7 +143,7 @@ export const registerSocketHandlers = (socket, handlers) => {
     if (setBlockedUsers) setBlockedUsers(blockedUsers || []);
     if (setIsBlocked) setIsBlocked(isBlocked ?? false);
     if (setIsAdmin) setIsAdmin(isAdmin ?? false);
-    console.log(blockedUsers, "blockedUsers");
+    // console.log(blockedUsers, "blockedUsers");
   });
 
   // socket.on("you_are_blocked", ({ chatId }) => {
@@ -173,7 +173,7 @@ export const registerSocketHandlers = (socket, handlers) => {
     toast.error(`${label} failed: ${error}`, {
       position: "top-center",
       autoClose: 4000,
-      toastId: `admin_error_${action}`, // prevents duplicate toasts
+      toastId: `admin_error_${action}`, 
     });
   });
 

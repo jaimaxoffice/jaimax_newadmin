@@ -85,6 +85,7 @@ import TransactionInfo from "./Accountant/TransactionInfo/TransactionInfo";
 import AccountantWithdrawal from "./Accountant/Withdrawal/Withdrawal";
 import Expenses from "./Accountant/Expensenses/Expenses"
 import UserSummary from "./Features/Users/UserSummary";
+import AdminMineDashboard from "./Features/Mining/AdminMineDashboard";
 // Permission-based Route Component
 const PermissionRoute = ({ element, permission, permissions }) => {
   if (!permission || permissions?.includes(permission)) return element;
@@ -124,7 +125,7 @@ const ADMIN_ROUTES = [
   { path: "/zoom-meetings", element: <ZoomMeeting /> },
   { path: "/blogs", element: <Blog /> },
   { path: "/support", element: <Support /> },
-  {path: "/support-chart/:id",element:<SupportChart/>},
+  { path: "/support-chart/:id",element:<SupportChart/>},
   { path: "/legal", element: <Security /> },
   { path: "/freezed-groups", element: <FreezedGroups /> },
   { path: "/not-verified-users", element: <NotVerifiedUser /> },
@@ -137,6 +138,7 @@ const ADMIN_ROUTES = [
   { path: "/user-summary", element: <UserSummary /> },
   { path: "/jaimax-community", element: <MainChat /> },
   { path: "/withdrawal-report", element: <WithdrawalReport /> },
+  { path: "/mining", element:<AdminMineDashboard/>}
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
@@ -144,7 +146,7 @@ const ROLE2_ROUTES = [
   { path: "/", element: <Dashboard />, permission: "DASHBOARD" },
   { path: "/wallet-management", element: <Wallet />, permission: "WALLET MANAGEMENT" },
   { path: "/user-management", element: <NoAccess /> },
-    { path: "/withdrawal-report", element: <NoAccess /> },
+  { path: "/withdrawal-report", element: <NoAccess /> },
   { path: "/kyc-management", element: <Kyc />, permission: "KYC MANAGEMENT" },
   { path: "/withdrawal-bonus", element: <Withdrawal />, permission: "WITHDRAW MANAGEMENT" },
   { path: "/usdt-withdrawal", element: <UsdtWithdrawal />, permission: "WITHDRAW MANAGEMENT" },
@@ -152,10 +154,10 @@ const ROLE2_ROUTES = [
   { path: "/admin-users", element: <NoAccess /> },
   { path: "/user-summary", element: <UserSummary />,permission: "USER INFO" },
   { path: "/all-wallet-transactions", element: <AllTransactions />, permission: "WALLET MANAGEMENT" },
-  {path: "/pg-transactions",element: <PaymentGatewaysTransactions />,permission: "WALLET MANAGEMENT",},
+  { path: "/pg-transactions",element: <PaymentGatewaysTransactions />,permission: "WALLET MANAGEMENT",},
   { path: "/payment-gateway", element: <PaymentGateway />, permission: "PAYMENTGATEWAYS" },
   { path: "/buy-history", element: <BuyHistory />, permission: "BUY HISTORY" },
-  {path: "/manual-accounts",element: <AddManualAccountsForm />,permission: "MANUAL TRANSACTION",},
+  { path: "/manual-accounts",element: <AddManualAccountsForm />,permission: "MANUAL TRANSACTION",},
   { path: "/manual-kyc", element: <ManualKycAccounts />, permission: "MANUAL KYC" },
   { path: "/team-reports", element: <TeamReports />, permission: "TEAM REPORT" },
   { path: "/team-investments", element: <TeamInvestments />, permission: "TEAM REPORT" },
@@ -173,7 +175,7 @@ const ROLE2_ROUTES = [
   { path: "/zoom-meetings", element: <ZoomMeeting />, permission: "ZOOM MEETING" },
   { path: "/blogs", element: <Blog />, permission: "BLOGS" },
   { path: "/support", element: <Support />, permission: "SUPPORT" },
-   {path: "/support-chart/:id",element:<SupportChart/>, permission: "SUPPORT"},
+  { path: "/support-chart/:id",element:<SupportChart/>, permission: "SUPPORT"},
   { path: "/legal", element: <Security />, permission: "LEGAL UPDATION" },
   { path: "/freezed-groups", element: <FreezedGroups />, permission: "FREEZED GROUPS" },
   { path: "/not-verified-users", element: <NotVerifiedUser />, permission: "NOT VERIFIED USERS" },
@@ -185,6 +187,7 @@ const ROLE2_ROUTES = [
   { path: "/jaimax-community", element: <MainChat />,permission: "JAIMAX COMMUNITY" },
   { path: "/businessanalytics", element: <BusinessAnalytics />,permission: "BUSINESS ANALYTICS" },
   { path: "/reports", element: <Report />, permission: "REPORTS" },
+  { path: "/mining", element:<AdminMineDashboard/>, permission:"MINING"}
 ];
 
 
@@ -257,7 +260,7 @@ const { role, permissions = [] } = parsed?.data || {};
         {/* Fallback */}
        <Route
         path="*"
-        element={<Navigate to={adminToken ? "/" : "/login"} replace />}
+        element={<Navigate to={adminToken && stored ? "/" : "/login"} replace />}
       />
       </Routes>
     </>

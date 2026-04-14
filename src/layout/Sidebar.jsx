@@ -688,6 +688,13 @@ const ADMIN_SECTIONS = [
     ],
   },
   {
+    label: "MINING",
+    items: [
+      { label: "Mining", icon: UserSearch, path: "/mining" },
+     
+    ],
+  },
+  {
     label: "TRANSACTIONS",
     items: [
       {

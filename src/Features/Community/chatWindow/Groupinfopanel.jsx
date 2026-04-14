@@ -1025,7 +1025,7 @@ const GroupInfoPanel = ({
                   <span className="text-[13.5px] text-white font-medium">Media & docs</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[13px] text-white/60">{allFiles.length}</span>
+                  {/* <span className="text-[13px] text-white/60">{allFiles.length}</span> */}
                   <ChevronRight className="w-4 h-4 text-white/60" />
                 </div>
               </button>

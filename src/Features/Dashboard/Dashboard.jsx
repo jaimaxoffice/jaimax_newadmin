@@ -1018,10 +1018,21 @@ const Dashboard = () => {
   if (!d) return <div className="min-h-screenflex items-center justify-center text-white text-sm">No data available</div>;
 
   // const userData = Cookies.get("userData")
-  const userData = Cookies.get("adminUserData");
+  // const userData = Cookies.get("adminUserData");
   // return userDataObj ? JSON.parse(userData) : null;
-  const userDataObj = userData ? JSON.parse(userData) : null;
+  // const userDataObj = userData ? JSON.parse(userData) : null;
   // console.log("UserData from localStorage:", userDataObj);
+  const getUserData = () => {
+  try {
+    const userData = Cookies.get("adminUserData");
+    return userData ? JSON.parse(userData) : null;
+  } catch (error) {
+    console.error("Failed to parse user data:", error);
+    return null;
+  }
+};
+
+const userDataObj = getUserData();
 
   // const activeRound = d.ico?.rounds?.find(r => r.status === 2) || d.ico?.rounds?.find(r => r.status === 1);
   // console.log(activeRound,"hello")

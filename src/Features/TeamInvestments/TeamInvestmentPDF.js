@@ -249,6 +249,8 @@ const getTotalInvestment = (investments) => {
   return investments.reduce((sum, inv) => sum + (inv.amount || 0), 0);
 };
 
+
+
 const getInvestedStats = (layersData) => {
   let totalInvestedUsers = 0;
   let totalLayers = 0;
@@ -256,11 +258,13 @@ const getInvestedStats = (layersData) => {
 
   Object.keys(layersData).forEach((layerKey) => {
     const layer = layersData[layerKey];
-    const investedUsers =
-      layer?.active?.filter((u) => u.investments?.length > 0) || [];
+
+    // ✅ include ALL active users (even with 0 or no investments)
+    const investedUsers = layer?.active || [];
 
     if (investedUsers.length > 0) totalLayers++;
     totalInvestedUsers += investedUsers.length;
+
     investedUsers.forEach((u) => {
       totalInvestment += getTotalInvestment(u.investments);
     });
@@ -395,9 +399,9 @@ export const buildTeamInvestmentPDF = (
     .sort((a, b) => Number(a) - Number(b))
     .forEach((layerKey) => {
       const layer = layersData[layerKey];
-      const investedUsers =
-        layer?.active?.filter((u) => u.investments?.length > 0) || [];
-
+      // const investedUsers =
+      //   layer?.active?.filter((u) => u.investments?.length > 0) || [];
+const investedUsers = layer?.active || [];
       if (investedUsers.length === 0) return;
 
       let layerTotal = 0;

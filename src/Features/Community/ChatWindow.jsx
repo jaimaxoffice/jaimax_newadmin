@@ -200,7 +200,6 @@ const ChatWindow = ({
 }) => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  console.log(blockedUsers, "blockedUsers")
 
   const [showCamera, setShowCamera] = useState(false);
   // ═══════════════════════════════════════════════════════════
@@ -222,7 +221,7 @@ const ChatWindow = ({
   const [showBlockedPanel, setShowBlockedPanel] = useState(false);
 
 
-  console.log(decryptedPinTexts, "decryptedPinTexts123")
+  // console.log(decryptedPinTexts, "decryptedPinTexts123")
   const hasMoreOldMessagesRef = useRef(hasMoreOldMessages);
   const isLoadingOlderRef = useRef(isLoadingOlder);
   const hasMoreNewMessagesRef = useRef(hasMoreNewMessages);
@@ -321,7 +320,7 @@ const ChatWindow = ({
 
 
   const handleBlockError = useCallback(({ error }) => {
-    console.error("Block error:", error);
+    // console.error("Block error:", error);
   }, []);
 
   const handleBlockUser = useCallback(
@@ -333,7 +332,7 @@ const ChatWindow = ({
         blockedByName: currentUser.name,
         blockerRole: currentUser.role,
       });
-      console.log(targetUserId, "targetUserIdwertb")
+      // console.log(targetUserId, "targetUserIdwertb")
     },
     [socketRef, selectedGroup, currentUser]
   );
@@ -436,7 +435,7 @@ const ChatWindow = ({
     pinnedMessages.forEach(async (pin) => {
       const msg = pin.msgBody?.message || pin.message || pin.body;
 
-      console.log("Decrypting pin:", pin._id, "msg:", msg, "groupKey:", !!groupKey);
+      // console.log("Decrypting pin:", pin._id, "msg:", msg, "groupKey:", !!groupKey);
 
       if (msg?.cipherText && msg?.iv && msg?.authTag) {
         try {
@@ -446,7 +445,7 @@ const ChatWindow = ({
             return { ...prev, [pin._id]: result || "Message" };
           });
         } catch (err) {
-          console.error("Pin decrypt error:", err);
+          // console.error("Pin decrypt error:", err);
           setDecryptedPinTexts(prev => ({ ...prev, [pin._id]: "Message" }));
         }
       } else if (typeof msg === "string") {
@@ -746,7 +745,7 @@ const ChatWindow = ({
           hasMoreOldMessagesRef.current &&
           !isLoadingOlderRef.current
         ) {
-          console.log("[SCROLL] Near top — loading older messages");
+          // console.log("[SCROLL] Near top — loading older messages");
           loadOlderMessages();
         }
 
@@ -2021,7 +2020,6 @@ const EnhancedContextMenu = ({
   messages,
   currentUser,
   userRole,
-  groupKey,
   copiedMessageId,
   handleReply,
   handleCopyMessage,
@@ -2146,6 +2144,7 @@ const EnhancedContextMenu = ({
   })();
 
   const isTargetBlocked = blockedUsers.includes(msg.fromUserId?.toString());
+  // console.log(isTargetBlocked,"hello") 
   const starred = isMessageStarred(msg);
   const pinned = isMessagePinned(msg);
   const editable = canEditMessage(msg);
@@ -2203,6 +2202,7 @@ const EnhancedContextMenu = ({
                   <ShieldBan className="w-6 h-6 text-red-400" />
                 )}
               </div>
+              {/* {console.log(isTargetBlocked,"hiii")} */}
               <p className="text-white text-sm font-medium text-center">
                 {isTargetBlocked ? `Unblock ${targetName}?` : `Block ${targetName}?`}
               </p>
