@@ -86,11 +86,19 @@ import AccountantWithdrawal from "./Accountant/Withdrawal/Withdrawal";
 import Expenses from "./Accountant/Expensenses/Expenses"
 import UserSummary from "./Features/Users/UserSummary";
 import AdminMineDashboard from "./Features/Mining/AdminMineDashboard";
+import Fallback from "./Features/Dashboard/WelcomeBanner"
+
+import  {useCheckPermissionsQuery} from './api/jaimaxApiSlice'
 // Permission-based Route Component
-const PermissionRoute = ({ element, permission, permissions }) => {
+// const PermissionRoute = ({ element, permission, permissions }) => {
+//   if (!permission || permissions?.includes(permission)) return element;
+//   return <NoAccess />;
+// };
+
+const PermissionRoute = ({ element, permission, permissions, fallback }) => {
   if (!permission || permissions?.includes(permission)) return element;
-  return <NoAccess />;
-};
+  return fallback || <NoAccess />;
+};  
 
 // ─── ADMIN ROUTES (role === 0) ───
 const ADMIN_ROUTES = [
@@ -143,7 +151,7 @@ const ADMIN_ROUTES = [
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
 const ROLE2_ROUTES = [
-  { path: "/", element: <Dashboard />, permission: "DASHBOARD" },
+  { path: "/", element: <Dashboard />, permission: "DASHBOARD",fallback: <Fallback /> },
   { path: "/wallet-management", element: <Wallet />, permission: "WALLET MANAGEMENT" },
   { path: "/user-management", element: <NoAccess /> },
   { path: "/withdrawal-report", element: <NoAccess /> },
@@ -187,7 +195,7 @@ const ROLE2_ROUTES = [
   { path: "/jaimax-community", element: <MainChat />,permission: "JAIMAX COMMUNITY" },
   { path: "/businessanalytics", element: <BusinessAnalytics />,permission: "BUSINESS ANALYTICS" },
   { path: "/reports", element: <Report />, permission: "REPORTS" },
-  { path: "/mining", element:<AdminMineDashboard/>, permission:"MINING"}
+  // { path: "/mining", element:<AdminMineDashboard/>, permission:"MINING"}
 ];
 
 
@@ -202,13 +210,16 @@ const ACCOUNTANT_ROUTES = [
 ];
 
 const App = () => {
+  const { data, isLoading, error } = useCheckPermissionsQuery();
+
+console.log(data);
  // ✅ FIX
 const adminToken = Cookies.get("adminToken");
 const stored = Cookies.get("adminUserData");
 const parsed = stored ? JSON.parse(stored) : {};
 const { role, permissions = [] } = parsed?.data || {};
   const renderRoutes = (routes, checkPermissions = false) =>
-    routes.map(({ path, element, permission }) => (
+    routes.map(({ path, element, permission ,fallback }) => (
       <Route
         key={path}
         path={path}
@@ -218,6 +229,7 @@ const { role, permissions = [] } = parsed?.data || {};
               element={element}
               permission={permission}
               permissions={permissions}
+              fallback={fallback}
             />
           ) : (
             element

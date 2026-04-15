@@ -59,7 +59,16 @@ export const apiSlice = createApi({
 
   refetchOnFocus: false,
   refetchOnReconnect: true,
-  endpoints: () => ({}),
+  endpoints: (builder) => ({
+    // ✅ NEW API
+    checkPermissions: builder.query({
+      query: () => ({
+        url: "/admin/check-permissions",
+        method: "GET",
+      }),
+      providesTags: ["Permissions"],
+    }),
+  }),
 });
 
-export const { usePrefetch } = apiSlice;
+export const { usePrefetch,useCheckPermissionsQuery } = apiSlice;
