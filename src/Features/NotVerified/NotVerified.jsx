@@ -186,7 +186,7 @@ const NotVerifiedUsers = () => {
     },
     {
       header: "ID",
-      render: (row) => <span className="">{row?._id?.slice(-8) || "N/A"}</span>,
+      render: (row) => <span className="">{row?._id || "N/A"}</span>,
     },
     {
       header: "Name",

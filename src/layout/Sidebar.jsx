@@ -748,6 +748,10 @@ import {
   LogOut,
   GalleryVerticalEnd,
   Loader2,
+  Pickaxe ,
+  Blinds ,
+  Scroll ,
+  Handshake 
 } from "lucide-react";
 
 // ─── ADMIN (role === 0) ───
@@ -785,7 +789,10 @@ const ADMIN_SECTIONS = [
   {
     label: "MINING",
     items: [
-      { label: "Mining", icon: UserSearch, path: "/mining", permission: "MINING" },
+      { label: "Mine Dashboard", icon: Blinds  , path: "/mining", permission: "MINING" },
+      { label: "Mine Wallet Tx", icon: Pickaxe , path: "/mining-transactions", permission: "MINING" },
+      { label: "Mine Logs", icon: Scroll , path: "/mining-logs", permission: "MINING" },
+      { label: "Mine Referrals", icon: Handshake , path: "/mining-referrals", permission: "MINING" },
     ],
   },
   {

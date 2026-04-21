@@ -65,27 +65,14 @@ const UsdtBonusList = () => {
   const totalRecords = response?.data?.total || 0;
   const totalPages = response?.data?.totalPages || 1;
 
-  // Stats
-  const totalPending = useMemo(
-    () => TableData.filter((req) => req.status === 0).length,
-    [TableData],
-  );
-  const totalApproved = useMemo(
-    () => TableData.filter((req) => req.status === 1).length,
-    [TableData],
-  );
-  const totalRejected = useMemo(
-    () => TableData.filter((req) => req.status === 2).length,
-    [TableData],
-  );
-  const totalUsdtAmount = useMemo(
-    () =>
-      TableData.reduce(
-        (sum, item) => sum + getDecimalValue(item?.amount_in_token),
-        0,
-      ),
-    [TableData],
-  );
+  const totalWithdrawnUSDT =
+  parseFloat(response?.data?.totalWithdrawnUSDT?.$numberDecimal || 0);
+  const totalUSDTAdminCharges =
+  parseFloat(response?.data?.totalUSDTAdminCharges?.$numberDecimal || 0);
+  const totalSentUSDT =
+  parseFloat(response?.data?.totalSentUSDT?.$numberDecimal || 0);
+  const total =
+  response?.data?.total || 0;
 
   // ─── Handlers ────────────────────────────────────────────────
 
@@ -409,26 +396,26 @@ const UsdtBonusList = () => {
       {/* Stat Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Pending"
-          value={totalPending}
+          title="Total USDT"
+          value={totalWithdrawnUSDT}
           icon={Clock}
           status="pending"
         />
         <StatCard
-          title="Approved"
-          value={totalApproved}
+          title="Admin Charges"
+          value={totalUSDTAdminCharges}
           icon={CheckCircle}
           status="approved"
         />
         <StatCard
-          title="Rejected"
-          value={totalRejected}
+          title="Send Tokens"
+          value={totalSentUSDT}
           icon={XCircle}
           status="rejected"
         />
         <StatCard
-          title="Total USDT"
-          value={`${totalUsdtAmount.toFixed(4)} `}
+          title="Total tnxs"
+          value={total}
           icon={Wallet}
         />
       </div>

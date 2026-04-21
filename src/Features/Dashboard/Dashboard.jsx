@@ -553,7 +553,60 @@ const WithdrawalsCard = ({ withdrawals }) => {
   );
 };
 
+const UsdtCard = ({ usdtWithdraws }) => {
+  const totalWithdrawn = usdtWithdraws.TotalWithdrawnUSDT || 0;
+  const totalSent = usdtWithdraws.TotalSentUSDT || 0;
+  const totalCharges = usdtWithdraws.TotalUSDTCharges || 0;
+  const withdrawCount = usdtWithdraws.totalUSDTWithdrawCount || 0;
 
+  // Calculate success rate
+  const successRate = totalWithdrawn > 0 ? ((totalSent / totalWithdrawn) * 100).toFixed(1) : 0;
+
+  return (
+    <Card>
+      <div className="p-4 sm:p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <span className="flex-1 text-[20px] font-bold text-white serialHeading">
+            USDT Withdrawals
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="bg-[#0d1218] rounded-xl p-3 text-center">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">
+              Total Withdrawn
+            </p>
+            <p className="text-sm font-bold text-white">${fmtWhole(totalWithdrawn)}</p>
+          </div>
+          <div className="bg-green-500/5 border border-green-500/15 rounded-xl p-3 text-center">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">
+              Total Sent
+            </p>
+            <p className="text-sm font-bold text-green-400">${fmtWhole(totalSent)}</p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <div className="bg-[#0d1218] rounded-xl px-3 py-2">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">
+              Total Charges
+            </p>
+            <p className="text-lg font-bold text-[#b9fd5c]">${fmt(totalCharges)}</p>
+          </div>
+
+          <div className="bg-[#0d1218] rounded-xl px-3 py-2">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white mb-1">
+              Withdraw Count
+            </p>
+            <p className="text-lg font-bold text-[#b9fd5c]">{withdrawCount}</p>
+          </div>
+
+          
+        </div>
+      </div>
+    </Card>
+  );
+};
 const WealthPlansCard = ({ wealthPlans }) => {
   const plans = [
     { key: 'gwp1', name: 'Wealth Plan 1', color: '#ffffff' },
@@ -1175,6 +1228,7 @@ const completedRounds = d.ico?.rounds?.filter(r => r.status === 1).length || 0;
               <SL>Financial & Plans</SL>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <WithdrawalsCard withdrawals={d.withdrawals} />
+                <UsdtCard usdtWithdraws={d.usdtWithdraws} />
                 <ActiveICOCard round={activeRound} completedRounds={completedRounds} totalRounds={totalRounds} />
                 <USDTCard usdt={d.usdt} />
               </div>

@@ -85,7 +85,10 @@ import TransactionInfo from "./Accountant/TransactionInfo/TransactionInfo";
 import AccountantWithdrawal from "./Accountant/Withdrawal/Withdrawal";
 import Expenses from "./Accountant/Expensenses/Expenses"
 import UserSummary from "./Features/Users/UserSummary";
-import AdminMineDashboard from "./Features/Mining/AdminMineDashboard";
+import MiningDashboard from "./Features/Mining/MiningDashboard";
+import MiningTransactions from "./Features/Mining/MiningWallets";
+import MiningLogs from "./Features/Mining/MiningLogs";
+import MiningReferrals from "./Features/Mining/MiningReferal";
 import Fallback from "./Features/Dashboard/WelcomeBanner"
 
 import  {useCheckPermissionsQuery} from './api/jaimaxApiSlice'
@@ -146,7 +149,10 @@ const ADMIN_ROUTES = [
   { path: "/user-summary", element: <UserSummary /> },
   { path: "/jaimax-community", element: <MainChat /> },
   { path: "/withdrawal-report", element: <WithdrawalReport /> },
-  { path: "/mining", element:<AdminMineDashboard/>}
+  { path: "/mining", element:<MiningDashboard/>},
+  { path: "/mining-transactions", element:<MiningTransactions/>},
+  { path: "/Mining-logs", element:<MiningLogs/>},
+  { path: "/Mining-referrals", element:<MiningReferrals/>}
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
@@ -195,7 +201,10 @@ const ROLE2_ROUTES = [
   { path: "/jaimax-community", element: <MainChat />,permission: "JAIMAX COMMUNITY" },
   { path: "/businessanalytics", element: <BusinessAnalytics />,permission: "BUSINESS ANALYTICS" },
   { path: "/reports", element: <Report />, permission: "REPORTS" },
-  // { path: "/mining", element:<AdminMineDashboard/>, permission:"MINING"}
+  { path: "/mining", element:<MiningDashboard/>,permission:"MINING"},
+  { path: "/mining-transactions", element:<MiningTransactions/>,permission:"MINING"},
+  { path: "/Mining-logs", element:<MiningLogs/>,permission:"MINING"},
+  { path: "/Mining-referrals", element:<MiningReferrals/>,permission:"MINING"}
 ];
 
 
