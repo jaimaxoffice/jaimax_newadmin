@@ -16,6 +16,7 @@ import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
 import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
 import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import { Clock, CheckCircle, BarChart3, XCircle } from "lucide-react";
+import { useLazyExportWithdrawalsQuery } from "../accountsApiSlice";
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL || "http://192.168.128.1:3002/api";
 
@@ -173,6 +174,9 @@ const WithDraw = () => {
     selectedStatus === "Select Status" ? "" : selectedStatus
   }&fromDate=${state.fromDate || ""}&toDate=${state.toDate || ""}`;
 
+  const [triggerExport, { isFetching: exporting }] =
+      useLazyExportWithdrawalsQuery();
+
   const {
     data: getWithdrawList,
     isLoading,
@@ -264,47 +268,78 @@ const WithDraw = () => {
     }
   };
 
-  const handleExport = async (fmt) => {
-    try {
-      const q = new URLSearchParams();
-      q.set("format", fmt);
-      if (state.search) q.set("search", state.search);
-      if (state.fromDate?.trim()) q.set("fromDate", state.fromDate);
-      if (state.toDate?.trim()) q.set("toDate", state.toDate);
+  // const handleExport = async (fmt) => {
+  //   try {
+  //     const q = new URLSearchParams();
+  //     q.set("format", fmt);
+  //     if (state.search) q.set("search", state.search);
+  //     if (state.fromDate?.trim()) q.set("fromDate", state.fromDate);
+  //     if (state.toDate?.trim()) q.set("toDate", state.toDate);
 
-      const res = await fetch(`${API_BASE}/accounts/withdrawals/export?${q}`, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("adminToken") || ""}`,
-        },
-      });
-      if (!res.ok) {
-        toast.error("Export failed");
-        return;
-      }
+  //     const res = await fetch(`${API_BASE}/accounts/withdrawals/export?${q}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${Cookies.get("adminToken") || ""}`,
+  //       },
+  //     });
+  //     if (!res.ok) {
+  //       toast.error("Export failed");
+  //       return;
+  //     }
 
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const disposition = res.headers.get("content-disposition");
-      let filename =
-        disposition && disposition.includes("filename=")
-          ? disposition.split("filename=")[1].replace(/["']/g, "")
-          : fmt === "pdf"
-          ? "withdrawals.pdf"
-          : "withdrawals.xlsx";
+  //     const blob = await res.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const disposition = res.headers.get("content-disposition");
+  //     let filename =
+  //       disposition && disposition.includes("filename=")
+  //         ? disposition.split("filename=")[1].replace(/["']/g, "")
+  //         : fmt === "pdf"
+  //         ? "withdrawals.pdf"
+  //         : "withdrawals.xlsx";
 
-      const a = Object.assign(document.createElement("a"), {
-        href: url,
-        download: filename,
-      });
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      toast.error("Export error");
-      console.error("Export error:", err);
-    }
-  };
+  //     const a = Object.assign(document.createElement("a"), {
+  //       href: url,
+  //       download: filename,
+  //     });
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     a.remove();
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (err) {
+  //     toast.error("Export error");
+  //     console.error("Export error:", err);
+  //   }
+  // };
+
+ const handleExport = async (fmt) => {
+  try {
+    const queryParams = new URLSearchParams({
+      format: fmt,
+      search: state.search || "",
+      fromDate: state.fromDate || "",
+      toDate: state.toDate || "",
+      status:
+        selectedStatus !== "Select Status" ? selectedStatus : "",
+    }).toString();
+
+    const blob = await triggerExport(queryParams).unwrap();
+
+    const filename = `withdrawals_${state.fromDate || "all"}_${
+      state.toDate || "all"
+    }.${fmt}`;
+
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(href);
+  } catch (e) {
+    console.error("Export failed:", e);
+    toast.error("Export failed.");
+  }
+};
 
   const closeDetail = () =>
     setDetailModal({ show: false, title: "", content: "" });

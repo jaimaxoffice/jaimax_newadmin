@@ -170,10 +170,37 @@ const Credits = () => {
     }
   };
 
-  const download = async (fmt) => {
-    setExportOpen(false);
-    try {
-      const blob = await triggerExport({
+  // const download = async (fmt) => {
+  //   setExportOpen(false);
+  //   try {
+  //     const blob = await triggerExport({
+  //       format: fmt,
+  //       transactionType: "Credit",
+  //       search: state.search || undefined,
+  //       fromDate: state.fromDate?.trim() || undefined,
+  //       toDate: state.toDate?.trim() || undefined,
+  //       sort: LIST_SORT,
+  //     }).unwrap();
+
+  //     const filename = `credits_export.${fmt}`;
+  //     const href = URL.createObjectURL(blob);
+  //     const a = document.createElement("a");
+  //     a.href = href;
+  //     a.download = filename;
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     a.remove();
+  //     URL.revokeObjectURL(href);
+  //   } catch (e) {
+  //     console.error("Export failed:", e);
+  //     toast.error("Export failed. See console for details.");
+  //   }
+  // };
+
+   const download = async (fmt) => {
+  setExportOpen(false);
+  try {
+    const blob = await triggerExport({
         format: fmt,
         transactionType: "Credit",
         search: state.search || undefined,
@@ -182,20 +209,25 @@ const Credits = () => {
         sort: LIST_SORT,
       }).unwrap();
 
-      const filename = `credits_export.${fmt}`;
-      const href = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = href;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(href);
-    } catch (e) {
-      console.error("Export failed:", e);
-      toast.error("Export failed. See console for details.");
-    }
-  };
+
+    const filename = `credits_${state.fromDate || "all"}_${
+      state.toDate || "all"
+    }.${fmt}`;
+
+
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(href);
+  } catch (e) {
+    console.error("Export failed:", e);
+    toast.error("Export failed. See console for details.");
+  }
+};
 
   const handleUtrSubmit = async (values, { setSubmitting, resetForm }) => {
     try {

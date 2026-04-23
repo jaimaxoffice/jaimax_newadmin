@@ -12,15 +12,15 @@ import {
   useUpdateDocumentMutation,
   useDeleteDocumentMutation,
   useGetinternalCategoriesQuery,
-} from "./expensesApiSlice";
+} from "../Accountant/Expensenses/expensesApiSlice";
 
 // ✅ YOUR REUSABLE COMPONENTS
-import Table from "../../reusableComponents/Tables/Table";
-import Pagination from "../../reusableComponents/paginations/Pagination";
-import StatCard from "../../reusableComponents/StatCards/StatsCard";
-import MobileCard from "../../reusableComponents/MobileCards/MobileCards";
-import MobileCardList from "../../reusableComponents/MobileCards/MobileCardList";
-import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import Table from "../reusableComponents/Tables/Table";
+import Pagination from "../reusableComponents/paginations/Pagination";
+import StatCard from "../reusableComponents/StatCards/StatsCard";
+import MobileCard from "../reusableComponents/MobileCards/MobileCards";
+import MobileCardList from "../reusableComponents/MobileCards/MobileCardList";
+import SearchBar from "../reusableComponents/searchBar/SearchBar";
 
 /* ── Modal Components ── */
 const TwModal = ({ show, onClose, size = "max-w-lg", children }) => {
@@ -104,7 +104,7 @@ const ExportDropdown = ({ exporting, onDownload }) => {
 
 /* ── Bill View Button ── */
 const BillViewButton = ({ url }) => {
-  if (!url) return <span className="text-gray-500">-</span>;
+  if (!url) return <span className="text-gray-300">N/A</span>;
   return (
     <a
       href={url}
@@ -134,7 +134,7 @@ const formatDateYYYYMMDD = (isoString) => {
 /* ═══════════════════════════════════
    INTERNAL EXPENSES COMPONENT
    ═══════════════════════════════════ */
-const InternalExpenses = () => {
+const Expenses = () => {
   /* ── State ── */
   const [FormOpen, setFormOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -396,7 +396,7 @@ const InternalExpenses = () => {
     {
       key: "utr",
       header: "UTR",
-      render: (doc) => doc.utrNumber || "-",
+      render: (doc) => doc.utrNumber || "N/A",
     },
     {
       key: "uploadedDate",
@@ -785,9 +785,11 @@ const InternalExpenses = () => {
                         className={inputCls}
                       >
                         <option value="">Select Money Source</option>
-                        <option value="Office Money">Office Money</option>
+                        {/* <option value="Office Money">Office Money</option>
                         <option value="Manager Money">Manager Money</option>
-                        <option value="Others">Others</option>
+                        <option value="Others">Others</option> */}
+                        <option value="50200096307867">50200096307867</option>
+                        <option value="50200109463200">50200109463200</option>
                       </Field>
                       {/* <ChevronDown className={chevronCls} /> */}
                     </div>
@@ -1005,4 +1007,4 @@ const InternalExpenses = () => {
   );
 };
 
-export default InternalExpenses;
+export default Expenses;

@@ -929,10 +929,25 @@ const ACCOUNTANT_SECTIONS = [
       { label: "Debits", icon: ArrowDownToLine, path: "/debits" },
       { label: "TransactionInfo", icon: Receipt, path: "/TransactionInfo" },
       { label: "Withdrawal", icon: Banknote, path: "/withdrawal" },
-      { label: "Internal Expenses", icon: HandCoins, path: "/expenses" },
+      { label: "Internal Expenses", icon: HandCoins, path: "/internal-expenses" },
     ],
   },
 ];
+// ─── ACCOUNTANT (role === 4) ───
+const FINANCE_SECTIONS = [
+  {
+    label: "DASHBOARDS",
+    items: [
+      { label: "Dashboard", icon: LayoutDashboard, path: "/" },
+      { label: "Credits", icon: WalletCards, path: "/credits" },
+      // { label: "Debits", icon: ArrowDownToLine, path: "/debits" },
+      // { label: "TransactionInfo", icon: Receipt, path: "/TransactionInfo" },
+      { label: "Withdrawal", icon: Banknote, path: "/withdrawal" },
+      { label: "Expenses", icon: HandCoins, path: "/expenses" },
+    ],
+  },
+];
+
 
 function getSectionsByRole(role, permissions = []) {
   // Normalize permissions to uppercase for comparison
@@ -956,25 +971,30 @@ function getSectionsByRole(role, permissions = []) {
     case 3:
       return ACCOUNTANT_SECTIONS;
     case 4:
-      // Viewer - same as sub admin, filter by permissions
-      return ADMIN_SECTIONS.map((section) => ({
-        ...section,
-        items: section.items.filter((item) => {
-          if (!item.permission) return true;
-          return normalizedPermissions.includes(item.permission.toUpperCase());
-        }),
-      })).filter((section) => section.items.length > 0);
-    default:
-      return [];
+      return FINANCE_SECTIONS;
+    // case 4:
+    //   // Viewer - same as sub admin, filter by permissions
+    //   return ADMIN_SECTIONS.map((section) => ({
+    //     ...section,
+    //     items: section.items.filter((item) => {
+    //       if (!item.permission) return true;
+    //       return normalizedPermissions.includes(item.permission.toUpperCase());
+    //     }),
+    //   })).filter((section) => section.items.length > 0);
+    // default:
+    //   return [];
   }
 }
+
 
 const ROLE_LABELS = {
   0: "Admin",
   2: "Sub Admin",
   3: "Accountant",
-  4: "Viewer",
+  4: "Finance",
+  // 4: "Viewer",
 };
+
 
 function getRoleLabel(role) {
   return ROLE_LABELS[role] || "User";

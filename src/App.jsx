@@ -83,7 +83,7 @@ import Credits from "./Accountant/Credits/Credits";
 import Debits from "./Accountant/Debits/Debits";
 import TransactionInfo from "./Accountant/TransactionInfo/TransactionInfo";
 import AccountantWithdrawal from "./Accountant/Withdrawal/Withdrawal";
-import Expenses from "./Accountant/Expensenses/Expenses"
+import InternalExpenses from "./Accountant/Expensenses/Expenses"
 import UserSummary from "./Features/Users/UserSummary";
 import MiningDashboard from "./Features/Mining/MiningDashboard";
 import MiningTransactions from "./Features/Mining/MiningWallets";
@@ -92,6 +92,7 @@ import MiningReferrals from "./Features/Mining/MiningReferal";
 import Fallback from "./Features/Dashboard/WelcomeBanner"
 
 import  {useCheckPermissionsQuery} from './api/jaimaxApiSlice'
+import Expenses from "./Finance/Expenses";
 // Permission-based Route Component
 // const PermissionRoute = ({ element, permission, permissions }) => {
 //   if (!permission || permissions?.includes(permission)) return element;
@@ -214,9 +215,21 @@ const ACCOUNTANT_ROUTES = [
   { path: "/debits", element: <Debits /> },
   { path: "/transactionInfo", element: <TransactionInfo /> },
   { path: "/withdrawal", element: <AccountantWithdrawal /> },
+  { path: "/internal-expenses", element: <InternalExpenses /> },
+  { path: "/logout", element: <Logout /> },
+];
+
+
+const FINANCE_ROUTES = [
+  { path: "/", element: <AccountsDashboard /> },
+  { path: "/credits", element: <Credits /> },
+  // { path: "/debits", element: <Debits /> },
+  // { path: "/transactionInfo", element: <TransactionInfo /> },
+  { path: "/withdrawal", element: <AccountantWithdrawal /> },
   { path: "/expenses", element: <Expenses /> },
   { path: "/logout", element: <Logout /> },
 ];
+
 
 const App = () => {
   const { data, isLoading, error } = useCheckPermissionsQuery();
@@ -255,6 +268,8 @@ const { role, permissions = [] } = parsed?.data || {};
         return renderRoutes(ROLE2_ROUTES, true);
       case 3:
         return renderRoutes(ACCOUNTANT_ROUTES);
+      case 4:
+        return renderRoutes(FINANCE_ROUTES);
       default:
         return null;
     }
