@@ -134,7 +134,7 @@ const formatDateYYYYMMDD = (isoString) => {
 /* ═══════════════════════════════════
    INTERNAL EXPENSES COMPONENT
    ═══════════════════════════════════ */
-const Expenses = () => {
+const FinanceExpenses = () => {
   /* ── State ── */
   const [FormOpen, setFormOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -547,18 +547,18 @@ const Expenses = () => {
             {/* ── Summary Cards (✅ StatCard) ── */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
               <StatCard
-                icon={IndianRupee }
+                icon={IndianRupee}
                 value={`₹${pagination?.totalAmount?.toLocaleString() || 0}`}
-                title="Total Monthly Amount"
+                title="Total  Amount"
                 variant="yellow"
-                // bgClass="bg-[#4c4320]"
+              // bgClass="bg-[#4c4320]"
               />
               <StatCard
-                icon={FileIcon }
+                icon={FileIcon}
                 value={totalCount || 0}
                 title="Total Bills"
                 variant="blue"
-                // bgClass="bg-[#4a262f]"
+              // bgClass="bg-[#4a262f]"
               />
 
               {/* Upload Card (custom - not a stat) */}
@@ -604,7 +604,7 @@ const Expenses = () => {
                 </div>
 
                 {/* Search */}
-                <div className="w-full">
+                {/* <div className="w-full">
                   <label className="block text-white text-xs mb-1">
                     Search
                   </label>
@@ -616,7 +616,7 @@ const Expenses = () => {
                     }}
                     placeholder="Search by UTR"
                   />
-                </div>
+                </div> */}
 
                 {/* Fetch Button */}
                 <button
@@ -1007,4 +1007,4 @@ const Expenses = () => {
   );
 };
 
-export default Expenses;
+export default FinanceExpenses;

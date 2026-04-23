@@ -91,8 +91,9 @@ import MiningLogs from "./Features/Mining/MiningLogs";
 import MiningReferrals from "./Features/Mining/MiningReferal";
 import Fallback from "./Features/Dashboard/WelcomeBanner"
 
-import  {useCheckPermissionsQuery} from './api/jaimaxApiSlice'
-import Expenses from "./Finance/Expenses";
+import { useCheckPermissionsQuery } from './api/jaimaxApiSlice'
+// import Expenses from "./Finance/Expenses";
+import FinanceExpenses from "./Finance/FinanceExpenses";
 // Permission-based Route Component
 // const PermissionRoute = ({ element, permission, permissions }) => {
 //   if (!permission || permissions?.includes(permission)) return element;
@@ -102,7 +103,7 @@ import Expenses from "./Finance/Expenses";
 const PermissionRoute = ({ element, permission, permissions, fallback }) => {
   if (!permission || permissions?.includes(permission)) return element;
   return fallback || <NoAccess />;
-};  
+};
 
 // ─── ADMIN ROUTES (role === 0) ───
 const ADMIN_ROUTES = [
@@ -137,7 +138,7 @@ const ADMIN_ROUTES = [
   { path: "/zoom-meetings", element: <ZoomMeeting /> },
   { path: "/blogs", element: <Blog /> },
   { path: "/support", element: <Support /> },
-  { path: "/support-chart/:id",element:<SupportChart/>},
+  { path: "/support-chart/:id", element: <SupportChart /> },
   { path: "/legal", element: <Security /> },
   { path: "/freezed-groups", element: <FreezedGroups /> },
   { path: "/not-verified-users", element: <NotVerifiedUser /> },
@@ -150,15 +151,15 @@ const ADMIN_ROUTES = [
   { path: "/user-summary", element: <UserSummary /> },
   { path: "/jaimax-community", element: <MainChat /> },
   { path: "/withdrawal-report", element: <WithdrawalReport /> },
-  { path: "/mining", element:<MiningDashboard/>},
-  { path: "/mining-transactions", element:<MiningTransactions/>},
-  { path: "/Mining-logs", element:<MiningLogs/>},
-  { path: "/Mining-referrals", element:<MiningReferrals/>}
+  { path: "/mining", element: <MiningDashboard /> },
+  { path: "/mining-transactions", element: <MiningTransactions /> },
+  { path: "/Mining-logs", element: <MiningLogs /> },
+  { path: "/Mining-referrals", element: <MiningReferrals /> }
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
 const ROLE2_ROUTES = [
-  { path: "/", element: <Dashboard />, permission: "DASHBOARD",fallback: <Fallback /> },
+  { path: "/", element: <Dashboard />, permission: "DASHBOARD", fallback: <Fallback /> },
   { path: "/wallet-management", element: <Wallet />, permission: "WALLET MANAGEMENT" },
   { path: "/user-management", element: <NoAccess /> },
   { path: "/withdrawal-report", element: <NoAccess /> },
@@ -167,12 +168,12 @@ const ROLE2_ROUTES = [
   { path: "/usdt-withdrawal", element: <UsdtWithdrawal />, permission: "WITHDRAW MANAGEMENT" },
   { path: "/user-info", element: <UserInfo />, permission: "USER INFO" },
   { path: "/admin-users", element: <NoAccess /> },
-  { path: "/user-summary", element: <UserSummary />,permission: "USER INFO" },
+  { path: "/user-summary", element: <UserSummary />, permission: "USER INFO" },
   { path: "/all-wallet-transactions", element: <AllTransactions />, permission: "WALLET MANAGEMENT" },
-  { path: "/pg-transactions",element: <PaymentGatewaysTransactions />,permission: "WALLET MANAGEMENT",},
+  { path: "/pg-transactions", element: <PaymentGatewaysTransactions />, permission: "WALLET MANAGEMENT", },
   { path: "/payment-gateway", element: <PaymentGateway />, permission: "PAYMENTGATEWAYS" },
   { path: "/buy-history", element: <BuyHistory />, permission: "BUY HISTORY" },
-  { path: "/manual-accounts",element: <AddManualAccountsForm />,permission: "MANUAL TRANSACTION",},
+  { path: "/manual-accounts", element: <AddManualAccountsForm />, permission: "MANUAL TRANSACTION", },
   { path: "/manual-kyc", element: <ManualKycAccounts />, permission: "MANUAL KYC" },
   { path: "/team-reports", element: <TeamReports />, permission: "TEAM REPORT" },
   { path: "/team-investments", element: <TeamInvestments />, permission: "TEAM REPORT" },
@@ -190,7 +191,7 @@ const ROLE2_ROUTES = [
   { path: "/zoom-meetings", element: <ZoomMeeting />, permission: "ZOOM MEETING" },
   { path: "/blogs", element: <Blog />, permission: "BLOGS" },
   { path: "/support", element: <Support />, permission: "SUPPORT" },
-  { path: "/support-chart/:id",element:<SupportChart/>, permission: "SUPPORT"},
+  { path: "/support-chart/:id", element: <SupportChart />, permission: "SUPPORT" },
   { path: "/legal", element: <Security />, permission: "LEGAL UPDATION" },
   { path: "/freezed-groups", element: <FreezedGroups />, permission: "FREEZED GROUPS" },
   { path: "/not-verified-users", element: <NotVerifiedUser />, permission: "NOT VERIFIED USERS" },
@@ -199,13 +200,13 @@ const ROLE2_ROUTES = [
   { path: "/delete-accounts", element: <DeletedUsersTable />, permission: "DELETE ACCOUNTS" },
   { path: "/settings", element: <Settings />, permission: "SETTING" },
   { path: "/logout", element: <Logout /> },
-  { path: "/jaimax-community", element: <MainChat />,permission: "JAIMAX COMMUNITY" },
-  { path: "/businessanalytics", element: <BusinessAnalytics />,permission: "BUSINESS ANALYTICS" },
+  { path: "/jaimax-community", element: <MainChat />, permission: "JAIMAX COMMUNITY" },
+  { path: "/businessanalytics", element: <BusinessAnalytics />, permission: "BUSINESS ANALYTICS" },
   { path: "/reports", element: <Report />, permission: "REPORTS" },
-  { path: "/mining", element:<MiningDashboard/>,permission:"MINING"},
-  { path: "/mining-transactions", element:<MiningTransactions/>,permission:"MINING"},
-  { path: "/Mining-logs", element:<MiningLogs/>,permission:"MINING"},
-  { path: "/Mining-referrals", element:<MiningReferrals/>,permission:"MINING"}
+  { path: "/mining", element: <MiningDashboard />, permission: "MINING" },
+  { path: "/mining-transactions", element: <MiningTransactions />, permission: "MINING" },
+  { path: "/Mining-logs", element: <MiningLogs />, permission: "MINING" },
+  { path: "/Mining-referrals", element: <MiningReferrals />, permission: "MINING" }
 ];
 
 
@@ -226,7 +227,7 @@ const FINANCE_ROUTES = [
   // { path: "/debits", element: <Debits /> },
   // { path: "/transactionInfo", element: <TransactionInfo /> },
   { path: "/withdrawal", element: <AccountantWithdrawal /> },
-  { path: "/expenses", element: <Expenses /> },
+  { path: "/expenses", element: <FinanceExpenses /> },
   { path: "/logout", element: <Logout /> },
 ];
 
@@ -234,14 +235,14 @@ const FINANCE_ROUTES = [
 const App = () => {
   const { data, isLoading, error } = useCheckPermissionsQuery();
 
-console.log(data);
- // ✅ FIX
-const adminToken = Cookies.get("adminToken");
-const stored = Cookies.get("adminUserData");
-const parsed = stored ? JSON.parse(stored) : {};
-const { role, permissions = [] } = parsed?.data || {};
+  console.log(data);
+  // ✅ FIX
+  const adminToken = Cookies.get("adminToken");
+  const stored = Cookies.get("adminUserData");
+  const parsed = stored ? JSON.parse(stored) : {};
+  const { role, permissions = [] } = parsed?.data || {};
   const renderRoutes = (routes, checkPermissions = false) =>
-    routes.map(({ path, element, permission ,fallback }) => (
+    routes.map(({ path, element, permission, fallback }) => (
       <Route
         key={path}
         path={path}
@@ -283,21 +284,21 @@ const { role, permissions = [] } = parsed?.data || {};
       <Routes>
         {/* Public */}
         <Route element={<PublicRoute />}>
-        <Route path="/login" element={<Login />} />
-      </Route>
+          <Route path="/login" element={<Login />} />
+        </Route>
 
         {/* Private - wrapped in AppLayout */}
         {adminToken && privateRoutes && (
-        <Route element={<PrivateRoute />}>
-          <Route element={<AppLayout />}>{privateRoutes}</Route>
-        </Route>
-      )}
+          <Route element={<PrivateRoute />}>
+            <Route element={<AppLayout />}>{privateRoutes}</Route>
+          </Route>
+        )}
 
         {/* Fallback */}
-       <Route
-        path="*"
-        element={<Navigate to={adminToken && stored ? "/" : "/login"} replace />}
-      />
+        <Route
+          path="*"
+          element={<Navigate to={adminToken && stored ? "/" : "/login"} replace />}
+        />
       </Routes>
     </>
   );
