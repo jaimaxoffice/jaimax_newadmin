@@ -82,18 +82,19 @@ const handleLogin = async (e) => {
 
     // ✅ Optional: store only small non-sensitive UI data (JS-readable cookie)
     Cookies.set("adminUserData", JSON.stringify(response), {
-      expires: 7,
+      expires: 365, // 30 days
       sameSite: "Lax",
       secure: false, // set true in HTTPS production
     });
 
     Cookies.set("adminUsername", response?.data?.username || "", {
-      expires: 7,
+      expires: 365, // 30 days
       sameSite: "Lax",
       secure: false,
     });
+    
     Cookies.set("adminToken", response?.data?.token || "", {
-      expires: 7,
+      expires: 365, // 30 days
       sameSite: "Lax",
       secure: false,
     });
@@ -106,13 +107,13 @@ const handleLogin = async (e) => {
 
     // ✅ Optional: store UI flags (DON'T trust this for security)
     Cookies.set("UserRoles", String(isKycS), {
-      expires: 7,
+      expires: 365, // 30 days
       sameSite: "Lax",
       secure: false,
     });
 
     setTimeout(() => {
-     navigate("/");
+      navigate("/");
       window.location.href = "/";
     }, 0);
   } catch (error) {
