@@ -80,7 +80,7 @@ const Credits = () => {
   const [utrModal, setUtrModal] = useState(false);
   const [utrTx, setUtrTx] = useState(null);
   const [exportOpen, setExportOpen] = useState(false);
-
+  
   const [state, setState] = useState({
     currentPage: 1,
     perPage: 10,
@@ -88,7 +88,8 @@ const Credits = () => {
     fromDate: "",
     toDate: "",
   });
-
+  
+  const [debouncedSearch, setDebouncedSearch] = useState(state.search);
   const exportRef = useRef(null);
 
   // ── RTK Query hooks ──
@@ -97,21 +98,44 @@ const Credits = () => {
   const [triggerExport, { isFetching: exporting }] =
     useLazyExportTransactionsQuery();
 
-  const queryParams = new URLSearchParams({
-    limit: state.perPage,
-    page: state.currentPage,
-    search: state.search,
-    transactionType: "Credit",
-    fromDate: state.fromDate || "",
-    toDate: state.toDate || "",
-    sort: LIST_SORT,
-  }).toString();
+  // const queryParams = new URLSearchParams({
+  //   limit: state.perPage,
+  //   page: state.currentPage,
+  //   search: state.search,
+  //   transactionType: "Credit",
+  //   fromDate: state.fromDate || "",
+  //   toDate: state.toDate || "",
+  //   sort: LIST_SORT,
+  // }).toString();
+
+  const queryObj = {
+  limit: state.perPage,
+  page: state.currentPage,
+  transactionType: "Credit",
+  sort: LIST_SORT,
+};
+
+if (debouncedSearch.trim()) queryObj.search = debouncedSearch;
+if (state.fromDate) queryObj.fromDate = state.fromDate;
+if (state.toDate) queryObj.toDate = state.toDate;
+
+const queryParams = new URLSearchParams(queryObj).toString();
+
+console.log("QUERY:", queryParams);
 
   const {
     data: tableData,
     isLoading,
     refetch,
   } = useTransListQuery(queryParams);
+
+useEffect(() => {
+  const t = setTimeout(() => {
+    setDebouncedSearch(state.search);
+  }, 300);
+
+  return () => clearTimeout(t);
+}, [state.search]);
 
   // ── Close export dropdown on outside click ──
   useEffect(() => {
@@ -124,9 +148,16 @@ const Credits = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // useEffect(() => {
+  //   refetch();
+  // }, [state, refetch]);
+
   useEffect(() => {
-    refetch();
-  }, [state, refetch]);
+  setState((prev) => ({
+    ...prev,
+    currentPage: 1,
+  }));
+}, [debouncedSearch]);
 
   // ── Derived values ──
   const transactions = tableData?.data?.transactions || [];
@@ -142,8 +173,10 @@ const Credits = () => {
   const handlePerPageChange = (value) =>
     setState((prev) => ({ ...prev, perPage: Number(value), currentPage: 1 }));
 
-  const handleSearchChange = (value) =>
+  const handleSearchChange = (value) =>{
+    console.log("SEARCH VALUE:", value);
     setState((prev) => ({ ...prev, search: value, currentPage: 1 }));
+  }
 
   const handleDateChange = (key, value) =>
     setState((prev) => ({ ...prev, [key]: value, currentPage: 1 }));
@@ -342,7 +375,7 @@ const Credits = () => {
                   </button>
 
                   {exportOpen && (
-                    <div className="absolute right-0 mt-1 w-40 bg-[#232d38] border border-gray-600 rounded shadow-lg z-50">
+                    <div className="absolute left-0 mt-1 w-40 bg-[#232d38] border border-gray-600 rounded shadow-lg z-50">
                       {["xlsx", "pdf"].map((fmt) => (
                         <button
                           key={fmt}
@@ -414,11 +447,16 @@ const Credits = () => {
                 ))}
 
                 {/* Search Bar (Reusable) */}
-                <SearchBar
+                {/* <SearchBar
                   value={state.search}
                   onChange={handleSearchChange}
                   placeholder="Search by name or txn id"
-                />
+                /> */}
+                <SearchBar
+  defaultValue={state.search}
+  onSearch={(e) => handleSearchChange(e.target.value)}
+  placeholder="Use name/txId/txAmount"
+/>
               </div>
 
               {/* ── Table ── */}

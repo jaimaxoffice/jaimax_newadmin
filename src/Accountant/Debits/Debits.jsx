@@ -271,7 +271,7 @@ const Debits = () => {
                       />
                       <input
                         type="text"
-                        placeholder="Search by name or email"
+                        placeholder="Search"
                         className="flex-1 px-2 py-2 bg-transparent border-0 text-white placeholder-gray-400 focus:outline-none focus:ring-0"
                         value={state.search}
                         onChange={(e) =>

@@ -28,38 +28,50 @@ export const documentApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["documentsList"],
     }),
 
+    // getDocuments: builder.query({
+    //   query: (queryParams = "") => {
+    //     // Convert queryParams to string safely
+    //     let paramsString = "";
+
+    //     if (typeof queryParams === "object" && queryParams !== null) {
+    //       // Convert object to query string
+    //       const queryString = new URLSearchParams(queryParams).toString();
+    //       paramsString = queryString ? `?${queryString}` : "";
+    //     } else if (typeof queryParams === "string") {
+    //       // Remove leading '?' if present
+    //       const cleanParams = queryParams.startsWith("?")
+    //         ? queryParams.slice(1)
+    //         : queryParams;
+    //       paramsString = cleanParams ? `?${cleanParams}` : "";
+    //     }
+
+    //     // Apply default limit=10 if no limit is provided
+    //     if (!paramsString.includes("limit=")) {
+    //       paramsString += paramsString ? "&limit=10" : "?limit=10";
+    //     }
+
+    //     const url = `/internalexpenes/get_list${paramsString}`;
+    //     console.log("API Call URL:", url); // ✅ Debug log
+
+    //     return {
+    //       url,
+    //       method: "GET",
+    //     };
+    //   },
+    //   providesTags: ["documentsList"],
+    // }),
     getDocuments: builder.query({
-      query: (queryParams = "") => {
-        // Convert queryParams to string safely
-        let paramsString = "";
+  query: (params = {}) => ({
+    url: "/internalexpenes/get_list",
+    method: "GET",
+    params: {
+      limit: 10,
+      ...params,
+    },
+  }),
+  providesTags: ["documentsList"],
+}),
 
-        if (typeof queryParams === "object" && queryParams !== null) {
-          // Convert object to query string
-          const queryString = new URLSearchParams(queryParams).toString();
-          paramsString = queryString ? `?${queryString}` : "";
-        } else if (typeof queryParams === "string") {
-          // Remove leading '?' if present
-          const cleanParams = queryParams.startsWith("?")
-            ? queryParams.slice(1)
-            : queryParams;
-          paramsString = cleanParams ? `?${cleanParams}` : "";
-        }
-
-        // Apply default limit=10 if no limit is provided
-        if (!paramsString.includes("limit=")) {
-          paramsString += paramsString ? "&limit=10" : "?limit=10";
-        }
-
-        const url = `/internalexpenes/get_list${paramsString}`;
-        console.log("API Call URL:", url); // ✅ Debug log
-
-        return {
-          url,
-          method: "GET",
-        };
-      },
-      providesTags: ["documentsList"],
-    }),
     getinternalCategories: builder.query({
       query: () => ({
         url: "/internalexpenes/expenses-categories",

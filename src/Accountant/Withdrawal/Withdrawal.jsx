@@ -81,7 +81,7 @@ const ExportDropdown = ({ onExport }) => {
         Export ▾
       </button>
       {open && (
-        <ul className="absolute right-0 mt-1 w-40 bg-[#1e2a34] border border-[#2b3440] rounded shadow-xl z-20 overflow-hidden">
+        <ul className="absolute left-0 mt-1 w-40 bg-[#1e2a34] border border-[#2b3440] rounded shadow-xl z-20 overflow-hidden">
           {[
             { key: "xlsx", label: "Excel (.xlsx)" },
             { key: "pdf", label: "PDF (.pdf)" },
@@ -223,13 +223,25 @@ const WithDraw = () => {
     update({ currentPage: 1 });
   };
 
-  let searchTimeout;
-  const handleSearch = (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      update({ search: e.target.value, currentPage: 1 });
-    }, 1000);
-  };
+  // let searchTimeout;
+  // const handleSearch = (e) => {
+  //   clearTimeout(searchTimeout);
+  //   searchTimeout = setTimeout(() => {
+  //     update({ search: e.target.value, currentPage: 1 });
+  //   }, 1000);
+  // };
+
+  const searchTimeout = useRef(null);
+
+const handleSearch = (e) => {
+  if (searchTimeout.current) {
+    clearTimeout(searchTimeout.current);
+  }
+
+  searchTimeout.current = setTimeout(() => {
+    update({ search: e.target.value, currentPage: 1 });
+  }, 500); // 500ms is enough
+};
 
   const handleApprove = async () => {
     try {
@@ -604,10 +616,14 @@ const WithDraw = () => {
             <div className="hidden lg:block" />
 
             {/* ✅ SearchBar */}
-            <SearchBar
+            {/* <SearchBar
               onChange={handleSearch}
               placeholder="Search"
-            />
+            /> */}
+            <SearchBar
+  onSearch={handleSearch}
+  placeholder="Search by customer id"
+/>
           </div>
 
           {/* ── Desktop Table (✅ Table) ── */}

@@ -83,7 +83,7 @@ const ExportDropdown = ({ exporting, onDownload }) => {
         {exporting ? "Exporting…" : "Export ▾"}
       </button>
       {open && (
-        <ul className="absolute right-0 mt-1 w-40 bg-[#1e2a34] border border-[#2b3440] rounded shadow-xl z-20 overflow-hidden">
+        <ul className="absolute left-0 mt-1 w-40 bg-[#1e2a34] border border-[#2b3440] rounded shadow-xl z-20 overflow-hidden">
           <li>
             <button
               className="w-full text-left px-4 py-2 text-sm text-white hover:bg-white/10 transition"
@@ -148,8 +148,15 @@ const FinanceExpenses = () => {
   const [exporting, setExporting] = useState(false);
   const perPage = 10;
 
-  const [queryParam, setQueryParam] = useState(`page=1&limit=${perPage}`);
+  // const [queryParam, setQueryParam] = useState(`page=1&limit=${perPage}`);
+  const [queryParam, setQueryParam] = useState({
+  page: 1,
+  limit: perPage,
+});
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+const [debouncedStartDate, setDebouncedStartDate] = useState(startDate);
+const [debouncedEndDate, setDebouncedEndDate] = useState(endDate);
 
   /* ── API ── */
   const [uploadDocument] = useUploadDocumentMutation();
@@ -164,7 +171,7 @@ const FinanceExpenses = () => {
   } = useGetDocumentsQuery(queryParam);
 
   const { data: categoriesData, isLoading: categoriesLoading } = useGetinternalCategoriesQuery();
-  console.log(categoriesData, "categoriesData123")
+  // console.log(categoriesData, "categoriesData123")
   const categories = categoriesData?.data || [];
 
   /* ── User Data ── */
@@ -184,20 +191,40 @@ const FinanceExpenses = () => {
   const getSerialNo = (i) => (currentPage - 1) * perPage + i + 1;
 
   /* ── Query Builder ── */
-  const buildQueryParam = () => {
-    const params = [];
-    if (searchTerm.trim())
-      params.push(`search=${encodeURIComponent(searchTerm.trim())}`);
-    if (startDate) params.push(`from=${startDate}`);
-    if (endDate) params.push(`to=${endDate}`);
-    params.push(`page=${currentPage}`);
-    params.push(`limit=${perPage}`);
-    return params.join("&");
+  // const buildQueryParam = () => {
+  //   const params = [];
+  //   if (searchTerm.trim())
+  //     params.push(`search=${encodeURIComponent(searchTerm.trim())}`);
+  //   if (startDate) params.push(`from=${startDate}`);
+  //   if (endDate) params.push(`to=${endDate}`);
+  //   params.push(`page=${currentPage}`);
+  //   params.push(`limit=${perPage}`);
+  //   return params.join("&");
+  // };
+ const buildQueryParam = () => {
+  return {
+    search: debouncedSearch || undefined,
+    from: debouncedStartDate || undefined,
+    to: debouncedEndDate || undefined,
+    page: currentPage,
+    limit: perPage,
   };
+};
+  useEffect(() => {
+  setQueryParam(buildQueryParam());
+}, [currentPage, debouncedSearch, debouncedStartDate, debouncedEndDate]);
 
   useEffect(() => {
-    setQueryParam(buildQueryParam());
-  }, [currentPage]);
+  const timer = setTimeout(() => {
+    setDebouncedSearch(searchTerm);
+    setDebouncedStartDate(startDate);
+    setDebouncedEndDate(endDate);
+    setCurrentPage((prev) => (prev !== 1 ? 1 : prev)); // reset page on filter change
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [searchTerm, startDate, endDate]);
+
 
   /* ── Handlers ── */
   const handleUploadClick = () => {
@@ -228,17 +255,17 @@ const FinanceExpenses = () => {
     setExpenseToDelete(null);
   };
 
-  const handleFilter = () => {
-    setCurrentPage(1);
-    setQueryParam(buildQueryParam());
-  };
+  // const handleFilter = () => {
+  //   setCurrentPage(1);
+  //   setQueryParam(buildQueryParam());
+  // };
 
   const handleReset = () => {
     setSearchTerm("");
     setStartDate("");
     setEndDate("");
     setCurrentPage(1);
-    setQueryParam("");
+    // setQueryParam("");
   };
 
   /* ── Form Submit ── */
@@ -313,7 +340,8 @@ const FinanceExpenses = () => {
       const q = new URLSearchParams();
       q.set("format", fmt);
       if (searchTerm.trim())
-        q.set("search", encodeURIComponent(searchTerm.trim()));
+        // q.set("search", encodeURIComponent(searchTerm.trim()));
+        q.set("search", searchTerm.trim());
       if (startDate) q.set("from", startDate);
       if (endDate) q.set("to", endDate);
 
@@ -365,13 +393,13 @@ const FinanceExpenses = () => {
       key: "date",
       header: "Date of Bill",
       nowrap: true,
-      render: (doc) => doc.date || "-",
+      render: (doc) => doc.date || "N/A",
     },
     {
       key: "name",
       header: "Name",
       nowrap: true,
-      render: (doc) => doc.name || "-",
+      render: (doc) => doc.name || "N/A",
     },
     {
       key: "category",
@@ -604,28 +632,34 @@ const FinanceExpenses = () => {
                 </div>
 
                 {/* Search */}
-                {/* <div className="w-full">
+                <div className="w-full">
                   <label className="block text-white text-xs mb-1">
                     Search
                   </label>
                   <SearchBar
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onSearch={(e) => setSearchTerm(e.target.value)}
+                    // onKeyDown={(e) => {
+                    //   if (e.key === "Enter") handleFilter();
+                    // }}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") handleFilter();
-                    }}
+  if (e.key === "Enter") {
+    setDebouncedSearch(searchTerm);
+    setCurrentPage(1);
+  }
+}}
                     placeholder="Search by UTR"
                   />
-                </div> */}
+                </div>
 
                 {/* Fetch Button */}
-                <button
+                {/* <button
                   className="px-4 py-2  hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 h-9.5 w-full sm:w-auto"
                   onClick={handleFilter}
                   disabled={isLoading}
                 >
                   {isLoading ? "Loading..." : "Fetch"}
-                </button>
+                </button> */}
               </div>
             </div>
 
@@ -923,7 +957,7 @@ const FinanceExpenses = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2  hover:bg-[#d45a0d] text-white text-sm rounded transition disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2  hover:bg-[#b9fd5c] text-white hover:text-black text-sm rounded transition disabled:opacity-50 flex items-center gap-2"
                     disabled={isSubmitting}
                   >
                     {isSubmitting && (
