@@ -94,6 +94,7 @@ import Fallback from "./Features/Dashboard/WelcomeBanner"
 import { useCheckPermissionsQuery } from './api/jaimaxApiSlice'
 // import Expenses from "./Finance/Expenses";
 import FinanceExpenses from "./Finance/FinanceExpenses";
+import P2PHistory from "./Features/P2P/P2PHistory";
 // Permission-based Route Component
 // const PermissionRoute = ({ element, permission, permissions }) => {
 //   if (!permission || permissions?.includes(permission)) return element;
@@ -154,7 +155,8 @@ const ADMIN_ROUTES = [
   { path: "/mining", element: <MiningDashboard /> },
   { path: "/mining-transactions", element: <MiningTransactions /> },
   { path: "/Mining-logs", element: <MiningLogs /> },
-  { path: "/Mining-referrals", element: <MiningReferrals /> }
+  { path: "/Mining-referrals", element: <MiningReferrals /> },
+  { path: "/p2p", element: <P2PHistory />, permission: "P2P" },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
@@ -206,7 +208,8 @@ const ROLE2_ROUTES = [
   { path: "/mining", element: <MiningDashboard />, permission: "MINING" },
   { path: "/mining-transactions", element: <MiningTransactions />, permission: "MINING" },
   { path: "/Mining-logs", element: <MiningLogs />, permission: "MINING" },
-  { path: "/Mining-referrals", element: <MiningReferrals />, permission: "MINING" }
+  { path: "/Mining-referrals", element: <MiningReferrals />, permission: "MINING" },
+  { path: "/p2p", element: <P2PHistory />, permission: "P2P" },
 ];
 
 

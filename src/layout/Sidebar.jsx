@@ -54,7 +54,8 @@ import {
   Pickaxe ,
   Blinds ,
   Scroll ,
-  Handshake 
+  Handshake, 
+  ArrowLeftRight
 } from "lucide-react";
 
 // ─── ADMIN (role === 0) ───
@@ -96,6 +97,12 @@ const ADMIN_SECTIONS = [
       { label: "Mine Wallet Tx", icon: Pickaxe , path: "/mining-transactions", permission: "MINING" },
       { label: "Mine Logs", icon: Scroll , path: "/mining-logs", permission: "MINING" },
       { label: "Mine Referrals", icon: Handshake , path: "/mining-referrals", permission: "MINING" },
+    ],
+  },
+  {
+    label: "P2P",
+    items: [
+      { label: "P2P", icon: ArrowLeftRight, path: "/p2p", permission: "P2P" },
     ],
   },
   {
