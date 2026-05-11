@@ -1,8 +1,7 @@
-
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useCheckPermissionsQuery } from '../api/jaimaxApiSlice';
+import { useCheckPermissionsQuery } from "../api/jaimaxApiSlice";
 import {
   LayoutDashboard,
   Wallet,
@@ -51,11 +50,11 @@ import {
   LogOut,
   GalleryVerticalEnd,
   Loader2,
-  Pickaxe ,
-  Blinds ,
-  Scroll ,
-  Handshake, 
-  ArrowLeftRight
+  Pickaxe,
+  Blinds,
+  Scroll,
+  Handshake,
+  ArrowLeftRight,
 } from "lucide-react";
 
 // ─── ADMIN (role === 0) ───
@@ -64,45 +63,106 @@ const ADMIN_SECTIONS = [
     label: "DASHBOARDS",
     items: [
       { label: "Dashboard", icon: LayoutDashboard, path: "/" },
-      { label: "User Management", icon: Users, path: "/user-management", permission: "USER MANAGEMENT" },
-      { label: "Wallet Management", icon: Wallet, path: "/wallet-management", permission: "WALLET MANAGEMENT" },
-      { label: "Buy-History", icon: GalleryVerticalEnd, path: "/buy-history", permission: "BUY HISTORY" },
-      { label: "KYC Management", icon: ShieldCheck, path: "/kyc-management", permission: "KYC MANAGEMENT" },
+      {
+        label: "User Management",
+        icon: Users,
+        path: "/user-management",
+        permission: "USER MANAGEMENT",
+      },
+      {
+        label: "Wallet Management",
+        icon: Wallet,
+        path: "/wallet-management",
+        permission: "WALLET MANAGEMENT",
+      },
+      {
+        label: "Buy-History",
+        icon: GalleryVerticalEnd,
+        path: "/buy-history",
+        permission: "BUY HISTORY",
+      },
+      {
+        label: "KYC Management",
+        icon: ShieldCheck,
+        path: "/kyc-management",
+        permission: "KYC MANAGEMENT",
+      },
       {
         label: "Withdrawal Bonus",
         icon: ArrowDownToLine,
         path: "/withdrawal-bonus",
-        permission: "WITHDRAWAL BONUS"
+        permission: "WITHDRAWAL BONUS",
       },
       {
         label: "USDT withdrawal",
         icon: CircleDollarSign,
         path: "/usdt-withdrawal",
-        permission: "USDT WITHDRAWAL"
+        permission: "USDT WITHDRAWAL",
       },
     ],
   },
   {
     label: "USERS",
     items: [
-      { label: "user-info", icon: UserSearch, path: "/user-info", permission: "USER INFO" },
-      { label: "Admin-Users", icon: UserCog, path: "/admin-users", permission: "ADMIN USERS" },
-      { label: "User-Summary", icon: UserPen, path: "/user-summary", permission: "USER SUMMARY" },
+      {
+        label: "user-info",
+        icon: UserSearch,
+        path: "/user-info",
+        permission: "USER INFO",
+      },
+      {
+        label: "Admin-Users",
+        icon: UserCog,
+        path: "/admin-users",
+        permission: "ADMIN USERS",
+      },
+      {
+        label: "User-Summary",
+        icon: UserPen,
+        path: "/user-summary",
+        permission: "USER SUMMARY",
+      },
     ],
   },
   {
     label: "MINING",
     items: [
-      { label: "Mine Dashboard", icon: Blinds  , path: "/mining", permission: "MINING" },
-      { label: "Mine Wallet Tx", icon: Pickaxe , path: "/mining-transactions", permission: "MINING" },
-      { label: "Mine Logs", icon: Scroll , path: "/mining-logs", permission: "MINING" },
-      { label: "Mine Referrals", icon: Handshake , path: "/mining-referrals", permission: "MINING" },
+      {
+        label: "Mine Dashboard",
+        icon: Blinds,
+        path: "/mining",
+        permission: "MINING",
+      },
+      {
+        label: "Mine Wallet Tx",
+        icon: Pickaxe,
+        path: "/mining-transactions",
+        permission: "MINING",
+      },
+      {
+        label: "Mine Logs",
+        icon: Scroll,
+        path: "/mining-logs",
+        permission: "MINING",
+      },
+      {
+        label: "Mine Referrals",
+        icon: Handshake,
+        path: "/mining-referrals",
+        permission: "MINING",
+      },
     ],
   },
   {
     label: "P2P",
     items: [
       { label: "P2P", icon: ArrowLeftRight, path: "/p2p", permission: "P2P" },
+      {
+        label: "Wp-staking-list",
+        icon: Landmark,
+        path: "/wp-staking-list",
+        permission: "wp-staking-list",
+      },
     ],
   },
   {
@@ -112,119 +172,230 @@ const ADMIN_SECTIONS = [
         label: "All Transactions",
         icon: History,
         path: "/all-wallet-transactions",
-        permission: "ALL TRANSACTIONS"
+        permission: "ALL TRANSACTIONS",
       },
-      { label: "PG Transactions", icon: ScanLine, path: "/pg-transactions", permission: "PG TRANSACTIONS" },
-      { label: "Payment-Gateways", icon: CreditCard, path: "/payment-gateway", permission: "PAYMENT GATEWAYS" },
+      {
+        label: "PG Transactions",
+        icon: ScanLine,
+        path: "/pg-transactions",
+        permission: "PG TRANSACTIONS",
+      },
+      {
+        label: "Payment-Gateways",
+        icon: CreditCard,
+        path: "/payment-gateway",
+        permission: "PAYMENT GATEWAYS",
+      },
     ],
   },
   {
     label: "MANUALS",
     items: [
-      { label: "Manual-KYC", icon: FileCheck, path: "/manual-kyc", permission: "MANUAL KYC" },
+      {
+        label: "Manual-KYC",
+        icon: FileCheck,
+        path: "/manual-kyc",
+        permission: "MANUAL KYC",
+      },
       {
         label: "Manual Transactions",
         icon: FileText,
         path: "/manual-accounts",
-        permission: "MANUAL TRANSACTIONS"
+        permission: "MANUAL TRANSACTIONS",
       },
     ],
   },
   {
     label: "REPORTS",
     items: [
-      { label: "Team-Reports", icon: BarChart3, path: "/team-reports", permission: "TEAM REPORTS" },
+      {
+        label: "Team-Reports",
+        icon: BarChart3,
+        path: "/team-reports",
+        permission: "TEAM REPORTS",
+      },
       {
         label: "Team-Investments",
         icon: TrendingUp,
         path: "/team-investments",
-        permission: "TEAM INVESTMENTS"
+        permission: "TEAM INVESTMENTS",
       },
       {
         label: "Withdrawal Report",
         icon: ArrowDownToLine,
         path: "/withdrawal-report",
-        permission: "WITHDRAWAL REPORT"
+        permission: "WITHDRAWAL REPORT",
       },
-      { label: "Reports", icon: ClipboardList, path: "/reports", permission: "REPORTS" },
+      {
+        label: "Reports",
+        icon: ClipboardList,
+        path: "/reports",
+        permission: "REPORTS",
+      },
       {
         label: "Business Analytics",
         icon: PieChart,
         path: "/businessanalytics",
-        permission: "BUSINESS ANALYTICS"
+        permission: "BUSINESS ANALYTICS",
       },
     ],
   },
   {
     label: "BONUS",
     items: [
-      { label: "Gradual Bonus", icon: Clock, path: "/gradual-bonus", permission: "GRADUAL BONUS" },
-      { label: "Bonus Coin History", icon: Coins, path: "/bonus-coin-history", permission: "BONUS COIN HISTORY" },
+      {
+        label: "Gradual Bonus",
+        icon: Clock,
+        path: "/gradual-bonus",
+        permission: "GRADUAL BONUS",
+      },
+      {
+        label: "Bonus Coin History",
+        icon: Coins,
+        path: "/bonus-coin-history",
+        permission: "BONUS COIN HISTORY",
+      },
       {
         label: "Available-Balance",
         icon: BadgeDollarSign,
         path: "/available-balance",
-        permission: "AVAILABLE BALANCE"
+        permission: "AVAILABLE BALANCE",
       },
     ],
   },
   {
     label: "WEALTHPLANS",
     items: [
-      { label: "Wealth Plan order-1", icon: Package, path: "/wealth-plan-1", permission: "WEALTH PLAN ORDER 1" },
+      {
+        label: "Wealth Plan order-1",
+        icon: Package,
+        path: "/wealth-plan-1",
+        permission: "WEALTH PLAN ORDER 1",
+      },
       {
         label: "Wealth Plan log 1",
         icon: ScrollText,
         path: "/wealth-plan-log-1",
-        permission: "WEALTH PLAN LOG 1"
+        permission: "WEALTH PLAN LOG 1",
       },
-      { label: "Wealth Plan order-2", icon: Package, path: "/wealth-plan-2", permission: "WEALTH PLAN ORDER 2" },
+      {
+        label: "Wealth Plan order-2",
+        icon: Package,
+        path: "/wealth-plan-2",
+        permission: "WEALTH PLAN ORDER 2",
+      },
       {
         label: "Wealth Plan log 2",
         icon: ScrollText,
         path: "/wealth-plan-log-2",
-        permission: "WEALTH PLAN LOG 2"
+        permission: "WEALTH PLAN LOG 2",
       },
-      { label: "Wealth Plan order-3", icon: Package, path: "/wealth-plan-3", permission: "WEALTH PLAN ORDER 3" },
+      {
+        label: "Wealth Plan order-3",
+        icon: Package,
+        path: "/wealth-plan-3",
+        permission: "WEALTH PLAN ORDER 3",
+      },
       {
         label: "Wealth Plan log 3",
         icon: ScrollText,
         path: "/wealth-plan-log-3",
-        permission: "WEALTH PLAN LOG 3"
+        permission: "WEALTH PLAN LOG 3",
+      },
+      {
+        label: "Wealth Plan Settlement",
+        icon: Package,
+        path: "/wealth-plan-settlement",
+        permission: "WEALTH PLAN SETTLEMENT",
       },
     ],
   },
   {
     label: "NOTIFICATIONS",
     items: [
-      { label: "Announcements", icon: Megaphone, path: "/announcements", permission: "ANNOUNCEMENTS" },
-      { label: "Notifications", icon: Bell, path: "/notifications", permission: "NOTIFICATIONS" },
-      { label: "zoom-meetings", icon: Video, path: "/zoom-meetings", permission: "ZOOM MEETING" },
-      { label: "Blogs", icon: BookOpenCheck, path: "/blogs", permission: "BLOGS" },
-      { label: "SocialMedia", icon: Share2, path: "/social-media", permission: "SOCIAL MEDIA" },
+      {
+        label: "Announcements",
+        icon: Megaphone,
+        path: "/announcements",
+        permission: "ANNOUNCEMENTS",
+      },
+      {
+        label: "Notifications",
+        icon: Bell,
+        path: "/notifications",
+        permission: "NOTIFICATIONS",
+      },
+      {
+        label: "zoom-meetings",
+        icon: Video,
+        path: "/zoom-meetings",
+        permission: "ZOOM MEETING",
+      },
+      {
+        label: "Blogs",
+        icon: BookOpenCheck,
+        path: "/blogs",
+        permission: "BLOGS",
+      },
+      {
+        label: "SocialMedia",
+        icon: Share2,
+        path: "/social-media",
+        permission: "SOCIAL MEDIA",
+      },
       {
         label: "Jaimax Community",
         icon: MessageCircleMore,
         path: "/jaimax-community",
-        permission: "JAIMAX COMMUNITY"
+        permission: "JAIMAX COMMUNITY",
       },
     ],
   },
   {
     label: "SUPPORT",
     items: [
-      { label: "Support", icon: Headset, path: "/support", permission: "SUPPORT" },
+      {
+        label: "Support",
+        icon: Headset,
+        path: "/support",
+        permission: "SUPPORT",
+      },
       { label: "Legal", icon: Scale, path: "/legal", permission: "LEGAL" },
-      { label: "freezed-Groups", icon: UsersRound, path: "/freezed-groups", permission: "FREEZED GROUPS" },
-      { label: "Not-Verified-Users", icon: UserX, path: "/not-verified-users", permission: "NOT VERIFIED USERS" },
+      {
+        label: "freezed-Groups",
+        icon: UsersRound,
+        path: "/freezed-groups",
+        permission: "FREEZED GROUPS",
+      },
+      {
+        label: "Not-Verified-Users",
+        icon: UserX,
+        path: "/not-verified-users",
+        permission: "NOT VERIFIED USERS",
+      },
     ],
   },
   {
     label: "SETTINGS",
     items: [
-      { label: "ICO Management", icon: Gem, path: "/ico-management", permission: "ICO MANAGEMENT" },
-      { label: "Delete Accounts", icon: Trash2, path: "/delete-accounts", permission: "DELETE ACCOUNTS" },
-      { label: "Software settings", icon: Settings, path: "/settings", permission: "SOFTWARE SETTINGS" },
+      {
+        label: "ICO Management",
+        icon: Gem,
+        path: "/ico-management",
+        permission: "ICO MANAGEMENT",
+      },
+      {
+        label: "Delete Accounts",
+        icon: Trash2,
+        path: "/delete-accounts",
+        permission: "DELETE ACCOUNTS",
+      },
+      {
+        label: "Software settings",
+        icon: Settings,
+        path: "/settings",
+        permission: "SOFTWARE SETTINGS",
+      },
     ],
   },
 ];
@@ -239,7 +410,11 @@ const ACCOUNTANT_SECTIONS = [
       { label: "Debits", icon: ArrowDownToLine, path: "/debits" },
       { label: "TransactionInfo", icon: Receipt, path: "/TransactionInfo" },
       { label: "Withdrawal", icon: Banknote, path: "/withdrawal" },
-      { label: "Internal Expenses", icon: HandCoins, path: "/internal-expenses" },
+      {
+        label: "Internal Expenses",
+        icon: HandCoins,
+        path: "/internal-expenses",
+      },
     ],
   },
 ];
@@ -258,10 +433,9 @@ const FINANCE_SECTIONS = [
   },
 ];
 
-
 function getSectionsByRole(role, permissions = []) {
   // Normalize permissions to uppercase for comparison
-  const normalizedPermissions = permissions.map(p => p.toUpperCase());
+  const normalizedPermissions = permissions.map((p) => p.toUpperCase());
 
   switch (role) {
     case 0:
@@ -296,7 +470,6 @@ function getSectionsByRole(role, permissions = []) {
   }
 }
 
-
 const ROLE_LABELS = {
   0: "Admin",
   2: "Sub Admin",
@@ -304,7 +477,6 @@ const ROLE_LABELS = {
   4: "Finance",
   // 4: "Viewer",
 };
-
 
 function getRoleLabel(role) {
   return ROLE_LABELS[role] || "User";
@@ -466,7 +638,9 @@ function ErrorState({ expanded, onRetry }) {
       <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center mb-2">
         <X size={20} className="text-red-400" />
       </div>
-      <p className="text-red-400 text-xs font-medium mb-0.5">Failed to load menu</p>
+      <p className="text-red-400 text-xs font-medium mb-0.5">
+        Failed to load menu
+      </p>
       <p className="text-gray-500 text-[10px] text-center mb-2">
         Unable to fetch permissions
       </p>
@@ -721,12 +895,14 @@ export default function Sidebar({ open, setOpen, onLogoutClick }) {
   const { role, name = "User" } = userData || {};
 
   // Fetch permissions from API
-  const { data: permissionsData, isLoading, error, refetch } = useCheckPermissionsQuery(
-    undefined,
-    {
-      skip: role === 0 || role === 3, // Skip API call for Admin and Accountant roles
-    }
-  );
+  const {
+    data: permissionsData,
+    isLoading,
+    error,
+    refetch,
+  } = useCheckPermissionsQuery(undefined, {
+    skip: role === 0 || role === 3, // Skip API call for Admin and Accountant roles
+  });
 
   // Extract permissions from API response
   const apiPermissions = useMemo(() => {

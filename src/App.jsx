@@ -1,8 +1,7 @@
-
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 // Auth & Layout
 import Login from "./Features/Login/Login";
 import AppLayout from "./layout/AppLayout";
@@ -67,15 +66,14 @@ import Notifications from "./Features/Notifications/Notifications";
 import ZoomMeeting from "./Features/Zoom/Zoom";
 import Blog from "./Features/Blogs/Blogs";
 import SocialMedia from "./Features/SocialMediaChart/SocialChart";
-import MainChat from "./Features/Community/MainChat"
+import MainChat from "./Features/Community/MainChat";
 // Support & Settings
 import Support from "./Features/Support/Support";
-import SupportChart from "./Features/Support/SupportChat"
+import SupportChart from "./Features/Support/SupportChat";
 import Security from "./Features/Security/Security";
 import Settings from "./Features/Settings/Settings";
 import FreezedGroups from "./Features/FreezedGroups/FreezedGroups";
 import Logout from "./Features/Logout/Logout";
-
 
 //accountsDashboard
 import AccountsDashboard from "./Accountant/Dashboard/Dashboard";
@@ -83,18 +81,20 @@ import Credits from "./Accountant/Credits/Credits";
 import Debits from "./Accountant/Debits/Debits";
 import TransactionInfo from "./Accountant/TransactionInfo/TransactionInfo";
 import AccountantWithdrawal from "./Accountant/Withdrawal/Withdrawal";
-import InternalExpenses from "./Accountant/Expensenses/Expenses"
+import InternalExpenses from "./Accountant/Expensenses/Expenses";
 import UserSummary from "./Features/Users/UserSummary";
 import MiningDashboard from "./Features/Mining/MiningDashboard";
 import MiningTransactions from "./Features/Mining/MiningWallets";
 import MiningLogs from "./Features/Mining/MiningLogs";
 import MiningReferrals from "./Features/Mining/MiningReferal";
-import Fallback from "./Features/Dashboard/WelcomeBanner"
+import Fallback from "./Features/Dashboard/WelcomeBanner";
 
-import { useCheckPermissionsQuery } from './api/jaimaxApiSlice'
+import { useCheckPermissionsQuery } from "./api/jaimaxApiSlice";
 // import Expenses from "./Finance/Expenses";
 import FinanceExpenses from "./Finance/FinanceExpenses";
 import P2PHistory from "./Features/P2P/P2PHistory";
+import WealthPlanSettlement from "./Features/WealthPlans/WealthPlanSettlement/WealthPlanSettlement";
+import WealthPlanStakingList from "./Features/WpStaking/WealthPlanStakingList";
 // Permission-based Route Component
 // const PermissionRoute = ({ element, permission, permissions }) => {
 //   if (!permission || permissions?.includes(permission)) return element;
@@ -134,6 +134,7 @@ const ADMIN_ROUTES = [
   { path: "/wealth-plan-log-2", element: <WealthPlanlog2 /> },
   { path: "/wealth-plan-3", element: <WealthPlan3 /> },
   { path: "/wealth-plan-log-3", element: <WealthPlanlog3 /> },
+  { path: "/wealth-plan-settlement", element: <WealthPlanSettlement /> },
   { path: "/announcements", element: <Announcements /> },
   { path: "/notifications", element: <Notifications /> },
   { path: "/zoom-meetings", element: <ZoomMeeting /> },
@@ -157,61 +158,195 @@ const ADMIN_ROUTES = [
   { path: "/Mining-logs", element: <MiningLogs /> },
   { path: "/Mining-referrals", element: <MiningReferrals /> },
   { path: "/p2p", element: <P2PHistory />, permission: "P2P" },
+  {
+    path: "/wp-staking-list",
+    element: <WealthPlanStakingList />,
+    permission: "wp-staking-list",
+  },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
 const ROLE2_ROUTES = [
-  { path: "/", element: <Dashboard />, permission: "DASHBOARD", fallback: <Fallback /> },
-  { path: "/wallet-management", element: <Wallet />, permission: "WALLET MANAGEMENT" },
+  {
+    path: "/",
+    element: <Dashboard />,
+    permission: "DASHBOARD",
+    fallback: <Fallback />,
+  },
+  {
+    path: "/wallet-management",
+    element: <Wallet />,
+    permission: "WALLET MANAGEMENT",
+  },
   { path: "/user-management", element: <NoAccess /> },
   { path: "/withdrawal-report", element: <NoAccess /> },
   { path: "/kyc-management", element: <Kyc />, permission: "KYC MANAGEMENT" },
-  { path: "/withdrawal-bonus", element: <Withdrawal />, permission: "WITHDRAW MANAGEMENT" },
-  { path: "/usdt-withdrawal", element: <UsdtWithdrawal />, permission: "WITHDRAW MANAGEMENT" },
+  {
+    path: "/withdrawal-bonus",
+    element: <Withdrawal />,
+    permission: "WITHDRAW MANAGEMENT",
+  },
+  {
+    path: "/usdt-withdrawal",
+    element: <UsdtWithdrawal />,
+    permission: "WITHDRAW MANAGEMENT",
+  },
   { path: "/user-info", element: <UserInfo />, permission: "USER INFO" },
   { path: "/admin-users", element: <NoAccess /> },
   { path: "/user-summary", element: <UserSummary />, permission: "USER INFO" },
-  { path: "/all-wallet-transactions", element: <AllTransactions />, permission: "WALLET MANAGEMENT" },
-  { path: "/pg-transactions", element: <PaymentGatewaysTransactions />, permission: "WALLET MANAGEMENT", },
-  { path: "/payment-gateway", element: <PaymentGateway />, permission: "PAYMENTGATEWAYS" },
+  {
+    path: "/all-wallet-transactions",
+    element: <AllTransactions />,
+    permission: "WALLET MANAGEMENT",
+  },
+  {
+    path: "/pg-transactions",
+    element: <PaymentGatewaysTransactions />,
+    permission: "WALLET MANAGEMENT",
+  },
+  {
+    path: "/payment-gateway",
+    element: <PaymentGateway />,
+    permission: "PAYMENTGATEWAYS",
+  },
   { path: "/buy-history", element: <BuyHistory />, permission: "BUY HISTORY" },
-  { path: "/manual-accounts", element: <AddManualAccountsForm />, permission: "MANUAL TRANSACTION", },
-  { path: "/manual-kyc", element: <ManualKycAccounts />, permission: "MANUAL KYC" },
-  { path: "/team-reports", element: <TeamReports />, permission: "TEAM REPORT" },
-  { path: "/team-investments", element: <TeamInvestments />, permission: "TEAM REPORT" },
-  { path: "/gradual-bonus", element: <GradualLayerBonusLogs />, permission: "GRADUAL BONUS" },
-  { path: "/bonus-coin-history", element: <BonusCoinHistory />, permission: "SUPER BONUS" },
-  { path: "/available-balance", element: <AvailableBalance />, permission: "AVAILABLE BALANCE" },
-  { path: "/wealth-plan-1", element: <WealthPlan1 />, permission: "WEALTH PLANS" },
-  { path: "/wealth-plan-log-1", element: <WealthPlanlog />, permission: "WEALTH PLANS" },
-  { path: "/wealth-plan-2", element: <WealthPlan2 />, permission: "WEALTH PLANS" },
-  { path: "/wealth-plan-log-2", element: <WealthPlanlog2 />, permission: "WEALTH PLANS" },
-  { path: "/wealth-plan-3", element: <WealthPlan3 />, permission: "WEALTH PLANS" },
-  { path: "/wealth-plan-log-3", element: <WealthPlanlog3 />, permission: "WEALTH PLANS" },
-  { path: "/announcements", element: <Announcements />, permission: "APP ANNOUNCEMENTS" },
-  { path: "/notifications", element: <Notifications />, permission: "NOTIFICATIONS" },
-  { path: "/zoom-meetings", element: <ZoomMeeting />, permission: "ZOOM MEETING" },
+  {
+    path: "/manual-accounts",
+    element: <AddManualAccountsForm />,
+    permission: "MANUAL TRANSACTION",
+  },
+  {
+    path: "/manual-kyc",
+    element: <ManualKycAccounts />,
+    permission: "MANUAL KYC",
+  },
+  {
+    path: "/team-reports",
+    element: <TeamReports />,
+    permission: "TEAM REPORT",
+  },
+  {
+    path: "/team-investments",
+    element: <TeamInvestments />,
+    permission: "TEAM REPORT",
+  },
+  {
+    path: "/gradual-bonus",
+    element: <GradualLayerBonusLogs />,
+    permission: "GRADUAL BONUS",
+  },
+  {
+    path: "/bonus-coin-history",
+    element: <BonusCoinHistory />,
+    permission: "SUPER BONUS",
+  },
+  {
+    path: "/available-balance",
+    element: <AvailableBalance />,
+    permission: "AVAILABLE BALANCE",
+  },
+  {
+    path: "/wealth-plan-1",
+    element: <WealthPlan1 />,
+    permission: "WEALTH PLANS",
+  },
+  {
+    path: "/wealth-plan-log-1",
+    element: <WealthPlanlog />,
+    permission: "WEALTH PLANS",
+  },
+  {
+    path: "/wealth-plan-2",
+    element: <WealthPlan2 />,
+    permission: "WEALTH PLANS",
+  },
+  {
+    path: "/wealth-plan-log-2",
+    element: <WealthPlanlog2 />,
+    permission: "WEALTH PLANS",
+  },
+  {
+    path: "/wealth-plan-3",
+    element: <WealthPlan3 />,
+    permission: "WEALTH PLANS",
+  },
+  {
+    path: "/wealth-plan-log-3",
+    element: <WealthPlanlog3 />,
+    permission: "WEALTH PLANS",
+  },
+  {
+    path: "/announcements",
+    element: <Announcements />,
+    permission: "APP ANNOUNCEMENTS",
+  },
+  {
+    path: "/notifications",
+    element: <Notifications />,
+    permission: "NOTIFICATIONS",
+  },
+  {
+    path: "/zoom-meetings",
+    element: <ZoomMeeting />,
+    permission: "ZOOM MEETING",
+  },
   { path: "/blogs", element: <Blog />, permission: "BLOGS" },
   { path: "/support", element: <Support />, permission: "SUPPORT" },
-  { path: "/support-chart/:id", element: <SupportChart />, permission: "SUPPORT" },
+  {
+    path: "/support-chart/:id",
+    element: <SupportChart />,
+    permission: "SUPPORT",
+  },
   { path: "/legal", element: <Security />, permission: "LEGAL UPDATION" },
-  { path: "/freezed-groups", element: <FreezedGroups />, permission: "FREEZED GROUPS" },
-  { path: "/not-verified-users", element: <NotVerifiedUser />, permission: "NOT VERIFIED USERS" },
+  {
+    path: "/freezed-groups",
+    element: <FreezedGroups />,
+    permission: "FREEZED GROUPS",
+  },
+  {
+    path: "/not-verified-users",
+    element: <NotVerifiedUser />,
+    permission: "NOT VERIFIED USERS",
+  },
   { path: "/ico-management", element: <Ico />, permission: "ICO MANAGEMENT" },
   { path: "/social-media", element: <NoAccess /> },
-  { path: "/delete-accounts", element: <DeletedUsersTable />, permission: "DELETE ACCOUNTS" },
+  {
+    path: "/delete-accounts",
+    element: <DeletedUsersTable />,
+    permission: "DELETE ACCOUNTS",
+  },
   { path: "/settings", element: <Settings />, permission: "SETTING" },
   { path: "/logout", element: <Logout /> },
-  { path: "/jaimax-community", element: <MainChat />, permission: "JAIMAX COMMUNITY" },
-  { path: "/businessanalytics", element: <BusinessAnalytics />, permission: "BUSINESS ANALYTICS" },
+  {
+    path: "/jaimax-community",
+    element: <MainChat />,
+    permission: "JAIMAX COMMUNITY",
+  },
+  {
+    path: "/businessanalytics",
+    element: <BusinessAnalytics />,
+    permission: "BUSINESS ANALYTICS",
+  },
   { path: "/reports", element: <Report />, permission: "REPORTS" },
   { path: "/mining", element: <MiningDashboard />, permission: "MINING" },
-  { path: "/mining-transactions", element: <MiningTransactions />, permission: "MINING" },
+  {
+    path: "/mining-transactions",
+    element: <MiningTransactions />,
+    permission: "MINING",
+  },
   { path: "/Mining-logs", element: <MiningLogs />, permission: "MINING" },
-  { path: "/Mining-referrals", element: <MiningReferrals />, permission: "MINING" },
+  {
+    path: "/Mining-referrals",
+    element: <MiningReferrals />,
+    permission: "MINING",
+  },
   { path: "/p2p", element: <P2PHistory />, permission: "P2P" },
+  {
+    path: "/wp-staking-list",
+    element: <WealthPlanStakingList />,
+    permission: "wp-staking-list",
+  },
 ];
-
 
 const ACCOUNTANT_ROUTES = [
   { path: "/", element: <AccountsDashboard /> },
@@ -223,7 +358,6 @@ const ACCOUNTANT_ROUTES = [
   { path: "/logout", element: <Logout /> },
 ];
 
-
 const FINANCE_ROUTES = [
   { path: "/", element: <AccountsDashboard /> },
   { path: "/credits", element: <Credits /> },
@@ -233,7 +367,6 @@ const FINANCE_ROUTES = [
   { path: "/expenses", element: <FinanceExpenses /> },
   { path: "/logout", element: <Logout /> },
 ];
-
 
 const App = () => {
   const { data, isLoading, error } = useCheckPermissionsQuery();
@@ -300,7 +433,9 @@ const App = () => {
         {/* Fallback */}
         <Route
           path="*"
-          element={<Navigate to={adminToken && stored ? "/" : "/login"} replace />}
+          element={
+            <Navigate to={adminToken && stored ? "/" : "/login"} replace />
+          }
         />
       </Routes>
     </>
