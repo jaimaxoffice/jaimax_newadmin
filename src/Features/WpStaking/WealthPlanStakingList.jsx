@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { Wallet, IndianRupee, Coins } from "lucide-react";
 
-import { useGetWpStakingWalletsQuery } from "./stakingapislice";
+import { useGetWpStakingWalletsQuery } from "./wpStakingApiSlice";
 import { formatDateTimeSimple } from "../../utils/dateUtils";
 
 import Table from "../../reusableComponents/Tables/Table";
@@ -54,8 +54,18 @@ const WealthPlanStakingList = () => {
   }, []);
 
   const handleSearch = useCallback((e) => {
-    setState((prev) => ({ ...prev, search: e.target.value, currentPage: 1 }));
-  }, []);
+  const value = e.target.value;
+
+  clearTimeout(window._wpSearchTimeout);
+
+  window._wpSearchTimeout = setTimeout(() => {
+    setState((prev) => ({
+      ...prev,
+      search: value,
+      currentPage: 1,
+    }));
+  }, 1000);
+}, []);
 
   const handleStatusChange = useCallback((e) => {
     setState((prev) => ({ ...prev, status: e.target.value, currentPage: 1 }));
@@ -185,14 +195,14 @@ const WealthPlanStakingList = () => {
       header: "Total Tokens Awarded",
       render: (row) =>
         row?.totalTokensAwarded != null
-          ? Number(row.totalTokensAwarded).toLocaleString("en-IN")
+          ? Number(row.totalTokensAwarded)
           : "—",
     },
     {
       header: "Net Tokens",
       render: (row) =>
         row?.netTokens != null
-          ? Number(row.netTokens).toLocaleString("en-IN")
+          ? Number(row.netTokens)
           : "—",
     },
 
@@ -200,8 +210,48 @@ const WealthPlanStakingList = () => {
       header: "Total Sold (P2P)",
       render: (row) =>
         row?.totalSoldInP2P != null
-          ? Number(row.totalSoldInP2P).toLocaleString("en-IN")
+          ? Number(row.totalSoldInP2P)
           : "—",
+    },
+
+    {
+      header: "Tokens per month",
+      render: (row) =>
+        row?.tokensPerMonth != null
+          ? Number(row.tokensPerMonth)
+          : "—",
+    },
+
+    {
+      header: "Previous Disbursed INR",
+      render: (row) =>
+        row?.previousDisbursedInr != null
+          ? Number(row.previousDisbursedInr)
+          : "—",
+    },
+
+    {
+      header: "Remained INR to settle",
+      render: (row) =>
+        row?.remainingInrToSettle != null
+          ? Number(row.remainingInrToSettle)
+          : "—",
+    },
+
+    {
+      header: "Total INR",
+      render: (row) =>
+        row?.totalInr != null
+          ? Number(row.totalInr)
+          : "—",
+    },
+
+    {
+      header: "Status",
+      render: (row) =>
+        <p>{row?.status != null
+          ? row.status === "active" ? <span className="text-green-500">{row.status.toUpperCase()}</span> : <span className="text-red-500">{row.status.toUpperCase()}</span>
+          : "—"}</p>
     },
 
     {

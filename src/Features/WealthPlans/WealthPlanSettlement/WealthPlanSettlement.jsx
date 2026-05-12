@@ -7,6 +7,7 @@ import {
 import Loader from "../../../reusableComponents/Loader/Loader";
 import { buildWpSettlementPDF } from "./buildWpSettlementPDF";
 import usePDFGenerator from "../../../hooks/usePDFGenerator";
+import { useToast } from "../../../reusableComponents/Toasts/ToastContext";
 
 /* ─── tiny helpers ─── */
 const fmt = (n) =>
@@ -198,7 +199,7 @@ function PlanSection({ planKey, plan }) {
       <button
         onClick={() => setOpen((p) => !p)}
         className="flex items-center justify-between px-4 py-2.5 rounded-[8px] text-xs font-bold tracking-widest uppercase transition-all
-          bg-[#1a1f24] border border-[#3a4149] text-[#8a9099] hover:text-white hover:border-[#b9fd5c]"
+          bg-[#1a1f24] border border-[#3a4149] text-[#8a9099] hover:text-white hover:border-[#b9fd5c] cursor-pointer"
       >
         <span>
           {open ? "Hide" : "Show"} {plan.orders.length} Orders
@@ -221,6 +222,7 @@ function PlanSection({ planKey, plan }) {
 function WealthPlanSettlement() {
   const [inputValue, setInputValue] = useState("");
   const [submittedUsername, setSubmittedUsername] = useState("");
+  const toast = useToast();
 
   const [triggerSettlement, { data, error, isLoading, reset }] =
     useGetPreviewWpSettlementMutation();
@@ -247,8 +249,11 @@ function WealthPlanSettlement() {
         consent: true,
       }).unwrap();
 
-      console.log("Conversion Success:", res);
+      toast.success(res?.message || "Welath plan settelement completed successfully!");
+
+      // console.log("Conversion Success:", res);
     } catch (error) {
+      toast.error(error?.data?.message || "Something went wrong!");
       console.error("Conversion Failed:", error);
     }
   };
@@ -305,7 +310,7 @@ function WealthPlanSettlement() {
             disabled={isLoading}
             className="flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-widest
               transition-all hover:opacity-80 active:scale-95 flex-shrink-0
-              bg-[#b9fd5c] text-[#1a1f24] disabled:opacity-50 disabled:cursor-not-allowed"
+              bg-[#b9fd5c] text-[#1a1f24] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             <Search size={12} strokeWidth={2.5} />
             <span>Calculate</span>
@@ -313,7 +318,7 @@ function WealthPlanSettlement() {
         </form>
 
         {/* Refresh + PDF actions */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap justify-center mt-5">
           {isLoading && (
             <span className="text-xs animate-pulse text-[#b9fd5c]">
               Calculating...
@@ -325,7 +330,7 @@ function WealthPlanSettlement() {
               disabled={isLoading}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-bold tracking-widest
                 transition-all hover:opacity-80 active:scale-95
-                bg-[#282f35] text-white border border-[#3a4149] disabled:opacity-50"
+                bg-[#282f35] text-white border border-[#3a4149] disabled:opacity-50 cursor-pointer"
             >
               <RefreshCw
                 size={12}
@@ -340,20 +345,20 @@ function WealthPlanSettlement() {
               <button
                 disabled={isGenerating}
                 onClick={handleDownloadPDF}
-                className="px-3 sm:px-4 py-2 rounded-full text-xs font-bold tracking-widest transition-all hover:opacity-80 active:scale-95 bg-[#b9fd5c] text-[#1a1f24] disabled:opacity-50 whitespace-nowrap"
+                className="px-3 sm:px-4 py-2 rounded-full text-xs font-bold tracking-widest transition-all hover:opacity-80 active:scale-95 bg-[#b9fd5c] text-[#1a1f24] disabled:opacity-50 whitespace-nowrap cursor-pointer"
               >
                 {isGenerating ? "Generating..." : "Download PDF"}
               </button>
               <button
                 onClick={handlePreviewPDF}
-                className="px-3 sm:px-4 py-2 rounded-full text-xs font-bold tracking-widest transition-all hover:opacity-80 active:scale-95 bg-[#1a1f24] border border-[#b9fd5c] text-[#b9fd5c] whitespace-nowrap"
+                className="px-3 sm:px-4 py-2 rounded-full text-xs font-bold tracking-widest transition-all hover:opacity-80 active:scale-95 bg-[#1a1f24] border border-[#b9fd5c] text-[#b9fd5c] whitespace-nowrap cursor-pointer"
               >
                 Preview PDF
               </button>
               <button
                 disabled={isConverting}
                 onClick={handleConvertSettlement}
-                className="px-3 sm:px-4 py-2 rounded-full text-xs font-bold tracking-widest transition-all hover:opacity-80 active:scale-95 bg-[#1a1f24] border border-[#b9fd5c] text-[#b9fd5c] whitespace-nowrap"
+                className="px-3 sm:px-4 py-2 rounded-full text-xs font-bold tracking-widest transition-all hover:opacity-80 active:scale-95 bg-[#1a1f24] border border-[#b9fd5c] text-[#b9fd5c] whitespace-nowrap cursor-pointer disabled:cursor-not-allowed"
               >
                 {isConverting ? "Processing..." : "Convert Settlement"}
               </button>
@@ -362,7 +367,7 @@ function WealthPlanSettlement() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8">
         {/* ── Empty state ── */}
         {!submittedUsername && (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
