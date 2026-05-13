@@ -1,4 +1,3 @@
-// marketingReportsApiSlice.js
 import { apiSlice } from "../../api/jaimaxApiSlice";
 
 export const marketingReportsApiSlice = apiSlice.injectEndpoints({
@@ -15,7 +14,6 @@ export const marketingReportsApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    // Split the 1-5 range into two separate endpoints
     getUsersWithOneToTwoDirectRefs: builder.query({
       query: () => ({
         url: `/Admin/users/direct-refs/1-to-2`,
@@ -46,23 +44,45 @@ export const marketingReportsApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getUsersWithCustomDirectRefsRange: builder.query({
+      query: ({ min, max }) => ({
+        url: `/Admin/users/direct-refs/custom-range?min=${min}&max=${max}`,
+        method: "GET",
+      }),
+    }),
     getAllUsers: builder.query({
       query: () => ({
         url: `/Admin/all-users`,
         method: "GET",
       }),
-      // providesTags: ["getAllUsers"],
     }),
   }),
 });
 
 export const {
-  useGetInactiveUsersQuery,
-  useGetUsersWithZeroDirectRefsQuery,
-  useGetUsersWithOneToTwoDirectRefsQuery,
-  useGetUsersWithThreeToFiveDirectRefsQuery,
-  useGetUsersWithSixToNineDirectRefsQuery,
-  useGetUsersWithTenToTwentyFiveDirectRefsQuery,
-  useGetUsersWithTwentySixToHundredDirectRefsQuery,
-  useGetAllUsersQuery,
+  // ── Regular hooks (auto-fetch) ──────────────────────────
+  // useGetInactiveUsersQuery,
+  // useGetUsersWithZeroDirectRefsQuery,
+  // useGetUsersWithOneToTwoDirectRefsQuery,
+  // useGetUsersWithThreeToFiveDirectRefsQuery,
+  // useGetUsersWithSixToNineDirectRefsQuery,
+  // useGetUsersWithTenToTwentyFiveDirectRefsQuery,
+  // useGetUsersWithTwentySixToHundredDirectRefsQuery,
+  // useGetUsersWithCustomDirectRefsRangeQuery,
+  // useGetAllUsersQuery,
+
+  // ── Lazy hooks (manual/on-demand fetch) ─────────────────
+  useLazyGetInactiveUsersQuery,
+  useLazyGetUsersWithZeroDirectRefsQuery,
+  useLazyGetUsersWithOneToTwoDirectRefsQuery,
+  useLazyGetUsersWithThreeToFiveDirectRefsQuery,
+  useLazyGetUsersWithSixToNineDirectRefsQuery,
+  useLazyGetUsersWithTenToTwentyFiveDirectRefsQuery,
+  useLazyGetUsersWithTwentySixToHundredDirectRefsQuery,
+  useLazyGetUsersWithCustomDirectRefsRangeQuery,
+  useLazyGetAllUsersQuery,
 } = marketingReportsApiSlice;
+
+
+
+

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  useGetInactiveUsersQuery,
-} from "./reportsApiSlice";
+
 import DetailedBusinessPerformanceReport from "../BusinessFrom$To/DetailedBusinessPerformanceReport";
 import SimpleBusinessReportPDF from "./SimpleBusinessReportPDF";
 
@@ -11,9 +9,9 @@ const MarketingReports = () => {
 
   return (
     <div>
-     
+
       <section>
-        <SimpleBusinessReportPDF/>
+        <SimpleBusinessReportPDF />
       </section>
 
       <section>
@@ -22,7 +20,7 @@ const MarketingReports = () => {
         </div>
       </section>
 
-      
+
 
     </div>
   );

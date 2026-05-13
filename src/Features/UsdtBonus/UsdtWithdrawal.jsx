@@ -41,13 +41,19 @@ const UsdtBonusList = () => {
   });
   const searchTimeoutRef = useRef(null);
 
+  // const queryParams = {
+  //   page: state.currentPage,
+  //   limit: state.perPage,
+  //   username: state.search,
+  //   type: selectedType,
+  // };
+  console.log(selectedType, "selectedTypeqq")
   const queryParams = {
     page: state.currentPage,
     limit: state.perPage,
     username: state.search,
-    type: selectedType,
+    status: selectedType,   // ✅ sends "0", "1", "2" or ""
   };
-
   const {
     data: response,
     isLoading,
@@ -61,18 +67,52 @@ const UsdtBonusList = () => {
 
   // ─── Data Processing ────────────────────────────────────────
 
+  // const TableData = response?.data?.withdrawList || [];
+
+
+  // console.log(TableData, "TableDataqwwef")
+  // const filteredData = useMemo(() => {
+  //   if (selectedType === "" || selectedType === null || selectedType === undefined)
+  //     return TableData;
+  //   return TableData.filter(
+  //     (row) => String(row?.status) === String(selectedType)
+  //   );
+  // }, [TableData, selectedType]);
+
   const TableData = response?.data?.withdrawList || [];
+  console.log(TableData, "TableData123")
+
+  // const filteredData = useMemo(() => {
+  //   console.log("selectedType:", selectedType);
+  //   console.log("TableData inside memo:", TableData);
+
+  //   if (selectedType === "" || selectedType === null || selectedType === undefined) {
+  //     console.log("No filter applied - returning all data:", TableData.length, "records");
+  //     return TableData;
+  //   }
+
+  //   const filtered = TableData.filter(
+  //     (row) => String(row?.status) === String(selectedType)
+  //   );
+
+  //   console.log(`Filtered by status "${selectedType}":`, filtered.length, "records found");
+  //   console.log("Filtered result:", filtered);
+
+  //   return filtered;
+  // }, [TableData, selectedType]);
+
+
   const totalRecords = response?.data?.total || 0;
   const totalPages = response?.data?.totalPages || 1;
 
   const totalWithdrawnUSDT =
-  parseFloat(response?.data?.totalWithdrawnUSDT?.$numberDecimal || 0);
+    parseFloat(response?.data?.totalWithdrawnUSDT?.$numberDecimal || 0);
   const totalUSDTAdminCharges =
-  parseFloat(response?.data?.totalUSDTAdminCharges?.$numberDecimal || 0);
+    parseFloat(response?.data?.totalUSDTAdminCharges?.$numberDecimal || 0);
   const totalSentUSDT =
-  parseFloat(response?.data?.totalSentUSDT?.$numberDecimal || 0);
+    parseFloat(response?.data?.totalSentUSDT?.$numberDecimal || 0);
   const total =
-  response?.data?.total || 0;
+    response?.data?.total || 0;
 
   // ─── Handlers ────────────────────────────────────────────────
 
@@ -100,6 +140,7 @@ const UsdtBonusList = () => {
 
   const handleTypeChange = useCallback((e) => {
     const value = e.target.value;
+    console.log(value, "value1we")
     setSelectedType(value);
     setState((prev) => ({ ...prev, currentPage: 1 }));
   }, []);
@@ -115,10 +156,10 @@ const UsdtBonusList = () => {
   }, []);
 
   const handleCopy = useCallback(() => {
-    if (detailModal.content && 
-        detailModal.content !== "No wallet address available." && 
-        detailModal.content !== "No note available." &&
-        detailModal.content !== "No transaction hash available.") {
+    if (detailModal.content &&
+      detailModal.content !== "No wallet address available." &&
+      detailModal.content !== "No note available." &&
+      detailModal.content !== "No transaction hash available.") {
       navigator.clipboard.writeText(detailModal.content);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -139,6 +180,7 @@ const UsdtBonusList = () => {
   };
 
   const getStatusInfo = (status) => {
+    console.log(status, "stus")
     switch (status) {
       case 1:
         return {
@@ -284,34 +326,34 @@ const UsdtBonusList = () => {
         </span>
       ),
     },
-        {
-  header: "Balance Before",
-  render: (row) => {
-    const value = row?.balance_before?.$numberDecimal
-      ? parseFloat(row.balance_before.$numberDecimal)
-      : 0;
-
-    return (
-      <span className="text-white text-xs">
-        ₹{value.toFixed(2)}
-      </span>
-    );
-  },
-},
     {
-  header: "Balance After",
-  render: (row) => {
-    const value = row?.balance_after?.$numberDecimal
-      ? parseFloat(row.balance_after.$numberDecimal)
-      : 0;
+      header: "Balance Before",
+      render: (row) => {
+        const value = row?.balance_before?.$numberDecimal
+          ? parseFloat(row.balance_before.$numberDecimal)
+          : 0;
 
-    return (
-      <span className="text-white text-xs">
-        ₹{value.toFixed(2)}
-      </span>
-    );
-  },
-},
+        return (
+          <span className="text-white text-xs">
+            ₹{value.toFixed(2)}
+          </span>
+        );
+      },
+    },
+    {
+      header: "Balance After",
+      render: (row) => {
+        const value = row?.balance_after?.$numberDecimal
+          ? parseFloat(row.balance_after.$numberDecimal)
+          : 0;
+
+        return (
+          <span className="text-white text-xs">
+            ₹{value.toFixed(2)}
+          </span>
+        );
+      },
+    },
     {
       header: "Withdrawal Amount",
       render: (row) => (
@@ -431,10 +473,10 @@ const UsdtBonusList = () => {
             <h2 className="text-lg font-semibold text-white">
               USDT Withdrawals
             </h2>
-            
+
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <PerPageSelector
-                options={[10, 20, 40, 60, 80, 100]}
+                options={[10, 20, 40, 60, 80, 100, 3882]}
                 onChange={handlePerPageChange}
               />
 
@@ -464,7 +506,7 @@ const UsdtBonusList = () => {
         <div className="rounded-lg">
           <Table
             columns={columns}
-            data={TableData}
+            data={TableData}        // ✅ API already filtered this
             isLoading={isLoading}
             currentPage={state.currentPage}
             perPage={state.perPage}
@@ -486,11 +528,11 @@ const UsdtBonusList = () => {
 
       {/* Simple Detail Modal */}
       {detailModal.show && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={closeDetailModal}
         >
-          <div 
+          <div
             className="bg-[#1a1c1f] border border-[#2a2c2f] rounded-2xl max-w-lg w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
@@ -516,30 +558,30 @@ const UsdtBonusList = () => {
               </div>
 
               {/* Copy Button */}
-              {detailModal.content && 
-               detailModal.content !== "No wallet address available." && 
-               detailModal.content !== "No note available." &&
-               detailModal.content !== "No transaction hash available." && (
-                <button
-                  onClick={handleCopy}
-                  className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5
+              {detailModal.content &&
+                detailModal.content !== "No wallet address available." &&
+                detailModal.content !== "No note available." &&
+                detailModal.content !== "No transaction hash available." && (
+                  <button
+                    onClick={handleCopy}
+                    className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5
                              rounded-xl text-sm font-medium bg-[#111214] border border-[#2a2c2f]
                              text-[#8a8d93] hover:text-white hover:border-[#3a3c3f]
                              transition-colors cursor-pointer"
-                >
-                  {copied ? (
-                    <>
-                      <Check size={14} className="text-green-400" />
-                      <span className="text-green-400">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={14} />
-                      Copy to Clipboard
-                    </>
-                  )}
-                </button>
-              )}
+                  >
+                    {copied ? (
+                      <>
+                        <Check size={14} className="text-green-400" />
+                        <span className="text-green-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={14} />
+                        Copy to Clipboard
+                      </>
+                    )}
+                  </button>
+                )}
             </div>
 
             {/* Footer */}
