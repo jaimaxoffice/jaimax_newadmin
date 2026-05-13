@@ -39,7 +39,7 @@ const Table = ({
   }
 
   return (
-    <div className="relative overflow-x-auto sidebar-scroll p-4">
+    <div className="relative overflow-x-auto sidebar-scroll p-4 rounded-lg ">
       {isLoading && <Loader />}
 
       <table className="w-full border-collapse" style={{ minWidth: "max-content" }}>

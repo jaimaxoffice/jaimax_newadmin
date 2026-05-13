@@ -226,74 +226,85 @@ const P2PHistory = () => {
       <div className="bg-[#282f35] border border-[#2a2c2f] rounded-lg overflow-hidden">
 
         {/* Header */}
-        <div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div className="px-4 sm:px-6 py-4 border-b border-[#2a2c2f]">
+  <div className="flex flex-col gap-4">
+    {/* Header */}
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <h2 className="text-lg font-semibold text-white">
+        P2P Trade History
+      </h2>
+      
+      <PerPageSelector
+        options={[10, 20, 50, 100]}
+        onChange={handlePerPageChange}
+      />
+    </div>
 
-            <h2 className="text-lg font-semibold text-white">
-              P2P Trade History
-            </h2>
+    {/* Filters */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+      {/* Status Filter */}
+      <select
+        value={state.status}
+        onChange={handleStatusChange}
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+      >
+        <option value="">All Status</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="PENDING">Pending</option>
+      </select>
 
-            <div className="flex flex-wrap items-center gap-3">
+      {/* Role Filter */}
+      <select
+        value={state.role}
+        onChange={handleRoleChange}
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+      >
+        <option value="">All Roles</option>
+        <option value="buyer">Buyer</option>
+        <option value="seller">Seller</option>
+        <option value="both">Both</option>
+      </select>
 
-              <PerPageSelector
-                options={[10, 20, 50, 100]}
-                onChange={handlePerPageChange}
-              />
+      {/* From Date */}
+      <input
+        type="date"
+        value={state.fromDate}
+        onChange={(e) =>
+          setState((prev) => ({
+            ...prev,
+            fromDate: e.target.value,
+            currentPage: 1,
+          }))
+        }
+        placeholder="From date"
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+      />
 
-              <select
-                value={state.status}
-                onChange={handleStatusChange}
-                className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm"
-              >
-                <option value="">All Status</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="PENDING">Pending</option>
-              </select>
+      {/* To Date */}
+      <input
+        type="date"
+        value={state.toDate}
+        onChange={(e) =>
+          setState((prev) => ({
+            ...prev,
+            toDate: e.target.value,
+            currentPage: 1,
+          }))
+        }
+        placeholder="To date"
+        className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+      />
 
-              <select
-                value={state.role}
-                onChange={handleRoleChange}
-                className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl py-2.5 px-3 text-sm"
-              >
-                <option value="">All Roles</option>
-                <option value="buyer">Buyer</option>
-                <option value="seller">Seller</option>
-                <option value="both">Both</option>
-              </select>
-
-              <input
-                type="date"
-                value={state.fromDate}
-                onChange={(e) =>
-                  setState((prev) => ({
-                    ...prev,
-                    fromDate: e.target.value,
-                    currentPage: 1,
-                  }))
-                }
-                className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl px-3 py-2"
-              />
-
-              <input
-                type="date"
-                value={state.toDate}
-                onChange={(e) =>
-                  setState((prev) => ({
-                    ...prev,
-                    toDate: e.target.value,
-                    currentPage: 1,
-                  }))
-                }
-                className="bg-[#111214] border border-[#2a2c2f] text-white rounded-xl px-3 py-2"
-              />
-
-              <SearchBar
-                onSearch={handleSearch}
-                placeholder="Search username..."
-              />
-            </div>
-          </div>
-        </div>
+      {/* Search Bar - spans 2 columns on larger screens */}
+      <div className="sm:col-span-2 lg:col-span-1 xl:col-span-2">
+        <SearchBar
+          onSearch={handleSearch}
+          placeholder="Search username..."
+        />
+      </div>
+    </div>
+  </div>
+</div>
 
         {/* Table */}
         <div className="rounded-lg">

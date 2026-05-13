@@ -420,9 +420,9 @@ const TokensCard = ({ tokens }) => {
               );
             })}
 
-            <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
+            <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none ">
               <div
-                className="w-24 h-24 bg-[#1a212a] rounded-full flex flex-col items-center justify-center pointer-events-auto border-[4px] border-[#272c33] shadow-inner"
+                className="w-24 h-24 bg-[#1a212a] rounded-full flex flex-col items-center justify-center pointer-events-auto border-[4px] border-[#272c33] shadow-inner "
                 onMouseEnter={() => setHoveredData(null)}
               >
                 <span className="text-2xl text-white font-bold">

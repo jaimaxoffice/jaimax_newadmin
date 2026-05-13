@@ -162,7 +162,7 @@ export default function AppLayout() {
       <main className="flex-1 overflow-y-auto transition-all duration-300 bg-[#000000] flex flex-col sidebar-scroll">
         {/* Top Header Section */}
         {location.pathname !== "/jaimax-community" && (
-          <header className="sticky top-0 z-20 bg-[#000000]/80 backdrop-blur-md border-b border-[#2a2c2f] px-6 py-4 flex items-center justify-between">
+          <header className="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-md border-b border-[#2a2c2f] px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
