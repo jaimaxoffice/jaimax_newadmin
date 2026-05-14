@@ -276,6 +276,10 @@ const Withdrawal = () => {
         </span>
       ),
     },
+     {
+      header: "Payment Mode",
+      render: (row) => <span>{row.sourceOfWithdrwal || "N/A"}</span>,
+    },
     {
       header: "Requested Date",
       render: (row) => (

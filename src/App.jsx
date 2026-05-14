@@ -88,7 +88,9 @@ import MiningTransactions from "./Features/Mining/MiningWallets";
 import MiningLogs from "./Features/Mining/MiningLogs";
 import MiningReferrals from "./Features/Mining/MiningReferal";
 import Fallback from "./Features/Dashboard/WelcomeBanner";
-
+import Staking from './Features/staking/StakingWallets';
+import StakingLogs from './Features/staking/StakingLogs';
+import WpStake from './Features/WpStaking/WealthPlantoStaking'
 import { useCheckPermissionsQuery } from "./api/jaimaxApiSlice";
 // import Expenses from "./Finance/Expenses";
 import FinanceExpenses from "./Finance/FinanceExpenses";
@@ -157,12 +159,11 @@ const ADMIN_ROUTES = [
   { path: "/mining-transactions", element: <MiningTransactions /> },
   { path: "/Mining-logs", element: <MiningLogs /> },
   { path: "/Mining-referrals", element: <MiningReferrals /> },
-  { path: "/p2p", element: <P2PHistory />, permission: "P2P" },
-  {
-    path: "/wp-staking-list",
-    element: <WealthPlanStakingList />,
-    permission: "wp-staking-list",
-  },
+  { path: "/staking", element: <Staking /> },
+  {path:"/staking-logs",element:<StakingLogs/>},
+  { path: "/p2p", element: <P2PHistory /> },
+  {path:'/wp-to-stake',element:<WpStake/>},
+  { path: "/wp-staking-list", element: <WealthPlanStakingList /> },
 ];
 
 // ─── SUB-ADMIN ROUTES (role === 2) ───
@@ -329,23 +330,15 @@ const ROLE2_ROUTES = [
   },
   { path: "/reports", element: <Report />, permission: "REPORTS" },
   { path: "/mining", element: <MiningDashboard />, permission: "MINING" },
-  {
-    path: "/mining-transactions",
+  {path: "/mining-transactions",
     element: <MiningTransactions />,
     permission: "MINING",
   },
   { path: "/Mining-logs", element: <MiningLogs />, permission: "MINING" },
-  {
-    path: "/Mining-referrals",
-    element: <MiningReferrals />,
-    permission: "MINING",
-  },
-  { path: "/p2p", element: <P2PHistory />, permission: "P2P" },
-  {
-    path: "/wp-staking-list",
-    element: <WealthPlanStakingList />,
-    permission: "wp-staking-list",
-  },
+  {path: "/Mining-referrals",element: <MiningReferrals />,permission: "MINING",},
+  {path: "/p2p", element: <P2PHistory />, permission: "P2P" },
+  {path:'/wp-to-stake',element:<WpStake/>,permission:'P2P'},
+  {path: "/wp-staking-list",element: <WealthPlanStakingList />,permission: "wp-staking-list",},
 ];
 
 const ACCOUNTANT_ROUTES = [

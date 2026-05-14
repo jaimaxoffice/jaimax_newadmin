@@ -362,7 +362,10 @@ const UsdtBonusList = () => {
         </span>
       ),
     },
-
+    {
+      header: "Payment Mode",
+      render: (row) => <span>{row.sourceOfWithdrwal || "N/A"}</span>,
+    },
     {
       header: "Date & Time",
       render: (row) => (

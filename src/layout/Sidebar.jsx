@@ -155,9 +155,17 @@ const ADMIN_SECTIONS = [
     ],
   },
   {
+    label: "STAKING",
+    items: [
+      { label: "Staking", icon: ArrowLeftRight, path: "/staking", permission: "STAKING" },
+      {label: "Staking-Logs",icon: Landmark,path: "/staking-logs",permission: "STAKING",},
+    ],
+  },
+  {
     label: "P2P",
     items: [
       { label: "P2P", icon: ArrowLeftRight, path: "/p2p", permission: "P2P" },
+      { label: "Wp-To-Stake", icon: ArrowLeftRight, path: "/wp-to-stake", permission: "P2P" },
       {
         label: "Wp-staking-list",
         icon: Landmark,
