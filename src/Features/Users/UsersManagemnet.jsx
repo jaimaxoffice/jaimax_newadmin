@@ -14,7 +14,8 @@ import {
   useSendTransactionMutation,
   useViewUserQuery,
 } from "./usersApiSlice";
-import { useToast } from "../../reusableComponents/Toasts/ToastContext";import SearchBar from "../../reusableComponents/searchBar/SearchBar";
+import { useToast } from "../../reusableComponents/Toasts/ToastContext";
+import SearchBar from "../../reusableComponents/searchBar/SearchBar";
 import { Eye, Send, ShieldX, UserCheck, Users } from "lucide-react";
 import PerPageSelector from "../../reusableComponents/Filter/PerPageSelector";
 import useTableState from "../../hooks/useTableState";
@@ -193,6 +194,18 @@ const UserManagement = () => {
     {
       header: "Available Balance",
       render: (row) => getCurrency(row.countryCode, row.Inr),
+    },
+    {
+      header: "Holding Balance",
+      render: (row) => getCurrency(row.countryCode, row.holdedInr),
+    },
+    {
+      header: "P2P Balance",
+      render: (row) => getCurrency(row.countryCode, row.p2pInr),
+    },
+    {
+      header: "Wp-P2P Balance",
+      render: (row) => getCurrency(row.countryCode, row.wpStakingInr),
     },
     {
       header: "Withdrawal Amount",
